@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pawn Island Records | Merch</title>
+    <meta
+      name="description"
+      content="Merch storefront concepts, bundle ideas, and collector goods for Pawn Island Records artists and releases."
+    />
+    <script src="theme-init.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-noise" aria-hidden="true"></div>
+    <div class="page-orb page-orb--blue" aria-hidden="true"></div>
+    <div class="page-orb page-orb--yellow" aria-hidden="true"></div>
+    <div class="page-template">
+      <header class="site-header">
+        <a class="brandmark" href="index.html" aria-label="Pawn Island Records home">
+          <span class="brandmark__coin">P</span>
+          <span class="brandmark__text">
+            <strong>Pawn Island Records</strong>
+            <span>Merch and collector storefront</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="admin.html">Admin</a>
+          <a href="#store">Merch</a>
+          <a href="#bundle-lab">Bundles</a>
+          <a href="campaigns.html">Campaign Lab</a>
+          <a href="brand-kit.html">Brand Kit</a>
+        </nav>
+
+        <div class="site-header__actions">
+          <a class="button button--ghost" href="admin.html">Data Entry</a>
+          <a class="button button--ghost" href="index.html#vault">Listener Vault</a>
+          <button
+            class="theme-toggle"
+            type="button"
+            data-theme-toggle
+            aria-label="Toggle day and night theme"
+          >
+            <span class="theme-toggle__label" data-theme-toggle-label>Theme</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="page-main">
+        <section class="page-hero">
+          <p class="eyebrow">Merch + Music Ownership</p>
+          <h1>Turn the label catalog into a physical world fans can collect.</h1>
+          <p class="page-lede">
+            The storefront can hold apparel, prints, accessories, and bundle
+            ideas that connect directly to release campaigns, FLAC and MP3
+            downloads, and premium DJ-ready WAV packs.
+          </p>
+          <div class="hero__actions">
+            <a class="button" href="#store">Browse Merch Concepts</a>
+            <a class="button button--ghost" href="index.html#vault"
+              >Open Listener Vault</a
+            >
+          </div>
+          <div class="stats-grid" id="merch-stats"></div>
+        </section>
+
+        <section class="page-section" id="store">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Store Grid</p>
+              <h2>Keep label-core goods and artist-specific drops in one lane.</h2>
+            </div>
+            <p>
+              This page can evolve into Shopify, Gumroad, or Bandcamp merch
+              routing later. For now it gives the label a structured storefront
+              that can grow release by release.
+            </p>
+          </div>
+
+          <div class="filters" aria-label="Merch filters">
+            <label class="field">
+              <span>Search merch</span>
+              <input
+                id="merch-search"
+                type="search"
+                placeholder="Try artist, product, or category"
+              />
+            </label>
+
+            <label class="field">
+              <span>Artist</span>
+              <select id="merch-artist-filter">
+                <option value="all">All artists</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Category</span>
+              <select id="merch-category-filter">
+                <option value="all">All categories</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="status-tabs" role="tablist" aria-label="Merch status">
+            <button
+              class="status-tab is-active"
+              type="button"
+              data-merch-status="all"
+              aria-selected="true"
+            >
+              All
+            </button>
+            <button
+              class="status-tab"
+              type="button"
+              data-merch-status="Concept"
+              aria-selected="false"
+            >
+              Concept
+            </button>
+            <button
+              class="status-tab"
+              type="button"
+              data-merch-status="Live"
+              aria-selected="false"
+            >
+              Live
+            </button>
+          </div>
+
+          <p class="catalog-summary" id="merch-results-summary">Loading merch...</p>
+          <div class="merch-grid" id="merch-store-grid"></div>
+        </section>
+
+        <section class="page-section" id="bundle-lab">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Bundle Lab</p>
+              <h2>Connect merch to music formats fans can actually own.</h2>
+            </div>
+            <p>
+              Every release can pair a tangible item with immediate MP3 access,
+              lossless FLAC delivery, and a premium direct-to-DJ WAV option when
+              it makes sense.
+            </p>
+          </div>
+
+          <div class="panel-grid" id="bundle-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="catalog-published.js"></script>
+    <script src="catalog-store.js"></script>
+    <script src="theme.js"></script>
+    <script src="merch.js"></script>
+  </body>
+</html>

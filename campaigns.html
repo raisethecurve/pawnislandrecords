@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pawn Island Records | Campaign Lab</title>
+    <meta
+      name="description"
+      content="A/B landing page concepts for Pawn Island Records artists and releases."
+    />
+    <script src="theme-init.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-noise" aria-hidden="true"></div>
+    <div class="page-orb page-orb--blue" aria-hidden="true"></div>
+    <div class="page-orb page-orb--yellow" aria-hidden="true"></div>
+    <div class="page-template">
+      <header class="site-header">
+        <a class="brandmark" href="index.html" aria-label="Pawn Island Records home">
+          <span class="brandmark__coin">P</span>
+          <span class="brandmark__text">
+            <strong>Pawn Island Records</strong>
+            <span>Campaign and landing-page lab</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="admin.html">Admin</a>
+          <a href="#variants">Variants</a>
+          <a href="#notes">Testing Notes</a>
+          <a href="brand-kit.html">Brand Kit</a>
+          <a href="merch.html">Merch</a>
+        </nav>
+
+        <div class="site-header__actions">
+          <a class="button button--ghost" href="admin.html">Data Entry</a>
+          <a class="button button--ghost" href="index.html#catalog">Catalog</a>
+          <button
+            class="theme-toggle"
+            type="button"
+            data-theme-toggle
+            aria-label="Toggle day and night theme"
+          >
+            <span class="theme-toggle__label" data-theme-toggle-label>Theme</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="page-main">
+        <section class="page-hero">
+          <p class="eyebrow">Campaign Lab</p>
+          <h1>Build release landing pages that can test mood, conversion, and video emphasis.</h1>
+          <p class="page-lede">
+            Each artist and release can branch into focused landing pages without
+            breaking the main catalog. This page sketches testable concepts for
+            narrative-first, conversion-first, and video-first rollouts.
+          </p>
+          <div class="hero__actions">
+            <a class="button" href="#variants">View Variants</a>
+            <a class="button button--ghost" href="brand-kit.html"
+              >Reference Brand Kit</a
+            >
+          </div>
+        </section>
+
+        <section class="page-section" id="variants">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Landing Variants</p>
+              <h2>Different releases may need different lead-ins.</h2>
+            </div>
+            <p>
+              Pre-save campaigns might prioritize urgency and action, while
+              catalog titles may perform better with video, lyrics, or a fuller
+              world-building frame.
+            </p>
+          </div>
+
+          <div class="filters" aria-label="Campaign filters">
+            <label class="field">
+              <span>Artist</span>
+              <select id="campaign-artist-filter">
+                <option value="all">All artists</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Status</span>
+              <select id="campaign-status-filter">
+                <option value="all">All statuses</option>
+                <option value="out">Out now</option>
+                <option value="presave">Pre-save</option>
+                <option value="archive">Archive</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Focus</span>
+              <select id="campaign-focus-filter">
+                <option value="all">All focuses</option>
+                <option value="Narrative">Narrative</option>
+                <option value="Conversion">Conversion</option>
+                <option value="Video">Video</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="research-grid" id="campaign-grid"></div>
+        </section>
+
+        <section class="page-section" id="notes">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Testing Notes</p>
+              <h2>Use one idea per page instead of asking every landing page to do everything.</h2>
+            </div>
+            <p>
+              Strong campaign pages usually lead with one clear promise, then
+              support it with the right asset: video, story, press framing,
+              merch, or direct ownership.
+            </p>
+          </div>
+          <div class="panel-grid" id="campaign-notes-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="catalog-published.js"></script>
+    <script src="catalog-store.js"></script>
+    <script src="theme.js"></script>
+    <script src="campaigns.js"></script>
+  </body>
+</html>

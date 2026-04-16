@@ -1,0 +1,157 @@
+@media (max-width: 1080px) {
+  .site-header,
+  .hero,
+  .artist-dossier__layout,
+  .artist-profile__hero,
+  .artist-profile__split,
+  .section-heading--split,
+  .platform-strip,
+  .about {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .site-header {
+    justify-content: stretch;
+  }
+
+  .site-nav {
+    order: 3;
+    justify-content: center;
+  }
+
+  .utility-band,
+  .artist-grid,
+  .artist-profile__stats,
+  .control-summary,
+  .release-grid,
+  .roadmap-grid,
+  .vault-summary,
+  .panel-grid,
+  .brand-grid,
+  .merch-grid,
+  .research-grid,
+  .form-grid,
+  .media-modal__grid,
+  .media-modal__downloads {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .control-grid,
+  .vault-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filters,
+  .entry-row,
+  .artist-palette-grid,
+  .track-row {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-strip,
+  .site-footer {
+    display: grid;
+  }
+
+  .track-row__actions,
+  .vault-card__actions,
+  .download-card__actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-shell,
+  .page-template {
+    padding: 0.75rem 0.75rem 2rem;
+  }
+
+  .site-header {
+    position: static;
+  }
+
+  .theme-toggle,
+  .site-header__actions .button {
+    width: 100%;
+  }
+
+  .hero,
+  .hero__copy,
+  .hero__feature,
+  .artists,
+  .artist-dossier,
+  .catalog,
+  .listener-vault,
+  .control-room,
+  .platform-strip,
+  .next-steps,
+  .about,
+  .about__panel,
+  .artist-profile {
+    padding: 1rem;
+  }
+
+  .hero h1,
+  .page-hero h1 {
+    max-width: none;
+  }
+
+  .stats-grid,
+  .utility-band,
+  .artist-grid,
+  .artist-profile__stats,
+  .control-summary,
+  .release-grid,
+  .control-grid,
+  .roadmap-grid,
+  .vault-summary,
+  .vault-grid,
+  .panel-grid,
+  .brand-grid,
+  .merch-grid,
+  .research-grid,
+  .form-grid,
+  .media-modal__grid,
+  .media-modal__downloads,
+  .about {
+    grid-template-columns: 1fr;
+  }
+
+  .spotlight-card {
+    grid-template-columns: 1fr;
+  }
+
+  .spotlight-card__cover,
+  .release-card__cover {
+    min-height: 180px;
+  }
+
+  .page-orb {
+    width: 18rem;
+    height: 18rem;
+    opacity: 0.28;
+  }
+
+  .media-modal__dialog {
+    width: calc(100% - 1rem);
+    margin: 0.5rem auto;
+    max-height: calc(100vh - 1rem);
+    padding: 1rem;
+  }
+
+  .video-frame,
+  .video-frame iframe,
+  .lyrics-block {
+    min-height: 240px;
+    max-height: 240px;
+  }
+
+  .split-actions input {
+    flex-basis: 100%;
+  }
+
+  .site-footer {
+    padding-bottom: 2rem;
+  }
+}

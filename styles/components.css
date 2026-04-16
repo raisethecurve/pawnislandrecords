@@ -1,0 +1,629 @@
+section,
+.page-hero,
+.page-section,
+.spotlight-card,
+.stat-card,
+.artist-card,
+.release-card,
+.artist-profile,
+.control-card,
+.roadmap-card,
+.about__panel,
+.utility-band__card,
+.vault-card,
+.download-card,
+.media-modal__dialog,
+.brand-panel,
+.merch-card,
+.research-card,
+.campaign-card,
+.bundle-card,
+.entry-row,
+.track-editor {
+  border: 1px solid var(--line);
+  background: var(--surface-panel);
+  backdrop-filter: blur(24px);
+  box-shadow: var(--shadow);
+}
+
+section,
+.page-hero,
+.page-section,
+.artist-card,
+.release-card,
+.artist-profile,
+.control-card,
+.roadmap-card,
+.about__panel,
+.utility-band__card,
+.vault-card,
+.download-card,
+.brand-panel,
+.merch-card,
+.research-card,
+.campaign-card,
+.bundle-card,
+.entry-row,
+.track-editor {
+  border-radius: var(--radius-xl);
+}
+
+.page-hero,
+.page-section,
+.brand-panel,
+.merch-card,
+.research-card,
+.campaign-card,
+.bundle-card {
+  padding: 1.25rem;
+}
+
+.artist-card,
+.release-card,
+.artist-profile,
+.control-card,
+.roadmap-card,
+.about__panel,
+.utility-band__card,
+.vault-card,
+.download-card,
+.entry-row,
+.track-editor {
+  padding: 1.15rem;
+}
+
+.site-header {
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius-xl) + 4px);
+  background: var(--surface-panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.site-nav,
+.button--ghost,
+.field :is(input, select, textarea),
+.status-tab,
+.artist-selector__button,
+.mini-stat,
+.artist-profile__panel,
+.hero__notes,
+.track-panel,
+.release-card details,
+.platform-chip,
+.tag-cloud button,
+.status-banner {
+  background: var(--surface-muted);
+}
+
+.brandmark__coin {
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 209, 42, 0.68);
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.42), transparent 34%),
+    linear-gradient(145deg, rgba(255, 209, 42, 0.8), rgba(36, 87, 255, 0.56));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 1.4rem;
+}
+
+.theme-toggle {
+  border-color: rgba(36, 87, 255, 0.24);
+}
+
+.spotlight-kicker {
+  color: var(--foam);
+  font-size: 0.88rem;
+}
+
+.spotlight-card {
+  grid-template-columns: 122px 1fr;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+}
+
+.spotlight-card__cover,
+.release-card__cover,
+.artist-card__swatch,
+.artist-profile__cover,
+.merch-card__swatch {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: end start;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.spotlight-card__cover,
+.release-card__cover,
+.artist-card__swatch,
+.artist-profile__cover {
+  background:
+    radial-gradient(circle at 24% 24%, rgba(255, 255, 255, 0.22), transparent 34%),
+    linear-gradient(
+      145deg,
+      var(--card-accent-1, rgba(255, 209, 42, 0.5)),
+      var(--card-accent-2, rgba(36, 87, 255, 0.44))
+    );
+}
+
+.spotlight-card__cover {
+  min-height: 140px;
+}
+
+.release-card__cover {
+  min-height: 220px;
+}
+
+.artist-card__swatch {
+  min-height: 130px;
+}
+
+.artist-profile__cover {
+  min-height: 220px;
+}
+
+.spotlight-card__cover span,
+.release-card__cover span,
+.artist-profile__cover span {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.spotlight-card__body h2 {
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+}
+
+.artist-card__swatch span {
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.stat-card {
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-stat);
+}
+
+.stat-card__value,
+.mini-stat__value {
+  display: block;
+  line-height: 1;
+}
+
+.stat-card__value {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  margin-bottom: 0.3rem;
+}
+
+.stat-card__label,
+.mini-stat__label {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.hero__feature {
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(165deg, rgba(126, 152, 255, 0.12), rgba(255, 209, 42, 0.08)),
+    var(--panel);
+}
+
+.hero__notes,
+.track-panel,
+.release-card details,
+.artist-profile__panel,
+.mini-stat,
+.vault-card__superfan,
+.vault-card__dj,
+.type-sample,
+.artist-palette,
+.status-banner {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hero__notes,
+.track-panel,
+.release-card details,
+.artist-profile__panel,
+.mini-stat {
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+}
+
+.vault-card__superfan,
+.vault-card__dj,
+.type-sample,
+.artist-palette,
+.status-banner {
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+}
+
+.hero__notes ul,
+.about__list,
+.track-list,
+.profile-list {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.hero__notes p {
+  margin-top: 0;
+}
+
+.artist-card__header,
+.artist-card__actions,
+.artist-profile__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.artist-card__header {
+  justify-content: space-between;
+  align-items: start;
+}
+
+.artist-card__header h3,
+.release-card__header h3,
+.artist-profile__intro h3,
+.control-card__header h3,
+.roadmap-card h3,
+.merch-card__copy h3,
+.campaign-card h3,
+.brand-panel h3,
+.bundle-card h3,
+.entry-row__body h3,
+.track-editor__header h3,
+.vault-card__header h3 {
+  margin: 0;
+}
+
+.spotlight-card__body,
+.release-card__header,
+.media-modal__meta,
+.entry-row__body,
+.vault-card__superfan,
+.vault-card__dj {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.artist-selector__button,
+.status-tab,
+.tag-cloud button {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.artist-selector__button:hover,
+.artist-selector__button:focus-visible,
+.artist-selector__button.is-active,
+.status-tab.is-active,
+.tag-cloud button.is-selected {
+  transform: translateY(-1px);
+  border-color: rgba(255, 209, 42, 0.55);
+  background: rgba(255, 209, 42, 0.12);
+}
+
+.artist-selector__name {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.artist-selector__lane,
+.artist-selector__meta,
+.release-pulse__item span,
+.profile-list,
+.profile-list span,
+.bundle-card__meta,
+.campaign-card__artist,
+.brand-panel__meta {
+  color: var(--muted);
+}
+
+.artist-profile__headline {
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.artist-profile__focus-label {
+  margin-bottom: 0.4rem;
+  color: var(--foam);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.release-card summary,
+.track-panel__label {
+  color: var(--foam);
+}
+
+.release-card summary {
+  cursor: pointer;
+}
+
+.track-panel__label {
+  margin: 0 0 0.65rem;
+}
+
+.track-row {
+  padding: 0.8rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.track-row:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.track-row__meta {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.track-row__meta span,
+.spotlight-card__meta {
+  color: var(--muted);
+}
+
+.control-card__meta,
+.control-card__progress p,
+.control-card__missing,
+.roadmap-card p {
+  margin: 0;
+}
+
+.control-card__action {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.control-card__missing--ready {
+  color: var(--foam);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 0.7rem;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--sand), var(--foam));
+}
+
+.about__panel {
+  padding: 1.5rem;
+}
+
+.about__panel--contrast {
+  background:
+    radial-gradient(circle at top left, rgba(255, 209, 42, 0.11), transparent 30%),
+    var(--surface-panel-strong);
+}
+
+.media-modal[hidden] {
+  display: none;
+}
+
+.media-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.media-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--modal-backdrop);
+  backdrop-filter: blur(12px);
+}
+
+.media-modal__dialog {
+  position: relative;
+  width: min(calc(100% - 2rem), 1280px);
+  max-height: calc(100vh - 2rem);
+  margin: 1rem auto;
+  padding: 1.25rem;
+  overflow: auto;
+  border: 1px solid var(--line-strong);
+}
+
+.media-modal__close {
+  position: sticky;
+  top: 0;
+  margin-left: auto;
+}
+
+.media-modal__meta {
+  margin-bottom: 1rem;
+}
+
+.media-panel,
+.download-card {
+  padding: 1rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line);
+}
+
+.video-frame,
+.lyrics-block {
+  min-height: 340px;
+  border-radius: var(--radius-lg);
+}
+
+.video-frame {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, rgba(36, 87, 255, 0.14), rgba(255, 209, 42, 0.12)),
+    rgba(0, 0, 0, 0.45);
+}
+
+.video-frame iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+  border: 0;
+}
+
+.video-frame__empty {
+  display: grid;
+  gap: 0.6rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.lyrics-block {
+  margin: 0;
+  max-height: 340px;
+  overflow: auto;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  white-space: pre-wrap;
+  line-height: 1.8;
+}
+
+.download-card__dj {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.media-modal__downloads {
+  margin-top: 1rem;
+}
+
+.tag-cloud button {
+  min-height: 2rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+}
+
+.merch-card__swatch {
+  min-height: 180px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 34%),
+    linear-gradient(
+      145deg,
+      var(--merch-accent-1, rgba(255, 209, 42, 0.9)),
+      var(--merch-accent-2, rgba(36, 87, 255, 0.75))
+    );
+  color: #05060a;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.merch-card__actions {
+  margin-top: auto;
+}
+
+.palette-card__swatch {
+  min-height: 140px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.type-sample {
+  margin: 0;
+}
+
+.type-sample--display {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  color: var(--text);
+}
+
+.type-sample--interface {
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.artist-palette-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.artist-palette {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.artist-palette__chip {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.status-banner {
+  padding: 1rem 1.1rem;
+}
+
+.status-banner[data-tone="success"] {
+  border-color: rgba(255, 209, 42, 0.45);
+  background: rgba(255, 209, 42, 0.1);
+}
+
+.status-banner[data-tone="warning"] {
+  border-color: rgba(255, 209, 42, 0.38);
+  background: rgba(255, 209, 42, 0.08);
+}
+
+.entry-row {
+  align-items: start;
+}
+
+.catalog-summary {
+  margin-bottom: 1rem;
+}
+
+.track-editor__header {
+  margin-bottom: 1rem;
+}
+
+.helper-copy {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.control-room__subhead {
+  margin-top: 0.25rem;
+}
+
+.trend-metrics,
+.control-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}

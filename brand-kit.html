@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pawn Island Records | Brand Kit</title>
+    <meta
+      name="description"
+      content="Brand kit, color palette, typography, and voice guidance for Pawn Island Records."
+    />
+    <script src="theme-init.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-noise" aria-hidden="true"></div>
+    <div class="page-orb page-orb--blue" aria-hidden="true"></div>
+    <div class="page-orb page-orb--yellow" aria-hidden="true"></div>
+    <div class="page-template">
+      <header class="site-header">
+        <a class="brandmark" href="index.html" aria-label="Pawn Island Records home">
+          <span class="brandmark__coin">P</span>
+          <span class="brandmark__text">
+            <strong>Pawn Island Records</strong>
+            <span>Brand kit and visual system</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="admin.html">Admin</a>
+          <a href="#palette">Palette</a>
+          <a href="#type">Typography</a>
+          <a href="#voice">Voice</a>
+          <a href="campaigns.html">Campaign Lab</a>
+        </nav>
+
+        <div class="site-header__actions">
+          <a class="button button--ghost" href="admin.html">Data Entry</a>
+          <a class="button button--ghost" href="merch.html">Merch</a>
+          <button
+            class="theme-toggle"
+            type="button"
+            data-theme-toggle
+            aria-label="Toggle day and night theme"
+          >
+            <span class="theme-toggle__label" data-theme-toggle-label>Theme</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="page-main">
+        <section class="page-hero">
+          <p class="eyebrow">Brand Kit</p>
+          <h1>Keep the label visually coherent while each artist keeps their own climate.</h1>
+          <p class="page-lede">
+            This kit anchors the site in black, white, superbee yellow, and
+            electric royal blue while still leaving room for artist-specific
+            palettes, campaign shifts, and release-specific moods.
+          </p>
+          <div class="hero__actions">
+            <a class="button" href="#palette">View Core Palette</a>
+            <a class="button button--ghost" href="campaigns.html"
+              >Open Campaign Lab</a
+            >
+          </div>
+        </section>
+
+        <section class="page-section" id="palette">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Palette</p>
+              <h2>Core colors that can travel across day and night modes.</h2>
+            </div>
+            <p>
+              The system should feel bold and collectible rather than generic
+              streaming-service minimalism. These color tokens carry that job.
+            </p>
+          </div>
+          <div class="brand-grid" id="palette-grid"></div>
+        </section>
+
+        <section class="page-section" id="type">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Typography</p>
+              <h2>Expressive display, grounded interface.</h2>
+            </div>
+            <p>
+              Headlines should feel cinematic and intentional. Interface
+              typography still needs to stay clean, legible, and fast.
+            </p>
+          </div>
+          <div class="panel-grid" id="type-grid"></div>
+        </section>
+
+        <section class="page-section" id="voice">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Voice + Texture</p>
+              <h2>Write like a label with perspective, not generic promo copy.</h2>
+            </div>
+            <p>
+              Voice, motion, and surface treatment matter as much as color. This
+              section keeps those softer decisions consistent.
+            </p>
+          </div>
+          <div class="panel-grid" id="voice-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="catalog-published.js"></script>
+    <script src="catalog-store.js"></script>
+    <script src="theme.js"></script>
+    <script src="brand-kit.js"></script>
+  </body>
+</html>

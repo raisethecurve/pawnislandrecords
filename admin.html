@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pawn Island Records | Admin</title>
+    <meta
+      name="description"
+      content="Admin and data-entry page for replacing demo releases with real Pawn Island Records catalog data."
+    />
+    <script src="theme-init.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-noise" aria-hidden="true"></div>
+    <div class="page-orb page-orb--blue" aria-hidden="true"></div>
+    <div class="page-orb page-orb--yellow" aria-hidden="true"></div>
+    <div class="page-template">
+      <header class="site-header">
+        <a class="brandmark" href="index.html" aria-label="Pawn Island Records home">
+          <span class="brandmark__coin">P</span>
+          <span class="brandmark__text">
+            <strong>Pawn Island Records</strong>
+            <span>Catalog admin and release intake</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="#catalog-controls">Controls</a>
+          <a href="#youtube-pulse">DSP Trends</a>
+          <a href="#artist-entry">Artists</a>
+          <a href="#release-entry">Releases</a>
+          <a href="#import-export">Import / Export</a>
+        </nav>
+
+        <div class="site-header__actions">
+          <a class="button button--ghost" href="index.html#catalog">Catalog</a>
+          <a class="button button--ghost" href="merch.html">Merch</a>
+          <button
+            class="theme-toggle"
+            type="button"
+            data-theme-toggle
+            aria-label="Toggle day and night theme"
+          >
+            <span class="theme-toggle__label" data-theme-toggle-label>Theme</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="page-main">
+        <section class="page-hero">
+          <p class="eyebrow">Label Admin</p>
+          <h1>Replace the theme demos with the real Pawn Island catalog.</h1>
+          <p class="page-lede">
+            This admin page can still save a temporary browser override, but it
+            can also generate a publishable catalog file for the repo. That
+            means you can clear the fictional releases, add real artists and
+            releases, and then promote the real catalog into a file the public
+            site reads by default.
+          </p>
+          <div class="hero__actions">
+            <a class="button" href="#catalog-controls">Start Here</a>
+            <a class="button button--ghost" href="index.html">View Public Site</a>
+          </div>
+          <div class="stats-grid" id="admin-summary"></div>
+        </section>
+
+        <section class="page-section" id="catalog-controls">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Catalog Controls</p>
+              <h2>Use one click to remove the theme seed and start loading real releases.</h2>
+            </div>
+            <p>
+              The buttons below change the browser-saved catalog that the public
+              site reads from. They do not edit the source files directly.
+            </p>
+          </div>
+
+          <div class="status-banner" id="catalog-status">
+            No catalog action has run yet.
+          </div>
+
+          <div class="admin-actions">
+            <button class="button" id="remove-demo-releases" type="button">
+              Remove Demo Releases
+            </button>
+            <button class="button button--ghost" id="clear-release-catalog" type="button">
+              Start Empty Real Catalog
+            </button>
+            <button class="button button--ghost" id="reset-seed-data" type="button">
+              Reset To Published / Seed
+            </button>
+            <button class="button button--ghost" id="download-json" type="button">
+              Download Current JSON
+            </button>
+            <button class="button button--ghost" id="download-publish-script" type="button">
+              Download Publish Script
+            </button>
+          </div>
+        </section>
+
+        <section class="page-section" id="youtube-pulse">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">DSP Trends</p>
+              <h2>Pull live YouTube metrics without exposing the API key on the public site.</h2>
+            </div>
+            <p>
+              This first DSP integration reads the track-level
+              <code>youtubeId</code> values already stored in the catalog,
+              fetches a live snapshot in the browser, and lets staff publish the
+              latest pulse into the repo as a static file.
+            </p>
+          </div>
+
+          <div class="panel-grid">
+            <article class="brand-panel">
+              <p class="eyebrow">YouTube API Key</p>
+              <p class="helper-copy">
+                Save the key only in this browser. Listeners never receive it.
+              </p>
+              <label class="field field--full">
+                <span>YouTube Data API v3 key</span>
+                <input
+                  id="youtube-api-key"
+                  type="password"
+                  placeholder="AIza..."
+                  autocomplete="off"
+                />
+              </label>
+              <div class="admin-actions">
+                <button class="button" id="save-youtube-api-key" type="button">
+                  Save Key
+                </button>
+                <button class="button button--ghost" id="clear-youtube-api-key" type="button">
+                  Clear Key
+                </button>
+                <button class="button button--ghost" id="refresh-youtube-stats" type="button">
+                  Refresh Stats
+                </button>
+                <button
+                  class="button button--ghost"
+                  id="download-youtube-publish-script"
+                  type="button"
+                >
+                  Download Pulse Script
+                </button>
+              </div>
+              <p class="helper-copy" id="youtube-key-note">
+                No browser-saved YouTube API key detected yet.
+              </p>
+            </article>
+
+            <article class="brand-panel">
+              <p class="eyebrow">Workflow</p>
+              <div class="tag-row" id="youtube-coverage-tags"></div>
+              <p class="helper-copy">
+                1. Save a browser key. 2. Refresh YouTube stats. 3. Download
+                <code>youtube-stats-published.js</code> and replace the repo
+                file when you want the public site to show the newest pulse
+                without exposing the key.
+              </p>
+            </article>
+          </div>
+
+          <div class="status-banner" id="youtube-status">
+            Save a YouTube Data API key and refresh stats when you are ready.
+          </div>
+
+          <div class="stats-grid" id="youtube-stats-summary"></div>
+          <div class="entry-list" id="youtube-trend-list"></div>
+        </section>
+
+        <section class="page-section" id="artist-entry">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Artist Entry</p>
+              <h2>Add or update artist projects before attaching releases.</h2>
+            </div>
+            <p>
+              If your live roster differs from the theme seed, add the real
+              projects here first so releases can be assigned correctly.
+            </p>
+          </div>
+
+          <form id="artist-form" class="panel-grid">
+            <div class="form-grid">
+              <label class="field">
+                <span>Artist name</span>
+                <input id="artist-name" name="artistName" required />
+              </label>
+              <label class="field">
+                <span>Slug</span>
+                <input id="artist-slug" name="artistSlug" placeholder="optional-auto-generated" />
+              </label>
+              <label class="field">
+                <span>Lane</span>
+                <input id="artist-lane" name="artistLane" placeholder="Soul / Country / Singer-Songwriter" />
+              </label>
+              <label class="field">
+                <span>Moods</span>
+                <input id="artist-moods" name="artistMoods" placeholder="warm, cinematic, weathered" />
+              </label>
+              <label class="field field--full">
+                <span>Summary</span>
+                <textarea id="artist-summary" name="artistSummary" rows="3"></textarea>
+              </label>
+              <label class="field field--full">
+                <span>Headline</span>
+                <textarea id="artist-headline" name="artistHeadline" rows="2"></textarea>
+              </label>
+              <label class="field field--full">
+                <span>Story</span>
+                <textarea id="artist-story" name="artistStory" rows="3"></textarea>
+              </label>
+              <label class="field field--full">
+                <span>Current focus</span>
+                <textarea id="artist-focus" name="artistFocus" rows="2"></textarea>
+              </label>
+              <label class="field">
+                <span>Signatures</span>
+                <input id="artist-signatures" name="artistSignatures" placeholder="close-mic vocals, modern low-end" />
+              </label>
+              <label class="field">
+                <span>Palette colors</span>
+                <div class="split-actions">
+                  <input id="artist-color-one" name="artistColorOne" type="color" value="#ffd12a" />
+                  <input id="artist-color-two" name="artistColorTwo" type="color" value="#2457ff" />
+                </div>
+              </label>
+            </div>
+
+            <div class="admin-actions">
+              <button class="button" type="submit">Save Artist</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="page-section" id="release-entry">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Release Entry</p>
+              <h2>Input real release data without opening `data.js`.</h2>
+            </div>
+            <p>
+              Tracks, lyrics, YouTube IDs, pre-save links, download formats, and
+              superfan fields can all be captured here. Singles will still auto-expand on the public site.
+            </p>
+          </div>
+
+          <form id="release-form" class="panel-grid">
+            <div class="form-grid">
+              <label class="field">
+                <span>Release title</span>
+                <input id="release-title" name="releaseTitle" required />
+              </label>
+              <label class="field">
+                <span>Slug</span>
+                <input id="release-slug" name="releaseSlug" placeholder="optional-auto-generated" />
+              </label>
+              <label class="field">
+                <span>Artist</span>
+                <select id="release-artist" name="releaseArtist"></select>
+              </label>
+              <label class="field">
+                <span>Release type</span>
+                <select id="release-type" name="releaseType">
+                  <option>Single</option>
+                  <option>EP</option>
+                  <option>Album</option>
+                  <option>Compilation</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Status</span>
+                <select id="release-status" name="releaseStatus">
+                  <option value="out">Out now</option>
+                  <option value="presave">Pre-save</option>
+                  <option value="archive">Archive</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Release date</span>
+                <input id="release-date" name="releaseDate" type="date" />
+              </label>
+              <label class="field field--full">
+                <span>Description</span>
+                <textarea id="release-description" name="releaseDescription" rows="3"></textarea>
+              </label>
+              <label class="field">
+                <span>Genres</span>
+                <input id="release-genres" name="releaseGenres" placeholder="soul, country, hip-hop" />
+              </label>
+              <label class="field">
+                <span>Catalog tags</span>
+                <input id="release-tags" name="releaseTags" placeholder="summer, acoustic, release-week" />
+              </label>
+              <label class="field">
+                <span>Expected platforms</span>
+                <input id="release-platforms" name="releasePlatforms" placeholder="Spotify, Apple Music, YouTube" />
+              </label>
+              <label class="field">
+                <span>Palette colors</span>
+                <div class="split-actions">
+                  <input id="release-color-one" name="releaseColorOne" type="color" value="#ffd12a" />
+                  <input id="release-color-two" name="releaseColorTwo" type="color" value="#2457ff" />
+                </div>
+              </label>
+            </div>
+
+            <div class="panel-grid">
+              <article class="brand-panel">
+                <p class="eyebrow">Genre Cloud</p>
+                <div class="tag-cloud" id="genre-cloud"></div>
+                <div class="split-actions">
+                  <input id="new-genre-tag" placeholder="Add genre" />
+                  <button class="button button--ghost" id="add-genre-tag" type="button">
+                    Add Genre
+                  </button>
+                </div>
+              </article>
+              <article class="brand-panel">
+                <p class="eyebrow">Tag Cloud</p>
+                <div class="tag-cloud" id="tag-cloud"></div>
+                <div class="split-actions">
+                  <input id="new-release-tag" placeholder="Add tag" />
+                  <button class="button button--ghost" id="add-release-tag" type="button">
+                    Add Tag
+                  </button>
+                </div>
+              </article>
+            </div>
+
+            <div class="form-grid">
+              <label class="field">
+                <span>Spotify URL</span>
+                <input id="release-spotify" name="releaseSpotify" />
+              </label>
+              <label class="field">
+                <span>Apple Music URL</span>
+                <input id="release-apple" name="releaseApple" />
+              </label>
+              <label class="field">
+                <span>YouTube URL</span>
+                <input id="release-youtube" name="releaseYouTube" />
+              </label>
+              <label class="field">
+                <span>Bandcamp URL</span>
+                <input id="release-bandcamp" name="releaseBandcamp" />
+              </label>
+              <label class="field">
+                <span>Amazon Music URL</span>
+                <input id="release-amazon" name="releaseAmazon" />
+              </label>
+              <label class="field">
+                <span>YouTube Music URL</span>
+                <input id="release-youtube-music" name="releaseYouTubeMusic" />
+              </label>
+              <label class="field">
+                <span>Too.fm label</span>
+                <input id="release-presave-label" name="releasePresaveLabel" placeholder="Too.fm pre-save" />
+              </label>
+              <label class="field">
+                <span>Too.fm URL</span>
+                <input id="release-presave-url" name="releasePresaveUrl" />
+              </label>
+              <label class="field field--full">
+                <span>Pre-save note</span>
+                <textarea id="release-presave-note" name="releasePresaveNote" rows="2"></textarea>
+              </label>
+            </div>
+
+            <div class="track-editor-list" id="track-editors"></div>
+
+            <div class="admin-actions">
+              <button class="button button--ghost" id="add-track" type="button">
+                Add Track
+              </button>
+              <button class="button" type="submit">Save Release</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="page-section" id="current-catalog">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Current Catalog</p>
+              <h2>Review what is live in the browser-saved catalog.</h2>
+            </div>
+            <p>
+              Delete individual releases here or use the control buttons above
+              for a broader reset.
+            </p>
+          </div>
+
+          <div class="entry-list" id="release-list"></div>
+        </section>
+
+        <section class="page-section" id="import-export">
+          <div class="section-heading section-heading--split">
+            <div>
+              <p class="eyebrow">Import / Export</p>
+              <h2>Move the catalog in and out as JSON while we stay static-site simple.</h2>
+            </div>
+            <p>
+              Export the current browser catalog for backup, or import a JSON
+              file to replace the current saved data in one move.
+            </p>
+          </div>
+
+          <div class="panel-grid">
+            <article class="brand-panel">
+              <p class="eyebrow">Import</p>
+              <div class="field">
+                <span>Choose JSON file</span>
+                <input id="import-file" type="file" accept=".json,application/json" />
+              </div>
+              <div class="admin-actions">
+                <button class="button" id="import-json" type="button">
+                  Import From Text
+                </button>
+                <button class="button button--ghost" id="load-current-json" type="button">
+                  Load Current JSON
+                </button>
+              </div>
+            </article>
+            <article class="brand-panel">
+              <p class="eyebrow">Export note</p>
+              <p>
+                The public site now checks `catalog-published.js` before falling
+                back to the theme seed. Download the publish script here and
+                replace the repo file with it when you are ready to promote the
+                real catalog into source control.
+              </p>
+            </article>
+          </div>
+
+          <textarea class="json-preview" id="catalog-json"></textarea>
+        </section>
+      </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="catalog-published.js"></script>
+    <script src="youtube-stats-published.js"></script>
+    <script src="catalog-store.js"></script>
+    <script src="youtube-stats.js"></script>
+    <script src="theme.js"></script>
+    <script src="admin.js"></script>
+    <script src="admin-youtube.js"></script>
+  </body>
+</html>

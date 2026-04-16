@@ -1,0 +1,1 @@
+window.PAWN_PUBLISHED_CATALOG = null;

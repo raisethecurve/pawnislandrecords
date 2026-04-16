@@ -1,0 +1,296 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.brandmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.brandmark__text {
+  display: grid;
+  line-height: 1.1;
+}
+
+.brandmark__text strong {
+  font-size: 0.98rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.brandmark__text span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.site-nav,
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.site-nav {
+  gap: 1rem;
+  padding: 0.45rem 0.6rem;
+}
+
+.site-nav a {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.site-nav a:hover,
+.site-nav a:focus-visible {
+  color: var(--text);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr;
+  gap: 1.5rem;
+  align-items: stretch;
+  min-height: min(88vh, 980px);
+  padding: 1.5rem;
+}
+
+.hero__copy,
+.hero__feature,
+.artists,
+.artist-dossier,
+.catalog,
+.listener-vault,
+.control-room,
+.platform-strip,
+.next-steps,
+.about {
+  padding: 1.5rem;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin: 1.7rem 0;
+}
+
+.hero__feature {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero__feature-header,
+.control-card__header,
+.roadmap-card__header,
+.vault-card__header,
+.media-modal__close,
+.track-editor__header,
+.entry-row {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stats-grid,
+.artist-profile__stats,
+.control-summary,
+.vault-summary {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.stats-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.artist-profile__stats,
+.control-summary,
+.vault-summary {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.utility-band {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.section-heading {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 1.3rem;
+}
+
+.section-heading--split {
+  display: grid;
+  grid-template-columns: 1fr minmax(280px, 420px);
+  align-items: end;
+  gap: 1rem;
+}
+
+.artist-grid,
+.release-grid,
+.roadmap-grid,
+.control-grid,
+.vault-grid,
+.panel-grid,
+.brand-grid,
+.merch-grid,
+.research-grid,
+.form-grid,
+.artist-profile__split,
+.artist-dossier__layout,
+.media-modal__grid,
+.media-modal__downloads {
+  display: grid;
+  gap: 1rem;
+}
+
+.artist-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.release-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.roadmap-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.control-grid,
+.vault-grid,
+.panel-grid,
+.brand-grid,
+.research-grid,
+.media-modal__downloads {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.merch-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.artist-dossier__layout {
+  grid-template-columns: 300px minmax(0, 1fr);
+}
+
+.artist-profile__hero {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.artist-profile__split {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.artist-selector,
+.release-pulse,
+.release-pulse__item,
+.artist-profile__intro,
+.page-hero,
+.page-main,
+.entry-list,
+.track-editor-list,
+.track-stack,
+.page-section,
+.artist-profile,
+.control-card,
+.release-card,
+.artist-card,
+.vault-card,
+.roadmap-card,
+.bundle-card,
+.campaign-card,
+.merch-card {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr 0.8fr;
+  gap: 1rem;
+}
+
+.status-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 1.1rem 0 0.75rem;
+}
+
+.track-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.85rem;
+  align-items: start;
+}
+
+.platform-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.platform-strip__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.about {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr;
+  gap: 1rem;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0.2rem 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.page-toolbar,
+.control-bar,
+.admin-actions,
+.split-actions,
+.entry-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.form-grid .field--full,
+.panel-grid .field--full {
+  grid-column: 1 / -1;
+}
+
+.split-actions input {
+  flex: 1 1 12rem;
+}
+
+.control-room__subhead h3 {
+  margin: 0;
+}

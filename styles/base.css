@@ -1,0 +1,325 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Bricolage Grotesque", "Segoe UI", sans-serif;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.page-noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image:
+    linear-gradient(transparent 0, rgba(255, 255, 255, 0.08) 50%, transparent 100%),
+    radial-gradient(rgba(255, 255, 255, 0.05) 0.8px, transparent 0.8px);
+  background-size: 100% 4px, 7px 7px;
+  mix-blend-mode: soft-light;
+}
+
+.site-shell,
+.page-template {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 1rem clamp(1rem, 2vw, 2rem) 4rem;
+}
+
+.page-template {
+  min-height: 100vh;
+}
+
+main {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.page-main {
+  display: grid;
+  gap: 1rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.55rem;
+  color: var(--sand);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.74rem;
+}
+
+.hero h1,
+.section-heading h2,
+.about h2,
+.page-hero h1,
+.page-section h2,
+.media-modal__meta h2 {
+  margin: 0;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-weight: 400;
+  line-height: 0.95;
+}
+
+.hero h1 {
+  max-width: 10ch;
+  font-size: clamp(3.4rem, 7vw, 7rem);
+}
+
+.page-hero h1 {
+  max-width: 12ch;
+  font-size: clamp(3rem, 6vw, 5.8rem);
+}
+
+.section-heading h2 {
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+}
+
+.hero__lede,
+.page-lede,
+.section-heading p,
+.about p,
+.artist-profile p,
+.hero__notes li,
+.catalog-summary,
+.release-card__description,
+.artist-card__summary,
+.brand-panel p,
+.campaign-card p,
+.bundle-card p,
+.merch-card__copy p,
+.entry-row__meta,
+.media-modal__subtitle,
+.video-frame__empty p,
+.vault-card__meta,
+.vault-card__superfan p,
+.vault-card__dj p,
+.download-card p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.button,
+.pill-link,
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.9rem;
+  padding: 0.7rem 1.15rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 209, 42, 0.34);
+  background:
+    linear-gradient(135deg, rgba(255, 209, 42, 0.24), rgba(36, 87, 255, 0.22)),
+    rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.button:hover,
+.button:focus-visible,
+.pill-link:hover,
+.pill-link:focus-visible,
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(255, 209, 42, 0.58);
+  box-shadow: 0 14px 36px rgba(36, 87, 255, 0.18);
+}
+
+.button--ghost {
+  border-color: var(--line);
+  background: var(--surface-muted);
+}
+
+.button--small,
+.pill-link--small {
+  min-height: 2.35rem;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.86rem;
+}
+
+.tag-row,
+.vault-card__superfan-actions,
+.status-list,
+.release-card__eyebrow,
+.release-card__meta,
+.spotlight-card__links,
+.release-card__links,
+.hero__chips,
+.merch-card__meta,
+.merch-card__footer,
+.merch-card__actions,
+.campaign-card__meta,
+.campaign-card__footer,
+.bundle-card__actions,
+.artist-palette__chips,
+.voice-list,
+.track-row__actions,
+.vault-card__actions,
+.download-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.tag,
+.badge,
+.status-chip,
+.platform-chip,
+.hero-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.95rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface-soft);
+  color: var(--text);
+  font-size: 0.84rem;
+}
+
+.tag--muted {
+  color: var(--muted);
+}
+
+.tag--ready,
+.status-chip--ready {
+  color: var(--foam);
+  border-color: rgba(126, 152, 255, 0.28);
+  background: rgba(126, 152, 255, 0.12);
+}
+
+.badge {
+  min-height: 1.9rem;
+  padding: 0.28rem 0.62rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badge--out {
+  background: rgba(126, 152, 255, 0.12);
+  color: var(--foam);
+}
+
+.badge--presave,
+.status-chip--draft {
+  background: rgba(255, 209, 42, 0.12);
+  color: var(--warning);
+  border-color: rgba(255, 209, 42, 0.24);
+}
+
+.badge--archive,
+.status-chip--needed {
+  color: var(--muted);
+}
+
+.status-chip {
+  min-height: 2rem;
+  font-size: 0.88rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.field :is(input, select, textarea),
+.split-actions input[type="color"] {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--field-bg);
+}
+
+.field textarea,
+.track-editor textarea {
+  resize: vertical;
+}
+
+.field input::placeholder,
+.field textarea::placeholder,
+.split-actions input::placeholder {
+  color: color-mix(in srgb, var(--muted) 78%, transparent);
+}
+
+.link-note {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  padding: 2rem;
+  border-radius: var(--radius-xl);
+  border: 1px dashed var(--line-strong);
+  color: var(--muted);
+  text-align: center;
+}
+
+.json-preview {
+  width: 100%;
+  min-height: 320px;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--code-bg);
+  color: var(--brand-white);
+  font-family: Consolas, monospace;
+  white-space: pre-wrap;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 600ms ease,
+    transform 600ms ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+body.modal-open {
+  overflow: hidden;
+}
