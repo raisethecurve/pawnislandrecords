@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Release | Pawn Island Records</title>
+    <meta
+      id="release-meta-description"
+      name="description"
+      content="A cinematic release page for Pawn Island Records with release story, artist introduction, platform links, and track videos."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="release.css" />
+  </head>
+  <body>
+    <div class="release-experience">
+      <div class="release-experience__backdrop" aria-hidden="true">
+        <div class="release-experience__image" id="release-backdrop"></div>
+        <div class="release-experience__wash"></div>
+        <div class="release-experience__grid"></div>
+        <div class="release-experience__noise"></div>
+        <div class="release-experience__vignette"></div>
+        <div class="release-experience__beam"></div>
+      </div>
+
+      <main class="release-shell" id="release-page">
+        <header class="release-header">
+          <a class="brand-lockup" href="index.html" aria-label="Pawn Island Records home">
+            <img
+              src="assets/brand/pawn-island-logo-1200.jpg"
+              alt="Pawn Island Records logo"
+            />
+            <span class="brand-lockup__copy">
+              <strong>Pawn Island Records</strong>
+              <span>Release pages</span>
+            </span>
+          </a>
+
+          <nav class="release-header__nav" aria-label="Primary">
+            <a href="index.html">Home</a>
+            <a id="header-artist-link" href="artist.html">Artist</a>
+          </nav>
+        </header>
+
+        <section class="release-hero reveal">
+          <div class="release-hero__media">
+            <div class="release-cover">
+              <img id="release-cover" src="" alt="" />
+            </div>
+          </div>
+
+          <article class="release-hero__content">
+            <p class="eyebrow" id="release-kicker">Loading release</p>
+            <h1 id="release-title">Loading release...</h1>
+            <p class="release-hero__artist" id="release-artist"></p>
+            <p class="release-hero__summary" id="release-summary"></p>
+            <div class="release-hero__chips" id="release-chips"></div>
+            <div class="platform-strip" id="release-platforms"></div>
+          </article>
+        </section>
+
+        <section class="release-story reveal">
+          <article class="glass-panel">
+            <p class="eyebrow">Release</p>
+            <h2 id="release-story-heading"></h2>
+            <p class="detail-copy" id="release-description"></p>
+          </article>
+
+          <article class="glass-panel glass-panel--artist">
+            <p class="eyebrow">Artist</p>
+            <h2 id="artist-name"></h2>
+            <p class="artist-headline" id="artist-headline"></p>
+            <p class="detail-copy" id="artist-story"></p>
+            <a class="inline-link" id="artist-page-link" href="artist.html">Open artist page</a>
+          </article>
+        </section>
+
+        <section class="trackworld reveal">
+          <div class="section-head">
+            <p class="eyebrow">Track Videos</p>
+            <h2>Watch the release track by track.</h2>
+            <p class="detail-copy" id="trackworld-copy"></p>
+          </div>
+
+          <div class="trackworld__grid">
+            <aside class="tracklist-panel" id="track-list"></aside>
+            <article class="trackviewer-panel" id="track-viewer"></article>
+          </div>
+        </section>
+
+        <section class="release-footer reveal" id="release-footer"></section>
+      </main>
+    </div>
+
+    <script src="public-data.js"></script>
+    <script src="site-store.js"></script>
+    <script src="site-ui.js"></script>
+    <script src="release.js"></script>
+  </body>
+</html>

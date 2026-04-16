@@ -1,913 +1,1027 @@
-const store = window.PAWN_CATALOG_STORE;
+(function () {
+  const store = window.PAWN_SITE_STORE;
+  const ui = window.PAWN_UI;
 
-const elements = {
-  summary: document.getElementById("admin-summary"),
-  status: document.getElementById("catalog-status"),
-  artistForm: document.getElementById("artist-form"),
-  artistName: document.getElementById("artist-name"),
-  artistSlug: document.getElementById("artist-slug"),
-  artistLane: document.getElementById("artist-lane"),
-  artistMoods: document.getElementById("artist-moods"),
-  artistSummary: document.getElementById("artist-summary"),
-  artistHeadline: document.getElementById("artist-headline"),
-  artistStory: document.getElementById("artist-story"),
-  artistFocus: document.getElementById("artist-focus"),
-  artistSignatures: document.getElementById("artist-signatures"),
-  artistColorOne: document.getElementById("artist-color-one"),
-  artistColorTwo: document.getElementById("artist-color-two"),
-  releaseForm: document.getElementById("release-form"),
-  releaseTitle: document.getElementById("release-title"),
-  releaseSlug: document.getElementById("release-slug"),
-  releaseArtist: document.getElementById("release-artist"),
-  releaseType: document.getElementById("release-type"),
-  releaseStatus: document.getElementById("release-status"),
-  releaseDate: document.getElementById("release-date"),
-  releaseDescription: document.getElementById("release-description"),
-  releaseGenres: document.getElementById("release-genres"),
-  releaseTags: document.getElementById("release-tags"),
-  releasePlatforms: document.getElementById("release-platforms"),
-  releaseColorOne: document.getElementById("release-color-one"),
-  releaseColorTwo: document.getElementById("release-color-two"),
-  releaseSpotify: document.getElementById("release-spotify"),
-  releaseApple: document.getElementById("release-apple"),
-  releaseYouTube: document.getElementById("release-youtube"),
-  releaseBandcamp: document.getElementById("release-bandcamp"),
-  releaseAmazon: document.getElementById("release-amazon"),
-  releaseYouTubeMusic: document.getElementById("release-youtube-music"),
-  releasePresaveLabel: document.getElementById("release-presave-label"),
-  releasePresaveUrl: document.getElementById("release-presave-url"),
-  releasePresaveNote: document.getElementById("release-presave-note"),
-  genreCloud: document.getElementById("genre-cloud"),
-  tagCloud: document.getElementById("tag-cloud"),
-  newGenreTag: document.getElementById("new-genre-tag"),
-  newReleaseTag: document.getElementById("new-release-tag"),
-  addGenreTag: document.getElementById("add-genre-tag"),
-  addReleaseTag: document.getElementById("add-release-tag"),
-  trackEditors: document.getElementById("track-editors"),
-  addTrack: document.getElementById("add-track"),
-  releaseList: document.getElementById("release-list"),
-  removeDemoReleases: document.getElementById("remove-demo-releases"),
-  clearReleaseCatalog: document.getElementById("clear-release-catalog"),
-  resetSeedData: document.getElementById("reset-seed-data"),
-  downloadJson: document.getElementById("download-json"),
-  downloadPublishScript: document.getElementById("download-publish-script"),
-  importJson: document.getElementById("import-json"),
-  loadCurrentJson: document.getElementById("load-current-json"),
-  importFile: document.getElementById("import-file"),
-  catalogJson: document.getElementById("catalog-json")
-};
+  const elements = {
+    status: document.getElementById("editor-status"),
+    stats: document.getElementById("editor-stats"),
+    releaseForm: document.getElementById("release-form"),
+    releaseTitle: document.getElementById("release-title"),
+    releaseArtist: document.getElementById("release-artist"),
+    releaseType: document.getElementById("release-type"),
+    releaseYear: document.getElementById("release-year"),
+    releaseVibe: document.getElementById("release-vibe"),
+    releaseAccent: document.getElementById("release-accent"),
+    releaseDescription: document.getElementById("release-description"),
+    releaseFeatured: document.getElementById("release-featured"),
+    releaseCover: document.getElementById("release-cover"),
+    releaseCoverUpload: document.getElementById("release-cover-upload"),
+    releaseCoverPreview: document.getElementById("release-cover-preview"),
+    inlineArtistFields: document.getElementById("inline-artist-fields"),
+    inlineArtistName: document.getElementById("inline-artist-name"),
+    inlineArtistLane: document.getElementById("inline-artist-lane"),
+    inlineArtistSummary: document.getElementById("inline-artist-summary"),
+    trackList: document.getElementById("track-list"),
+    addTrack: document.getElementById("add-track"),
+    platformPresets: document.getElementById("platform-presets"),
+    platformList: document.getElementById("platform-list"),
+    addPlatform: document.getElementById("add-platform"),
+    releasePreview: document.getElementById("release-preview"),
+    releaseList: document.getElementById("release-list"),
+    resetReleaseForm: document.getElementById("reset-release-form"),
+    artistForm: document.getElementById("artist-form"),
+    artistProfileSelect: document.getElementById("artist-profile-select"),
+    artistName: document.getElementById("artist-name"),
+    artistLane: document.getElementById("artist-lane"),
+    artistAccent: document.getElementById("artist-accent"),
+    artistImage: document.getElementById("artist-image"),
+    artistImageUpload: document.getElementById("artist-image-upload"),
+    artistSummary: document.getElementById("artist-summary"),
+    artistHeadline: document.getElementById("artist-headline"),
+    artistStory: document.getElementById("artist-story"),
+    artistIndustryPitch: document.getElementById("artist-industry-pitch"),
+    artistPressBio: document.getElementById("artist-press-bio"),
+    artistPressHighlights: document.getElementById("artist-press-highlights"),
+    artistPressAssets: document.getElementById("artist-press-assets"),
+    artistMerchIntro: document.getElementById("artist-merch-intro"),
+    artistImagePreview: document.getElementById("artist-image-preview"),
+    artistList: document.getElementById("artist-list"),
+    resetArtistForm: document.getElementById("reset-artist-form"),
+    downloadJson: document.getElementById("download-json"),
+    downloadScript: document.getElementById("download-script"),
+    loadJson: document.getElementById("load-json"),
+    resetData: document.getElementById("reset-data"),
+    importFile: document.getElementById("import-file"),
+    importJson: document.getElementById("import-json"),
+    catalogJson: document.getElementById("catalog-json")
+  };
 
-const defaultGenreTags = [
-  "Soul",
-  "Country",
-  "Singer-Songwriter",
-  "Hip-Hop",
-  "Rap",
-  "Stoner Doom",
-  "Alternative Rock",
-  "Groove Metal",
-  "Metal",
-  "Rock",
-  "Americana"
-];
+  const state = {
+    editingReleaseSlug: "",
+    editingArtistSlug: ""
+  };
 
-let catalog = store.loadCatalog();
-let editingReleaseSlug = null;
-let trackEditorCount = 0;
-const tagState = {
-  genres: new Set(),
-  tags: new Set()
-};
-
-function parseCsv(value) {
-  return [...new Set(String(value || "")
-    .split(",")
-    .map((entry) => entry.trim())
-    .filter(Boolean))];
-}
-
-function getArtistName(slug) {
-  const artist = catalog.artists.find((entry) => entry.slug === slug);
-  return artist ? artist.name : slug;
-}
-
-function setStatus(message, tone) {
-  elements.status.textContent = message;
-  elements.status.dataset.tone = tone || "info";
-}
-
-function buildSummaryCards() {
-  const trackCount = catalog.releases.reduce(
-    (total, release) => total + release.tracks.length,
-    0
-  );
-  const sourceLabel = store.getSourceLabel();
-
-  elements.summary.innerHTML = `
-    <article class="stat-card">
-      <span class="stat-card__value">${catalog.artists.length}</span>
-      <span class="stat-card__label">Artists loaded</span>
-    </article>
-    <article class="stat-card">
-      <span class="stat-card__value">${catalog.releases.length}</span>
-      <span class="stat-card__label">Releases loaded</span>
-    </article>
-    <article class="stat-card">
-      <span class="stat-card__value">${trackCount}</span>
-      <span class="stat-card__label">Tracks loaded</span>
-    </article>
-    <article class="stat-card">
-      <span class="stat-card__value">${catalog.merch.length}</span>
-      <span class="stat-card__label">Merch items loaded</span>
-    </article>
-    <article class="stat-card">
-      <span class="stat-card__value">${sourceLabel}</span>
-      <span class="stat-card__label">Current data source</span>
-    </article>
-  `;
-}
-
-function populateArtistSelect() {
-  elements.releaseArtist.innerHTML = "";
-
-  if (catalog.artists.length === 0) {
-    const option = document.createElement("option");
-    option.value = "";
-    option.textContent = "Add an artist first";
-    elements.releaseArtist.append(option);
-    return;
+  function loadData() {
+    return store.load();
   }
 
-  catalog.artists.forEach((artist) => {
-    const option = document.createElement("option");
-    option.value = artist.slug;
-    option.textContent = artist.name;
-    elements.releaseArtist.append(option);
-  });
-}
+  function saveData(nextData) {
+    return store.save(nextData);
+  }
 
-function getGenrePool() {
-  return [
-    ...new Set([
-      ...defaultGenreTags,
-      ...catalog.releases.flatMap((release) => release.genres),
-      ...tagState.genres
-    ])
-  ].sort();
-}
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
 
-function getTagPool() {
-  return [
-    ...new Set([
-      ...catalog.releases.flatMap((release) => release.tags || []),
-      ...tagState.tags
-    ])
-  ].sort();
-}
+  function lineList(value) {
+    return [...new Set(
+      String(value || "")
+        .split(/\r?\n/)
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+    )];
+  }
 
-function syncTagInput(kind) {
-  const input = kind === "genres" ? elements.releaseGenres : elements.releaseTags;
-  input.value = [...tagState[kind]].join(", ");
-}
+  function setStatus(message, tone) {
+    elements.status.textContent = message;
+    elements.status.dataset.tone = tone || "info";
+  }
 
-function renderTagCloud(kind) {
-  const target = kind === "genres" ? elements.genreCloud : elements.tagCloud;
-  const pool = kind === "genres" ? getGenrePool() : getTagPool();
+  function countTracks(releases) {
+    return releases.reduce((total, release) => total + release.tracks.length, 0);
+  }
 
-  target.innerHTML = pool
-    .map((tag) => {
-      const selected = tagState[kind].has(tag);
+  function countLinkedPlatforms(releases) {
+    return releases.reduce((total, release) => total + release.platforms.length, 0);
+  }
 
+  function featuredRelease(data) {
+    return (
+      data.releases.find((release) => release.slug === data.label.featuredReleaseSlug) ||
+      data.releases[0] ||
+      null
+    );
+  }
+
+  function downloadText(filename, content, type) {
+    ui.downloadText(filename, content, type);
+  }
+
+  function coverPreviewMarkup(src, alt) {
+    if (!src) {
       return `
-        <button
-          type="button"
-          class="${selected ? "is-selected" : ""}"
-          data-tag-kind="${kind}"
-          data-tag-value="${tag}"
-        >
-          ${tag}
-        </button>
+        <div class="cover-frame">
+          <div class="cover-placeholder">
+            Square art preview appears here when a cover is attached.
+          </div>
+        </div>
       `;
-    })
-    .join("");
-}
-
-function refreshTagClouds() {
-  syncTagInput("genres");
-  syncTagInput("tags");
-  renderTagCloud("genres");
-  renderTagCloud("tags");
-}
-
-function updateTagStateFromInputs() {
-  tagState.genres = new Set(parseCsv(elements.releaseGenres.value));
-  tagState.tags = new Set(parseCsv(elements.releaseTags.value));
-  refreshTagClouds();
-}
-
-function getEmptyTrack() {
-  return {
-    title: "",
-    slug: "",
-    runtime: "",
-    youtubeId: "",
-    lyrics: "",
-    fanDownloads: [],
-    superfan: {
-      title: "",
-      description: "",
-      price: "",
-      provider: "Connect checkout",
-      checkoutUrl: "",
-      djPackage: null
     }
-  };
-}
 
-function createTrackEditor(trackData) {
-  trackEditorCount += 1;
-  const editor = document.createElement("article");
-  const track = trackData || getEmptyTrack();
-  const djPackage = track.superfan && track.superfan.djPackage ? track.superfan.djPackage : null;
-  const mp3Download = (track.fanDownloads || []).find(
-    (download) => download.format === "MP3"
-  );
-  const flacDownload = (track.fanDownloads || []).find(
-    (download) => download.format === "FLAC"
-  );
-
-  editor.className = "track-editor";
-  editor.dataset.trackEditor = String(trackEditorCount);
-  editor.innerHTML = `
-    <div class="track-editor__header">
-      <div>
-        <p class="eyebrow">Track Entry</p>
-        <h3 data-track-heading>${track.title || `Track ${trackEditorCount}`}</h3>
+    return `
+      <div class="cover-frame">
+        <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" />
       </div>
-      <button class="button button--ghost" type="button" data-remove-track>
-        Remove Track
-      </button>
-    </div>
-    <div class="form-grid">
-      <label class="field">
-        <span>Track title</span>
-        <input data-field="title" value="${track.title || ""}" />
-      </label>
-      <label class="field">
-        <span>Slug</span>
-        <input data-field="slug" value="${track.slug || ""}" placeholder="optional-auto-generated" />
-      </label>
-      <label class="field">
-        <span>Runtime</span>
-        <input data-field="runtime" value="${track.runtime || ""}" placeholder="3:42" />
-      </label>
-      <label class="field">
-        <span>YouTube ID</span>
-        <input data-field="youtubeId" value="${track.youtubeId || ""}" placeholder="video ID only" />
-      </label>
-      <label class="field field--full">
-        <span>Lyrics</span>
-        <textarea data-field="lyrics" rows="5">${track.lyrics || ""}</textarea>
-      </label>
-      <label class="field">
-        <span>Fan MP3 URL</span>
-        <input data-field="fanMp3Url" value="${mp3Download ? mp3Download.url : ""}" />
-      </label>
-      <label class="field">
-        <span>Fan FLAC URL</span>
-        <input data-field="fanFlacUrl" value="${flacDownload ? flacDownload.url : ""}" />
-      </label>
-      <label class="field">
-        <span>Superfan title</span>
-        <input data-field="superfanTitle" value="${track.superfan ? track.superfan.title : ""}" />
-      </label>
-      <label class="field">
-        <span>Superfan price</span>
-        <input data-field="superfanPrice" value="${track.superfan ? track.superfan.price : ""}" />
-      </label>
-      <label class="field">
-        <span>Superfan provider</span>
-        <input data-field="superfanProvider" value="${track.superfan ? track.superfan.provider : ""}" />
-      </label>
-      <label class="field">
-        <span>Superfan checkout URL</span>
-        <input data-field="superfanCheckout" value="${track.superfan ? track.superfan.checkoutUrl : ""}" />
-      </label>
-      <label class="field field--full">
-        <span>Superfan description</span>
-        <textarea data-field="superfanDescription" rows="3">${track.superfan ? track.superfan.description : ""}</textarea>
-      </label>
-      <label class="field">
-        <span>DJ package title</span>
-        <input data-field="djTitle" value="${djPackage ? djPackage.title : ""}" />
-      </label>
-      <label class="field">
-        <span>DJ package format</span>
-        <input data-field="djFormat" value="${djPackage ? djPackage.format : "24-bit WAV"}" />
-      </label>
-      <label class="field">
-        <span>DJ package price</span>
-        <input data-field="djPrice" value="${djPackage ? djPackage.price : ""}" />
-      </label>
-      <label class="field">
-        <span>DJ package checkout URL</span>
-        <input data-field="djCheckout" value="${djPackage ? djPackage.checkoutUrl : ""}" />
-      </label>
-      <label class="field field--full">
-        <span>DJ package description</span>
-        <textarea data-field="djDescription" rows="3">${djPackage ? djPackage.description : ""}</textarea>
-      </label>
-    </div>
-  `;
+    `;
+  }
 
-  const titleInput = editor.querySelector('[data-field="title"]');
-  titleInput.addEventListener("input", () => {
-    const heading = editor.querySelector("[data-track-heading]");
-    heading.textContent = titleInput.value.trim() || `Track ${editor.dataset.trackEditor}`;
-  });
-
-  editor.querySelector("[data-remove-track]").addEventListener("click", () => {
-    editor.remove();
-
-    if (elements.trackEditors.children.length === 0) {
-      addTrackEditor();
+  function getArtistNameForReleasePreview() {
+    if (elements.releaseArtist.value === "__new__") {
+      return elements.inlineArtistName.value.trim() || "New artist";
     }
-  });
 
-  elements.trackEditors.append(editor);
-}
-
-function addTrackEditor(trackData) {
-  createTrackEditor(trackData);
-}
-
-function resetArtistForm() {
-  elements.artistForm.reset();
-  elements.artistColorOne.value = "#ffd12a";
-  elements.artistColorTwo.value = "#2457ff";
-}
-
-function resetReleaseForm() {
-  editingReleaseSlug = null;
-  elements.releaseForm.reset();
-  elements.releaseStatus.value = "out";
-  elements.releaseType.value = "Single";
-  elements.releasePresaveLabel.value = "Too.fm pre-save";
-  elements.releasePlatforms.value = "Spotify, Apple Music, YouTube";
-  elements.releaseColorOne.value = "#ffd12a";
-  elements.releaseColorTwo.value = "#2457ff";
-  elements.trackEditors.innerHTML = "";
-  tagState.genres = new Set();
-  tagState.tags = new Set();
-  refreshTagClouds();
-  populateArtistSelect();
-  addTrackEditor();
-}
-
-function upsertBySlug(list, nextItem) {
-  const existingIndex = list.findIndex((item) => item.slug === nextItem.slug);
-
-  if (existingIndex === -1) {
-    return [...list, nextItem];
+    const data = loadData();
+    const artist = data.artists.find((entry) => entry.slug === elements.releaseArtist.value);
+    return artist ? artist.name : "Select artist";
   }
 
-  const nextList = [...list];
-  nextList[existingIndex] = nextItem;
-  return nextList;
-}
+  function renderStats() {
+    const data = loadData();
+    const featured = featuredRelease(data);
+    const featuredArtist = featured ? data.artists.find((artist) => artist.slug === featured.artist) : null;
 
-function collectTrack(editor, index) {
-  const value = (field) =>
-    editor.querySelector(`[data-field="${field}"]`).value.trim();
-  const title = value("title");
-
-  if (!title) {
-    return null;
+    elements.stats.innerHTML = `
+      <article class="stat-card">
+        <strong>${data.artists.length}</strong>
+        <span>Artist pages</span>
+      </article>
+      <article class="stat-card">
+        <strong>${data.releases.length}</strong>
+        <span>Releases</span>
+      </article>
+      <article class="stat-card">
+        <strong>${countTracks(data.releases)}</strong>
+        <span>Tracks</span>
+      </article>
+      <article class="stat-card">
+        <strong>${countLinkedPlatforms(data.releases)}</strong>
+        <span>Streaming links</span>
+      </article>
+      <article class="stat-card">
+        <strong>${featured ? escapeHtml(featured.title) : "None set"}</strong>
+        <span>${featuredArtist ? escapeHtml(featuredArtist.name) : "Featured release"}</span>
+      </article>
+      <article class="stat-card">
+        <strong>${data.merch.length}</strong>
+        <span>Merch entries</span>
+      </article>
+    `;
   }
 
-  const mp3Url = value("fanMp3Url");
-  const flacUrl = value("fanFlacUrl");
-  const fanDownloads = [];
+  function populateArtistSelects() {
+    const data = loadData();
 
-  if (mp3Url) {
-    fanDownloads.push({
-      label: "Fan MP3",
-      format: "MP3",
-      size: "",
-      url: mp3Url
-    });
-  }
+    elements.releaseArtist.innerHTML = `
+      ${data.artists
+        .map(
+          (artist) =>
+            `<option value="${escapeHtml(artist.slug)}">${escapeHtml(artist.name)}</option>`
+        )
+        .join("")}
+      <option value="__new__">Create new artist...</option>
+    `;
 
-  if (flacUrl) {
-    fanDownloads.push({
-      label: "Fan FLAC",
-      format: "FLAC",
-      size: "",
-      url: flacUrl
-    });
-  }
+    elements.artistProfileSelect.innerHTML = `
+      <option value="">Start new artist...</option>
+      ${data.artists
+        .map(
+          (artist) =>
+            `<option value="${escapeHtml(artist.slug)}">${escapeHtml(artist.name)}</option>`
+        )
+        .join("")}
+    `;
 
-  const djTitle = value("djTitle");
-  const djDescription = value("djDescription");
-  const djFormat = value("djFormat");
-  const djPrice = value("djPrice");
-  const djCheckout = value("djCheckout");
-  const hasDjPackage = [djTitle, djDescription, djFormat, djPrice, djCheckout].some(Boolean);
-
-  return {
-    slug: value("slug") || store.slugify(title, `track-${index + 1}`),
-    title,
-    runtime: value("runtime"),
-    youtubeId: value("youtubeId"),
-    lyrics: value("lyrics"),
-    fanDownloads,
-    superfan: {
-      title: value("superfanTitle"),
-      description: value("superfanDescription"),
-      price: value("superfanPrice"),
-      provider: value("superfanProvider"),
-      checkoutUrl: value("superfanCheckout"),
-      djPackage: hasDjPackage
-        ? {
-            title: djTitle || "Direct To DJ WAV Pack",
-            description: djDescription,
-            format: djFormat || "24-bit WAV",
-            price: djPrice,
-            checkoutUrl: djCheckout
-          }
-        : null
+    if (!data.artists.length) {
+      elements.releaseArtist.value = "__new__";
     }
-  };
-}
 
-function buildReleaseFromForm() {
-  const title = elements.releaseTitle.value.trim();
-  const type = elements.releaseType.value.trim();
-  const tracks = [...elements.trackEditors.querySelectorAll(".track-editor")]
-    .map((editor, index) => collectTrack(editor, index))
-    .filter(Boolean);
+    toggleInlineArtistFields();
+  }
 
-  if (tracks.length === 0 && title) {
-    tracks.push({
-      slug: store.slugify(title, "track-1"),
-      title,
-      runtime: "",
-      youtubeId: "",
-      lyrics: "",
-      fanDownloads: [],
-      superfan: {
-        title: "",
-        description: "",
-        price: "",
-        provider: "Connect checkout",
-        checkoutUrl: "",
-        djPackage: null
+  function toggleInlineArtistFields() {
+    elements.inlineArtistFields.hidden = elements.releaseArtist.value !== "__new__";
+  }
+
+  function syncTrackLabel(item) {
+    const title = item.querySelector('[data-field="title"]').value.trim();
+    item.querySelector("[data-track-label]").textContent = title || "Track title pending";
+  }
+
+  function buildTrackItem(track) {
+    const item = document.createElement("article");
+    item.className = "track-item";
+    item.innerHTML = `
+      <div class="release-list__header">
+        <div>
+          <p class="eyebrow">Track</p>
+          <p class="release-list__meta" data-track-label>Track title pending</p>
+        </div>
+        <button class="button button--ghost" type="button" data-remove-track>
+          Remove
+        </button>
+      </div>
+      <div class="track-item__grid">
+        <label class="field">
+          <span>Track title</span>
+          <input data-field="title" />
+        </label>
+        <label class="field">
+          <span>Runtime</span>
+          <input data-field="runtime" placeholder="3:42" />
+        </label>
+        <label class="field">
+          <span>YouTube video ID</span>
+          <input data-field="youtubeId" placeholder="video-id-only" />
+        </label>
+      </div>
+    `;
+
+    item.querySelector('[data-field="title"]').value = track && track.title ? track.title : "";
+    item.querySelector('[data-field="runtime"]').value = track && track.runtime ? track.runtime : "";
+    item.querySelector('[data-field="youtubeId"]').value =
+      track && track.youtubeId ? track.youtubeId : "";
+    syncTrackLabel(item);
+    return item;
+  }
+
+  function addTrackItem(track) {
+    elements.trackList.append(buildTrackItem(track));
+  }
+
+  function ensureAtLeastOneTrack() {
+    if (!elements.trackList.children.length) {
+      addTrackItem();
+    }
+  }
+
+  function syncPlatformLabel(item) {
+    const label = item.querySelector('[data-field="label"]').value.trim();
+    item.querySelector("[data-platform-label]").textContent = label || "Custom destination";
+  }
+
+  function buildPlatformItem(platform) {
+    const item = document.createElement("article");
+    item.className = "platform-item";
+    item.innerHTML = `
+      <div class="release-list__header">
+        <div>
+          <p class="eyebrow">Platform Link</p>
+          <p class="release-list__meta" data-platform-label>Custom destination</p>
+        </div>
+        <button class="button button--ghost" type="button" data-remove-platform>
+          Remove
+        </button>
+      </div>
+      <div class="platform-item__grid">
+        <label class="field">
+          <span>Platform name</span>
+          <input data-field="label" />
+        </label>
+        <label class="field field--full">
+          <span>URL</span>
+          <input data-field="url" placeholder="https://..." />
+        </label>
+      </div>
+    `;
+
+    item.querySelector('[data-field="label"]').value =
+      platform && platform.label ? platform.label : "";
+    item.querySelector('[data-field="url"]').value = platform && platform.url ? platform.url : "";
+    syncPlatformLabel(item);
+    return item;
+  }
+
+  function addPlatformItem(platform) {
+    elements.platformList.append(buildPlatformItem(platform));
+    renderPlatformPresets();
+  }
+
+  function renderPlatformPresets() {
+    const data = loadData();
+    const existingLabels = [...elements.platformList.querySelectorAll('[data-field="label"]')]
+      .map((input) => input.value.trim().toLowerCase())
+      .filter(Boolean);
+
+    elements.platformPresets.innerHTML = data.label.platformPresets
+      .map((label) => {
+        const isAttached = existingLabels.includes(label.toLowerCase());
+
+        return `
+          <button
+            class="chip-button ${isAttached ? "is-active" : ""}"
+            type="button"
+            data-platform-preset="${escapeHtml(label)}"
+          >
+            ${escapeHtml(label)}
+          </button>
+        `;
+      })
+      .join("");
+  }
+
+  function collectTracks() {
+    return [...elements.trackList.querySelectorAll(".track-item")]
+      .map((item) => ({
+        title: item.querySelector('[data-field="title"]').value.trim(),
+        runtime: item.querySelector('[data-field="runtime"]').value.trim(),
+        youtubeId: item.querySelector('[data-field="youtubeId"]').value.trim()
+      }))
+      .filter((track) => track.title);
+  }
+
+  function collectPlatforms() {
+    return [...elements.platformList.querySelectorAll(".platform-item")]
+      .map((item) => ({
+        label: item.querySelector('[data-field="label"]').value.trim(),
+        url: item.querySelector('[data-field="url"]').value.trim()
+      }))
+      .filter((platform) => platform.label && platform.url);
+  }
+
+  function renderReleaseCoverPreview() {
+    const src = elements.releaseCover.value.trim();
+    elements.releaseCoverPreview.innerHTML = coverPreviewMarkup(src, "Release cover preview");
+  }
+
+  function renderArtistImagePreview() {
+    const src = elements.artistImage.value.trim();
+    elements.artistImagePreview.innerHTML = coverPreviewMarkup(src, "Artist image preview");
+  }
+
+  function renderReleasePreview() {
+    const title = elements.releaseTitle.value.trim() || "Release title";
+    const artistName = getArtistNameForReleasePreview();
+    const type = elements.releaseType.value || "Album";
+    const year = elements.releaseYear.value.trim() || "Year";
+    const vibe = elements.releaseVibe.value.trim() || "Album vibe";
+    const description =
+      elements.releaseDescription.value.trim() ||
+      "Add release notes, mood, and context here to shape the public-facing copy.";
+    const tracks = collectTracks();
+    const platforms = collectPlatforms();
+    const featured = elements.releaseFeatured.checked;
+
+    elements.releasePreview.innerHTML = `
+      <article class="release-card">
+        ${coverPreviewMarkup(elements.releaseCover.value.trim(), `${title} cover art preview`)}
+        <div class="release-card__body">
+          <p class="eyebrow">${escapeHtml(type)}</p>
+          <h3>${escapeHtml(title)}</h3>
+          <p class="release-card__meta">
+            ${escapeHtml(artistName)} / ${escapeHtml(year)}
+          </p>
+          <p class="release-card__summary">${escapeHtml(description)}</p>
+          <div class="chip-row">
+            <span class="mini-chip">${escapeHtml(vibe)}</span>
+            <span class="mini-chip">${tracks.length} track${tracks.length === 1 ? "" : "s"}</span>
+            <span class="mini-chip">${platforms.length} link${platforms.length === 1 ? "" : "s"}</span>
+            ${featured ? '<span class="mini-chip">Homepage feature</span>' : ""}
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderReleaseList() {
+    const data = loadData();
+    const featuredSlug = data.label.featuredReleaseSlug;
+
+    if (!data.releases.length) {
+      elements.releaseList.innerHTML = `
+        <article class="empty-state">
+          <h2>No releases saved yet.</h2>
+          <p>The first saved release will appear here for editing and homepage featuring.</p>
+        </article>
+      `;
+      return;
+    }
+
+    elements.releaseList.innerHTML = data.releases
+      .map((release) => {
+        const artist = data.artists.find((entry) => entry.slug === release.artist);
+
+        return `
+          <article class="release-list__item">
+            <div class="release-list__header">
+              <div>
+                <p class="eyebrow">${escapeHtml(release.type)}</p>
+                <h3>${escapeHtml(release.title)}</h3>
+                <p class="release-list__meta">
+                  ${escapeHtml(artist ? artist.name : release.artist)} / ${escapeHtml(release.year)}
+                </p>
+              </div>
+              <div class="row-actions">
+                ${
+                  featuredSlug === release.slug
+                    ? '<span class="chip">Featured</span>'
+                    : ""
+                }
+                <button class="button button--ghost" type="button" data-feature-release="${escapeHtml(release.slug)}">
+                  ${featuredSlug === release.slug ? "Featured" : "Feature"}
+                </button>
+                <button class="button button--ghost" type="button" data-edit-release="${escapeHtml(release.slug)}">
+                  Edit
+                </button>
+                <button class="button button--ghost" type="button" data-delete-release="${escapeHtml(release.slug)}">
+                  Delete
+                </button>
+              </div>
+            </div>
+            <div class="chip-row">
+              <span class="mini-chip">${release.tracks.length} track${release.tracks.length === 1 ? "" : "s"}</span>
+              <span class="mini-chip">${release.platforms.length} link${release.platforms.length === 1 ? "" : "s"}</span>
+              ${release.vibe ? `<span class="mini-chip">${escapeHtml(release.vibe)}</span>` : ""}
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  function renderArtistList() {
+    const data = loadData();
+
+    if (!data.artists.length) {
+      elements.artistList.innerHTML = `
+        <article class="empty-state">
+          <h2>No artists saved yet.</h2>
+          <p>Choose "Create new artist..." in the release form or build one here.</p>
+        </article>
+      `;
+      return;
+    }
+
+    elements.artistList.innerHTML = data.artists
+      .map(
+        (artist) => `
+          <article class="release-list__item">
+            <div class="release-list__header">
+              <div>
+                <p class="eyebrow">Artist</p>
+                <h3>${escapeHtml(artist.name)}</h3>
+                <p class="release-list__meta">${escapeHtml(artist.lane)}</p>
+              </div>
+              <button class="button button--ghost" type="button" data-edit-artist="${escapeHtml(artist.slug)}">
+                Edit
+              </button>
+            </div>
+            <div class="row-actions">
+              <a class="text-button" href="artist.html?artist=${escapeHtml(artist.slug)}&view=public">Public</a>
+              <a class="text-button" href="artist.html?artist=${escapeHtml(artist.slug)}&view=industry">Industry</a>
+              <a class="text-button" href="artist.html?artist=${escapeHtml(artist.slug)}&view=press">Press Kit</a>
+              <a class="text-button" href="artist.html?artist=${escapeHtml(artist.slug)}&view=merch">Merch</a>
+            </div>
+          </article>
+        `
+      )
+      .join("");
+  }
+
+  function resetReleaseForm() {
+    const data = loadData();
+    state.editingReleaseSlug = "";
+    elements.releaseForm.reset();
+    elements.releaseType.value = "Album";
+    elements.releaseYear.value = String(new Date().getFullYear());
+    elements.releaseAccent.value = "#ba7b2b";
+    elements.releaseFeatured.checked = false;
+    elements.trackList.innerHTML = "";
+    elements.platformList.innerHTML = "";
+    populateArtistSelects();
+
+    if (data.artists.length) {
+      elements.releaseArtist.value = data.artists[0].slug;
+      elements.releaseAccent.value = data.artists[0].accent || "#ba7b2b";
+    } else {
+      elements.releaseArtist.value = "__new__";
+    }
+
+    toggleInlineArtistFields();
+    addTrackItem();
+    addPlatformItem({ label: "Spotify", url: "" });
+    addPlatformItem({ label: "Apple Music", url: "" });
+    addPlatformItem({ label: "YouTube", url: "" });
+    renderReleaseCoverPreview();
+    renderReleasePreview();
+  }
+
+  function resetArtistForm() {
+    elements.artistForm.reset();
+    state.editingArtistSlug = "";
+    elements.artistAccent.value = "#ba7b2b";
+    elements.artistProfileSelect.value = "";
+    renderArtistImagePreview();
+  }
+
+  function fillReleaseForm(releaseSlug) {
+    const data = loadData();
+    const release = data.releases.find((entry) => entry.slug === releaseSlug);
+
+    if (!release) {
+      return;
+    }
+
+    state.editingReleaseSlug = release.slug;
+    elements.releaseTitle.value = release.title;
+    elements.releaseArtist.value = release.artist;
+    elements.releaseType.value = release.type;
+    elements.releaseYear.value = release.year;
+    elements.releaseVibe.value = release.vibe;
+    elements.releaseAccent.value = release.accent || "#ba7b2b";
+    elements.releaseDescription.value = release.description;
+    elements.releaseCover.value = release.cover;
+    elements.releaseFeatured.checked = data.label.featuredReleaseSlug === release.slug;
+    elements.inlineArtistName.value = "";
+    elements.inlineArtistLane.value = "";
+    elements.inlineArtistSummary.value = "";
+    toggleInlineArtistFields();
+
+    elements.trackList.innerHTML = "";
+    release.tracks.forEach((track) => addTrackItem(track));
+    ensureAtLeastOneTrack();
+
+    elements.platformList.innerHTML = "";
+    release.platforms.forEach((platform) => addPlatformItem(platform));
+    renderPlatformPresets();
+    renderReleaseCoverPreview();
+    renderReleasePreview();
+    document
+      .getElementById("release-intake")
+      .scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function fillArtistForm(artistSlug) {
+    const data = loadData();
+    const artist = data.artists.find((entry) => entry.slug === artistSlug);
+
+    if (!artist) {
+      return;
+    }
+
+    state.editingArtistSlug = artist.slug;
+    elements.artistProfileSelect.value = artist.slug;
+    elements.artistName.value = artist.name;
+    elements.artistLane.value = artist.lane;
+    elements.artistAccent.value = artist.accent || "#ba7b2b";
+    elements.artistImage.value = artist.image;
+    elements.artistSummary.value = artist.summary;
+    elements.artistHeadline.value = artist.headline;
+    elements.artistStory.value = artist.story;
+    elements.artistIndustryPitch.value = artist.industryPitch;
+    elements.artistPressBio.value = artist.pressBio;
+    elements.artistPressHighlights.value = artist.pressHighlights.join("\n");
+    elements.artistPressAssets.value = artist.pressAssets.join("\n");
+    elements.artistMerchIntro.value = artist.merchIntro;
+    renderArtistImagePreview();
+
+    document
+      .getElementById("artist-profiles")
+      .scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function buildInlineArtist(data) {
+    if (elements.releaseArtist.value !== "__new__") {
+      return { data, artistSlug: elements.releaseArtist.value };
+    }
+
+    const name = elements.inlineArtistName.value.trim();
+
+    if (!name) {
+      throw new Error("A new artist name is required before saving this release.");
+    }
+
+    const summary = elements.inlineArtistSummary.value.trim();
+    const slug = store.slugify(name, "artist");
+    const artist = {
+      slug,
+      name,
+      lane: elements.inlineArtistLane.value.trim(),
+      accent: elements.releaseAccent.value,
+      image: elements.releaseCover.value.trim(),
+      summary,
+      headline: summary || name,
+      story: summary,
+      industryPitch: summary,
+      pressBio: summary,
+      pressHighlights: [],
+      pressAssets: [],
+      merchIntro: `${name} merch can be added and refined from the artist profile editor.`
+    };
+
+    return {
+      artistSlug: slug,
+      data: {
+        ...data,
+        artists: store.upsertBySlug(data.artists, artist)
+      }
+    };
+  }
+
+  function saveRelease(event) {
+    event.preventDefault();
+    let data = loadData();
+    const title = elements.releaseTitle.value.trim();
+    const tracks = collectTracks();
+
+    if (!title) {
+      setStatus("Release title is required before saving.", "warning");
+      return;
+    }
+
+    if (!tracks.length) {
+      setStatus("Add at least one track title before saving the release.", "warning");
+      return;
+    }
+
+    try {
+      const inlineArtistResult = buildInlineArtist(data);
+      data = inlineArtistResult.data;
+      const artistSlug = inlineArtistResult.artistSlug;
+      const artist = data.artists.find((entry) => entry.slug === artistSlug);
+      const release = {
+        slug: state.editingReleaseSlug || store.slugify(`${artistSlug}-${title}`, title),
+        artist: artistSlug,
+        title,
+        type: elements.releaseType.value,
+        vibe: elements.releaseVibe.value.trim(),
+        year: elements.releaseYear.value.trim(),
+        accent: elements.releaseAccent.value,
+        cover: elements.releaseCover.value.trim(),
+        description: elements.releaseDescription.value.trim(),
+        platforms: collectPlatforms(),
+        tracks
+      };
+
+      const nextData = {
+        ...data,
+        releases: store.upsertBySlug(
+          state.editingReleaseSlug
+            ? data.releases.filter((entry) => entry.slug !== state.editingReleaseSlug)
+            : data.releases,
+          release
+        )
+      };
+
+      nextData.label.featuredReleaseSlug = elements.releaseFeatured.checked
+        ? release.slug
+        : nextData.label.featuredReleaseSlug || release.slug;
+
+      saveData(nextData);
+      renderAll();
+      resetReleaseForm();
+      elements.releaseArtist.value = artistSlug;
+      toggleInlineArtistFields();
+      renderReleasePreview();
+      setStatus(`Saved "${release.title}" for ${artist ? artist.name : "the selected artist"}.`, "success");
+    } catch (error) {
+      setStatus(error.message, "warning");
+    }
+  }
+
+  function saveArtist(event) {
+    event.preventDefault();
+    const data = loadData();
+    const name = elements.artistName.value.trim();
+
+    if (!name) {
+      setStatus("Artist name is required before saving the profile.", "warning");
+      return;
+    }
+
+    const existing = state.editingArtistSlug
+      ? data.artists.find((entry) => entry.slug === state.editingArtistSlug)
+      : null;
+
+    const artist = {
+      slug: existing ? existing.slug : store.slugify(name, "artist"),
+      name,
+      lane: elements.artistLane.value.trim(),
+      accent: elements.artistAccent.value,
+      image: elements.artistImage.value.trim(),
+      summary: elements.artistSummary.value.trim(),
+      headline: elements.artistHeadline.value.trim(),
+      story: elements.artistStory.value.trim(),
+      industryPitch: elements.artistIndustryPitch.value.trim(),
+      pressBio: elements.artistPressBio.value.trim(),
+      pressHighlights: lineList(elements.artistPressHighlights.value),
+      pressAssets: lineList(elements.artistPressAssets.value),
+      merchIntro: elements.artistMerchIntro.value.trim()
+    };
+
+    saveData({
+      ...data,
+      artists: store.upsertBySlug(data.artists, artist)
+    });
+    renderAll();
+    resetArtistForm();
+    elements.releaseArtist.value = artist.slug;
+    toggleInlineArtistFields();
+    renderReleasePreview();
+    setStatus(`Saved artist profile for "${artist.name}".`, "success");
+  }
+
+  function deleteRelease(releaseSlug) {
+    const data = loadData();
+    const release = data.releases.find((entry) => entry.slug === releaseSlug);
+
+    if (!release) {
+      return;
+    }
+
+    if (!window.confirm(`Delete "${release.title}" from the current catalog?`)) {
+      return;
+    }
+
+    const remainingReleases = data.releases.filter((entry) => entry.slug !== releaseSlug);
+    saveData({
+      ...data,
+      releases: remainingReleases,
+      label: {
+        ...data.label,
+        featuredReleaseSlug:
+          data.label.featuredReleaseSlug === releaseSlug && remainingReleases[0]
+            ? remainingReleases[0].slug
+            : data.label.featuredReleaseSlug === releaseSlug
+              ? ""
+              : data.label.featuredReleaseSlug
+      }
+    });
+
+    renderAll();
+    if (state.editingReleaseSlug === releaseSlug) {
+      resetReleaseForm();
+    }
+    setStatus(`Deleted "${release.title}" from the current catalog.`, "success");
+  }
+
+  function featureRelease(releaseSlug) {
+    const data = loadData();
+    const release = data.releases.find((entry) => entry.slug === releaseSlug);
+
+    if (!release) {
+      return;
+    }
+
+    saveData({
+      ...data,
+      label: {
+        ...data.label,
+        featuredReleaseSlug: release.slug
+      }
+    });
+    renderAll();
+
+    if (state.editingReleaseSlug === release.slug) {
+      elements.releaseFeatured.checked = true;
+    }
+
+    setStatus(`"${release.title}" is now featured on the homepage.`, "success");
+  }
+
+  function importFromText() {
+    const source = elements.catalogJson.value.trim();
+
+    if (!source) {
+      setStatus("Paste or load JSON into the preview box before importing.", "warning");
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(source);
+      saveData(parsed);
+      renderAll();
+      resetReleaseForm();
+      resetArtistForm();
+      setStatus("Imported JSON into the current browser catalog.", "success");
+    } catch (error) {
+      setStatus("That JSON could not be parsed. Check the format and try again.", "warning");
+    }
+  }
+
+  function readImportFile(file) {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      elements.catalogJson.value = String(reader.result || "");
+      setStatus(`Loaded "${file.name}" into the JSON preview.`, "info");
+    });
+
+    reader.readAsText(file);
+  }
+
+  function readImageFile(targetInput, file, renderPreview) {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      targetInput.value = String(reader.result || "");
+      renderPreview();
+      renderReleasePreview();
+    });
+
+    reader.readAsDataURL(file);
+  }
+
+  function loadCurrentJson() {
+    elements.catalogJson.value = store.exportJson(loadData());
+    setStatus("Loaded the current catalog JSON into the preview box.", "info");
+  }
+
+  function downloadJson() {
+    downloadText("pawn-island-records.json", store.exportJson(loadData()), "application/json");
+    setStatus("Downloaded the current catalog as JSON.", "success");
+  }
+
+  function downloadScript() {
+    downloadText(
+      "public-data.js",
+      store.exportScript(loadData()),
+      "application/javascript"
+    );
+    setStatus("Downloaded a publish-ready public-data.js file.", "success");
+  }
+
+  function resetData() {
+    if (!window.confirm("Reset the current browser catalog back to the seed data?")) {
+      return;
+    }
+
+    store.reset();
+    renderAll();
+    resetReleaseForm();
+    resetArtistForm();
+    setStatus("Reset the current browser catalog back to the seed data.", "info");
+  }
+
+  function renderAll() {
+    renderStats();
+    populateArtistSelects();
+    renderReleaseList();
+    renderArtistList();
+    renderPlatformPresets();
+    elements.catalogJson.value = store.exportJson(loadData());
+  }
+
+  function bindEvents() {
+    elements.releaseForm.addEventListener("submit", saveRelease);
+    elements.artistForm.addEventListener("submit", saveArtist);
+    elements.addTrack.addEventListener("click", () => {
+      addTrackItem();
+      renderReleasePreview();
+    });
+    elements.addPlatform.addEventListener("click", () => {
+      addPlatformItem();
+      renderReleasePreview();
+    });
+    elements.resetReleaseForm.addEventListener("click", resetReleaseForm);
+    elements.resetArtistForm.addEventListener("click", resetArtistForm);
+    elements.releaseArtist.addEventListener("change", () => {
+      const data = loadData();
+      const artist = data.artists.find((entry) => entry.slug === elements.releaseArtist.value);
+      toggleInlineArtistFields();
+
+      if (artist && !state.editingReleaseSlug) {
+        elements.releaseAccent.value = artist.accent || "#ba7b2b";
+      }
+
+      renderReleasePreview();
+    });
+    elements.artistProfileSelect.addEventListener("change", () => {
+      if (!elements.artistProfileSelect.value) {
+        resetArtistForm();
+        return;
+      }
+
+      fillArtistForm(elements.artistProfileSelect.value);
+    });
+    elements.releaseCover.addEventListener("input", () => {
+      renderReleaseCoverPreview();
+      renderReleasePreview();
+    });
+    elements.artistImage.addEventListener("input", renderArtistImagePreview);
+    elements.releaseCoverUpload.addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+
+      if (file) {
+        readImageFile(elements.releaseCover, file, renderReleaseCoverPreview);
+      }
+    });
+    elements.artistImageUpload.addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+
+      if (file) {
+        readImageFile(elements.artistImage, file, renderArtistImagePreview);
+      }
+    });
+    elements.releaseForm.addEventListener("input", (event) => {
+      if (event.target.closest(".track-item")) {
+        syncTrackLabel(event.target.closest(".track-item"));
+      }
+
+      if (event.target.closest(".platform-item")) {
+        syncPlatformLabel(event.target.closest(".platform-item"));
+        renderPlatformPresets();
+      }
+
+      renderReleasePreview();
+    });
+    elements.platformPresets.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-platform-preset]");
+
+      if (!button) {
+        return;
+      }
+
+      const label = button.getAttribute("data-platform-preset");
+      const exists = [...elements.platformList.querySelectorAll('[data-field="label"]')].some(
+        (input) => input.value.trim().toLowerCase() === label.toLowerCase()
+      );
+
+      if (!exists) {
+        addPlatformItem({ label, url: "" });
+      }
+
+      renderReleasePreview();
+    });
+    elements.trackList.addEventListener("click", (event) => {
+      const removeButton = event.target.closest("[data-remove-track]");
+
+      if (!removeButton) {
+        return;
+      }
+
+      removeButton.closest(".track-item").remove();
+      ensureAtLeastOneTrack();
+      renderReleasePreview();
+    });
+    elements.platformList.addEventListener("click", (event) => {
+      const removeButton = event.target.closest("[data-remove-platform]");
+
+      if (!removeButton) {
+        return;
+      }
+
+      removeButton.closest(".platform-item").remove();
+      renderPlatformPresets();
+      renderReleasePreview();
+    });
+    elements.releaseList.addEventListener("click", (event) => {
+      const editButton = event.target.closest("[data-edit-release]");
+      const deleteButton = event.target.closest("[data-delete-release]");
+      const featureButton = event.target.closest("[data-feature-release]");
+
+      if (editButton) {
+        fillReleaseForm(editButton.getAttribute("data-edit-release"));
+        return;
+      }
+
+      if (deleteButton) {
+        deleteRelease(deleteButton.getAttribute("data-delete-release"));
+        return;
+      }
+
+      if (featureButton) {
+        featureRelease(featureButton.getAttribute("data-feature-release"));
+      }
+    });
+    elements.artistList.addEventListener("click", (event) => {
+      const editButton = event.target.closest("[data-edit-artist]");
+
+      if (editButton) {
+        fillArtistForm(editButton.getAttribute("data-edit-artist"));
+      }
+    });
+    elements.downloadJson.addEventListener("click", downloadJson);
+    elements.downloadScript.addEventListener("click", downloadScript);
+    elements.loadJson.addEventListener("click", loadCurrentJson);
+    elements.resetData.addEventListener("click", resetData);
+    elements.importJson.addEventListener("click", importFromText);
+    elements.importFile.addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+
+      if (file) {
+        readImportFile(file);
       }
     });
   }
 
-  const links = [
-    { label: "Spotify", url: elements.releaseSpotify.value.trim() },
-    { label: "Apple Music", url: elements.releaseApple.value.trim() },
-    { label: "YouTube", url: elements.releaseYouTube.value.trim() },
-    { label: "Bandcamp", url: elements.releaseBandcamp.value.trim() },
-    { label: "Amazon Music", url: elements.releaseAmazon.value.trim() },
-    { label: "YouTube Music", url: elements.releaseYouTubeMusic.value.trim() }
-  ].filter((link) => link.url);
-
-  const status = elements.releaseStatus.value;
-  const presaveUrl = elements.releasePresaveUrl.value.trim();
-
-  return {
-    slug: elements.releaseSlug.value.trim() || store.slugify(title, "release"),
-    title,
-    artist: elements.releaseArtist.value,
-    type,
-    status,
-    releaseDate: elements.releaseDate.value,
-    genres: parseCsv(elements.releaseGenres.value),
-    tags: parseCsv(elements.releaseTags.value),
-    description: elements.releaseDescription.value.trim(),
-    palette: [elements.releaseColorOne.value, elements.releaseColorTwo.value],
-    expectedPlatforms: parseCsv(elements.releasePlatforms.value),
-    links,
-    presave:
-      status === "presave" || presaveUrl
-        ? {
-            label: elements.releasePresaveLabel.value.trim() || "Too.fm pre-save",
-            url: presaveUrl,
-            note:
-              elements.releasePresaveNote.value.trim() ||
-              "Add the Too Lost link here so fans can save the release before it goes live."
-          }
-        : null,
-    tracks
-  };
-}
-
-function renderReleaseList() {
-  const releases = [...catalog.releases].sort(
-    (left, right) => new Date(right.releaseDate || 0) - new Date(left.releaseDate || 0)
-  );
-
-  if (releases.length === 0) {
-    elements.releaseList.innerHTML =
-      '<div class="empty-state">No releases are stored right now. Use "Start Empty Real Catalog" and then add the first live release above.</div>';
-    return;
-  }
-
-  elements.releaseList.innerHTML = releases
-    .map(
-      (release) => `
-        <article class="entry-row">
-          <div class="entry-row__body">
-            <p class="eyebrow">Release</p>
-            <h3>${release.title}</h3>
-            <p class="entry-row__meta">
-              ${getArtistName(release.artist)} | ${release.type} | ${release.status} | ${
-                release.releaseDate || "date pending"
-              }
-            </p>
-            <div class="tag-row">
-              <span class="tag">${release.tracks.length} track${
-                release.tracks.length === 1 ? "" : "s"
-              }</span>
-              ${release.genres.map((genre) => `<span class="tag tag--muted">${genre}</span>`).join("")}
-              ${(release.tags || []).map((tag) => `<span class="tag">${tag}</span>`).join("")}
-            </div>
-          </div>
-          <div class="entry-row__actions">
-            <button class="button button--ghost" type="button" data-edit-release="${release.slug}">
-              Edit
-            </button>
-            <button class="button button--ghost" type="button" data-delete-release="${release.slug}">
-              Delete
-            </button>
-          </div>
-        </article>
-      `
-    )
-    .join("");
-}
-
-function refreshCatalogView() {
-  catalog = store.loadCatalog();
-  buildSummaryCards();
-  populateArtistSelect();
-  renderReleaseList();
-  refreshTagClouds();
-}
-
-function saveArtist(event) {
-  event.preventDefault();
-  const name = elements.artistName.value.trim();
-
-  if (!name) {
-    setStatus("Artist name is required before saving.", "warning");
-    return;
-  }
-
-  const artist = {
-    slug: elements.artistSlug.value.trim() || store.slugify(name, "artist"),
-    name,
-    lane: elements.artistLane.value.trim(),
-    moods: parseCsv(elements.artistMoods.value),
-    summary: elements.artistSummary.value.trim(),
-    headline: elements.artistHeadline.value.trim(),
-    story: elements.artistStory.value.trim(),
-    currentFocus: elements.artistFocus.value.trim(),
-    signatures: parseCsv(elements.artistSignatures.value),
-    epk: [],
-    palette: [elements.artistColorOne.value, elements.artistColorTwo.value]
-  };
-
-  store.updateCatalog((current) => ({
-    ...current,
-    artists: upsertBySlug(current.artists, artist)
-  }));
-
-  refreshCatalogView();
-  resetArtistForm();
-  elements.releaseArtist.value = artist.slug;
-  setStatus(`Saved artist "${artist.name}" to the browser catalog.`, "success");
-}
-
-function saveRelease(event) {
-  event.preventDefault();
-  const release = buildReleaseFromForm();
-
-  if (!release.title) {
-    setStatus("Release title is required before saving.", "warning");
-    return;
-  }
-
-  if (!release.artist) {
-    setStatus("Add an artist first, then assign the release to that artist.", "warning");
-    return;
-  }
-
-  if (release.tracks.length === 0) {
-    setStatus("Add at least one track before saving the release.", "warning");
-    return;
-  }
-
-  store.updateCatalog((current) => ({
-    ...current,
-    releases: upsertBySlug(
-      editingReleaseSlug
-        ? current.releases.filter((entry) => entry.slug !== editingReleaseSlug)
-        : current.releases,
-      release
-    )
-  }));
-
-  refreshCatalogView();
-  resetReleaseForm();
-  setStatus(`Saved release "${release.title}" to the browser catalog.`, "success");
-}
-
-function fillReleaseForm(releaseSlug) {
-  const release = catalog.releases.find((entry) => entry.slug === releaseSlug);
-
-  if (!release) {
-    return;
-  }
-
-  editingReleaseSlug = release.slug;
-  elements.releaseTitle.value = release.title;
-  elements.releaseSlug.value = release.slug;
-  elements.releaseArtist.value = release.artist;
-  elements.releaseType.value = release.type;
-  elements.releaseStatus.value = release.status;
-  elements.releaseDate.value = release.releaseDate || "";
-  elements.releaseDescription.value = release.description || "";
-  elements.releaseGenres.value = (release.genres || []).join(", ");
-  elements.releaseTags.value = (release.tags || []).join(", ");
-  elements.releasePlatforms.value = (release.expectedPlatforms || []).join(", ");
-  elements.releaseColorOne.value = release.palette && release.palette[0] ? release.palette[0] : "#ffd12a";
-  elements.releaseColorTwo.value = release.palette && release.palette[1] ? release.palette[1] : "#2457ff";
-
-  const linkMap = new Map((release.links || []).map((link) => [link.label, link.url]));
-  elements.releaseSpotify.value = linkMap.get("Spotify") || "";
-  elements.releaseApple.value = linkMap.get("Apple Music") || "";
-  elements.releaseYouTube.value = linkMap.get("YouTube") || "";
-  elements.releaseBandcamp.value = linkMap.get("Bandcamp") || "";
-  elements.releaseAmazon.value = linkMap.get("Amazon Music") || "";
-  elements.releaseYouTubeMusic.value = linkMap.get("YouTube Music") || "";
-
-  elements.releasePresaveLabel.value =
-    release.presave && release.presave.label ? release.presave.label : "Too.fm pre-save";
-  elements.releasePresaveUrl.value =
-    release.presave && release.presave.url ? release.presave.url : "";
-  elements.releasePresaveNote.value =
-    release.presave && release.presave.note ? release.presave.note : "";
-
-  tagState.genres = new Set(release.genres || []);
-  tagState.tags = new Set(release.tags || []);
-  refreshTagClouds();
-
-  elements.trackEditors.innerHTML = "";
-  release.tracks.forEach((track) => addTrackEditor(track));
-
-  document
-    .getElementById("release-entry")
-    .scrollIntoView({ behavior: "smooth", block: "start" });
-  setStatus(`Loaded "${release.title}" into the release form. Save again to update it.`, "info");
-}
-
-function deleteRelease(releaseSlug) {
-  const release = catalog.releases.find((entry) => entry.slug === releaseSlug);
-
-  if (!release) {
-    return;
-  }
-
-  if (!window.confirm(`Delete "${release.title}" from the browser catalog?`)) {
-    return;
-  }
-
-  store.updateCatalog((current) => ({
-    ...current,
-    releases: current.releases.filter((entry) => entry.slug !== releaseSlug)
-  }));
-
-  refreshCatalogView();
-
-  if (editingReleaseSlug === releaseSlug) {
+  function init() {
+    renderAll();
     resetReleaseForm();
+    resetArtistForm();
+    bindEvents();
+    renderReleasePreview();
+    renderArtistImagePreview();
+    setStatus(
+      "Start with a new release, or refine any existing artist profile. The public pages will read from this browser-saved catalog immediately.",
+      "info"
+    );
+    ui.revealOnScroll();
   }
 
-  setStatus(`Deleted "${release.title}" from the browser catalog.`, "success");
-}
-
-function removeDemoReleases() {
-  store.removeDemoReleases();
-  refreshCatalogView();
-  setStatus("Removed demo-style releases from the browser catalog.", "success");
-}
-
-function clearReleaseCatalog() {
-  if (
-    !window.confirm(
-      "Clear every current release from the browser catalog and start from an empty real-release slate?"
-    )
-  ) {
-    return;
-  }
-
-  store.clearCatalog({ clearReleases: true, clearMerch: true });
-  refreshCatalogView();
-  resetReleaseForm();
-  setStatus("Cleared releases and merch so you can start from an empty real catalog.", "success");
-}
-
-function resetSeedData() {
-  if (
-    !window.confirm(
-      "Clear the browser override and return to the published catalog file, or the theme seed if no published file exists?"
-    )
-  ) {
-    return;
-  }
-
-  store.resetCatalog();
-  refreshCatalogView();
-  resetReleaseForm();
-  setStatus("Cleared the browser override and returned to the published or seed catalog.", "info");
-}
-
-function loadCurrentJson() {
-  elements.catalogJson.value = store.exportCatalog();
-  setStatus("Loaded the current catalog JSON into the editor.", "info");
-}
-
-function downloadCurrentJson() {
-  const blob = new Blob([store.exportCatalog()], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-
-  anchor.href = url;
-  anchor.download = "pawn-island-records-catalog.json";
-  anchor.click();
-  URL.revokeObjectURL(url);
-  setStatus("Downloaded the current browser catalog as JSON.", "success");
-}
-
-function downloadPublishScript() {
-  const blob = new Blob([store.exportPublishedScript()], {
-    type: "application/javascript"
-  });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-
-  anchor.href = url;
-  anchor.download = "catalog-published.js";
-  anchor.click();
-  URL.revokeObjectURL(url);
-  setStatus(
-    "Downloaded catalog-published.js. Replace the repo file with it when you want the public site to use this catalog by default.",
-    "success"
-  );
-}
-
-function importJsonText() {
-  const source = elements.catalogJson.value.trim();
-
-  if (!source) {
-    setStatus("Paste JSON into the import box first.", "warning");
-    return;
-  }
-
-  let parsed;
-
-  try {
-    parsed = JSON.parse(source);
-  } catch (error) {
-    setStatus("That JSON could not be parsed. Check the format and try again.", "warning");
-    return;
-  }
-
-  if (Array.isArray(parsed)) {
-    store.updateCatalog((current) => ({
-      ...current,
-      releases: parsed
-    }));
-  } else {
-    store.saveCatalog(parsed);
-  }
-
-  refreshCatalogView();
-  setStatus("Imported JSON into the browser catalog.", "success");
-}
-
-function readImportFile(file) {
-  const reader = new FileReader();
-
-  reader.addEventListener("load", () => {
-    elements.catalogJson.value = String(reader.result || "");
-    setStatus(`Loaded "${file.name}" into the JSON editor.`, "info");
-  });
-
-  reader.readAsText(file);
-}
-
-function toggleTag(kind, value) {
-  if (tagState[kind].has(value)) {
-    tagState[kind].delete(value);
-  } else {
-    tagState[kind].add(value);
-  }
-
-  refreshTagClouds();
-}
-
-function addCustomTag(kind) {
-  const input = kind === "genres" ? elements.newGenreTag : elements.newReleaseTag;
-  const value = input.value.trim();
-
-  if (!value) {
-    return;
-  }
-
-  tagState[kind].add(value);
-  input.value = "";
-  refreshTagClouds();
-}
-
-function bindEvents() {
-  elements.artistForm.addEventListener("submit", saveArtist);
-  elements.releaseForm.addEventListener("submit", saveRelease);
-  elements.addTrack.addEventListener("click", () => addTrackEditor());
-  elements.removeDemoReleases.addEventListener("click", removeDemoReleases);
-  elements.clearReleaseCatalog.addEventListener("click", clearReleaseCatalog);
-  elements.resetSeedData.addEventListener("click", resetSeedData);
-  elements.loadCurrentJson.addEventListener("click", loadCurrentJson);
-  elements.downloadJson.addEventListener("click", downloadCurrentJson);
-  elements.downloadPublishScript.addEventListener("click", downloadPublishScript);
-  elements.importJson.addEventListener("click", importJsonText);
-  elements.addGenreTag.addEventListener("click", () => addCustomTag("genres"));
-  elements.addReleaseTag.addEventListener("click", () => addCustomTag("tags"));
-
-  elements.releaseGenres.addEventListener("input", updateTagStateFromInputs);
-  elements.releaseTags.addEventListener("input", updateTagStateFromInputs);
-
-  elements.genreCloud.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-tag-value]");
-
-    if (!button) {
-      return;
-    }
-
-    toggleTag("genres", button.dataset.tagValue);
-  });
-
-  elements.tagCloud.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-tag-value]");
-
-    if (!button) {
-      return;
-    }
-
-    toggleTag("tags", button.dataset.tagValue);
-  });
-
-  elements.releaseList.addEventListener("click", (event) => {
-    const editButton = event.target.closest("[data-edit-release]");
-
-    if (editButton) {
-      fillReleaseForm(editButton.dataset.editRelease);
-      return;
-    }
-
-    const deleteButton = event.target.closest("[data-delete-release]");
-
-    if (deleteButton) {
-      deleteRelease(deleteButton.dataset.deleteRelease);
-    }
-  });
-
-  elements.importFile.addEventListener("change", (event) => {
-    const file = event.target.files && event.target.files[0];
-
-    if (file) {
-      readImportFile(file);
-    }
-  });
-}
-
-function init() {
-  buildSummaryCards();
-  populateArtistSelect();
-  refreshTagClouds();
-  renderReleaseList();
-  resetArtistForm();
-  resetReleaseForm();
-  elements.catalogJson.value = store.exportCatalog();
-  bindEvents();
-  setStatus(
-    "Start by clicking \"Remove Demo Releases\" or \"Start Empty Real Catalog,\" then add your live artists and releases. When the catalog looks right, download catalog-published.js to promote it into the repo.",
-    "info"
-  );
-}
-
-init();
+  init();
+})();

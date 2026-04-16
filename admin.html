@@ -3,458 +3,414 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pawn Island Records | Admin</title>
+    <title>Pawn Island Records | Catalog Editor</title>
     <meta
       name="description"
-      content="Admin and data-entry page for replacing demo releases with real Pawn Island Records catalog data."
+      content="A cleaner catalog editor for managing artist pages, release intake, square cover art, track listings, and streaming links."
     />
-    <script src="theme-init.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="public.css" />
   </head>
   <body>
-    <div class="page-noise" aria-hidden="true"></div>
-    <div class="page-orb page-orb--blue" aria-hidden="true"></div>
-    <div class="page-orb page-orb--yellow" aria-hidden="true"></div>
-    <div class="page-template">
-      <header class="site-header">
-        <a class="brandmark" href="index.html" aria-label="Pawn Island Records home">
-          <span class="brandmark__coin">P</span>
-          <span class="brandmark__text">
+    <div class="page-shell">
+      <header class="page-header">
+        <a class="brand-lockup" href="index.html" aria-label="Pawn Island Records home">
+          <img
+            src="assets/brand/pawn-island-logo-1200.jpg"
+            alt="Pawn Island Records logo"
+          />
+          <span class="brand-lockup__copy">
             <strong>Pawn Island Records</strong>
-            <span>Catalog admin and release intake</span>
+            <span>Catalog editor</span>
           </span>
         </a>
 
-        <nav class="site-nav" aria-label="Primary">
+        <nav class="page-nav" aria-label="Primary">
           <a href="index.html">Home</a>
-          <a href="#catalog-controls">Controls</a>
-          <a href="#youtube-pulse">DSP Trends</a>
-          <a href="#artist-entry">Artists</a>
-          <a href="#release-entry">Releases</a>
-          <a href="#import-export">Import / Export</a>
+          <a href="artists.html">Artists</a>
+          <a href="catalog.html">Releases</a>
+          <a href="admin.html">Editor</a>
         </nav>
 
-        <div class="site-header__actions">
-          <a class="button button--ghost" href="index.html#catalog">Catalog</a>
-          <a class="button button--ghost" href="merch.html">Merch</a>
-          <button
-            class="theme-toggle"
-            type="button"
-            data-theme-toggle
-            aria-label="Toggle day and night theme"
-          >
-            <span class="theme-toggle__label" data-theme-toggle-label>Theme</span>
-          </button>
+        <div class="header-actions">
+          <a class="button button--ghost" href="#release-intake">Release Intake</a>
         </div>
       </header>
 
-      <main class="page-main">
-        <section class="page-hero">
-          <p class="eyebrow">Label Admin</p>
-          <h1>Replace the theme demos with the real Pawn Island catalog.</h1>
-          <p class="page-lede">
-            This admin page can still save a temporary browser override, but it
-            can also generate a publishable catalog file for the repo. That
-            means you can clear the fictional releases, add real artists and
-            releases, and then promote the real catalog into a file the public
-            site reads by default.
+      <main>
+        <section class="editor-hero reveal">
+          <p class="eyebrow">Catalog Editor</p>
+          <h1>Smoother release intake, cleaner public pages.</h1>
+          <p class="support-copy">
+            Add artist profiles and releases in one calm workflow: square cover
+            art, album vibe, track listing, track-level YouTube IDs, and
+            streaming links all feed the public site structure directly.
           </p>
-          <div class="hero__actions">
-            <a class="button" href="#catalog-controls">Start Here</a>
-            <a class="button button--ghost" href="index.html">View Public Site</a>
+          <div class="hero-actions">
+            <a class="button" href="#release-intake">New Release</a>
+            <a class="button button--ghost" href="#artist-profiles">Artist Profiles</a>
+            <a class="button button--ghost" href="#export-tools">Import / Export</a>
           </div>
-          <div class="stats-grid" id="admin-summary"></div>
+          <div class="status-banner" id="editor-status">
+            The editor is loading the current catalog.
+          </div>
+          <div class="stats-grid" id="editor-stats"></div>
         </section>
 
-        <section class="page-section" id="catalog-controls">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">Catalog Controls</p>
-              <h2>Use one click to remove the theme seed and start loading real releases.</h2>
-            </div>
+        <section id="release-intake" class="reveal">
+          <div class="section-head">
+            <p class="eyebrow">Release Intake</p>
+            <h2>Capture one release cleanly from cover art to listening links.</h2>
             <p>
-              The buttons below change the browser-saved catalog that the public
-              site reads from. They do not edit the source files directly.
+              The form stays focused on the essentials: artist, title, vibe,
+              square cover art, track listing, track-level YouTube embeds, and
+              platform links that feed the public artist and release pages.
             </p>
           </div>
 
-          <div class="status-banner" id="catalog-status">
-            No catalog action has run yet.
-          </div>
-
-          <div class="admin-actions">
-            <button class="button" id="remove-demo-releases" type="button">
-              Remove Demo Releases
-            </button>
-            <button class="button button--ghost" id="clear-release-catalog" type="button">
-              Start Empty Real Catalog
-            </button>
-            <button class="button button--ghost" id="reset-seed-data" type="button">
-              Reset To Published / Seed
-            </button>
-            <button class="button button--ghost" id="download-json" type="button">
-              Download Current JSON
-            </button>
-            <button class="button button--ghost" id="download-publish-script" type="button">
-              Download Publish Script
-            </button>
-          </div>
-        </section>
-
-        <section class="page-section" id="youtube-pulse">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">DSP Trends</p>
-              <h2>Pull live YouTube metrics without exposing the API key on the public site.</h2>
-            </div>
-            <p>
-              This first DSP integration reads the track-level
-              <code>youtubeId</code> values already stored in the catalog,
-              fetches a live snapshot in the browser, and lets staff publish the
-              latest pulse into the repo as a static file.
-            </p>
-          </div>
-
-          <div class="panel-grid">
-            <article class="brand-panel">
-              <p class="eyebrow">YouTube API Key</p>
-              <p class="helper-copy">
-                Save the key only in this browser. Listeners never receive it.
-              </p>
-              <label class="field field--full">
-                <span>YouTube Data API v3 key</span>
-                <input
-                  id="youtube-api-key"
-                  type="password"
-                  placeholder="AIza..."
-                  autocomplete="off"
-                />
-              </label>
-              <div class="admin-actions">
-                <button class="button" id="save-youtube-api-key" type="button">
-                  Save Key
-                </button>
-                <button class="button button--ghost" id="clear-youtube-api-key" type="button">
-                  Clear Key
-                </button>
-                <button class="button button--ghost" id="refresh-youtube-stats" type="button">
-                  Refresh Stats
-                </button>
-                <button
-                  class="button button--ghost"
-                  id="download-youtube-publish-script"
-                  type="button"
-                >
-                  Download Pulse Script
-                </button>
-              </div>
-              <p class="helper-copy" id="youtube-key-note">
-                No browser-saved YouTube API key detected yet.
-              </p>
-            </article>
-
-            <article class="brand-panel">
-              <p class="eyebrow">Workflow</p>
-              <div class="tag-row" id="youtube-coverage-tags"></div>
-              <p class="helper-copy">
-                1. Save a browser key. 2. Refresh YouTube stats. 3. Download
-                <code>youtube-stats-published.js</code> and replace the repo
-                file when you want the public site to show the newest pulse
-                without exposing the key.
-              </p>
-            </article>
-          </div>
-
-          <div class="status-banner" id="youtube-status">
-            Save a YouTube Data API key and refresh stats when you are ready.
-          </div>
-
-          <div class="stats-grid" id="youtube-stats-summary"></div>
-          <div class="entry-list" id="youtube-trend-list"></div>
-        </section>
-
-        <section class="page-section" id="artist-entry">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">Artist Entry</p>
-              <h2>Add or update artist projects before attaching releases.</h2>
-            </div>
-            <p>
-              If your live roster differs from the theme seed, add the real
-              projects here first so releases can be assigned correctly.
-            </p>
-          </div>
-
-          <form id="artist-form" class="panel-grid">
-            <div class="form-grid">
-              <label class="field">
-                <span>Artist name</span>
-                <input id="artist-name" name="artistName" required />
-              </label>
-              <label class="field">
-                <span>Slug</span>
-                <input id="artist-slug" name="artistSlug" placeholder="optional-auto-generated" />
-              </label>
-              <label class="field">
-                <span>Lane</span>
-                <input id="artist-lane" name="artistLane" placeholder="Soul / Country / Singer-Songwriter" />
-              </label>
-              <label class="field">
-                <span>Moods</span>
-                <input id="artist-moods" name="artistMoods" placeholder="warm, cinematic, weathered" />
-              </label>
-              <label class="field field--full">
-                <span>Summary</span>
-                <textarea id="artist-summary" name="artistSummary" rows="3"></textarea>
-              </label>
-              <label class="field field--full">
-                <span>Headline</span>
-                <textarea id="artist-headline" name="artistHeadline" rows="2"></textarea>
-              </label>
-              <label class="field field--full">
-                <span>Story</span>
-                <textarea id="artist-story" name="artistStory" rows="3"></textarea>
-              </label>
-              <label class="field field--full">
-                <span>Current focus</span>
-                <textarea id="artist-focus" name="artistFocus" rows="2"></textarea>
-              </label>
-              <label class="field">
-                <span>Signatures</span>
-                <input id="artist-signatures" name="artistSignatures" placeholder="close-mic vocals, modern low-end" />
-              </label>
-              <label class="field">
-                <span>Palette colors</span>
-                <div class="split-actions">
-                  <input id="artist-color-one" name="artistColorOne" type="color" value="#ffd12a" />
-                  <input id="artist-color-two" name="artistColorTwo" type="color" value="#2457ff" />
+          <div class="editor-grid">
+            <article class="editor-panel">
+              <form id="release-form" class="editor-form">
+                <div class="input-grid">
+                  <label class="field">
+                    <span>Release title</span>
+                    <input id="release-title" name="releaseTitle" required />
+                  </label>
+                  <label class="field">
+                    <span>Artist</span>
+                    <select id="release-artist" name="releaseArtist"></select>
+                  </label>
+                  <label class="field">
+                    <span>Release type</span>
+                    <select id="release-type" name="releaseType">
+                      <option>Album</option>
+                      <option>EP</option>
+                      <option>Single</option>
+                      <option>Compilation</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span>Release year</span>
+                    <input id="release-year" name="releaseYear" placeholder="2026" />
+                  </label>
+                  <label class="field field--wide">
+                    <span>Album vibe</span>
+                    <input
+                      id="release-vibe"
+                      name="releaseVibe"
+                      placeholder="firelit, handwritten, cinematic"
+                    />
+                  </label>
+                  <label class="field">
+                    <span>Accent color</span>
+                    <input id="release-accent" name="releaseAccent" type="color" value="#ba7b2b" />
+                  </label>
+                  <label class="field field--full">
+                    <span>Description</span>
+                    <textarea id="release-description" name="releaseDescription"></textarea>
+                  </label>
+                  <div class="field field--full" id="inline-artist-fields" hidden>
+                    <span>New artist details</span>
+                    <div class="input-grid">
+                      <label class="field">
+                        <span>Artist name</span>
+                        <input id="inline-artist-name" name="inlineArtistName" />
+                      </label>
+                      <label class="field">
+                        <span>Artist lane</span>
+                        <input
+                          id="inline-artist-lane"
+                          name="inlineArtistLane"
+                          placeholder="Dream pop / neon romance"
+                        />
+                      </label>
+                      <label class="field field--full">
+                        <span>Artist summary</span>
+                        <textarea
+                          id="inline-artist-summary"
+                          name="inlineArtistSummary"
+                          rows="3"
+                        ></textarea>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="field field--full">
+                    <span>Homepage feature</span>
+                    <label class="toggle-row" for="release-featured">
+                      <input id="release-featured" name="releaseFeatured" type="checkbox" />
+                      <span>Feature this release on the homepage landing page</span>
+                    </label>
+                  </div>
                 </div>
-              </label>
-            </div>
 
-            <div class="admin-actions">
-              <button class="button" type="submit">Save Artist</button>
-            </div>
-          </form>
-        </section>
-
-        <section class="page-section" id="release-entry">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">Release Entry</p>
-              <h2>Input real release data without opening `data.js`.</h2>
-            </div>
-            <p>
-              Tracks, lyrics, YouTube IDs, pre-save links, download formats, and
-              superfan fields can all be captured here. Singles will still auto-expand on the public site.
-            </p>
-          </div>
-
-          <form id="release-form" class="panel-grid">
-            <div class="form-grid">
-              <label class="field">
-                <span>Release title</span>
-                <input id="release-title" name="releaseTitle" required />
-              </label>
-              <label class="field">
-                <span>Slug</span>
-                <input id="release-slug" name="releaseSlug" placeholder="optional-auto-generated" />
-              </label>
-              <label class="field">
-                <span>Artist</span>
-                <select id="release-artist" name="releaseArtist"></select>
-              </label>
-              <label class="field">
-                <span>Release type</span>
-                <select id="release-type" name="releaseType">
-                  <option>Single</option>
-                  <option>EP</option>
-                  <option>Album</option>
-                  <option>Compilation</option>
-                </select>
-              </label>
-              <label class="field">
-                <span>Status</span>
-                <select id="release-status" name="releaseStatus">
-                  <option value="out">Out now</option>
-                  <option value="presave">Pre-save</option>
-                  <option value="archive">Archive</option>
-                </select>
-              </label>
-              <label class="field">
-                <span>Release date</span>
-                <input id="release-date" name="releaseDate" type="date" />
-              </label>
-              <label class="field field--full">
-                <span>Description</span>
-                <textarea id="release-description" name="releaseDescription" rows="3"></textarea>
-              </label>
-              <label class="field">
-                <span>Genres</span>
-                <input id="release-genres" name="releaseGenres" placeholder="soul, country, hip-hop" />
-              </label>
-              <label class="field">
-                <span>Catalog tags</span>
-                <input id="release-tags" name="releaseTags" placeholder="summer, acoustic, release-week" />
-              </label>
-              <label class="field">
-                <span>Expected platforms</span>
-                <input id="release-platforms" name="releasePlatforms" placeholder="Spotify, Apple Music, YouTube" />
-              </label>
-              <label class="field">
-                <span>Palette colors</span>
-                <div class="split-actions">
-                  <input id="release-color-one" name="releaseColorOne" type="color" value="#ffd12a" />
-                  <input id="release-color-two" name="releaseColorTwo" type="color" value="#2457ff" />
+                <div class="dropzone">
+                  <div class="section-head">
+                    <p class="eyebrow">Cover Art</p>
+                    <h2>Square display, flexible source input.</h2>
+                    <p>
+                      Paste a local path or URL, or upload the cover directly
+                      into the browser for preview and export.
+                    </p>
+                  </div>
+                  <div class="input-grid">
+                    <label class="field field--wide">
+                      <span>Cover art path or URL</span>
+                      <input
+                        id="release-cover"
+                        name="releaseCover"
+                        placeholder="media/public/new-release-cover.jpg"
+                      />
+                    </label>
+                    <label class="field">
+                      <span>Upload cover art</span>
+                      <input id="release-cover-upload" type="file" accept="image/*" />
+                    </label>
+                  </div>
+                  <p class="helper-line">
+                    Cover art always displays in a square frame across the
+                    public site.
+                  </p>
+                  <div class="dropzone__preview" id="release-cover-preview"></div>
                 </div>
-              </label>
-            </div>
 
-            <div class="panel-grid">
-              <article class="brand-panel">
-                <p class="eyebrow">Genre Cloud</p>
-                <div class="tag-cloud" id="genre-cloud"></div>
-                <div class="split-actions">
-                  <input id="new-genre-tag" placeholder="Add genre" />
-                  <button class="button button--ghost" id="add-genre-tag" type="button">
-                    Add Genre
+                <div class="section-head">
+                  <p class="eyebrow">Track Listing</p>
+                  <h2>Add titles, runtimes, and YouTube embeds for each track.</h2>
+                  <p>
+                    Every track can carry its own YouTube video ID, which feeds
+                    the embed panel on the artist landing pages.
+                  </p>
+                </div>
+                <div class="release-list" id="track-list"></div>
+                <div class="row-actions">
+                  <button class="button button--ghost" id="add-track" type="button">
+                    Add Track
                   </button>
                 </div>
-              </article>
-              <article class="brand-panel">
-                <p class="eyebrow">Tag Cloud</p>
-                <div class="tag-cloud" id="tag-cloud"></div>
-                <div class="split-actions">
-                  <input id="new-release-tag" placeholder="Add tag" />
-                  <button class="button button--ghost" id="add-release-tag" type="button">
-                    Add Tag
+
+                <div class="section-head">
+                  <p class="eyebrow">Streaming Links</p>
+                  <h2>Attach the listening destinations without crowding the form.</h2>
+                  <p>
+                    Start from common platforms, then add any custom destinations
+                    you need for the release.
+                  </p>
+                </div>
+                <div class="preset-row" id="platform-presets"></div>
+                <div class="platforms-stack" id="platform-list"></div>
+                <div class="row-actions">
+                  <button class="button button--ghost" id="add-platform" type="button">
+                    Add Custom Link
                   </button>
                 </div>
-              </article>
-            </div>
 
-            <div class="form-grid">
-              <label class="field">
-                <span>Spotify URL</span>
-                <input id="release-spotify" name="releaseSpotify" />
-              </label>
-              <label class="field">
-                <span>Apple Music URL</span>
-                <input id="release-apple" name="releaseApple" />
-              </label>
-              <label class="field">
-                <span>YouTube URL</span>
-                <input id="release-youtube" name="releaseYouTube" />
-              </label>
-              <label class="field">
-                <span>Bandcamp URL</span>
-                <input id="release-bandcamp" name="releaseBandcamp" />
-              </label>
-              <label class="field">
-                <span>Amazon Music URL</span>
-                <input id="release-amazon" name="releaseAmazon" />
-              </label>
-              <label class="field">
-                <span>YouTube Music URL</span>
-                <input id="release-youtube-music" name="releaseYouTubeMusic" />
-              </label>
-              <label class="field">
-                <span>Too.fm label</span>
-                <input id="release-presave-label" name="releasePresaveLabel" placeholder="Too.fm pre-save" />
-              </label>
-              <label class="field">
-                <span>Too.fm URL</span>
-                <input id="release-presave-url" name="releasePresaveUrl" />
-              </label>
-              <label class="field field--full">
-                <span>Pre-save note</span>
-                <textarea id="release-presave-note" name="releasePresaveNote" rows="2"></textarea>
-              </label>
-            </div>
+                <div class="editor-actions">
+                  <button class="button" type="submit">Save Release</button>
+                  <button class="button button--ghost" id="reset-release-form" type="button">
+                    Start New Release
+                  </button>
+                </div>
+              </form>
+            </article>
 
-            <div class="track-editor-list" id="track-editors"></div>
-
-            <div class="admin-actions">
-              <button class="button button--ghost" id="add-track" type="button">
-                Add Track
-              </button>
-              <button class="button" type="submit">Save Release</button>
-            </div>
-          </form>
+            <aside class="editor-panel editor-sticky">
+              <p class="eyebrow">Live Preview</p>
+              <div id="release-preview"></div>
+            </aside>
+          </div>
         </section>
 
-        <section class="page-section" id="current-catalog">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">Current Catalog</p>
-              <h2>Review what is live in the browser-saved catalog.</h2>
-            </div>
+        <section id="artist-profiles" class="reveal">
+          <div class="section-head">
+            <p class="eyebrow">Artist Profiles</p>
+            <h2>Shape the public, industry, press, and merch views per artist.</h2>
             <p>
-              Delete individual releases here or use the control buttons above
-              for a broader reset.
+              The release form can create a quick artist record, but this is
+              where you refine the copy and page content that supports each
+              artist landing page.
             </p>
           </div>
 
-          <div class="entry-list" id="release-list"></div>
+          <div class="editor-grid">
+            <article class="editor-panel">
+              <form id="artist-form" class="editor-form">
+                <div class="input-grid">
+                  <label class="field">
+                    <span>Edit artist</span>
+                    <select id="artist-profile-select" name="artistProfileSelect"></select>
+                  </label>
+                  <label class="field">
+                    <span>Artist name</span>
+                    <input id="artist-name" name="artistName" required />
+                  </label>
+                  <label class="field field--wide">
+                    <span>Artist lane</span>
+                    <input
+                      id="artist-lane"
+                      name="artistLane"
+                      placeholder="Roots noir / river-country writing"
+                    />
+                  </label>
+                  <label class="field">
+                    <span>Accent color</span>
+                    <input id="artist-accent" name="artistAccent" type="color" value="#ba7b2b" />
+                  </label>
+                  <label class="field field--wide">
+                    <span>Artist image path or URL</span>
+                    <input
+                      id="artist-image"
+                      name="artistImage"
+                      placeholder="media/public/artist-image.jpg"
+                    />
+                  </label>
+                  <label class="field">
+                    <span>Upload artist image</span>
+                    <input id="artist-image-upload" type="file" accept="image/*" />
+                  </label>
+                  <label class="field field--full">
+                    <span>Summary</span>
+                    <textarea id="artist-summary" name="artistSummary"></textarea>
+                  </label>
+                  <label class="field field--full">
+                    <span>Headline</span>
+                    <textarea id="artist-headline" name="artistHeadline"></textarea>
+                  </label>
+                  <label class="field field--full">
+                    <span>Story</span>
+                    <textarea id="artist-story" name="artistStory"></textarea>
+                  </label>
+                  <label class="field field--full">
+                    <span>Industry pitch</span>
+                    <textarea id="artist-industry-pitch" name="artistIndustryPitch"></textarea>
+                  </label>
+                  <label class="field field--full">
+                    <span>Press bio</span>
+                    <textarea id="artist-press-bio" name="artistPressBio"></textarea>
+                  </label>
+                  <label class="field field--full">
+                    <span>Press highlights</span>
+                    <textarea
+                      id="artist-press-highlights"
+                      name="artistPressHighlights"
+                      placeholder="One line per highlight"
+                    ></textarea>
+                  </label>
+                  <label class="field field--full">
+                    <span>Press assets</span>
+                    <textarea
+                      id="artist-press-assets"
+                      name="artistPressAssets"
+                      placeholder="One line per asset"
+                    ></textarea>
+                  </label>
+                  <label class="field field--full">
+                    <span>Merch intro</span>
+                    <textarea id="artist-merch-intro" name="artistMerchIntro"></textarea>
+                  </label>
+                </div>
+
+                <div class="dropzone__preview" id="artist-image-preview"></div>
+
+                <div class="editor-actions">
+                  <button class="button" type="submit">Save Artist Profile</button>
+                  <button class="button button--ghost" id="reset-artist-form" type="button">
+                    Start New Artist
+                  </button>
+                </div>
+              </form>
+            </article>
+
+            <aside class="editor-panel editor-sticky">
+              <p class="eyebrow">Current Artists</p>
+              <div class="release-list" id="artist-list"></div>
+            </aside>
+          </div>
         </section>
 
-        <section class="page-section" id="import-export">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">Import / Export</p>
-              <h2>Move the catalog in and out as JSON while we stay static-site simple.</h2>
-            </div>
+        <section id="current-catalog" class="reveal">
+          <div class="section-head">
+            <p class="eyebrow">Current Releases</p>
+            <h2>Review, edit, delete, or feature what is currently saved.</h2>
             <p>
-              Export the current browser catalog for backup, or import a JSON
-              file to replace the current saved data in one move.
+              The list below reflects the current local catalog data that the
+              public pages will read from.
             </p>
           </div>
 
-          <div class="panel-grid">
-            <article class="brand-panel">
-              <p class="eyebrow">Import</p>
-              <div class="field">
-                <span>Choose JSON file</span>
-                <input id="import-file" type="file" accept=".json,application/json" />
-              </div>
-              <div class="admin-actions">
-                <button class="button" id="import-json" type="button">
-                  Import From Text
+          <div class="release-list" id="release-list"></div>
+        </section>
+
+        <section id="export-tools" class="reveal">
+          <div class="section-head">
+            <p class="eyebrow">Import / Export</p>
+            <h2>Keep the data portable while the site stays static-site simple.</h2>
+            <p>
+              Download the current data as JSON or as a `public-data.js` publish
+              script, or import JSON when you want to replace the current local
+              catalog quickly.
+            </p>
+          </div>
+
+          <div class="surface-grid">
+            <article class="form-card">
+              <div class="editor-form">
+                <button class="button" id="download-json" type="button">
+                  Download JSON
                 </button>
-                <button class="button button--ghost" id="load-current-json" type="button">
+                <button class="button button--ghost" id="download-script" type="button">
+                  Download public-data.js
+                </button>
+                <button class="button button--ghost" id="load-json" type="button">
                   Load Current JSON
                 </button>
+                <button class="button button--ghost" id="reset-data" type="button">
+                  Reset To Seed Data
+                </button>
               </div>
             </article>
-            <article class="brand-panel">
-              <p class="eyebrow">Export note</p>
-              <p>
-                The public site now checks `catalog-published.js` before falling
-                back to the theme seed. Download the publish script here and
-                replace the repo file with it when you are ready to promote the
-                real catalog into source control.
-              </p>
+
+            <article class="form-card">
+              <div class="editor-form">
+                <label class="field">
+                  <span>Import JSON file</span>
+                  <input id="import-file" type="file" accept=".json,application/json" />
+                </label>
+                <button class="button" id="import-json" type="button">
+                  Import JSON From Preview
+                </button>
+                <p class="helper-line">
+                  Load the current JSON, edit it here if needed, then import it
+                  back into the browser catalog.
+                </p>
+              </div>
             </article>
           </div>
 
-          <textarea class="json-preview" id="catalog-json"></textarea>
+          <label class="field field--full">
+            <span>JSON preview</span>
+            <textarea class="json-preview" id="catalog-json"></textarea>
+          </label>
         </section>
       </main>
+
+      <footer class="page-footer">
+        <p>Pawn Island Records</p>
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="artists.html">Artists</a>
+          <a href="catalog.html">Releases</a>
+        </div>
+      </footer>
     </div>
 
-    <script src="data.js"></script>
-    <script src="catalog-published.js"></script>
-    <script src="youtube-stats-published.js"></script>
-    <script src="catalog-store.js"></script>
-    <script src="youtube-stats.js"></script>
-    <script src="theme.js"></script>
+    <script src="public-data.js"></script>
+    <script src="site-store.js"></script>
+    <script src="site-ui.js"></script>
     <script src="admin.js"></script>
-    <script src="admin-youtube.js"></script>
   </body>
 </html>

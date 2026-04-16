@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pawn Island Records | Releases</title>
+    <meta
+      name="description"
+      content="Browse release information, square cover art, track listings, and artist links across the Pawn Island Records catalog."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="public.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="page-header">
+        <a class="brand-lockup" href="index.html" aria-label="Pawn Island Records home">
+          <img
+            src="assets/brand/pawn-island-logo-1200.jpg"
+            alt="Pawn Island Records logo"
+          />
+          <span class="brand-lockup__copy">
+            <strong>Pawn Island Records</strong>
+            <span>Release catalog</span>
+          </span>
+        </a>
+
+        <nav class="page-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="artists.html">Artists</a>
+          <a href="catalog.html">Releases</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="button button--ghost" href="artists.html">Artist Pages</a>
+        </div>
+      </header>
+
+      <main>
+        <section class="reveal">
+          <div class="section-head">
+            <p class="eyebrow">Releases</p>
+            <h2>A dedicated release catalog, separate from the homepage.</h2>
+            <p>
+              Search the catalog by artist, release title, vibe, or track
+              titles. Covers stay square and the catalog page stays focused on
+              release browsing only.
+            </p>
+          </div>
+
+          <div class="surface-grid">
+            <article class="form-card">
+              <label class="field">
+                <span>Search releases</span>
+                <input
+                  id="catalog-search"
+                  type="search"
+                  placeholder="Try artist, title, vibe, or track"
+                />
+              </label>
+            </article>
+            <article class="form-card">
+              <label class="field">
+                <span>Artist</span>
+                <select id="catalog-artist"></select>
+              </label>
+            </article>
+          </div>
+
+          <p class="footer-note" id="catalog-summary">Loading releases...</p>
+          <div class="catalog-grid" id="catalog-grid"></div>
+        </section>
+      </main>
+
+      <footer class="page-footer">
+        <p>Pawn Island Records</p>
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="artists.html">Artists</a>
+        </div>
+      </footer>
+    </div>
+
+    <script src="public-data.js"></script>
+    <script src="site-store.js"></script>
+    <script src="site-ui.js"></script>
+    <script src="catalog.js"></script>
+  </body>
+</html>

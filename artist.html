@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artist | Pawn Island Records</title>
+    <meta
+      name="description"
+      content="Explore artist-specific public, industry, press kit, and merch views across the Pawn Island Records catalog."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="public.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="page-header">
+        <a class="brand-lockup" href="index.html" aria-label="Pawn Island Records home">
+          <img
+            src="assets/brand/pawn-island-logo-1200.jpg"
+            alt="Pawn Island Records logo"
+          />
+          <span class="brand-lockup__copy">
+            <strong>Pawn Island Records</strong>
+            <span>Artist worlds</span>
+          </span>
+        </a>
+
+        <nav class="page-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="artists.html">Artists</a>
+          <a href="catalog.html">Releases</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="button button--ghost" href="artists.html">Back to Roster</a>
+        </div>
+      </header>
+
+      <main id="artist-page">
+        <section class="artist-detail__grid reveal">
+          <article class="artist-detail__content">
+            <p class="eyebrow">Artist</p>
+            <h1 id="artist-title">Loading artist...</h1>
+            <div id="artist-meta"></div>
+            <div class="artist-view-nav" id="artist-view-nav" aria-label="Artist views"></div>
+          </article>
+
+          <div id="artist-hero-cover"></div>
+        </section>
+
+        <section class="reveal">
+          <div class="section-head">
+            <p class="eyebrow">Release Worlds</p>
+            <h2>One page for discovery, one release panel at a time.</h2>
+            <p>
+              Switch between releases for the selected artist, then move into
+              the public, industry, press, or merch view without losing the
+              release context.
+            </p>
+          </div>
+          <div class="artist-detail__grid">
+            <aside class="release-nav" id="artist-release-nav"></aside>
+            <div id="artist-release-detail"></div>
+          </div>
+        </section>
+
+        <section class="reveal">
+          <div id="artist-view"></div>
+        </section>
+      </main>
+
+      <footer class="page-footer">
+        <p>Pawn Island Records</p>
+        <div class="footer-links">
+          <a href="artists.html">Artists</a>
+          <a href="catalog.html">Releases</a>
+        </div>
+      </footer>
+    </div>
+
+    <script src="public-data.js"></script>
+    <script src="site-store.js"></script>
+    <script src="site-ui.js"></script>
+    <script src="artist.js"></script>
+  </body>
+</html>

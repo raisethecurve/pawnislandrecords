@@ -6,474 +6,113 @@
     <title>Pawn Island Records</title>
     <meta
       name="description"
-      content="Pawn Island Records is a multi-project independent label universe built by Matthew H. Freeman, spanning soul, country, hip-hop, doom, alternative rock, groove metal, and beyond."
+      content="Pawn Island Records presented as a single immersive release stage with cinematic transitions and a refined coverflow reel."
     />
-    <script src="theme-init.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="landing.css" />
   </head>
   <body>
-    <div class="page-noise" aria-hidden="true"></div>
-    <div class="page-orb page-orb--blue" aria-hidden="true"></div>
-    <div class="page-orb page-orb--yellow" aria-hidden="true"></div>
-    <div class="site-shell">
-      <header class="site-header">
-        <a class="brandmark" href="#top" aria-label="Pawn Island Records home">
-          <span class="brandmark__coin">P</span>
-          <span class="brandmark__text">
-            <strong>Pawn Island Records</strong>
-            <span>Independent soundscape label</span>
-          </span>
-        </a>
-
-        <nav class="site-nav" aria-label="Primary">
-          <a href="#artists">Artists</a>
-          <a href="#artist-dossier">Dossier</a>
-          <a href="#catalog">Releases</a>
-          <a href="#vault">Vault</a>
-          <a href="merch.html">Merch</a>
-          <a href="#control-room">Control Room</a>
-        </nav>
-
-        <div class="site-header__actions">
-          <a class="button button--ghost" href="admin.html">Admin</a>
-          <a class="button button--ghost" href="campaigns.html">Campaign Lab</a>
-          <a class="button button--ghost" href="brand-kit.html">Brand Kit</a>
-          <button
-            class="theme-toggle"
-            type="button"
-            data-theme-toggle
-            aria-label="Toggle day and night theme"
-          >
-            <span class="theme-toggle__label" data-theme-toggle-label>Theme</span>
-          </button>
-        </div>
-      </header>
-
-      <main id="top">
-        <section class="hero reveal">
-          <div class="hero__copy">
-            <p class="eyebrow">Glass Catalog System</p>
-            <h1>
-              Build a label universe that feels collectible, cinematic, and easy
-              to explore.
-            </h1>
-            <p class="hero__lede">
-              Pawn Island Records is a home for multiple artist identities,
-              distinct soundscape lanes, and release campaigns that should feel
-              intentional from first click through download, video, lyrics, and
-              superfan unlocks.
-            </p>
-
-            <div class="hero__actions">
-              <a class="button" href="#catalog">Explore The Catalog</a>
-              <a class="button button--ghost" href="admin.html">Open Data Entry</a>
-              <a class="button button--ghost" href="merch.html">Shop Merch</a>
-              <a class="button button--ghost" href="campaigns.html"
-                >Open Campaign Lab</a
-              >
-            </div>
-
-            <div class="hero__chips">
-              <span class="hero-chip">Glass UI</span>
-              <span class="hero-chip">Lyrics + YouTube</span>
-              <span class="hero-chip">MP3 + FLAC downloads</span>
-              <span class="hero-chip">Superfan unlocks</span>
-              <span class="hero-chip">Merch drops</span>
-              <span class="hero-chip">Day/night memory</span>
-            </div>
-
-            <div class="stats-grid" aria-label="Label statistics">
-              <article class="stat-card">
-                <span class="stat-card__value" id="artist-count">0</span>
-                <span class="stat-card__label">Active artist projects</span>
-              </article>
-              <article class="stat-card">
-                <span class="stat-card__value" id="release-count">0</span>
-                <span class="stat-card__label">Release entries in catalog</span>
-              </article>
-              <article class="stat-card">
-                <span class="stat-card__value" id="track-count">0</span>
-                <span class="stat-card__label">Tracks represented</span>
-              </article>
-              <article class="stat-card">
-                <span class="stat-card__value" id="presave-count">0</span>
-                <span class="stat-card__label">Upcoming pre-save campaigns</span>
-              </article>
-            </div>
-          </div>
-
-          <aside class="hero__feature" aria-labelledby="spotlight-title">
-            <div class="hero__feature-header">
-              <p class="eyebrow">Release Spotlight</p>
-              <span class="spotlight-kicker" id="spotlight-status"
-                >Loading release</span
-              >
-            </div>
-
-            <article class="spotlight-card">
-              <div class="spotlight-card__cover" id="spotlight-cover">
-                <span id="spotlight-initials">PI</span>
-              </div>
-              <div class="spotlight-card__body">
-                <h2 id="spotlight-title">Catalog loading</h2>
-                <p class="spotlight-card__meta" id="spotlight-meta"></p>
-                <p id="spotlight-description"></p>
-                <div class="spotlight-card__links" id="spotlight-links"></div>
-              </div>
-            </article>
-
-            <div class="hero__notes">
-              <p>Built to support:</p>
-              <ul>
-                <li>Lyrics and YouTube video for every track</li>
-                <li>Catalog downloads and locked superfan offers</li>
-                <li>Artist dossier and release-readiness views</li>
-                <li>A/B test landing pages and brand-system continuity</li>
-              </ul>
-            </div>
-          </aside>
-        </section>
-
-        <section class="utility-band reveal">
-          <article class="utility-band__card">
-            <p class="eyebrow">Campaign Lab</p>
-            <h2>Spin up landing pages for each artist and release.</h2>
-            <p>
-              A/B test emotional, conversion-first, or video-first variants
-              without breaking the main catalog.
-            </p>
-            <a class="button" href="campaigns.html">View Landing Variants</a>
-          </article>
-          <article class="utility-band__card">
-            <p class="eyebrow">Brand Kit</p>
-            <h2>Lock the visual system before the catalog gets bigger.</h2>
-            <p>
-              Black, white, superbee yellow, and electric royal blue now anchor
-              the site across glass panels, CTAs, and campaign mockups.
-            </p>
-            <a class="button button--ghost" href="brand-kit.html"
-              >Open Brand Kit</a
-            >
-          </article>
-          <article class="utility-band__card">
-            <p class="eyebrow">Merch Store</p>
-            <h2>Pair the catalog with apparel, prints, and collector goods.</h2>
-            <p>
-              Build artist-specific merch drops, label-core pieces, and bundle
-              ideas that sit naturally beside streaming, downloads, and
-              superfan offers.
-            </p>
-            <a class="button" href="merch.html">Open Merch Page</a>
-          </article>
-        </section>
-
-        <section class="artists reveal" id="artists">
-          <div class="section-heading">
-            <p class="eyebrow">Artist Worlds</p>
-            <h2>Every project gets its own atmosphere.</h2>
-            <p>
-              The label can feel cohesive without flattening the artists into
-              one voice. This grid introduces each lane while the dossier and
-              campaign lab take them deeper.
-            </p>
-          </div>
-
-          <div class="artist-grid" id="artist-grid"></div>
-        </section>
-
-        <section class="artist-dossier reveal" id="artist-dossier">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">Artist Dossier</p>
-              <h2>Start treating each pen name like its own world.</h2>
-            </div>
-            <p>
-              This section is the bridge toward full artist pages: deeper story,
-              release context, signature traits, and press-readiness notes for
-              each project.
-            </p>
-          </div>
-
-          <div class="artist-dossier__layout">
-            <div
-              class="artist-selector"
-              id="artist-selector"
-              aria-label="Choose an artist"
-            ></div>
-            <article class="artist-profile" id="artist-profile"></article>
-          </div>
-        </section>
-
-        <section class="catalog reveal" id="catalog">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">Release Catalog</p>
-              <h2>Search the label by artist, vibe, or campaign status.</h2>
-            </div>
-            <p>
-              Singles now auto-open their track list, and every track can route
-              into lyrics, YouTube video, catalog downloads, and locked superfan
-              offers.
-            </p>
-          </div>
-
-          <div class="filters" aria-label="Catalog filters">
-            <label class="field">
-              <span>Search releases</span>
-              <input
-                id="search-input"
-                type="search"
-                placeholder="Try artist, title, mood, or genre"
-              />
-            </label>
-
-            <label class="field">
-              <span>Artist</span>
-              <select id="artist-filter">
-                <option value="all">All artists</option>
-              </select>
-            </label>
-
-            <label class="field">
-              <span>Genre</span>
-              <select id="genre-filter">
-                <option value="all">All genres</option>
-              </select>
-            </label>
-          </div>
-
-          <div class="status-tabs" role="tablist" aria-label="Release status">
-            <button
-              class="status-tab is-active"
-              type="button"
-              data-status="all"
-              role="tab"
-              aria-selected="true"
-            >
-              All
-            </button>
-            <button
-              class="status-tab"
-              type="button"
-              data-status="out"
-              role="tab"
-              aria-selected="false"
-            >
-              Out now
-            </button>
-            <button
-              class="status-tab"
-              type="button"
-              data-status="presave"
-              role="tab"
-              aria-selected="false"
-            >
-              Pre-save
-            </button>
-            <button
-              class="status-tab"
-              type="button"
-              data-status="archive"
-              role="tab"
-              aria-selected="false"
-            >
-              Archive
-            </button>
-          </div>
-
-          <div class="catalog-summary">
-            <p id="results-summary">Loading releases...</p>
-          </div>
-
-          <div class="release-grid" id="release-grid"></div>
-        </section>
-
-        <section class="listener-vault reveal" id="vault">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">Listener Vault</p>
-              <h2>Direct-to-fan downloads and locked superfan offers.</h2>
-            </div>
-            <p>
-              Fans should be able to go deeper than streaming. This vault lists
-              what can be downloaded now and which premium bundles still need a
-              checkout connection.
-            </p>
-          </div>
-
-          <div class="vault-summary" id="vault-summary"></div>
-          <div class="vault-grid" id="vault-grid"></div>
-        </section>
-
-        <section class="page-section reveal" id="merch-preview">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">Merch Preview</p>
-              <h2>Give each release a physical and visual afterlife.</h2>
-            </div>
-            <p>
-              The merch lane can support artist identity, limited drops, and
-              bundle thinking without forcing every project into the same
-              template.
-            </p>
-          </div>
-
-          <div class="merch-grid" id="merch-preview-grid"></div>
-          <div class="hero__actions">
-            <a class="button" href="merch.html">Visit Merch Storefront</a>
-          </div>
-        </section>
-
-        <section class="control-room reveal" id="control-room">
-          <div class="section-heading section-heading--split">
-            <div>
-              <p class="eyebrow">Control Room</p>
-              <h2>See what the label site still needs before each release feels complete.</h2>
-            </div>
-            <p>
-              The site should eventually help you manage rollouts, not just show
-              them. This dashboard surfaces missing destinations, pre-save
-              readiness, and the next obvious action for each release.
-            </p>
-          </div>
-
-          <div class="section-heading section-heading--split control-room__subhead">
-            <div>
-              <p class="eyebrow">YouTube Pulse</p>
-              <h3>Show the latest published video snapshot without exposing the key.</h3>
-            </div>
-            <p>
-              Staff can refresh this in the admin page, then publish the newest
-              static pulse file into the repo so fans see current movement while
-              the site stays static-host friendly.
-            </p>
-          </div>
-
-          <div class="control-summary" id="youtube-pulse-summary"></div>
-          <div class="control-grid" id="youtube-pulse-grid"></div>
-
-          <div class="section-heading section-heading--split control-room__subhead">
-            <div>
-              <p class="eyebrow">Release Readiness</p>
-              <h3>Track missing destinations and rollout gaps across the catalog.</h3>
-            </div>
-            <p>
-              This keeps the broader release operation visible even while the
-              first live DSP metrics layer is now running on YouTube.
-            </p>
-          </div>
-
-          <div class="control-summary" id="control-summary"></div>
-          <div class="control-grid" id="control-grid"></div>
-        </section>
-
-        <section class="platform-strip reveal" aria-label="Supported release actions">
-          <div class="platform-strip__copy">
-            <p class="eyebrow">Link Routing</p>
-            <h2>One place for discovery, streaming, video, and fan ownership.</h2>
-          </div>
-          <div class="platform-strip__chips" id="platform-chip-list"></div>
-        </section>
-
-        <section class="next-steps reveal" id="next-steps">
-          <div class="section-heading">
-            <p class="eyebrow">After This Build</p>
-            <h2>These are the next upgrades after the glass catalog foundation.</h2>
-            <p>
-              The site now has the start of a catalog engine, video layer,
-              download vault, theme system, campaign lab, and brand kit. These
-              are the next features that push it toward a full label platform.
-            </p>
-          </div>
-
-          <div class="roadmap-grid" id="roadmap-grid"></div>
-        </section>
-
-        <section class="about reveal" id="about">
-          <div class="about__panel">
-            <p class="eyebrow">About The Label</p>
-            <h2>Pawn Island Records can feel like one world with many climates.</h2>
-            <p>
-              That's the core challenge this site is solving. Instead of making
-              every artist conform to one look or one sonic identity, the site
-              should hold a full ecosystem: soul, country, singer-songwriter,
-              hip-hop, stoner doom, alternative rock, groove metal, and
-              whatever arrives next.
-            </p>
-            <p>
-              This version gives the label a stronger front door and a clearer
-              operating system: a visual identity, flexible campaign surfaces,
-              richer release cards, and a direct-to-listener lane that can grow
-              into real commerce.
-            </p>
-          </div>
-
-          <div class="about__panel about__panel--contrast">
-            <p class="eyebrow">What This Build Proves</p>
-            <ul class="about__list">
-              <li>The roster can support many pen names without feeling messy.</li>
-              <li>Every release can hold streaming, video, lyrics, and downloads.</li>
-              <li>The visual system can shift between day and night without losing identity.</li>
-              <li>Artist and release campaigns can branch into testable landing pages.</li>
-            </ul>
-          </div>
-        </section>
-      </main>
-
-      <footer class="site-footer">
-        <p>Pawn Island Records glass catalog starter</p>
-        <p>Built as a launch-ready foundation for the full label ecosystem.</p>
-      </footer>
-    </div>
-
-    <div class="media-modal" id="media-modal" hidden>
-      <div class="media-modal__backdrop" data-close-modal></div>
-      <div
-        class="media-modal__dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="media-modal-title"
-      >
-        <button
-          class="media-modal__close"
-          type="button"
-          data-close-modal
-          aria-label="Close track modal"
-        >
-          Close
-        </button>
-        <div class="media-modal__meta">
-          <p class="eyebrow">Track Lounge</p>
-          <h2 id="media-modal-title">Track details</h2>
-          <p class="media-modal__subtitle" id="media-modal-subtitle"></p>
-        </div>
-        <div class="media-modal__grid">
-          <div class="media-panel media-panel--video">
-            <p class="eyebrow">YouTube Video</p>
-            <div class="video-frame" id="media-modal-video"></div>
-          </div>
-          <div class="media-panel">
-            <p class="eyebrow">Lyrics</p>
-            <pre class="lyrics-block" id="media-modal-lyrics"></pre>
-          </div>
-        </div>
-        <div class="media-modal__downloads" id="media-modal-downloads"></div>
+    <div class="experience" id="top">
+      <div class="experience__backdrop" aria-hidden="true">
+        <div class="experience__image experience__image--active" id="bg-active"></div>
+        <div class="experience__image" id="bg-buffer"></div>
+        <div class="experience__wash"></div>
+        <div class="experience__grid"></div>
+        <div class="experience__noise"></div>
+        <div class="experience__vignette"></div>
+        <div class="experience__beam"></div>
       </div>
+
+      <main class="stage">
+        <header class="masthead">
+          <a class="brand-lockup" href="#top" aria-label="Pawn Island Records">
+            <img
+              src="assets/brand/pawn-island-logo-1200.jpg"
+              alt="Pawn Island Records logo"
+            />
+            <span class="brand-lockup__copy">
+              <strong>Pawn Island Records</strong>
+              <span>Immersive release stage</span>
+            </span>
+          </a>
+
+          <div class="masthead__meta">
+            <span class="masthead__line"></span>
+            <span id="release-index"></span>
+          </div>
+        </header>
+
+        <section class="hero" aria-label="Pawn Island Records release experience">
+          <div class="hero__copy">
+            <p class="eyebrow">Pawn Island Records</p>
+            <h1>Release worlds in motion.</h1>
+            <p class="hero__lede">
+              A single-screen visual identity built around the mark, the
+              atmosphere of the releases, and a cinematic reel of projects in orbit.
+            </p>
+
+            <div class="hero__release">
+              <p class="hero__release-kicker" id="release-kicker"></p>
+              <h2 id="release-title"></h2>
+              <p class="hero__release-artist" id="release-artist"></p>
+              <p class="hero__release-summary" id="release-summary"></p>
+              <div class="hero__tags" id="release-tags"></div>
+            </div>
+          </div>
+
+          <div class="coverflow" id="coverflow">
+            <div class="coverflow__logo-ghost" aria-hidden="true">
+              <img
+                src="assets/brand/pawn-island-logo-1200.jpg"
+                alt=""
+              />
+            </div>
+
+            <button
+              class="coverflow__slide coverflow__slide--prev"
+              id="prev-stage"
+              type="button"
+              aria-label="Previous release"
+            ></button>
+
+            <article class="coverflow__slide coverflow__slide--active" id="active-stage"></article>
+
+            <button
+              class="coverflow__slide coverflow__slide--next"
+              id="next-stage"
+              type="button"
+              aria-label="Next release"
+            ></button>
+          </div>
+        </section>
+
+        <footer class="reel" id="reel">
+          <div class="reel__controls">
+            <button class="reel__button" id="prev-release" type="button">Prev</button>
+            <button class="reel__button reel__button--primary" id="next-release" type="button">
+              Next
+            </button>
+          </div>
+
+          <div class="reel__progress" aria-hidden="true">
+            <span id="progress-bar"></span>
+          </div>
+
+          <div class="reel__viewport">
+            <div class="reel__track" id="carousel-track"></div>
+          </div>
+        </footer>
+      </main>
     </div>
 
-    <script src="data.js"></script>
-    <script src="catalog-published.js"></script>
-    <script src="youtube-stats-published.js"></script>
-    <script src="catalog-store.js"></script>
-    <script src="youtube-stats.js"></script>
-    <script src="theme.js"></script>
-    <script src="app.js"></script>
-    <script src="youtube-pulse.js"></script>
+    <script src="public-data.js"></script>
+    <script src="site-store.js"></script>
+    <script src="site-ui.js"></script>
+    <script src="landing.js"></script>
   </body>
 </html>
