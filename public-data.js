@@ -5,6 +5,41 @@ window.PAWN_PUBLIC_DATA = {
     intro:
       "Pawn Island Records presents a catalog of distinct project identities, visual worlds, and release campaigns built to be explored cleanly.",
     featuredReleaseSlug: "rhea-mauro-hearthblood",
+    catalogPlaylistUrl: "https://open.spotify.com/playlist/7ru1FJZS5qFXAbrNlh5YwZ",
+    streamingPlatforms: [
+      "Spotify",
+      "YouTube Music",
+      "Apple Music",
+      "Amazon Music",
+      "iHeartRadio",
+      "Pandora",
+      "QQMusic",
+      "Tidal"
+    ],
+    aboutText:
+      "Pawn Island Records is building around a vibe-first mentality: the feeling should land before the explanation does. We release the music, watch which visual and emotional cues actually resonate, and then iterate the world from what feels alive. Each artist gets room to become a distinct universe instead of being forced into a finished brand system too early. The goal is a catalog that grows through signal, repetition, and intent.",
+    ethos:
+      "Start with the vibe. Release the record. Let the world sharpen through repetition, response, and intent.",
+    timeline: [
+      {
+        label: "01",
+        title: "Vibe First",
+        text:
+          "Atmosphere, tone, and emotional signal come before over-explaining the concept. If a listener can feel the world immediately, the release is already working."
+      },
+      {
+        label: "02",
+        title: "Release Then Iterate",
+        text:
+          "We do not wait for a giant lore package before the music moves. The release goes live first, then the strongest visuals, language, and campaign angles are refined from real response."
+      },
+      {
+        label: "03",
+        title: "Worlds That Earn Detail",
+        text:
+          "Each project builds its own symbols, textures, and pacing over time. World-building is treated as something discovered through repeat releases, not imposed all at once."
+      }
+    ],
     platformPresets: [
       "Spotify",
       "Apple Music",
@@ -175,33 +210,34 @@ window.PAWN_PUBLIC_DATA = {
     },
     {
       slug: "matt-freeman",
-      name: "Matt Freeman",
-      lane: "Writer snapshots / standalone cuts",
+      name: "Matthew Freeman",
+      lane: "Sound / language / atmosphere",
       accent: "#7b362b",
       image: "media/public/matt-freeman-morris-trash.jpg",
       summary:
-        "Concise side releases that feel personal, pointed, and intentionally self-contained.",
+        "A multidisciplinary creator building dark, disciplined release worlds from sound, language, and atmosphere.",
       headline:
-        "A flexible writer-led outlet for direct, memorable standalone material.",
+        "Industrial texture, electronic movement, and cinematic tension shaped into emotionally precise songs.",
       story:
-        "Matt Freeman is the lane for releases that do not need a large campaign architecture to land. The focus is immediacy, voice, and a strong frame around a single idea.",
+        "Matthew Freeman works at the intersection of sound, language, and atmosphere. Rather than chasing fixed genre lines, he builds each track around mood, narrative, and emotional impact, creating work that feels immersive, visceral, and alive with inner pressure.",
       industryPitch:
-        "Works best when kept concise, with one clear image, one clear title, and no excess framing around it.",
+        "Best framed as intention-led world-building: clear emotional direction, disciplined release visuals, and music shaped as much by authorship and sound design as by genre language.",
       pressBio:
-        "Matt Freeman releases are lean and direct by design. They serve the material itself, making room for one-off statements without forcing them into a larger project mythology.",
+        "Matthew Freeman is a multidisciplinary creator working at the intersection of sound, language, and atmosphere. Drawing on industrial texture, electronic movement, and cinematic tension, he builds songs around mood, narrative, and emotional impact rather than fixed genre boundaries. The result is a body of work that feels dark, disciplined, immersive, and emotionally precise.",
       pressHighlights: [
-        "Ideal for standalone rollouts",
-        "Direct copy and low-friction presentation",
-        "Useful for between-cycle releases and project snapshots"
+        "Industrial texture with electronic movement",
+        "Mood-first writing with cinematic tension",
+        "Release worlds shaped by resilience, transformation, and identity under pressure"
       ],
       pressAssets: [
+        "Public bio",
+        "Creative process statement",
         "Square cover art",
         "Artist note",
-        "Track details",
-        "Short bio"
+        "Track details"
       ],
       merchIntro:
-        "Matt Freeman merch should stay minimal and idea-led rather than campaign-heavy."
+        "Matthew Freeman merch should extend the atmosphere of the work: disciplined, tactile, and emotionally loaded rather than decorative."
     },
     {
       slug: "blackout-state",
@@ -307,7 +343,16 @@ window.PAWN_PUBLIC_DATA = {
       cover: "media/public/rhea-hearthblood.jpg",
       description:
         "A songwriter world built around voice, weather, home, and the kind of emotional detail that grows larger the longer it lingers.",
-      platforms: [],
+      youtubeId: "ufrYH6hyT3Q",
+      primaryEmbedLabel: "Spotify",
+      primaryEmbedUrl:
+        "https://open.spotify.com/embed/track/27tmWIHA2BkQauKlFuDPQG?utm_source=generator",
+      platforms: [
+        {
+          label: "Spotify",
+          url: "https://open.spotify.com/track/27tmWIHA2BkQauKlFuDPQG"
+        }
+      ],
       tracks: [
         { title: "About The Town", runtime: "", youtubeId: "" },
         { title: "Elianna", runtime: "", youtubeId: "" },

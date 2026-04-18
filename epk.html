@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artist Press Kit | Pawn Island Records</title>
+    <meta
+      name="description"
+      content="Artist press kit for Pawn Island Records with positioning, bio, media, and release context."
+    />
+    <script src="site-shell-bootstrap.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=League+Spartan:wght@600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="label-site.css" />
+    <link rel="stylesheet" href="site-audio.css" />
+  </head>
+  <body data-page="epk">
+    <div class="label-page">
+      <header class="label-header">
+        <a class="brand-mark" href="index.html" aria-label="Pawn Island Records home">
+          <img
+            src="assets/brand/pawn-island-logo-1200.jpg"
+            alt="Pawn Island Records logo"
+          />
+          <span class="brand-mark__copy">
+            <strong>Pawn Island Records</strong>
+            <span>Artist Press</span>
+          </span>
+        </a>
+
+        <nav class="label-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="artists.html">Artists</a>
+          <a href="about.html">About</a>
+          <a href="epks.html" aria-current="page">Press</a>
+        </nav>
+      </header>
+
+      <main class="label-main">
+        <section class="panel-shell epk-page-shell" id="epk-page-panel" aria-labelledby="epk-page-title">
+          <div class="epk-page-hero">
+            <article class="epk-page-copy">
+              <p class="section-kicker">Press Kit</p>
+              <h1 id="epk-page-title">Loading press kit...</h1>
+              <p class="epk-page-copy__lane" id="epk-page-lane"></p>
+              <p class="epk-page-copy__summary" id="epk-page-summary"></p>
+              <p class="epk-page-copy__body" id="epk-page-body"></p>
+              <div class="action-row" id="epk-page-actions"></div>
+            </article>
+
+            <aside class="epk-page-aside">
+              <div class="epk-page-visual" id="epk-page-visual"></div>
+              <div class="epk-stat-grid" id="epk-page-stats" aria-label="Artist press kit stats"></div>
+            </aside>
+          </div>
+
+          <section class="epk-stage-shell" aria-labelledby="epk-stage-title">
+            <div class="rail-header">
+              <div>
+                <p class="section-kicker">Press Materials</p>
+                <h2 id="epk-stage-title">Kit Views</h2>
+              </div>
+              <p class="rail-copy" id="epk-stage-copy">
+                Switch between overview, bio, catalog, media, and assets.
+              </p>
+            </div>
+            <div class="artist-media-panel">
+              <div class="artist-media-panel__views" id="epk-page-views"></div>
+              <div class="artist-media-panel__stage" id="epk-page-stage"></div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="public-data.js"></script>
+    <script src="site-store.js"></script>
+    <script src="site-ui.js"></script>
+    <script src="label-site.js"></script>
+    <script src="site-audio-config.js"></script>
+    <script src="site-audio.js"></script>
+  </body>
+</html>

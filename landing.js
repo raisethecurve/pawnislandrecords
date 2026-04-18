@@ -29,7 +29,7 @@
       title: String(release.title || `Release ${index + 1}`).trim(),
       type: String(release.type || "Release").trim(),
       year: String(release.year || "").trim(),
-      cover: String(release.cover || (artist && artist.image) || "assets/brand/pawn-island-logo-1200.jpg").trim(),
+      cover: String(release.cover || (artist && artist.image) || "").trim(),
       accent: String(release.accent || (artist && artist.accent) || "#d8c7a1").trim(),
       summary: String(release.description || (artist && artist.summary) || "").trim(),
       tags: [...new Set([...vibeTags, ...laneTags])].slice(0, 4)
@@ -52,15 +52,15 @@
   const releaseArtist = document.getElementById("release-artist");
   const releaseSummary = document.getElementById("release-summary");
   const releaseTags = document.getElementById("release-tags");
+  const openRelease = document.getElementById("open-release");
+  const openArtist = document.getElementById("open-artist");
   const prevStage = document.getElementById("prev-stage");
   const activeStage = document.getElementById("active-stage");
   const nextStage = document.getElementById("next-stage");
   const prevButton = document.getElementById("prev-release");
   const nextButton = document.getElementById("next-release");
-  const progressBar = document.getElementById("progress-bar");
-  const carouselTrack = document.getElementById("carousel-track");
+  const inlineReleaseIndex = document.getElementById("release-index-inline");
   const heroMark = document.getElementById("coverflow");
-  const reel = document.getElementById("reel");
 
   function syncViewportHeight() {
     document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
@@ -68,6 +68,12 @@
 
   function releaseUrl(release) {
     return `release.html?release=${encodeURIComponent(release.slug)}`;
+  }
+
+  function artistUrl(release) {
+    return release.artistSlug
+      ? `artist.html?artist=${encodeURIComponent(release.artistSlug)}`
+      : "artists.html";
   }
 
   function hexToRgba(hex, alpha) {
@@ -102,11 +108,21 @@
     const cta = config.link
       ? '<span class="coverflow__slide-cta">Open release</span>'
       : "";
+    const artwork = ui && ui.artworkImageMarkup
+      ? ui.artworkImageMarkup({
+          src: release.cover,
+          title: release.title,
+          subtitle: release.artist,
+          accent: release.accent,
+          alt: `${release.title} cover art`,
+          loading: config.link ? "eager" : "lazy"
+        })
+      : `<img src="${release.cover}" alt="${release.title} cover art" />`;
 
     return `
       <${wrapperTag} class="coverflow__slide-link"${href}>
         <div class="coverflow__slide-inner">
-          <img src="${release.cover}" alt="${release.title} cover art" />
+          ${artwork}
           <div class="coverflow__slide-label">
             <strong>${release.title}</strong>
             <span>${label}</span>
@@ -117,28 +133,6 @@
     `;
   }
 
-  function renderTrack() {
-    carouselTrack.innerHTML = releases
-      .map(
-        (release, index) => `
-          <a
-            class="reel-item ${index === state.activeIndex ? "is-active" : ""}"
-            href="${releaseUrl(release)}"
-            data-release-index="${index}"
-            aria-current="${index === state.activeIndex ? "true" : "false"}"
-          >
-            <span class="reel-item__thumb">
-              <img src="${release.cover}" alt="${release.title} cover art" />
-            </span>
-            <p class="reel-item__title">${release.title}</p>
-            <p class="reel-item__artist">${release.artist}</p>
-            ${index === state.activeIndex ? '<span class="reel-item__hint">Open release</span>' : ""}
-          </a>
-        `
-      )
-      .join("");
-  }
-
   function renderCoverflow() {
     const total = releases.length;
     const previousIndex = (state.activeIndex - 1 + total) % total;
@@ -147,7 +141,7 @@
     const active = releases[state.activeIndex];
     const next = releases[nextIndex];
 
-    prevStage.innerHTML = stageMarkup(previous, previous.artist);
+    prevStage.innerHTML = stageMarkup(previous, previous.artist, { link: true });
     prevStage.dataset.targetIndex = String(previousIndex);
 
     activeStage.innerHTML = stageMarkup(
@@ -156,8 +150,14 @@
       { link: true }
     );
 
-    nextStage.innerHTML = stageMarkup(next, next.artist);
+    nextStage.innerHTML = stageMarkup(next, next.artist, { link: true });
     nextStage.dataset.targetIndex = String(nextIndex);
+
+    if (ui && ui.hydrateArtwork) {
+      ui.hydrateArtwork(prevStage);
+      ui.hydrateArtwork(activeStage);
+      ui.hydrateArtwork(nextStage);
+    }
   }
 
   function renderActiveRelease() {
@@ -167,9 +167,17 @@
       return;
     }
 
-    setBackdropImage(release.cover);
+    setBackdropImage(
+      ui && ui.resolveArtwork
+        ? ui.resolveArtwork(release.cover, {
+            title: release.title,
+            subtitle: release.artist,
+            accent: release.accent,
+            format: "landscape"
+          })
+        : release.cover
+    );
     renderCoverflow();
-    renderTrack();
 
     releaseKicker.textContent = release.year ? `${release.type} / ${release.year}` : `${release.type} / Release`;
     releaseTitle.textContent = release.title;
@@ -177,19 +185,13 @@
     releaseSummary.textContent = release.summary;
     releaseTags.innerHTML = release.tags.map((tag) => `<span class="chip">${tag}</span>`).join("");
     releaseIndex.textContent = `${String(state.activeIndex + 1).padStart(2, "0")} / ${String(releases.length).padStart(2, "0")}`;
-    progressBar.style.width = `${((state.activeIndex + 1) / releases.length) * 100}%`;
+    if (inlineReleaseIndex) {
+      inlineReleaseIndex.textContent = releaseIndex.textContent;
+    }
     document.documentElement.style.setProperty("--release-glow", hexToRgba(release.accent, 0.22));
     document.documentElement.style.setProperty("--release-accent", release.accent);
-
-    const activeThumb = carouselTrack.querySelector(".reel-item.is-active");
-
-    if (activeThumb) {
-      activeThumb.scrollIntoView({
-        behavior: state.reduceMotion ? "auto" : "smooth",
-        inline: "center",
-        block: "nearest"
-      });
-    }
+    openRelease.href = releaseUrl(release);
+    openArtist.href = artistUrl(release);
   }
 
   function setActiveRelease(index) {
@@ -224,16 +226,6 @@
     });
 
     nextButton.addEventListener("click", () => {
-      nextRelease();
-      restartCycle();
-    });
-
-    prevStage.addEventListener("click", () => {
-      previousRelease();
-      restartCycle();
-    });
-
-    nextStage.addEventListener("click", () => {
       nextRelease();
       restartCycle();
     });
@@ -275,16 +267,16 @@
   }
 
   function bindSwipe() {
-    if (!reel) {
+    if (!heroMark) {
       return;
     }
 
-    reel.addEventListener("touchstart", (event) => {
+    heroMark.addEventListener("touchstart", (event) => {
       const touch = event.changedTouches[0];
       state.touchStartX = touch ? touch.clientX : 0;
     }, { passive: true });
 
-    reel.addEventListener("touchend", (event) => {
+    heroMark.addEventListener("touchend", (event) => {
       const touch = event.changedTouches[0];
       const endX = touch ? touch.clientX : 0;
       const delta = endX - state.touchStartX;
@@ -306,16 +298,18 @@
   function renderEmptyState() {
     prevButton.disabled = true;
     nextButton.disabled = true;
-    prevStage.disabled = true;
-    nextStage.disabled = true;
     releaseKicker.textContent = "Catalog";
-    releaseTitle.textContent = "Release worlds coming into focus.";
-    releaseArtist.textContent = "Pawn Island Records";
+    releaseTitle.textContent = "Releases coming into focus.";
+    releaseArtist.textContent = "Label catalog";
     releaseSummary.textContent =
       "Add public releases to the shared catalog and the landing page will stage them here automatically.";
     releaseTags.innerHTML = "";
     releaseIndex.textContent = "00 / 00";
-    progressBar.style.width = "0%";
+    if (inlineReleaseIndex) {
+      inlineReleaseIndex.textContent = "00 / 00";
+    }
+    openRelease.href = "catalog.html";
+    openArtist.href = "artists.html";
     document.documentElement.style.setProperty("--release-glow", hexToRgba("#d8c7a1", 0.18));
     document.documentElement.style.setProperty("--release-accent", "#d8c7a1");
   }

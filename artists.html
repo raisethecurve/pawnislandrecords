@@ -6,68 +6,64 @@
     <title>Pawn Island Records | Artists</title>
     <meta
       name="description"
-      content="Browse the artist roster at Pawn Island Records and jump directly into each project's public, industry, press kit, or merch view."
+      content="Browse the Pawn Island Records roster in a clean no-scroll discovery view."
     />
+    <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=League+Spartan:wght@600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="public.css" />
+    <link rel="stylesheet" href="label-site.css" />
+    <link rel="stylesheet" href="site-audio.css" />
   </head>
-  <body>
-    <div class="page-shell">
-      <header class="page-header">
-        <a class="brand-lockup" href="index.html" aria-label="Pawn Island Records home">
+  <body data-page="artists">
+    <div class="label-page">
+      <header class="label-header">
+        <a class="brand-mark" href="index.html" aria-label="Pawn Island Records home">
           <img
             src="assets/brand/pawn-island-logo-1200.jpg"
             alt="Pawn Island Records logo"
           />
-          <span class="brand-lockup__copy">
+          <span class="brand-mark__copy">
             <strong>Pawn Island Records</strong>
-            <span>Artist roster</span>
+            <span>Artists &amp; projects</span>
           </span>
         </a>
 
-        <nav class="page-nav" aria-label="Primary">
+        <nav class="label-nav" aria-label="Primary">
           <a href="index.html">Home</a>
-          <a href="artists.html">Artists</a>
-          <a href="catalog.html">Releases</a>
+          <a href="artists.html" aria-current="page">Artists</a>
+          <a href="about.html">About</a>
+          <a href="epks.html">Press</a>
         </nav>
-
-        <div class="header-actions">
-          <a class="button button--ghost" href="catalog.html">Release Catalog</a>
-        </div>
       </header>
 
-      <main>
-        <section class="reveal">
-          <div class="section-head">
-            <p class="eyebrow">Artists</p>
-            <h2>Each project gets its own clean landing path.</h2>
-            <p>
-              Open the public story, industry framing, press kit, or merch view
-              for any artist without making the homepage carry every purpose at
-              once.
-            </p>
+      <main class="label-main">
+        <section class="panel-shell artists-panel" aria-labelledby="artists-title">
+          <div class="panel-header">
+            <div>
+              <p class="section-kicker">Artists</p>
+              <h1 id="artists-title">Artists &amp; Projects</h1>
+            </div>
+            <div class="panel-note">
+              <p>
+                A multi-project label built to let each lane feel distinct while staying easy to discover.
+              </p>
+            </div>
           </div>
-          <div class="artists-grid" id="artists-grid"></div>
+
+          <div class="artists-grid" id="artists-collection" aria-label="Artist grid"></div>
         </section>
       </main>
-
-      <footer class="page-footer">
-        <p>Pawn Island Records</p>
-        <div class="footer-links">
-          <a href="index.html">Home</a>
-          <a href="catalog.html">Releases</a>
-        </div>
-      </footer>
     </div>
 
     <script src="public-data.js"></script>
     <script src="site-store.js"></script>
     <script src="site-ui.js"></script>
-    <script src="artists.js"></script>
+    <script src="label-site.js"></script>
+    <script src="site-audio-config.js"></script>
+    <script src="site-audio.js"></script>
   </body>
 </html>

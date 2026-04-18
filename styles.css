@@ -3,3 +3,42 @@
 @import url("./styles/layout.css");
 @import url("./styles/components.css");
 @import url("./styles/responsive.css");
+
+.brandmark {
+  gap: 1rem;
+}
+
+.brandmark__coin {
+  width: 3.8rem;
+  height: 3.8rem;
+  border-radius: 1.15rem;
+  font-size: 1.8rem;
+  box-shadow:
+    0 24px 44px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.brandmark__text {
+  display: grid;
+  gap: 0.16rem;
+}
+
+.brandmark__text strong {
+  font-size: 1.08rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.brandmark__text span {
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 800px) {
+  .brandmark__coin {
+    width: 3.25rem;
+    height: 3.25rem;
+    font-size: 1.55rem;
+  }
+}

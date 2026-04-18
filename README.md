@@ -3,6 +3,8 @@
 This repo now contains a cleaner multi-page static site for Pawn Island Records, built around a simple public-facing flow:
 
 - `index.html` is the homepage landing page with one featured release.
+- `about.html` is the public-facing bio page for Matthew Freeman.
+- `process.html` is the public creative process page.
 - `artists.html` is the public roster page.
 - `artist.html` is the per-artist landing page, with `public`, `industry`, `press`, and `merch` views controlled by query params.
 - `catalog.html` is the release catalog page.
@@ -14,8 +16,24 @@ This repo now contains a cleaner multi-page static site for Pawn Island Records,
 - `site-store.js` manages the browser-saved local override in `localStorage`.
 - `site-ui.js` provides shared helpers for artist/release lookups and simple reveal animations.
 - `public.css` is the shared design system for the public pages and editor.
+- `site-audio-config.js` is the single place to point the site-wide background player at an audio file.
+- `site-audio.js` restores background music state across page loads in the same tab.
+- `site-audio.css` styles the floating site-wide music controls.
+- `shell.html`, `shell.css`, and `shell.js` provide the persistent iframe shell that keeps the audio player alive while inner pages change.
+- `story.css` is the styling layer for the About and Process pages.
 - `home.js`, `artists.js`, `artist.js`, and `catalog.js` render the public pages.
+- `story.js` applies shared theming and reveal behavior on the About and Process pages.
 - `admin.js` powers the editor workflow.
+
+## Background music
+
+To turn on site-wide background audio:
+
+1. Add your MP3 to the repo.
+2. Set its path in `site-audio-config.js`.
+3. Open any page and press `Play`.
+
+The player will remember volume and mute state. With the persistent shell in place, the audio element itself stays alive while inner pages navigate, so the soundtrack no longer restarts on normal page changes.
 
 ## Release intake workflow
 

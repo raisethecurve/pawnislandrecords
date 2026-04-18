@@ -6,89 +6,65 @@
     <title>Pawn Island Records | Releases</title>
     <meta
       name="description"
-      content="Browse release information, square cover art, track listings, and artist links across the Pawn Island Records catalog."
+      content="Explore the Pawn Island Records catalog in a single-panel releases view."
     />
+    <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=League+Spartan:wght@600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="public.css" />
+    <link rel="stylesheet" href="label-site.css" />
+    <link rel="stylesheet" href="site-audio.css" />
   </head>
-  <body>
-    <div class="page-shell">
-      <header class="page-header">
-        <a class="brand-lockup" href="index.html" aria-label="Pawn Island Records home">
+  <body data-page="releases">
+    <div class="label-page">
+      <header class="label-header">
+        <a class="brand-mark" href="index.html" aria-label="Pawn Island Records home">
           <img
             src="assets/brand/pawn-island-logo-1200.jpg"
             alt="Pawn Island Records logo"
           />
-          <span class="brand-lockup__copy">
+          <span class="brand-mark__copy">
             <strong>Pawn Island Records</strong>
-            <span>Release catalog</span>
+            <span>Releases</span>
           </span>
         </a>
 
-        <nav class="page-nav" aria-label="Primary">
+        <nav class="label-nav" aria-label="Primary">
           <a href="index.html">Home</a>
           <a href="artists.html">Artists</a>
-          <a href="catalog.html">Releases</a>
+          <a href="about.html">About</a>
+          <a href="epks.html">Press</a>
         </nav>
-
-        <div class="header-actions">
-          <a class="button button--ghost" href="artists.html">Artist Pages</a>
-        </div>
       </header>
 
-      <main>
-        <section class="reveal">
-          <div class="section-head">
-            <p class="eyebrow">Releases</p>
-            <h2>A dedicated release catalog, separate from the homepage.</h2>
-            <p>
-              Search the catalog by artist, release title, vibe, or track
-              titles. Covers stay square and the catalog page stays focused on
-              release browsing only.
-            </p>
+      <main class="label-main">
+        <section class="panel-shell releases-panel" aria-labelledby="releases-title">
+          <div class="panel-header">
+            <div>
+              <p class="section-kicker">Catalog</p>
+              <h1 id="releases-title">Releases</h1>
+            </div>
+            <div class="panel-note">
+              <p id="releases-intro">Explore the catalog.</p>
+              <a class="button button--ghost button--small is-hidden" id="release-filter-reset" href="catalog.html">
+                Show All
+              </a>
+            </div>
           </div>
 
-          <div class="surface-grid">
-            <article class="form-card">
-              <label class="field">
-                <span>Search releases</span>
-                <input
-                  id="catalog-search"
-                  type="search"
-                  placeholder="Try artist, title, vibe, or track"
-                />
-              </label>
-            </article>
-            <article class="form-card">
-              <label class="field">
-                <span>Artist</span>
-                <select id="catalog-artist"></select>
-              </label>
-            </article>
-          </div>
-
-          <p class="footer-note" id="catalog-summary">Loading releases...</p>
-          <div class="catalog-grid" id="catalog-grid"></div>
+          <div class="release-strip" id="releases-collection" aria-label="Release strip"></div>
         </section>
       </main>
-
-      <footer class="page-footer">
-        <p>Pawn Island Records</p>
-        <div class="footer-links">
-          <a href="index.html">Home</a>
-          <a href="artists.html">Artists</a>
-        </div>
-      </footer>
     </div>
 
     <script src="public-data.js"></script>
     <script src="site-store.js"></script>
     <script src="site-ui.js"></script>
-    <script src="catalog.js"></script>
+    <script src="label-site.js"></script>
+    <script src="site-audio-config.js"></script>
+    <script src="site-audio.js"></script>
   </body>
 </html>

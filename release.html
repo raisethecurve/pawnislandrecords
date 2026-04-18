@@ -7,8 +7,9 @@
     <meta
       id="release-meta-description"
       name="description"
-      content="A cinematic release page for Pawn Island Records with release story, artist introduction, platform links, and track videos."
+      content="A release page for Pawn Island Records with official audio, video, platform links, and artist context."
     />
+    <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,6 +17,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="release.css" />
+    <link rel="stylesheet" href="site-audio.css" />
   </head>
   <body>
     <div class="release-experience">
@@ -36,14 +38,15 @@
               alt="Pawn Island Records logo"
             />
             <span class="brand-lockup__copy">
-              <strong>Pawn Island Records</strong>
-              <span>Release pages</span>
+              <strong>Pawn Island</strong>
+              <span>Release</span>
             </span>
           </a>
 
           <nav class="release-header__nav" aria-label="Primary">
             <a href="index.html">Home</a>
             <a id="header-artist-link" href="artist.html">Artist</a>
+            <a id="header-epk-link" href="epks.html">Press</a>
           </nav>
         </header>
 
@@ -60,7 +63,24 @@
             <p class="release-hero__artist" id="release-artist"></p>
             <p class="release-hero__summary" id="release-summary"></p>
             <div class="release-hero__chips" id="release-chips"></div>
+            <div class="release-hero__actions">
+              <a class="action-link" id="hero-artist-link" href="artist.html">Open artist page</a>
+            </div>
             <div class="platform-strip" id="release-platforms"></div>
+          </article>
+        </section>
+
+        <section class="release-media reveal">
+          <article class="glass-panel">
+            <p class="eyebrow">Official Audio</p>
+            <h2 id="release-embed-heading">Official audio</h2>
+            <div id="release-primary-embed"></div>
+          </article>
+
+          <article class="glass-panel">
+            <p class="eyebrow">Visual</p>
+            <h2 id="release-video-heading">Official visual</h2>
+            <div id="release-youtube-embed"></div>
           </article>
         </section>
 
@@ -69,6 +89,7 @@
             <p class="eyebrow">Release</p>
             <h2 id="release-story-heading"></h2>
             <p class="detail-copy" id="release-description"></p>
+            <ol class="tracklist" id="release-tracklist"></ol>
           </article>
 
           <article class="glass-panel glass-panel--artist">
@@ -80,19 +101,6 @@
           </article>
         </section>
 
-        <section class="trackworld reveal">
-          <div class="section-head">
-            <p class="eyebrow">Track Videos</p>
-            <h2>Watch the release track by track.</h2>
-            <p class="detail-copy" id="trackworld-copy"></p>
-          </div>
-
-          <div class="trackworld__grid">
-            <aside class="tracklist-panel" id="track-list"></aside>
-            <article class="trackviewer-panel" id="track-viewer"></article>
-          </div>
-        </section>
-
         <section class="release-footer reveal" id="release-footer"></section>
       </main>
     </div>
@@ -101,5 +109,7 @@
     <script src="site-store.js"></script>
     <script src="site-ui.js"></script>
     <script src="release.js"></script>
+    <script src="site-audio-config.js"></script>
+    <script src="site-audio.js"></script>
   </body>
 </html>

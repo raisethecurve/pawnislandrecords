@@ -6,86 +6,91 @@
     <title>Artist | Pawn Island Records</title>
     <meta
       name="description"
-      content="Explore artist-specific public, industry, press kit, and merch views across the Pawn Island Records catalog."
+      content="Explore an individual Pawn Island Records artist page with discography and sample listening embeds."
     />
+    <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=League+Spartan:wght@600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="public.css" />
+    <link rel="stylesheet" href="label-site.css" />
+    <link rel="stylesheet" href="site-audio.css" />
   </head>
-  <body>
-    <div class="page-shell">
-      <header class="page-header">
-        <a class="brand-lockup" href="index.html" aria-label="Pawn Island Records home">
+  <body data-page="artist">
+    <div class="label-page">
+      <header class="label-header">
+        <a class="brand-mark" href="index.html" aria-label="Pawn Island Records home">
           <img
             src="assets/brand/pawn-island-logo-1200.jpg"
             alt="Pawn Island Records logo"
           />
-          <span class="brand-lockup__copy">
+          <span class="brand-mark__copy">
             <strong>Pawn Island Records</strong>
-            <span>Artist worlds</span>
+            <span>Artist Page</span>
           </span>
         </a>
 
-        <nav class="page-nav" aria-label="Primary">
+        <nav class="label-nav" aria-label="Primary">
           <a href="index.html">Home</a>
-          <a href="artists.html">Artists</a>
-          <a href="catalog.html">Releases</a>
+          <a href="artists.html" aria-current="page">Artists</a>
+          <a href="about.html">About</a>
+          <a href="epks.html">Press</a>
         </nav>
-
-        <div class="header-actions">
-          <a class="button button--ghost" href="artists.html">Back to Roster</a>
-        </div>
       </header>
 
-      <main id="artist-page">
-        <section class="artist-detail__grid reveal">
-          <article class="artist-detail__content">
-            <p class="eyebrow">Artist</p>
-            <h1 id="artist-title">Loading artist...</h1>
-            <div id="artist-meta"></div>
-            <div class="artist-view-nav" id="artist-view-nav" aria-label="Artist views"></div>
-          </article>
+      <main class="label-main">
+        <section class="panel-shell artist-page-shell" id="artist-page-panel" aria-labelledby="artist-page-title">
+          <div class="artist-page-hero">
+            <article class="artist-page-copy">
+              <p class="section-kicker">Artist Page</p>
+              <h1 id="artist-page-title">Loading artist...</h1>
+              <p class="artist-page-copy__lane" id="artist-page-lane"></p>
+              <p class="artist-page-copy__headline" id="artist-page-headline"></p>
+              <p class="artist-page-copy__body" id="artist-page-body"></p>
+              <div class="action-row" id="artist-page-actions"></div>
+            </article>
 
-          <div id="artist-hero-cover"></div>
-        </section>
-
-        <section class="reveal">
-          <div class="section-head">
-            <p class="eyebrow">Release Worlds</p>
-            <h2>One page for discovery, one release panel at a time.</h2>
-            <p>
-              Switch between releases for the selected artist, then move into
-              the public, industry, press, or merch view without losing the
-              release context.
-            </p>
+            <aside class="artist-page-visual" id="artist-page-visual"></aside>
           </div>
-          <div class="artist-detail__grid">
-            <aside class="release-nav" id="artist-release-nav"></aside>
-            <div id="artist-release-detail"></div>
-          </div>
-        </section>
 
-        <section class="reveal">
-          <div id="artist-view"></div>
+          <div class="artist-page-content">
+            <section class="artist-discography" aria-labelledby="artist-discography-title">
+              <div class="rail-header">
+                <div>
+                  <p class="section-kicker">Discography</p>
+                  <h2 id="artist-discography-title">Project Releases</h2>
+                </div>
+                <p class="rail-copy" id="artist-discography-copy">
+                  Loading public discography.
+                </p>
+              </div>
+              <div class="release-strip" id="artist-discography"></div>
+            </section>
+
+            <section class="artist-embeds" aria-labelledby="artist-embed-title">
+              <div class="rail-header">
+                <div>
+                  <p class="section-kicker">Gallery &amp; Media</p>
+                  <h2 id="artist-embed-title">Covers, Spotify &amp; YouTube</h2>
+                </div>
+                <p class="rail-copy">
+                  Switch between the cover gallery and available listening or video embeds for this artist.
+                </p>
+              </div>
+              <div id="artist-embeds"></div>
+            </section>
+          </div>
         </section>
       </main>
-
-      <footer class="page-footer">
-        <p>Pawn Island Records</p>
-        <div class="footer-links">
-          <a href="artists.html">Artists</a>
-          <a href="catalog.html">Releases</a>
-        </div>
-      </footer>
     </div>
 
     <script src="public-data.js"></script>
     <script src="site-store.js"></script>
     <script src="site-ui.js"></script>
-    <script src="artist.js"></script>
+    <script src="label-site.js"></script>
+    <script src="site-audio-config.js"></script>
+    <script src="site-audio.js"></script>
   </body>
 </html>

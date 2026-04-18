@@ -6,14 +6,16 @@
 
   if (ui.setMetaDescription) {
     ui.setMetaDescription(
-      "Browse the Pawn Island Records roster and open each artist's public, industry, press, or merch world."
+      "Browse the Pawn Island Records roster and move directly into each artist page or current release."
     );
   }
 
   if (ui.applyExperienceTheme && featuredArtist) {
     ui.applyExperienceTheme({
       accent: (featured && featured.accent) || featuredArtist.accent,
-      image: (featured && featured.cover) || featuredArtist.image
+      image: (featured && featured.cover) || featuredArtist.image,
+      title: (featured && featured.title) || featuredArtist.name,
+      subtitle: featured ? featuredArtist.name : (featuredArtist.lane || "Artist roster")
     });
   }
 
@@ -25,7 +27,15 @@
       return `
         <article class="artist-card reveal">
           <div class="cover-frame">
-            <img src="${artist.image}" alt="${artist.name} artwork" />
+            ${
+              ui.artworkImageMarkup({
+                src: artist.image,
+                title: artist.name,
+                subtitle: artist.lane || "Artist page",
+                accent: artist.accent,
+                alt: `${artist.name} artwork`
+              })
+            }
           </div>
           <div class="artist-card__body">
             <p class="eyebrow">Artist</p>
@@ -37,10 +47,12 @@
               ${leadRelease ? `<span class="mini-chip">${leadRelease.title}</span>` : ""}
             </div>
             <div class="artist-card__footer">
-              <a class="text-button" href="artist.html?artist=${artist.slug}&view=public">Public</a>
-              <a class="text-button" href="artist.html?artist=${artist.slug}&view=industry">Industry</a>
-              <a class="text-button" href="artist.html?artist=${artist.slug}&view=press">Press Kit</a>
-              <a class="text-button" href="artist.html?artist=${artist.slug}&view=merch">Merch</a>
+              <a class="text-button" href="artist.html?artist=${artist.slug}">Artist Page</a>
+              ${
+                leadRelease
+                  ? `<a class="text-button" href="release.html?release=${leadRelease.slug}">Open Release</a>`
+                  : ""
+              }
             </div>
           </div>
         </article>
@@ -48,5 +60,6 @@
     })
     .join("");
 
+  ui.hydrateArtwork(grid);
   ui.revealOnScroll();
 })();

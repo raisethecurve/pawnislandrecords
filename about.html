@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Pawn Island Records</title>
+    <meta
+      name="description"
+      content="About Pawn Island Records, its artist-first approach, and its discovery-led release philosophy."
+    />
+    <script src="site-shell-bootstrap.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=League+Spartan:wght@600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="label-site.css" />
+    <link rel="stylesheet" href="site-audio.css" />
+  </head>
+  <body data-page="about">
+    <div class="label-page">
+      <header class="label-header">
+        <a class="brand-mark" href="index.html" aria-label="Pawn Island home">
+          <img
+            src="assets/brand/pawn-island-logo-1200.jpg"
+            alt="Pawn Island Records logo"
+          />
+          <span class="brand-mark__copy">
+            <strong>Pawn Island Records</strong>
+            <span>About</span>
+          </span>
+        </a>
+
+        <nav class="label-nav" aria-label="Primary">
+          <a href="index.html">Home</a>
+          <a href="artists.html">Artists</a>
+          <a href="about.html" aria-current="page">About</a>
+          <a href="epks.html">Press</a>
+        </nav>
+      </header>
+
+      <main class="label-main">
+        <section class="panel-shell" aria-labelledby="about-title">
+          <div class="about-layout">
+            <article class="about-copy">
+              <p class="section-kicker">About Pawn Island Records</p>
+              <h1 id="about-title">About Pawn Island Records</h1>
+              <p class="about-copy__body" id="about-body-copy">
+                Pawn Island Records is building around a vibe-first mentality: the feeling should land before the explanation does. We release the music, watch which visual and emotional cues actually resonate, and then iterate the world from what feels alive. Each artist gets room to become a distinct universe instead of being forced into a finished brand system too early. The goal is a catalog that grows through signal, repetition, and intent.
+              </p>
+              <p class="ethos-line" id="about-ethos-line">
+                Start with the vibe. Release the record. Let the world sharpen through repetition, response, and intent.
+              </p>
+              <div class="action-row">
+                <a
+                  class="button button--toofm"
+                  id="about-campaign-link"
+                  href="https://too.fm/yn8xx7l"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Featured Campaign
+                </a>
+                <a class="button button--ghost" href="catalog.html">Browse Releases</a>
+              </div>
+            </article>
+
+            <aside class="timeline-shell" aria-labelledby="about-timeline-title">
+              <p class="section-kicker">Label Motion</p>
+              <h2 class="a11y-hidden" id="about-timeline-title">Pawn Island Records timeline</h2>
+              <div class="timeline-list" id="about-timeline"></div>
+            </aside>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="public-data.js"></script>
+    <script src="site-store.js"></script>
+    <script src="site-ui.js"></script>
+    <script src="label-site.js"></script>
+    <script src="site-audio-config.js"></script>
+    <script src="site-audio.js"></script>
+  </body>
+</html>

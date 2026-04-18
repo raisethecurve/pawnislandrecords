@@ -132,55 +132,64 @@ button {
 .brandmark {
   display: inline-flex;
   align-items: center;
-  gap: 0.9rem;
+  gap: 1.05rem;
   min-width: 0;
 }
 
 .brand-lockup img {
-  width: 3.4rem;
-  height: 3.4rem;
+  width: 4.2rem;
+  height: 4.2rem;
   object-fit: cover;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border-radius: 1.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 24px 44px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .brandmark__coin {
   display: grid;
   place-items: center;
-  width: 3.2rem;
-  height: 3.2rem;
-  border-radius: 50%;
+  width: 3.8rem;
+  height: 3.8rem;
+  border-radius: 1.15rem;
   border: 1px solid var(--line);
   background:
     radial-gradient(circle at 28% 28%, rgba(255, 255, 255, 0.18), transparent 32%),
     linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 24px 44px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
   color: var(--text);
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 700;
 }
 
 .brand-lockup__copy,
-.brandmark__copy {
+.brandmark__copy,
+.brandmark__text {
   display: grid;
   gap: 0.14rem;
 }
 
 .brand-lockup__copy strong,
-.brandmark__copy strong {
-  font-size: 0.96rem;
-  letter-spacing: 0.12em;
+.brandmark__copy strong,
+.brandmark__text strong {
+  font-size: 1.06rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 .brand-lockup__copy span,
 .brandmark__copy span,
+.brandmark__text span,
 .page-nav a,
 .footer-links a {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .page-nav,
@@ -219,6 +228,7 @@ button {
 
 .page-nav a:hover,
 .page-nav a:focus-visible,
+.page-nav a[aria-current="page"],
 .footer-links a:hover,
 .footer-links a:focus-visible,
 .text-button:hover,
@@ -462,6 +472,7 @@ section {
 }
 
 .cover-frame {
+  display: block;
   position: relative;
   overflow: hidden;
   aspect-ratio: 1 / 1;
@@ -730,6 +741,25 @@ section {
   margin: 0;
 }
 
+.footer-mark {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.16), transparent 34%),
+    rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+}
+
 .editor-grid {
   grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
 }
@@ -762,6 +792,18 @@ section {
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text);
+}
+
+.field select {
+  background: #000;
+  color: #fff;
+  color-scheme: dark;
+}
+
+.field select option,
+.field select optgroup {
+  background: #000;
+  color: #fff;
 }
 
 .field input::placeholder,
@@ -979,8 +1021,8 @@ section {
 
   .brand-lockup img,
   .brandmark__coin {
-    width: 3rem;
-    height: 3rem;
+    width: 3.35rem;
+    height: 3.35rem;
   }
 
   .page-nav {

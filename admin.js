@@ -13,6 +13,9 @@
     releaseVibe: document.getElementById("release-vibe"),
     releaseAccent: document.getElementById("release-accent"),
     releaseDescription: document.getElementById("release-description"),
+    releaseYoutubeId: document.getElementById("release-youtube-id"),
+    releasePrimaryEmbedLabel: document.getElementById("release-primary-embed-label"),
+    releasePrimaryEmbedUrl: document.getElementById("release-primary-embed-url"),
     releaseFeatured: document.getElementById("release-featured"),
     releaseCover: document.getElementById("release-cover"),
     releaseCoverUpload: document.getElementById("release-cover-upload"),
@@ -112,20 +115,23 @@
     ui.downloadText(filename, content, type);
   }
 
-  function coverPreviewMarkup(src, alt) {
-    if (!src) {
-      return `
-        <div class="cover-frame">
-          <div class="cover-placeholder">
-            Square art preview appears here when a cover is attached.
-          </div>
-        </div>
-      `;
-    }
+  function coverPreviewMarkup(src, alt, options) {
+    const settings = options && typeof options === "object" ? options : {};
+    const artwork = ui && ui.artworkImageMarkup
+      ? ui.artworkImageMarkup({
+          src,
+          title: settings.title || "Untitled artwork",
+          subtitle: settings.subtitle || "Placeholder artwork",
+          accent: settings.accent || "#d8c7a1",
+          alt: alt || settings.title || "Artwork preview",
+          format: settings.format || "square",
+          loading: "eager"
+        })
+      : `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" />`;
 
     return `
       <div class="cover-frame">
-        <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" />
+        ${artwork}
       </div>
     `;
   }
@@ -345,12 +351,22 @@
 
   function renderReleaseCoverPreview() {
     const src = elements.releaseCover.value.trim();
-    elements.releaseCoverPreview.innerHTML = coverPreviewMarkup(src, "Release cover preview");
+    elements.releaseCoverPreview.innerHTML = coverPreviewMarkup(src, "Release cover preview", {
+      title: elements.releaseTitle.value.trim() || "Release cover",
+      subtitle: getArtistNameForReleasePreview(),
+      accent: elements.releaseAccent.value.trim() || "#d8c7a1"
+    });
+    ui.hydrateArtwork(elements.releaseCoverPreview);
   }
 
   function renderArtistImagePreview() {
     const src = elements.artistImage.value.trim();
-    elements.artistImagePreview.innerHTML = coverPreviewMarkup(src, "Artist image preview");
+    elements.artistImagePreview.innerHTML = coverPreviewMarkup(src, "Artist image preview", {
+      title: elements.artistName.value.trim() || "Artist image",
+      subtitle: elements.artistLane.value.trim() || "Artist world",
+      accent: elements.artistAccent.value.trim() || "#ba7b2b"
+    });
+    ui.hydrateArtwork(elements.artistImagePreview);
   }
 
   function renderReleasePreview() {
@@ -361,14 +377,23 @@
     const vibe = elements.releaseVibe.value.trim() || "Album vibe";
     const description =
       elements.releaseDescription.value.trim() ||
-      "Add release notes, mood, and context here to shape the public-facing copy.";
+      "Add release notes, mood, and context here to shape the release world.";
     const tracks = collectTracks();
     const platforms = collectPlatforms();
+    const releaseVideoId = elements.releaseYoutubeId.value.trim();
+    const primaryEmbedLabel = elements.releasePrimaryEmbedLabel.value.trim();
+    const primaryEmbedUrl = elements.releasePrimaryEmbedUrl.value.trim();
     const featured = elements.releaseFeatured.checked;
 
     elements.releasePreview.innerHTML = `
       <article class="release-card">
-        ${coverPreviewMarkup(elements.releaseCover.value.trim(), `${title} cover art preview`)}
+        ${
+          coverPreviewMarkup(elements.releaseCover.value.trim(), `${title} cover art preview`, {
+            title,
+            subtitle: artistName,
+            accent: elements.releaseAccent.value.trim() || "#d8c7a1"
+          })
+        }
         <div class="release-card__body">
           <p class="eyebrow">${escapeHtml(type)}</p>
           <h3>${escapeHtml(title)}</h3>
@@ -380,11 +405,15 @@
             <span class="mini-chip">${escapeHtml(vibe)}</span>
             <span class="mini-chip">${tracks.length} track${tracks.length === 1 ? "" : "s"}</span>
             <span class="mini-chip">${platforms.length} link${platforms.length === 1 ? "" : "s"}</span>
+            ${primaryEmbedUrl ? `<span class="mini-chip">${escapeHtml(primaryEmbedLabel || "Primary embed")} attached</span>` : ""}
+            ${releaseVideoId ? '<span class="mini-chip">Hero video attached</span>' : ""}
             ${featured ? '<span class="mini-chip">Homepage feature</span>' : ""}
           </div>
         </div>
       </article>
     `;
+
+    ui.hydrateArtwork(elements.releasePreview);
   }
 
   function renderReleaseList() {
@@ -458,7 +487,10 @@
 
     elements.artistList.innerHTML = data.artists
       .map(
-        (artist) => `
+        (artist) => {
+          const leadRelease = data.releases.find((release) => release.artist === artist.slug);
+
+          return `
           <article class="release-list__item">
             <div class="release-list__header">
               <div>
@@ -471,13 +503,16 @@
               </button>
             </div>
             <div class="row-actions">
-              <a class="text-button" href="artist.html?artist=${escapeHtml(artist.slug)}&view=public">Public</a>
-              <a class="text-button" href="artist.html?artist=${escapeHtml(artist.slug)}&view=industry">Industry</a>
-              <a class="text-button" href="artist.html?artist=${escapeHtml(artist.slug)}&view=press">Press Kit</a>
-              <a class="text-button" href="artist.html?artist=${escapeHtml(artist.slug)}&view=merch">Merch</a>
+              <a class="text-button" href="artist.html?artist=${escapeHtml(artist.slug)}">Open World</a>
+              ${
+                leadRelease
+                  ? `<a class="text-button" href="release.html?release=${escapeHtml(leadRelease.slug)}">Open Release</a>`
+                  : ""
+              }
             </div>
           </article>
-        `
+        `;
+        }
       )
       .join("");
   }
@@ -489,6 +524,9 @@
     elements.releaseType.value = "Album";
     elements.releaseYear.value = String(new Date().getFullYear());
     elements.releaseAccent.value = "#ba7b2b";
+    elements.releaseYoutubeId.value = "";
+    elements.releasePrimaryEmbedLabel.value = "";
+    elements.releasePrimaryEmbedUrl.value = "";
     elements.releaseFeatured.checked = false;
     elements.trackList.innerHTML = "";
     elements.platformList.innerHTML = "";
@@ -534,6 +572,9 @@
     elements.releaseVibe.value = release.vibe;
     elements.releaseAccent.value = release.accent || "#ba7b2b";
     elements.releaseDescription.value = release.description;
+    elements.releaseYoutubeId.value = release.youtubeId || "";
+    elements.releasePrimaryEmbedLabel.value = release.primaryEmbedLabel || "";
+    elements.releasePrimaryEmbedUrl.value = release.primaryEmbedUrl || "";
     elements.releaseCover.value = release.cover;
     elements.releaseFeatured.checked = data.label.featuredReleaseSlug === release.slug;
     elements.inlineArtistName.value = "";
@@ -653,6 +694,9 @@
         accent: elements.releaseAccent.value,
         cover: elements.releaseCover.value.trim(),
         description: elements.releaseDescription.value.trim(),
+        primaryEmbedLabel: elements.releasePrimaryEmbedLabel.value.trim(),
+        primaryEmbedUrl: elements.releasePrimaryEmbedUrl.value.trim(),
+        youtubeId: elements.releaseYoutubeId.value.trim(),
         platforms: collectPlatforms(),
         tracks
       };

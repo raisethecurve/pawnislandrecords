@@ -6,8 +6,9 @@
     <title>Pawn Island Records | Catalog Editor</title>
     <meta
       name="description"
-      content="A cleaner catalog editor for managing artist pages, release intake, square cover art, track listings, and streaming links."
+      content="A launch-ready catalog editor for artist worlds, release embeds, square cover art, track listings, and platform destinations."
     />
+    <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,6 +16,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="public.css" />
+    <link rel="stylesheet" href="site-audio.css" />
   </head>
   <body>
     <div class="page-shell">
@@ -25,7 +27,7 @@
             alt="Pawn Island Records logo"
           />
           <span class="brand-lockup__copy">
-            <strong>Pawn Island Records</strong>
+            <strong>Pawn Island</strong>
             <span>Catalog editor</span>
           </span>
         </a>
@@ -48,8 +50,8 @@
           <h1>Smoother release intake, cleaner public pages.</h1>
           <p class="support-copy">
             Add artist profiles and releases in one calm workflow: square cover
-            art, album vibe, track listing, track-level YouTube IDs, and
-            streaming links all feed the public site structure directly.
+            art, world-building copy, release-level audio embeds, YouTube IDs,
+            and platform links all feed the public site structure directly.
           </p>
           <div class="hero-actions">
             <a class="button" href="#release-intake">New Release</a>
@@ -113,6 +115,30 @@
                   <label class="field field--full">
                     <span>Description</span>
                     <textarea id="release-description" name="releaseDescription"></textarea>
+                  </label>
+                  <label class="field">
+                    <span>Release YouTube video ID</span>
+                    <input
+                      id="release-youtube-id"
+                      name="releaseYoutubeId"
+                      placeholder="video-id-only"
+                    />
+                  </label>
+                  <label class="field">
+                    <span>Primary embed label</span>
+                    <input
+                      id="release-primary-embed-label"
+                      name="releasePrimaryEmbedLabel"
+                      placeholder="Spotify, Bandcamp, Official Audio"
+                    />
+                  </label>
+                  <label class="field field--wide">
+                    <span>Primary embed URL</span>
+                    <input
+                      id="release-primary-embed-url"
+                      name="releasePrimaryEmbedUrl"
+                      placeholder="https://open.spotify.com/embed/..."
+                    />
                   </label>
                   <div class="field field--full" id="inline-artist-fields" hidden>
                     <span>New artist details</span>
@@ -182,8 +208,8 @@
                   <p class="eyebrow">Track Listing</p>
                   <h2>Add titles, runtimes, and YouTube embeds for each track.</h2>
                   <p>
-                    Every track can carry its own YouTube video ID, which feeds
-                    the embed panel on the artist landing pages.
+                    Every track can carry its own YouTube video ID, while the
+                    release itself can hold one hero video for the public release page.
                   </p>
                 </div>
                 <div class="release-list" id="track-list"></div>
@@ -228,11 +254,11 @@
         <section id="artist-profiles" class="reveal">
           <div class="section-head">
             <p class="eyebrow">Artist Profiles</p>
-            <h2>Shape the public, industry, press, and merch views per artist.</h2>
+            <h2>Shape the artist world, its voice, and the copy around it.</h2>
             <p>
               The release form can create a quick artist record, but this is
-              where you refine the copy and page content that supports each
-              artist landing page.
+              where you refine the artist-world copy, release context, and
+              evergreen label language that support each public destination.
             </p>
           </div>
 
@@ -399,7 +425,7 @@
       </main>
 
       <footer class="page-footer">
-        <p>Pawn Island Records</p>
+        <p class="footer-mark" aria-label="Pawn Island Records">PI</p>
         <div class="footer-links">
           <a href="index.html">Home</a>
           <a href="artists.html">Artists</a>
@@ -412,5 +438,7 @@
     <script src="site-store.js"></script>
     <script src="site-ui.js"></script>
     <script src="admin.js"></script>
+    <script src="site-audio-config.js"></script>
+    <script src="site-audio.js"></script>
   </body>
 </html>

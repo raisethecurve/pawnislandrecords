@@ -79,7 +79,8 @@
               : ""
           }
           <div class="hero-actions">
-            <a class="button" href="artist.html?artist=${featuredArtist.slug}&view=public">Open Artist Page</a>
+            <a class="button" href="artist.html?artist=${featuredArtist.slug}&release=${featured.slug}">Open Artist World</a>
+            <a class="button button--ghost" href="release.html?release=${featured.slug}">Open Release Page</a>
             <a class="button button--ghost" href="catalog.html">Browse All Releases</a>
           </div>
         </article>
@@ -100,9 +101,12 @@
             <h3>${artist.name}</h3>
             <p class="detail-copy">${artist.summary}</p>
             <div class="row-actions">
-              <a class="text-button" href="artist.html?artist=${artist.slug}&view=public">Public</a>
-              <a class="text-button" href="artist.html?artist=${artist.slug}&view=industry">Industry</a>
-              <a class="text-button" href="artist.html?artist=${artist.slug}&view=press">Press Kit</a>
+              <a class="text-button" href="artist.html?artist=${artist.slug}">Open World</a>
+              ${
+                ui.getArtistReleases(artist.slug)[0]
+                  ? `<a class="text-button" href="release.html?release=${ui.getArtistReleases(artist.slug)[0].slug}">Open Release</a>`
+                  : ""
+              }
             </div>
           </article>
         `

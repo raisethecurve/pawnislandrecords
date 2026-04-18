@@ -18,7 +18,11 @@
   if (ui.applyExperienceTheme && (featured || featuredArtist)) {
     ui.applyExperienceTheme({
       accent: (featured && featured.accent) || (featuredArtist && featuredArtist.accent) || "#d8c7a1",
-      image: (featured && featured.cover) || (featuredArtist && featuredArtist.image) || ""
+      image: (featured && featured.cover) || (featuredArtist && featuredArtist.image) || "",
+      title: (featured && featured.title) || (featuredArtist && featuredArtist.name) || "Catalog",
+      subtitle: featured && featuredArtist
+        ? featuredArtist.name
+        : ((featuredArtist && featuredArtist.lane) || "Release catalog")
     });
   }
 
@@ -75,9 +79,21 @@
 
         return `
           <article class="release-card reveal">
-            <div class="cover-frame">
-              <img src="${release.cover}" alt="${release.title} cover art" />
-            </div>
+            <a
+              class="cover-frame"
+              href="release.html?release=${release.slug}"
+              aria-label="Open ${release.title} release page"
+            >
+              ${
+                ui.artworkImageMarkup({
+                  src: release.cover,
+                  title: release.title,
+                  subtitle: artist ? artist.name : "Release",
+                  accent: release.accent || (artist && artist.accent) || "#d8c7a1",
+                  alt: `${release.title} cover art`
+                })
+              }
+            </a>
             <div class="release-card__body">
               <p class="eyebrow">${release.type}</p>
               <h3>${release.title}</h3>
@@ -94,7 +110,7 @@
               </div>
               <div class="release-card__footer">
                 <a class="text-button" href="release.html?release=${release.slug}">Release Page</a>
-                <a class="text-button" href="artist.html?artist=${release.artist}&view=public">Artist Page</a>
+                <a class="text-button" href="artist.html?artist=${release.artist}&release=${release.slug}">Artist Page</a>
               </div>
             </div>
           </article>
@@ -102,6 +118,7 @@
       })
       .join("");
 
+    ui.hydrateArtwork(grid);
     ui.revealOnScroll();
   }
 

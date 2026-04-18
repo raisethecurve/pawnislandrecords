@@ -6,113 +6,84 @@
     <title>Pawn Island Records</title>
     <meta
       name="description"
-      content="Pawn Island Records presented as a single immersive release stage with cinematic transitions and a refined coverflow reel."
+      content="Pawn Island Records: a modern discovery-led homepage for artists, releases, and Too.fm campaigns."
     />
+    <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=League+Spartan:wght@600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="landing.css" />
+    <link rel="stylesheet" href="label-site.css" />
+    <link rel="stylesheet" href="site-audio.css" />
   </head>
-  <body>
-    <div class="experience" id="top">
-      <div class="experience__backdrop" aria-hidden="true">
-        <div class="experience__image experience__image--active" id="bg-active"></div>
-        <div class="experience__image" id="bg-buffer"></div>
-        <div class="experience__wash"></div>
-        <div class="experience__grid"></div>
-        <div class="experience__noise"></div>
-        <div class="experience__vignette"></div>
-        <div class="experience__beam"></div>
-      </div>
+  <body data-page="home">
+    <div class="label-page">
+      <header class="label-header">
+        <a class="brand-mark" href="index.html" aria-label="Pawn Island Records home">
+          <img
+            src="assets/brand/pawn-island-logo-1200.jpg"
+            alt="Pawn Island Records logo"
+          />
+          <span class="brand-mark__copy">
+            <strong>Pawn Island Records</strong>
+            <span>Independent record label</span>
+          </span>
+        </a>
 
-      <main class="stage">
-        <header class="masthead">
-          <a class="brand-lockup" href="#top" aria-label="Pawn Island Records">
-            <img
-              src="assets/brand/pawn-island-logo-1200.jpg"
-              alt="Pawn Island Records logo"
-            />
-            <span class="brand-lockup__copy">
-              <strong>Pawn Island Records</strong>
-              <span>Immersive release stage</span>
-            </span>
-          </a>
+        <nav class="label-nav" aria-label="Primary">
+          <a href="index.html" aria-current="page">Home</a>
+          <a href="artists.html">Artists</a>
+          <a href="about.html">About</a>
+          <a href="epks.html">Press</a>
+        </nav>
+      </header>
 
-          <div class="masthead__meta">
-            <span class="masthead__line"></span>
-            <span id="release-index"></span>
-          </div>
-        </header>
+      <main class="label-main">
+        <section class="panel-shell panel-grid--home" aria-labelledby="home-title">
+          <div class="home-hero">
+            <article class="hero-copy">
+              <p class="section-kicker">Independent Record Label</p>
+              <h1 id="home-title">Pawn Island Records</h1>
+              <p class="hero-copy__body" id="home-identity-line">
+                A discovery-led independent label space built for artist identity, direct listening, and clean release worlds.
+              </p>
+              <div class="platform-banner" aria-labelledby="home-platforms-title">
+                <p class="platform-banner__label" id="home-platforms-title">Find Us On</p>
+                <div class="platform-banner__row" id="home-platforms"></div>
+              </div>
+              <div class="action-row action-row--center">
+                <a
+                  class="button button--primary"
+                  id="home-playlist-link"
+                  href="catalog.html"
+                >
+                  Pawn Island Playlist
+                </a>
+                <a
+                  class="button button--toofm"
+                  id="home-featured-release-link"
+                  href="https://too.fm/yn8xx7l"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Featured Release
+                </a>
+              </div>
+            </article>
 
-        <section class="hero" aria-label="Pawn Island Records release experience">
-          <div class="hero__copy">
-            <p class="eyebrow">Pawn Island Records</p>
-            <h1>Release worlds in motion.</h1>
-            <p class="hero__lede">
-              A single-screen visual identity built around the mark, the
-              atmosphere of the releases, and a cinematic reel of projects in orbit.
-            </p>
-
-            <div class="hero__release">
-              <p class="hero__release-kicker" id="release-kicker"></p>
-              <h2 id="release-title"></h2>
-              <p class="hero__release-artist" id="release-artist"></p>
-              <p class="hero__release-summary" id="release-summary"></p>
-              <div class="hero__tags" id="release-tags"></div>
-            </div>
-          </div>
-
-          <div class="coverflow" id="coverflow">
-            <div class="coverflow__logo-ghost" aria-hidden="true">
-              <img
-                src="assets/brand/pawn-island-logo-1200.jpg"
-                alt=""
-              />
-            </div>
-
-            <button
-              class="coverflow__slide coverflow__slide--prev"
-              id="prev-stage"
-              type="button"
-              aria-label="Previous release"
-            ></button>
-
-            <article class="coverflow__slide coverflow__slide--active" id="active-stage"></article>
-
-            <button
-              class="coverflow__slide coverflow__slide--next"
-              id="next-stage"
-              type="button"
-              aria-label="Next release"
-            ></button>
+            <aside class="feature-stack" id="home-feature-stack" aria-label="Featured discovery"></aside>
           </div>
         </section>
-
-        <footer class="reel" id="reel">
-          <div class="reel__controls">
-            <button class="reel__button" id="prev-release" type="button">Prev</button>
-            <button class="reel__button reel__button--primary" id="next-release" type="button">
-              Next
-            </button>
-          </div>
-
-          <div class="reel__progress" aria-hidden="true">
-            <span id="progress-bar"></span>
-          </div>
-
-          <div class="reel__viewport">
-            <div class="reel__track" id="carousel-track"></div>
-          </div>
-        </footer>
       </main>
     </div>
 
     <script src="public-data.js"></script>
     <script src="site-store.js"></script>
     <script src="site-ui.js"></script>
-    <script src="landing.js"></script>
+    <script src="label-site.js"></script>
+    <script src="site-audio-config.js"></script>
+    <script src="site-audio.js"></script>
   </body>
 </html>

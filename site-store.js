@@ -52,7 +52,12 @@
       pressBio: String((artist && artist.pressBio) || "").trim(),
       pressHighlights: uniqueTextList(artist && artist.pressHighlights),
       pressAssets: uniqueTextList(artist && artist.pressAssets),
-      merchIntro: String((artist && artist.merchIntro) || "").trim()
+      merchIntro: String((artist && artist.merchIntro) || "").trim(),
+      epkTagline: String((artist && artist.epkTagline) || "").trim(),
+      pressQuote: String((artist && artist.pressQuote) || "").trim(),
+      liveShowNote: String((artist && artist.liveShowNote) || "").trim(),
+      bookingNote: String((artist && artist.bookingNote) || "").trim(),
+      priorityMarkets: uniqueTextList(artist && artist.priorityMarkets)
     };
   }
 
@@ -81,6 +86,15 @@
       accent: String((release && release.accent) || "#b77924").trim(),
       cover: String((release && release.cover) || "").trim(),
       description: String((release && release.description) || "").trim(),
+      tooFmUrl: String(
+        ((release && (release.tooFmUrl || release.toofmUrl || release.campaignUrl)) || "")
+      ).trim(),
+      campaignUrl: String(
+        ((release && (release.campaignUrl || release.tooFmUrl || release.toofmUrl)) || "")
+      ).trim(),
+      primaryEmbedLabel: String((release && release.primaryEmbedLabel) || "").trim(),
+      primaryEmbedUrl: String((release && release.primaryEmbedUrl) || "").trim(),
+      youtubeId: String((release && release.youtubeId) || "").trim(),
       platforms: ensureArray(release && release.platforms)
         .map(normalizePlatform)
         .filter((platform) => platform.label || platform.url),
@@ -109,17 +123,66 @@
 
   function normalizeData(input) {
     const base = input && typeof input === "object" ? input : {};
+    const baseLabel = base.label && typeof base.label === "object" ? base.label : {};
+    const seedLabel = seed.label && typeof seed.label === "object" ? seed.label : {};
     const label = {
-      name: String((base.label && base.label.name) || "Pawn Island Records").trim(),
-      tagline: String((base.label && base.label.tagline) || "").trim(),
-      intro: String((base.label && base.label.intro) || "").trim(),
-      featuredReleaseSlug: String(
-        (base.label && base.label.featuredReleaseSlug) || ""
+      name: String(baseLabel.name || "Pawn Island Records").trim(),
+      tagline: String(baseLabel.tagline || "").trim(),
+      intro: String(baseLabel.intro || "").trim(),
+      featuredReleaseSlug: String(baseLabel.featuredReleaseSlug || "").trim(),
+      identityLine: String((baseLabel.identityLine || seedLabel.identityLine) || "").trim(),
+      aboutText: String(
+        (baseLabel.aboutText || baseLabel.about || seedLabel.aboutText || seedLabel.about || "")
       ).trim(),
+      about: String(
+        (baseLabel.about || baseLabel.aboutText || seedLabel.about || seedLabel.aboutText || "")
+      ).trim(),
+      ethos: String((baseLabel.ethos || seedLabel.ethos || "")).trim(),
+      featuredCampaignTitle: String(
+        (baseLabel.featuredCampaignTitle || seedLabel.featuredCampaignTitle || "")
+      ).trim(),
+      featuredCampaignSummary: String(
+        (baseLabel.featuredCampaignSummary || seedLabel.featuredCampaignSummary || "")
+      ).trim(),
+      featuredCampaignUrl: String(
+        (
+          baseLabel.featuredCampaignUrl ||
+          baseLabel.campaignUrl ||
+          seedLabel.featuredCampaignUrl ||
+          seedLabel.campaignUrl ||
+          ""
+        )
+      ).trim(),
+      campaignUrl: String(
+        (
+          baseLabel.campaignUrl ||
+          baseLabel.featuredCampaignUrl ||
+          seedLabel.campaignUrl ||
+          seedLabel.featuredCampaignUrl ||
+          ""
+        )
+      ).trim(),
+      defaultTooFmUrl: String((baseLabel.defaultTooFmUrl || seedLabel.defaultTooFmUrl || ""))
+        .trim(),
+      catalogPlaylistUrl: String(
+        (
+          baseLabel.catalogPlaylistUrl ||
+          baseLabel.playlistUrl ||
+          baseLabel.catalogPlaylistLink ||
+          seedLabel.catalogPlaylistUrl ||
+          seedLabel.playlistUrl ||
+          seedLabel.catalogPlaylistLink ||
+          ""
+        )
+      ).trim(),
+      streamingPlatforms: uniqueTextList(
+        baseLabel.streamingPlatforms ? baseLabel.streamingPlatforms : seedLabel.streamingPlatforms
+      ),
+      timeline: ensureArray(baseLabel.timeline).length
+        ? deepClone(baseLabel.timeline)
+        : deepClone(seedLabel.timeline || []),
       platformPresets: uniqueTextList(
-        base.label && base.label.platformPresets
-          ? base.label.platformPresets
-          : seed.label && seed.label.platformPresets
+        baseLabel.platformPresets ? baseLabel.platformPresets : seedLabel.platformPresets
       )
     };
 

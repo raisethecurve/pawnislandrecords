@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pawn Island Records</title>
+    <meta
+      name="description"
+      content="Pawn Island Records immersive shell with persistent site-wide audio."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="shell.css" />
+    <link rel="stylesheet" href="site-audio.css" />
+  </head>
+  <body class="shell-body">
+    <div class="shell-experience">
+      <div class="shell-experience__wash" aria-hidden="true"></div>
+      <div class="shell-experience__grid" aria-hidden="true"></div>
+      <div class="shell-experience__noise" aria-hidden="true"></div>
+
+      <div class="shell-loading" id="shell-loading">
+        <div class="shell-loading__brand" aria-label="Pawn Island Records">
+          <img src="assets/brand/pawn-island-logo-1200.jpg" alt="" />
+          <span>PI</span>
+        </div>
+        <h1>Loading the next world.</h1>
+      </div>
+
+      <iframe
+        id="site-shell-frame"
+        class="shell-frame"
+        title="Pawn Island Records"
+        loading="eager"
+        allow="autoplay; fullscreen"
+      ></iframe>
+    </div>
+
+    <script src="shell.js"></script>
+    <script src="site-audio-config.js"></script>
+    <script src="site-audio.js"></script>
+  </body>
+</html>

@@ -22,16 +22,16 @@
     return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
   }
 
-  function youtubeWatchUrl(videoId) {
-    return videoId ? `https://www.youtube.com/watch?v=${videoId}` : "";
-  }
-
   function releaseUrl(slug) {
     return `release.html?release=${encodeURIComponent(slug)}`;
   }
 
-  function artistUrl(slug) {
-    return `artist.html?artist=${encodeURIComponent(slug)}&view=public`;
+  function artistUrl(slug, releaseId) {
+    return `artist.html?artist=${encodeURIComponent(slug)}${releaseId ? `&release=${encodeURIComponent(releaseId)}` : ""}`;
+  }
+
+  function epkUrl(slug) {
+    return `epk.html?artist=${encodeURIComponent(slug)}`;
   }
 
   function splitVibe(text) {
@@ -41,50 +41,13 @@
       .filter(Boolean);
   }
 
-  function platformEntries() {
-    const presets = Array.isArray(data.label && data.label.platformPresets)
-      ? data.label.platformPresets
-      : [];
-    const linkedPlatforms = Array.isArray(release && release.platforms)
-      ? release.platforms
-      : [];
-    const order = [...new Set([...presets, ...linkedPlatforms.map((item) => item.label)])];
-
-    return order.map((label) => {
-      const active = linkedPlatforms.find((item) => item.label === label);
-      return {
-        label,
-        url: active ? active.url : ""
-      };
-    });
-  }
-
-  function preferredTrackIndex() {
-    const tracks = Array.isArray(release && release.tracks) ? release.tracks : [];
-    const videoIndex = tracks.findIndex((track) => Boolean(track.youtubeId));
-    return videoIndex >= 0 ? videoIndex : 0;
-  }
-
-  function setVisualTheme() {
-    const accent = (release && release.accent) || (artist && artist.accent) || "#d8c7a1";
-    const backdropImage = String((release && release.cover) || (artist && artist.image) || "").trim();
-
-    if (ui && ui.applyExperienceTheme) {
-      ui.applyExperienceTheme({
-        accent,
-        image: backdropImage,
-        backdropId: "release-backdrop"
-      });
-    }
-  }
-
   function renderNotFound() {
     document.title = "Release Not Found | Pawn Island Records";
     page.innerHTML = `
       <section class="empty-state">
         <p class="eyebrow">Release</p>
         <h2>That release page is not available.</h2>
-        <p>Return to the main stage to choose another project from the catalog.</p>
+        <p>Return to the homepage to choose another release from the catalog.</p>
         <a class="action-link" href="index.html">Back to Homepage</a>
       </section>
     `;
@@ -94,10 +57,6 @@
     renderNotFound();
     return;
   }
-
-  const state = {
-    activeTrackIndex: preferredTrackIndex()
-  };
 
   const relatedReleases = ui && ui.getArtistReleases
     ? ui.getArtistReleases(artist.slug).filter((entry) => entry.slug !== release.slug)
@@ -110,18 +69,47 @@
   const releaseSummary = document.getElementById("release-summary");
   const releaseChips = document.getElementById("release-chips");
   const releasePlatforms = document.getElementById("release-platforms");
+  const heroArtistLink = document.getElementById("hero-artist-link");
+  const releaseEmbedHeading = document.getElementById("release-embed-heading");
+  const releasePrimaryEmbed = document.getElementById("release-primary-embed");
+  const releaseVideoHeading = document.getElementById("release-video-heading");
+  const releaseYoutubeEmbed = document.getElementById("release-youtube-embed");
   const releaseStoryHeading = document.getElementById("release-story-heading");
   const releaseDescription = document.getElementById("release-description");
+  const releaseTracklist = document.getElementById("release-tracklist");
   const artistName = document.getElementById("artist-name");
   const artistHeadline = document.getElementById("artist-headline");
   const artistStory = document.getElementById("artist-story");
   const artistPageLink = document.getElementById("artist-page-link");
   const headerArtistLink = document.getElementById("header-artist-link");
-  const trackworldCopy = document.getElementById("trackworld-copy");
-  const trackList = document.getElementById("track-list");
-  const trackViewer = document.getElementById("track-viewer");
+  const headerEpkLink = document.getElementById("header-epk-link");
   const releaseFooter = document.getElementById("release-footer");
   const metaDescription = document.getElementById("release-meta-description");
+
+  function renderPlatforms() {
+    const livePlatforms = ui.getLivePlatforms(release);
+
+    releasePlatforms.innerHTML = livePlatforms
+      .map(
+        (platform) => `
+          <a
+            class="platform-logo-link"
+            href="${platform.url}"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="${platform.label}"
+            title="${platform.label}"
+          >
+            <span class="platform-logo-link__icon" aria-hidden="true">
+              ${platform.icon || `<span>${platform.label.slice(0, 1)}</span>`}
+            </span>
+          </a>
+        `
+      )
+      .join("");
+
+    releasePlatforms.hidden = !livePlatforms.length;
+  }
 
   function renderHero() {
     const chips = [
@@ -130,129 +118,88 @@
       `${release.tracks.length} ${release.tracks.length === 1 ? "track" : "tracks"}`,
       ...splitVibe(release.vibe)
     ].filter(Boolean);
-    const platformList = platformEntries();
 
-    releaseCover.src = release.cover;
-    releaseCover.alt = `${release.title} cover art`;
+    if (ui && ui.assignArtworkImage) {
+      ui.assignArtworkImage(releaseCover, {
+        src: release.cover,
+        title: release.title,
+        subtitle: artist.name,
+        accent: release.accent || artist.accent,
+        alt: `${release.title} cover art`,
+        loading: "eager"
+      });
+    } else {
+      releaseCover.src = release.cover;
+      releaseCover.alt = `${release.title} cover art`;
+    }
     releaseKicker.textContent = [release.type, release.year].filter(Boolean).join(" / ") || "Release";
     releaseTitle.textContent = release.title;
     releaseArtist.textContent = artist.name;
     releaseSummary.textContent = release.description || artist.summary || "";
     releaseChips.innerHTML = chips.map((chip) => `<span class="chip">${chip}</span>`).join("");
-    releasePlatforms.innerHTML = platformList
-      .map((platform) => {
-        if (platform.url) {
-          return `
-            <a class="platform-pill platform-pill--live" href="${platform.url}" target="_blank" rel="noreferrer">
-              <strong>${platform.label}</strong>
-              <span>Open platform</span>
-            </a>
-          `;
-        }
+    heroArtistLink.href = artistUrl(artist.slug, release.slug);
+    renderPlatforms();
+  }
 
-        return `
-          <div class="platform-pill platform-pill--pending" aria-disabled="true">
-            <strong>${platform.label}</strong>
-            <span>Destination coming soon</span>
+  function renderEmbeds() {
+    const primaryEmbed = ui.primaryEmbed(release);
+    const youtubeId = ui.preferredYoutubeId(release);
+
+    releaseEmbedHeading.textContent = primaryEmbed.label || "Official audio";
+    releaseVideoHeading.textContent = youtubeId ? `${release.title} visual` : "Official visual";
+
+    releasePrimaryEmbed.innerHTML = primaryEmbed.url
+      ? `
+          <div class="embed-frame embed-frame--audio">
+            <iframe
+              src="${primaryEmbed.url}"
+              title="${primaryEmbed.label || release.title} embed"
+              loading="lazy"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            ></iframe>
+          </div>
+        `
+      : `
+          <div class="embed-empty">
+            <p class="eyebrow">Audio</p>
+            <p>Official audio embed ready when a primary embed URL is added to this release.</p>
           </div>
         `;
-      })
-      .join("");
+
+    releaseYoutubeEmbed.innerHTML = youtubeId
+      ? `
+          <div class="embed-frame">
+            <iframe
+              src="${youtubeEmbedUrl(youtubeId)}"
+              title="${release.title} by ${artist.name}"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+        `
+      : `
+          <div class="embed-empty">
+            <p class="eyebrow">Visual</p>
+            <p>Official YouTube embed ready when a release-level video or track video is attached.</p>
+          </div>
+        `;
   }
 
   function renderStory() {
     releaseStoryHeading.textContent = `Inside ${release.title}`;
     releaseDescription.textContent = release.description || artist.summary || "";
+    releaseTracklist.innerHTML = release.tracks.map((track) => `<li>${track.title}</li>`).join("");
+    releaseTracklist.hidden = !release.tracks.length;
+
     artistName.textContent = artist.name;
     artistHeadline.textContent = artist.headline || artist.summary || "";
     artistStory.textContent = artist.story || artist.summary || "";
-    artistPageLink.href = artistUrl(artist.slug);
-    headerArtistLink.href = artistUrl(artist.slug);
-  }
-
-  function renderTrackList() {
-    trackList.innerHTML = release.tracks
-      .map((track, index) => `
-        <button
-          class="track-button ${index === state.activeTrackIndex ? "is-active" : ""}"
-          type="button"
-          data-track-index="${index}"
-        >
-          <div class="track-button__topline">
-            <span class="track-button__index">Track ${String(index + 1).padStart(2, "0")}</span>
-            ${track.runtime ? `<span class="track-button__meta">${track.runtime}</span>` : ""}
-          </div>
-          <span class="track-button__title">${track.title}</span>
-          <span class="track-button__meta">${track.youtubeId ? "Video ready" : "Video pending"}</span>
-        </button>
-      `)
-      .join("");
-  }
-
-  function renderTrackViewer() {
-    const track = release.tracks[state.activeTrackIndex];
-    const videoCount = release.tracks.filter((entry) => Boolean(entry.youtubeId)).length;
-
-    trackworldCopy.textContent = videoCount
-      ? "Choose a track to move through the release with its connected video."
-      : "The track layout is ready for official videos, visualizers, or performance clips as they go live.";
-
-    if (!track) {
-      trackViewer.innerHTML = `
-        <div class="video-empty">
-          <div class="video-empty__copy">
-            <p class="eyebrow">Track</p>
-            <h3>No track selected</h3>
-            <p>Choose a track from the list to open its video panel.</p>
-          </div>
-        </div>
-      `;
-      return;
+    artistPageLink.href = artistUrl(artist.slug, release.slug);
+    headerArtistLink.href = artistUrl(artist.slug, release.slug);
+    if (headerEpkLink) {
+      headerEpkLink.href = epkUrl(artist.slug);
     }
-
-    trackViewer.innerHTML = `
-      <div class="trackviewer-panel__header">
-        <p class="eyebrow">Selected Track</p>
-        <h3>${track.title}</h3>
-        <p class="track-meta">
-          ${[
-            release.title,
-            track.runtime || "",
-            track.youtubeId ? "Official video connected" : "Video slot ready"
-          ].filter(Boolean).join(" / ")}
-        </p>
-      </div>
-      ${
-        track.youtubeId
-          ? `<div class="video-frame">
-              <iframe
-                src="${youtubeEmbedUrl(track.youtubeId)}"
-                title="${track.title} by ${artist.name}"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              ></iframe>
-            </div>`
-          : `<div class="video-empty">
-              <div class="video-empty__copy">
-                <p class="eyebrow">Video</p>
-                <h3>${track.title}</h3>
-                <p>
-                  This slot is ready for an official video, visualizer, or live performance once the
-                  YouTube link is attached.
-                </p>
-              </div>
-            </div>`
-      }
-      <div class="trackviewer-panel__actions">
-        ${
-          track.youtubeId
-            ? `<a class="action-link" href="${youtubeWatchUrl(track.youtubeId)}" target="_blank" rel="noreferrer">Watch on YouTube</a>`
-            : ""
-        }
-        <a class="action-link" href="${artistUrl(artist.slug)}">Open Artist Page</a>
-      </div>
-    `;
   }
 
   function renderFooter() {
@@ -276,7 +223,13 @@
           <h3>${artist.name}</h3>
           <p>${artist.summary || artist.headline || ""}</p>
           <div class="footer-actions">
-            <a class="action-link" href="${artistUrl(artist.slug)}">Open artist page</a>
+            <a class="action-link" href="${artistUrl(artist.slug, release.slug)}">Open artist page</a>
+            <a class="action-link" href="${epkUrl(artist.slug)}">Open artist Press Kit</a>
+            ${
+              artist.slug === "matt-freeman"
+                ? '<a class="action-link" href="about.html">About Matthew</a><a class="action-link" href="process.html">Creative process</a>'
+                : ""
+            }
             <a class="action-link" href="index.html">Back to homepage</a>
           </div>
         </article>
@@ -284,10 +237,10 @@
           relatedCards ||
           `<article class="footer-card">
             <span class="footer-card__eyebrow">Catalog</span>
-            <h3>Stay in the release world.</h3>
-            <p>Return to the stage to move across the rest of the catalog.</p>
+            <h3>Keep moving through the catalog.</h3>
+            <p>Return to the front page to move across the rest of the releases.</p>
             <div class="footer-actions">
-              <a class="action-link" href="index.html">Explore the homepage reel</a>
+              <a class="action-link" href="index.html">Back to homepage</a>
             </div>
           </article>`
         }
@@ -295,39 +248,38 @@
     `;
   }
 
-  function applyMeta() {
-    document.title = `${release.title} | ${artist.name} | Pawn Island Records`;
+  function setVisualTheme() {
+    const accent = (release && release.accent) || (artist && artist.accent) || "#d8c7a1";
+    const backdropImage = String((release && release.cover) || (artist && artist.image) || "").trim();
 
-    if (ui && ui.setMetaDescription) {
-      ui.setMetaDescription(
-        `${release.title} by ${artist.name}. ${release.description || artist.summary || "Explore the release, artist story, platform links, and track videos."}`
-      );
-    } else if (metaDescription) {
-      metaDescription.setAttribute(
-        "content",
-        `${release.title} by ${artist.name}. ${release.description || artist.summary || "Explore the release, artist story, platform links, and track videos."}`
-      );
+    if (ui && ui.applyExperienceTheme) {
+      ui.applyExperienceTheme({
+        accent,
+        image: backdropImage,
+        backdropId: "release-backdrop",
+        title: release.title,
+        subtitle: artist.name
+      });
     }
   }
 
-  trackList.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-track-index]");
+  function applyMeta() {
+    document.title = `${release.title} | ${artist.name} | Pawn Island Records`;
 
-    if (!button) {
-      return;
+    const text = `${release.title} by ${artist.name}. ${release.description || artist.summary || "Explore the release, official embeds, and platform destinations."}`;
+
+    if (ui && ui.setMetaDescription) {
+      ui.setMetaDescription(text);
+    } else if (metaDescription) {
+      metaDescription.setAttribute("content", text);
     }
-
-    state.activeTrackIndex = Number(button.getAttribute("data-track-index")) || 0;
-    renderTrackList();
-    renderTrackViewer();
-  });
+  }
 
   setVisualTheme();
   applyMeta();
   renderHero();
+  renderEmbeds();
   renderStory();
-  renderTrackList();
-  renderTrackViewer();
   renderFooter();
 
   if (ui && ui.revealOnScroll) {
