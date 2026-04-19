@@ -16,6 +16,12 @@
     <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="//open.spotify.com" />
+    <link rel="preconnect" href="https://open.spotify.com" crossorigin />
+    <link
+      rel="prefetch"
+      href="https://open.spotify.com/embed/playlist/7ru1FJZS5qFXAbrNlh5YwZ?utm_source=generator&amp;theme=0"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=League+Spartan:wght@600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
@@ -63,18 +69,39 @@
                 <div class="platform-banner__row" id="home-platforms"></div>
               </div>
               <div class="hero-playlist-embed" aria-label="Pawn Island Playlist">
-                <iframe
-                  data-testid="embed-iframe"
-                  title="Pawn Island Playlist on Spotify"
-                  style="border-radius:12px"
-                  src="https://open.spotify.com/embed/playlist/7ru1FJZS5qFXAbrNlh5YwZ?utm_source=generator&amp;theme=0"
-                  width="85%"
-                  height="352"
-                  frameborder="0"
-                  allowfullscreen=""
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                ></iframe>
+                <div class="hero-playlist-embed__frame">
+                  <iframe
+                    data-testid="embed-iframe"
+                    title="Pawn Island Playlist on Spotify"
+                    style="border-radius:12px"
+                    src="https://open.spotify.com/embed/playlist/7ru1FJZS5qFXAbrNlh5YwZ?utm_source=generator&amp;theme=0"
+                    width="100%"
+                    height="352"
+                    frameborder="0"
+                    allowfullscreen=""
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="eager"
+                  ></iframe>
+                </div>
+                <div class="hero-playlist-embed__support">
+                  <p class="hero-playlist-embed__note" id="home-playlist-note">
+                    If the embedded player stalls here, open the playlist directly.
+                  </p>
+                  <div class="action-row action-row--center hero-playlist-embed__actions">
+                    <a
+                      class="button button--toofm button--small"
+                      id="home-playlist-link"
+                      href="https://open.spotify.com/playlist/7ru1FJZS5qFXAbrNlh5YwZ"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open in Spotify
+                    </a>
+                    <a class="button button--ghost button--small" href="catalog.html">
+                      Browse Catalog
+                    </a>
+                  </div>
+                </div>
               </div>
             </article>
 

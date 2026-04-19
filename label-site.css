@@ -457,7 +457,12 @@ button:focus-visible {
 .hero-playlist-embed {
   width: var(--home-card-width);
   display: grid;
+  gap: 0.85rem;
   justify-items: center;
+}
+
+.hero-playlist-embed__frame {
+  width: 100%;
 }
 
 .hero-playlist-embed iframe {
@@ -467,6 +472,29 @@ button:focus-visible {
   box-shadow:
     0 20px 44px rgba(0, 0, 0, 0.28),
     0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.hero-playlist-embed__support {
+  width: 100%;
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--white-faint);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
+}
+
+.hero-playlist-embed__note {
+  margin: 0;
+  color: var(--white-soft);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.hero-playlist-embed__actions {
+  justify-content: center;
 }
 
 .platform-banner {

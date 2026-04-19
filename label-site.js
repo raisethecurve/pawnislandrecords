@@ -75,6 +75,10 @@
     return /^https?:\/\//i.test(text(value, ""));
   }
 
+  function isSpotifyUrl(value) {
+    return /spotify\.com/i.test(text(value, ""));
+  }
+
   const launchModeValue = text(data.label && data.label.launchMode, "full").toLowerCase();
   const isFullLaunchMode = launchModeValue === "full";
 
@@ -835,6 +839,7 @@
     const identityLine = document.getElementById("home-identity-line");
     const platformsNode = document.getElementById("home-platforms");
     const playlistLink = document.getElementById("home-playlist-link");
+    const playlistNote = document.getElementById("home-playlist-note");
     const featuredReleaseLink = document.getElementById("home-featured-release-link");
     const featureStack = document.getElementById("home-feature-stack");
     const featuredArtist = artistForRelease(featuredRelease);
@@ -888,18 +893,36 @@
     if (playlistLink) {
       const nextPlaylistUrl = playlistUrl();
       const externalPlaylist = isExternalUrl(nextPlaylistUrl);
+      const spotifyPlaylist = isSpotifyUrl(nextPlaylistUrl);
 
       playlistLink.href = nextPlaylistUrl;
+      playlistLink.textContent = externalPlaylist
+        ? spotifyPlaylist
+          ? "Open in Spotify"
+          : "Open Playlist"
+        : "Browse Catalog";
 
       if (externalPlaylist) {
         playlistLink.target = "_blank";
         playlistLink.rel = "noreferrer";
-        playlistLink.setAttribute("aria-label", "Open the Pawn Island catalog playlist");
+        playlistLink.setAttribute(
+          "aria-label",
+          spotifyPlaylist
+            ? "Open the Pawn Island catalog playlist in Spotify"
+            : "Open the Pawn Island catalog playlist"
+        );
       } else {
         playlistLink.removeAttribute("target");
         playlistLink.removeAttribute("rel");
         playlistLink.setAttribute("aria-label", "Browse the Pawn Island catalog");
       }
+    }
+
+    if (playlistNote) {
+      const nextPlaylistUrl = playlistUrl();
+      playlistNote.textContent = isExternalUrl(nextPlaylistUrl)
+        ? "If the embedded player stalls here, open the playlist directly."
+        : "Prefer a fuller browse? Open the catalog directly.";
     }
 
     if (featuredReleaseLink && featuredRelease) {
