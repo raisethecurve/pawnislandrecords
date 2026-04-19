@@ -19,7 +19,7 @@
   ];
   const DEFAULTS = {
     identityLine:
-      "A discovery-led independent label space built for distinct project identity, direct listening, and clean release worlds.",
+      "A one-person label imprint for songs that do not belong in one lane. Each project gives the writing its own weather, voice, and visual world.",
     featuredCampaignTitle: "Featured Campaign",
     featuredCampaignSummary:
       "Move from discovery to action through the label's live Too.fm campaign hub.",
@@ -281,7 +281,10 @@
   }
 
   function labelIdentityLine() {
-    return text(data.label && data.label.identityLine, DEFAULTS.identityLine);
+    return text(
+      data.label && (data.label.identityLine || data.label.intro || data.label.tagline),
+      DEFAULTS.identityLine
+    );
   }
 
   function releaseState(release) {
@@ -915,6 +918,7 @@
       );
       const featureMarkup = featuredRelease
         ? `
+          <p class="section-kicker feature-stack__kicker">${escapeHtml(featuredMetaLabel)}</p>
           <article class="feature-card feature-card--featured">
             <div class="feature-card__visual">
               ${artworkMarkup(
@@ -925,7 +929,6 @@
               )}
             </div>
             <div class="feature-card__body">
-              <p class="feature-card__meta">${escapeHtml(featuredMetaLabel)}</p>
               <h2>${escapeHtml(featuredRelease.title)}</h2>
               <p>${escapeHtml(
                 featuredArtist
@@ -948,8 +951,8 @@
           ${pendingReleases.length ? pendingCarouselMarkup(pendingReleases) : ""}
         `
         : `
+          <p class="section-kicker feature-stack__kicker">Featured Release</p>
           <article class="feature-card">
-            <p class="feature-card__meta">Featured Release</p>
             <h2>Catalog In Motion</h2>
             <p>The next release world will appear here as soon as the public catalog is updated.</p>
           </article>

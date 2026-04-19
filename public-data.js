@@ -1,15 +1,15 @@
 window.PAWN_PUBLIC_DATA = {
   label: {
     name: "Pawn Island Records",
-    tagline: "Release worlds with room to breathe.",
+    tagline: "One writer, many worlds.",
     intro:
-      "Pawn Island Records presents a catalog of distinct project identities, visual worlds, and release campaigns built to be explored cleanly.",
+      "A one-person label imprint for songs that do not belong in one lane. Each project gives the writing its own weather, voice, and visual world.",
     // Switch back to "full" when project pages, release pages, and press pages are ready to publish.
     launchMode: "essentials",
     featuredReleaseSlug: "rhea-mauro-aura-farming",
     featuredCampaignTitle: "May 1 Release Wave",
     featuredCampaignSummary:
-      "Lights On, Midnight Revival, and That's Fair all arrive May 1, 2026, with pre-save live now.",
+      "Three new chapters arrive May 1, with pre-save links live now.",
     featuredCampaignUrl: "https://too.fm/ryxg0kk",
     campaignUrl: "https://too.fm/ryxg0kk",
     defaultTooFmUrl: "https://too.fm/ryxg0kk",
@@ -25,27 +25,27 @@ window.PAWN_PUBLIC_DATA = {
       "Tidal"
     ],
     aboutText:
-      "Pawn Island Records is building around a vibe-first mentality: the feeling should land before the explanation does. We release the music, watch which visual and emotional cues actually resonate, and then iterate the world from what feels alive. Each project gets room to become a distinct universe instead of being forced into a finished brand system too early. The goal is a catalog that grows through signal, repetition, and intent.",
+      "Pawn Island Records is a one-person label built by a poet who follows feeling before format. Some songs arrive close to the page; others ask for noise, glow, weight, or motion. The project names exist to keep those lanes clear for listeners, so each release can live in its own world instead of everything being forced under one sound. The process is simple: stay with the song until it feels right, release it, and keep moving.",
     ethos:
-      "Start with the vibe. Release the record. Let the world sharpen through repetition, response, and intent.",
+      "Follow the feeling. Finish the song. Let each world keep its own weather.",
     timeline: [
       {
         label: "01",
-        title: "Vibe First",
+        title: "Write From the Feeling",
         text:
-          "Atmosphere, tone, and emotional signal come before over-explaining the concept. If a listener can feel the world immediately, the release is already working."
+          "Most songs start with language, mood, or an image. The first job is not explanation. It is getting the emotional truth to land."
       },
       {
         label: "02",
-        title: "Release Then Iterate",
+        title: "Give Each Sound Its Own Name",
         text:
-          "We do not wait for a giant lore package before the music moves. The release goes live first, then the strongest visuals, language, and campaign angles are refined from real response."
+          "The roster is a set of project lanes built to separate genres and keep the catalog readable. Each name holds a different weather system."
       },
       {
         label: "03",
-        title: "Worlds That Earn Detail",
+        title: "Release and Keep Moving",
         text:
-          "Each project builds its own symbols, textures, and pacing over time. World-building is treated as something discovered through repeat releases, not imposed all at once."
+          "When a song feels honest, it goes out into the world. The next piece begins before the dust has fully settled."
       }
     ],
     platformPresets: [
@@ -64,19 +64,19 @@ window.PAWN_PUBLIC_DATA = {
     {
       slug: "rhea-mauro",
       name: "Rhea Mauro",
-      lane: "Songwriter soul / country dusk",
+      lane: "Soulful belting / adult contemporary / country",
       accent: "#cb7c4c",
       image: "media/public/promo/rhea_promo.png",
       summary:
-        "Warm-blooded writing, ember-lit arrangements, and songs that feel handwritten even at their biggest.",
+        "A versatile vocal lane moving from soulful belting to singer-songwriter warmth, with room for playful country turns.",
       headline:
-        "A cinematic songwriter project built from intimacy, grain, and open-road emotional scale.",
+        "A voice-led project built for adult contemporary depth, songwriter intimacy, and occasional country lift.",
       story:
-        "Rhea Mauro is where the catalog leans into voice, memory, and slow-burning atmosphere. The project lives in the space between soul confession, country horizon lines, and detail-rich storytelling.",
+        "Rhea Mauro is one of the most flexible corners of the catalog. The songs can belt, confide, or loosen into something playful depending on where the writing wants to go.",
       industryPitch:
-        "Ideal for visual release campaigns, lyric-led short form, intimate live sessions, and press framing that emphasizes writing first.",
+        "Best framed through lyric excerpts, intimate visuals, acoustic performance clips, and writing-first storytelling.",
       pressBio:
-        "Rhea Mauro moves through songwriter soul, country texture, and film-sized emotional framing. The songs are built for listeners who want closeness, detail, and a sense of weather in the room.",
+        "Rhea Mauro is the songwriter-facing wing of Pawn Island Records, built for close writing, warm arrangements, and durable emotional detail.",
       pressHighlights: [
         "Songwriter-led release world with strong lyric focus",
         "Warm visual palette and tactile artwork direction",
@@ -95,19 +95,19 @@ window.PAWN_PUBLIC_DATA = {
     {
       slug: "high-ground",
       name: "High Ground",
-      lane: "Rap / statement records",
+      lane: "Urban hip hop / New England identity",
       accent: "#53473d",
       image: "media/public/promo/high_promo.png",
       summary:
-        "Direct writing, stripped-back graphics, and records that make their point quickly and clearly.",
+        "An urban hip hop lane with cold-weather edges, direct language, and a rooted New England identity.",
       headline:
-        "A precise rap project built around pressure, perspective, and editorial clarity.",
+        "A stripped-back project built for sharp bars, regional character, and clean impact.",
       story:
-        "High Ground is the label's cleanest statement-maker. The project works best when the presentation is sharp, minimal, and built to let the bars and visual branding carry the release.",
+        "High Ground carries the clearest hip hop voice on the label, pairing direct writing with the feel of northeastern streets, winters, and self-possession.",
       industryPitch:
-        "Strong fit for playlist pitching, short-form campaign clips, editorial performance visuals, and single-focused release sequencing.",
+        "Strong fit for sharp visuals, editorial performance clips, and concise campaign language that lets the bars lead.",
       pressBio:
-        "High Ground blends lean production, direct language, and hard-edged visual restraint into a project designed to cut through quickly. The focus is clarity, intent, and controlled momentum.",
+        "High Ground is the direct-hit rap lane of Pawn Island Records, built around clarity, intent, and records that say exactly what they mean.",
       pressHighlights: [
         "Clear visual identity and graphic presentation",
         "Strong single-ready structure",
@@ -126,19 +126,19 @@ window.PAWN_PUBLIC_DATA = {
     {
       slug: "velvet-orchard",
       name: "Velvet Orchard",
-      lane: "Dream pop / neon romance",
+      lane: "Bass-forward EDM / dance pop",
       accent: "#9a4d73",
       image: "media/public/promo/velvet_promo.png",
       summary:
-        "Soft-focus synth color, romantic tension, and hooks that stay luminous without becoming weightless.",
+        "A neon-born dance lane that has evolved into bass-forward EDM with pop instincts intact.",
       headline:
-        "A dream-pop project built for neon atmosphere, dark romance, and after-hours melodic pull.",
+        "A high-color project built for movement, glow, and late-night release.",
       story:
-        "Velvet Orchard brings gloss and glow into the catalog without flattening it into generic pop. The project thrives on atmosphere, saturated color, and a slightly dangerous kind of polish.",
+        "Velvet Orchard began in neon synth-pop and has grown into something heavier on rhythm and low end. It is the dance-facing world of the label, built to move without losing heart.",
       industryPitch:
-        "Best presented with visual-first campaigns, strong artwork rollouts, and a merch line that leans into nightlife and collector aesthetics.",
+        "Best presented through strong artwork, visual-first rollouts, and a collector aesthetic that feels nocturnal rather than slick.",
       pressBio:
-        "Velvet Orchard lives in the space between dream-pop shimmer and neon-lit tension. The project leans into color, mood, and movement while keeping the songs emotionally immediate.",
+        "Velvet Orchard is the dream-pop arm of Pawn Island Records, leaning into saturated color, romantic pull, and songs that stay human beneath the glow.",
       pressHighlights: [
         "Highly visual release identity",
         "Strong crossover between music and design language",
@@ -157,19 +157,19 @@ window.PAWN_PUBLIC_DATA = {
     {
       slug: "quiet-filter",
       name: "Quiet Filter",
-      lane: "Heavy slow-burn / doom pressure",
+      lane: "Stoner doom / heavy ritual",
       accent: "#8a764f",
       image: "media/public/promo/filter_promo.png",
       summary:
-        "Low-end mass, ritual pacing, and songs that feel physical before they feel polished.",
+        "A stoner-doom lane built on low-end drag, repetition, and immersive heaviness.",
       headline:
-        "A heavy project defined by pressure, patience, and stripped-down visual force.",
+        "A metal project shaped by ritual pace, texture, and real physical weight.",
       story:
-        "Quiet Filter is built around weight, repetition, and atmosphere with edges sanded off. The project works best in a presentation that feels deliberate, minimal, and grounded in texture.",
+        "Quiet Filter is the slowest and heaviest lane on the label, leaning into stoner doom atmosphere, patience, and tone you can almost feel in the room.",
       industryPitch:
-        "Pairs well with performance video, heavier visual branding, vinyl-minded merch, and slow-burn campaign pacing.",
+        "Pairs naturally with performance video, heavier visual branding, and slow-burn campaigns that do not rush the atmosphere.",
       pressBio:
-        "Quiet Filter moves through heaviness with intention rather than clutter. The songs are thick, patient, and immersive, with imagery that works best when the page gives them room.",
+        "Quiet Filter is the heavy slow-burn wing of the label, built around mass, restraint, and immersion.",
       pressHighlights: [
         "Strong identity for heavy-music editorial framing",
         "Visual language favors texture over excess",
@@ -188,19 +188,19 @@ window.PAWN_PUBLIC_DATA = {
     {
       slug: "resunant",
       name: "Resunant",
-      lane: "Alternative metal / aftermath glow",
+      lane: "Alternative rock / glam rock",
       accent: "#cb6c2a",
       image: "media/public/promo/resunant_promo.png",
       summary:
-        "Ash, tension, and flashes of melody inside a heavier project with real visual impact.",
+        "An alternative rock lane with glam lift, sharp hooks, and real stage energy.",
       headline:
-        "An alt-metal lane where burn marks, lift, and release sequencing all matter equally.",
+        "A guitar-forward project built for contrast, color, and larger-than-life release.",
       story:
-        "Resunant lets the catalog get sharper and more volatile. The project wants bigger gestures, stronger contrast, and a presentation that feels more cinematic than generic heavy-band boilerplate.",
+        "Resunant is where the catalog turns outward and theatrical, mixing alternative rock drive with glam-rock shine and a sense of ignition.",
       industryPitch:
-        "Strong fit for performance visuals, live session clips, heavier playlist pitching, and bold artwork-led campaign drops.",
+        "Strong fit for performance visuals, live clips, heavier playlist pitching, and artwork that leans into contrast and motion.",
       pressBio:
-        "Resunant pushes into alternative metal and heavier rock through atmosphere, damage, and a sense of ignition after the fact. The songs balance impact with a strong visual arc.",
+        "Resunant is the alt-metal lane of Pawn Island Records, balancing abrasion, melody, and a strong visual sense of aftermath.",
       pressHighlights: [
         "High-contrast visual identity",
         "Built for larger live-performance framing",
@@ -219,19 +219,19 @@ window.PAWN_PUBLIC_DATA = {
     {
       slug: "matt-freeman",
       name: "Matthew Freeman",
-      lane: "Sound / language / atmosphere",
+      lane: "Pop culture / uncategorized songs",
       accent: "#7b362b",
       image: "media/public/albums/freeman_time.png",
       summary:
-        "A multidisciplinary creator building dark, disciplined release worlds from sound, language, and atmosphere.",
+        "The catch-all lane for pop culture pieces, one-offs, and songs that do not belong under a stricter genre banner.",
       headline:
-        "Industrial texture, electronic movement, and cinematic tension shaped into emotionally precise songs.",
+        "A flexible project for standalone ideas, cultural references, and material outside the genre-facing lanes.",
       story:
-        "Matthew Freeman works at the intersection of sound, language, and atmosphere. Rather than chasing fixed genre lines, he builds each track around mood, narrative, and emotional impact, creating work that feels immersive, visceral, and alive with inner pressure.",
+        "Matthew Freeman holds the songs that do not want to stay in a single box. It is the most open-ended space on the label, where commentary, character, and odd angles can lead the way.",
       industryPitch:
-        "Best framed as intention-led world-building: clear emotional direction, disciplined release visuals, and music shaped as much by authorship and sound design as by genre language.",
+        "A strong entry point for understanding the label as one authorship expressed through multiple release worlds.",
       pressBio:
-        "Matthew Freeman is a multidisciplinary creator working at the intersection of sound, language, and atmosphere. Drawing on industrial texture, electronic movement, and cinematic tension, he builds songs around mood, narrative, and emotional impact rather than fixed genre boundaries. The result is a body of work that feels dark, disciplined, immersive, and emotionally precise.",
+        "Matthew Freeman is a poet, songwriter, and builder of release worlds whose work moves through industrial texture, electronic motion, and emotionally exact writing. Pawn Island Records grows from that same one-person practice: one voice, many lanes.",
       pressHighlights: [
         "Industrial texture with electronic movement",
         "Mood-first writing with cinematic tension",
@@ -250,19 +250,19 @@ window.PAWN_PUBLIC_DATA = {
     {
       slug: "blackout-state",
       name: "Blackout State",
-      lane: "Industrial panic / collapse rock",
+      lane: "Pop punk / shutdown energy",
       accent: "#c59b25",
       image: "media/public/promo/state_promo.png",
       summary:
-        "Collage-heavy chaos, abrasion, and release framing that feels torn from a wall rather than polished in a template.",
+        "A pop-punk lane built for fast hooks, restless energy, and a little beautiful damage.",
       headline:
-        "A confrontational project built from impact, damage, and shutdown energy.",
+        "A confrontational project driven by momentum, abrasion, and sing-along impact.",
       story:
-        "Blackout State gives the catalog a more chaotic poster-culture lane. The presentation should feel raw enough to hold the work without burying it under gimmicks.",
+        "Blackout State is the loud, fast-moving corner of the label, where sharp edges and catchy release energy meet.",
       industryPitch:
-        "Best supported with graphic campaigns, visual destruction motifs, and limited merch that leans hard into the collage language.",
+        "Best supported with graphic campaigns, distressed visuals, and limited merch that leans into collage and contrast.",
       pressBio:
-        "Blackout State is louder in both sonics and presentation: distressed type, hard contrast, and songs that feel like alarms rather than background.",
+        "Blackout State is the industrial-panic side of the label, pairing distressed graphics with songs that feel like alerts and aftermath.",
       pressHighlights: [
         "Strong poster-ready visual language",
         "Natural fit for graphic merch",
@@ -280,19 +280,19 @@ window.PAWN_PUBLIC_DATA = {
     {
       slug: "crick-kinnard",
       name: "Crick Kinnard",
-      lane: "Roots noir / river-country writing",
+      lane: "Bluesy southern country / soul",
       accent: "#b17d43",
       image: "media/public/promo/crick_promo.png",
       summary:
-        "Place-rich writing, long-view storytelling, and songs that carry landscape inside them.",
+        "A bluesy, soulful southern-country lane with grit, warmth, and deep roots.",
       headline:
-        "A roots-driven project grounded in river light, memory, and strong narrative framing.",
+        "A grounded project built from southern weather, soulful phrasing, and durable songcraft.",
       story:
-        "Crick Kinnard belongs to the part of the catalog that values patience, sense of place, and classic songcraft. The site should let that register through calm spacing and strong typography.",
+        "Crick Kinnard carries the earthy, blues-soaked side of the label, where country structure and soul feeling meet without pretense.",
       industryPitch:
-        "Good fit for Americana press, lyric features, intimate performance clips, and simple merch tied to the release artwork.",
+        "A good fit for Americana press, lyric features, intimate performance clips, and simple artwork-led merch.",
       pressBio:
-        "Crick Kinnard writes with place in mind. The songs move through river country, shadow, distance, and durable emotional detail without overstatement.",
+        "Crick Kinnard is the roots-noir arm of Pawn Island Records, built for patient storytelling, grounded imagery, and sturdy emotional truth.",
       pressHighlights: [
         "Narrative-led songwriting identity",
         "Strong fit for Americana and songwriter press",
@@ -311,19 +311,19 @@ window.PAWN_PUBLIC_DATA = {
     {
       slug: "second-watch",
       name: "second watch",
-      lane: "Reflective dusk / spiritual horizon",
+      lane: "Contemporary gospel / modern church music",
       accent: "#c08745",
       image: "media/public/promo/second_promo.png",
       summary:
-        "Stillness, horizon light, and reflective material built for slower attention.",
+        "A contemporary gospel lane built for modern churches, devotion, and uplift.",
       headline:
-        "A contemplative project shaped by devotion, dusk, and long-view emotional framing.",
+        "A worship-facing project shaped by reflection, hope, and congregational scale.",
       story:
-        "second watch lives in a quieter register than most of the catalog. The presentation should stay spare, bright at the edges, and focused on the song rather than interface complexity.",
+        "second watch carries the faith-centered material in the catalog, drawing on contemporary Christian songwriting built for modern church settings.",
       industryPitch:
-        "Works well with thoughtful editorial positioning, lyric-first framing, and carefully selected video embeds rather than constant motion.",
+        "Works well with thoughtful editorial framing, lyric-first presentation, and carefully chosen visuals rather than constant motion.",
       pressBio:
-        "second watch leans into reflection, scale, and emotional quiet. The songs invite slower listening and a visual language that feels open rather than crowded.",
+        "second watch is the reflective wing of the catalog, built for quiet songs, spiritual undertones, and unforced emotional space.",
       pressHighlights: [
         "Clear contemplative identity",
         "Strong visual pairing with horizon and light motifs",
@@ -383,7 +383,7 @@ window.PAWN_PUBLIC_DATA = {
       accent: "#efc185",
       cover: "media/public/albums/rhea_aura.png",
       description:
-        "A warm-lit songwriter release built around presence, detail, and the feeling of a room coming into focus.",
+        "A playful, storybook songwriter-pop release following a young girl from childhood into adulthood.",
       status: "live",
       tooFmUrl: "https://too.fm/ga4wykj",
       platforms: [],
