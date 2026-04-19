@@ -44,17 +44,18 @@
   }
 
   const launchModeValue = text(data.label && data.label.launchMode, "full").toLowerCase();
+  const isFullLaunchMode = launchModeValue === "full";
 
   function showCatalogPage() {
-    return launchModeValue !== "essentials";
+    return isFullLaunchMode;
   }
 
   function showPressPages() {
-    return launchModeValue !== "essentials";
+    return isFullLaunchMode;
   }
 
   function showReleasePages() {
-    return launchModeValue !== "essentials";
+    return isFullLaunchMode;
   }
 
   function publicNavLinks() {

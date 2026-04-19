@@ -229,10 +229,14 @@
     const seedLabel = seed.label && typeof seed.label === "object" ? seed.label : {};
     const storedFeaturedReleaseSlug = String(baseLabel.featuredReleaseSlug || "").trim();
     const seedFeaturedReleaseSlug = String(seedLabel.featuredReleaseSlug || "").trim();
+    const normalizedLaunchMode = String(baseLabel.launchMode || seedLabel.launchMode || "full")
+      .trim()
+      .toLowerCase();
     const label = {
       name: String(baseLabel.name || seedLabel.name || "Pawn Island Records").trim(),
       tagline: String(baseLabel.tagline || seedLabel.tagline || "").trim(),
       intro: String(baseLabel.intro || seedLabel.intro || "").trim(),
+      launchMode: normalizedLaunchMode || "full",
       featuredReleaseSlug:
         storedFeaturedReleaseSlug && storedFeaturedReleaseSlug !== LEGACY_FEATURED_RELEASE_SLUG
           ? storedFeaturedReleaseSlug
