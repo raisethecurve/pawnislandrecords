@@ -91,7 +91,29 @@
     rgba(255, 255, 255, 0.03) 100%
   );
   background-size: 400% 100%;
+}
+
+.release-card__cover img.artwork-pending,
+.artist-card__cover img.artwork-pending,
+.press-card__cover img.artwork-pending,
+.feature-card__visual img.artwork-pending,
+.cover-gallery__image img.artwork-pending,
+.strip-card__thumb img.artwork-pending,
+.epk-spotlight__cover img.artwork-pending,
+.artist-page-visual__cover img.artwork-pending {
   animation: pawn-shimmer 1.6s ease-in-out infinite;
+}
+
+.release-card__cover img.artwork-ready,
+.artist-card__cover img.artwork-ready,
+.press-card__cover img.artwork-ready,
+.feature-card__visual img.artwork-ready,
+.cover-gallery__image img.artwork-ready,
+.strip-card__thumb img.artwork-ready,
+.epk-spotlight__cover img.artwork-ready,
+.artist-page-visual__cover img.artwork-ready {
+  animation: none;
+  background-size: auto;
 }
 
 /* ─── Horizontal scroll fades ───────────────────────────────── */
@@ -1083,6 +1105,8 @@ button:focus-visible {
 
 .artist-card__cover {
   display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -1091,8 +1115,10 @@ button:focus-visible {
 
 .artist-card__cover img {
   width: 100%;
+  height: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
+  object-position: center center;
 }
 
 .artist-card__index {

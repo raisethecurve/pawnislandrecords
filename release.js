@@ -261,7 +261,9 @@
         subtitle: artist.name,
         accent: release.accent || artist.accent,
         alt: `${release.title} cover art`,
-        loading: "eager"
+        loading: "eager",
+        fetchPriority: "high",
+        sizes: "(min-width: 960px) 34rem, 92vw"
       });
     } else {
       releaseCover.src = release.cover;

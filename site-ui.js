@@ -625,6 +625,61 @@
     return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
   }
 
+  const artworkPlaceholderCache = new Map();
+
+  function markArtworkReady(image) {
+    if (!(image instanceof HTMLImageElement)) {
+      return;
+    }
+
+    image.classList.remove("artwork-pending");
+    image.classList.add("artwork-ready");
+  }
+
+  function applyArtworkLoadingPolicy(image, settings) {
+    if (!(image instanceof HTMLImageElement)) {
+      return;
+    }
+
+    const options = settings && typeof settings === "object" ? settings : {};
+    const loading = options.loading === "eager" ? "eager" : "lazy";
+    const requestedPriority = String(
+      options.fetchpriority || options.fetchPriority || (loading === "eager" ? "high" : "low")
+    )
+      .trim()
+      .toLowerCase();
+    const priority = ["high", "low", "auto"].includes(requestedPriority)
+      ? requestedPriority
+      : "auto";
+
+    image.loading = loading;
+    image.decoding = "async";
+    image.fetchPriority = priority;
+    image.classList.add("artwork-pending");
+
+    if (options.sizes) {
+      image.sizes = String(options.sizes).trim();
+    }
+
+    if (Number(options.width) > 0) {
+      image.width = Number(options.width);
+    }
+
+    if (Number(options.height) > 0) {
+      image.height = Number(options.height);
+    }
+  }
+
+  function shouldRenderBackdrop() {
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const slowConnection = Boolean(
+      connection && (connection.saveData || /2g/i.test(String(connection.effectiveType || "")))
+    );
+
+    return !reducedMotion && !slowConnection;
+  }
+
   function placeholderArtworkUrl(options) {
     const settings = options && typeof options === "object" ? options : {};
     const format = settings.format === "landscape" ? "landscape" : "square";
@@ -642,6 +697,13 @@
       settings.context ||
       (format === "landscape" ? "Immersive placeholder artwork" : "Placeholder artwork")
     ).trim();
+    const cacheKey = `${format}|${accent}|${title}|${subtitle}`;
+    const cachedPlaceholder = artworkPlaceholderCache.get(cacheKey);
+
+    if (cachedPlaceholder) {
+      return cachedPlaceholder;
+    }
+
     const hash = stringHash(`${title}|${subtitle}|${accent}|${format}`);
     const orbAX = (18 + hashUnit(hash, 1) * 60).toFixed(2);
     const orbAY = (12 + hashUnit(hash, 2) * 64).toFixed(2);
@@ -751,7 +813,9 @@
       </svg>
     `.replace(/\s+/g, " ").trim();
 
-    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    const dataUrl = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    artworkPlaceholderCache.set(cacheKey, dataUrl);
+    return dataUrl;
   }
 
   function resolveArtwork(source, options) {
@@ -765,11 +829,24 @@
     }
 
     if (image.dataset.artworkBound === "true") {
+      if (image.complete && image.naturalWidth > 0) {
+        markArtworkReady(image);
+      }
       return;
     }
 
     image.dataset.artworkBound = "true";
-    image.decoding = "async";
+    applyArtworkLoadingPolicy(image, {
+      loading: image.getAttribute("loading") || image.loading || "lazy",
+      fetchpriority: image.getAttribute("fetchpriority") || image.fetchPriority || "auto",
+      sizes: image.getAttribute("sizes") || "",
+      width: image.getAttribute("width") || image.width || 0,
+      height: image.getAttribute("height") || image.height || 0
+    });
+
+    image.addEventListener("load", () => {
+      markArtworkReady(image);
+    });
 
     image.addEventListener("error", () => {
       const fallback = String(image.dataset.artworkFallback || "").trim();
@@ -784,6 +861,11 @@
 
     if (!String(image.getAttribute("src") || "").trim() && image.dataset.artworkFallback) {
       image.src = image.dataset.artworkFallback;
+      return;
+    }
+
+    if (image.complete && image.naturalWidth > 0) {
+      markArtworkReady(image);
       return;
     }
 
@@ -817,14 +899,36 @@
     const alt = String(settings.alt || settings.title || "Artwork").trim();
     const className = String(settings.className || "").trim();
     const loading = settings.loading === "eager" ? "eager" : "lazy";
+    const requestedPriority = String(
+      settings.fetchpriority || settings.fetchPriority || (loading === "eager" ? "high" : "low")
+    )
+      .trim()
+      .toLowerCase();
+    const fetchPriority = ["high", "low", "auto"].includes(requestedPriority)
+      ? requestedPriority
+      : "auto";
+    const format = settings.format === "landscape" ? "landscape" : "square";
+    const width = Math.max(1, Number(settings.width) || (format === "landscape" ? 1600 : 1200));
+    const height = Math.max(1, Number(settings.height) || (format === "landscape" ? 900 : 1200));
+    const sizes = String(
+      settings.sizes ||
+        (format === "landscape"
+          ? "(min-width: 1100px) 42vw, 100vw"
+          : "(min-width: 1100px) 20rem, (min-width: 720px) 32vw, 92vw")
+    ).trim();
+    const combinedClassName = [className, "artwork-pending"].filter(Boolean).join(" ");
 
     return `
       <img
-        ${className ? `class="${escapeAttribute(className)}"` : ""}
+        ${combinedClassName ? `class="${escapeAttribute(combinedClassName)}"` : ""}
         src="${escapeAttribute(src)}"
         alt="${escapeAttribute(alt)}"
+        width="${width}"
+        height="${height}"
         loading="${loading}"
         decoding="async"
+        fetchpriority="${fetchPriority}"
+        sizes="${escapeAttribute(sizes)}"
         data-artwork-fallback="${escapeAttribute(fallback)}"
       />
     `.replace(/\s+/g, " ").trim();
@@ -845,12 +949,13 @@
       image.alt = String(settings.alt || "").trim();
     }
 
-    if (settings.loading) {
-      image.loading = settings.loading;
-    }
-
+    applyArtworkLoadingPolicy(image, settings);
     bindArtworkFallback(image);
     image.src = resolveArtwork(settings.src, settings);
+
+    if (image.complete && image.naturalWidth > 0) {
+      markArtworkReady(image);
+    }
   }
 
   function applyExperienceTheme(options) {
@@ -867,18 +972,42 @@
       (backdropId && document.getElementById(backdropId)) ||
       document.getElementById("page-backdrop") ||
       document.getElementById("release-backdrop");
+    const showBackdrop = Boolean(image) && shouldRenderBackdrop();
+    const backdropOpacity = showBackdrop ? String(settings.backdropOpacity || "0.14") : "0";
+    const backdropFilter = showBackdrop
+      ? String(settings.backdropFilter || "blur(16px) saturate(1.08)")
+      : "none";
+    const nextBackdrop = showBackdrop ? `url("${image}")` : "none";
 
     document.documentElement.style.setProperty("--release-accent", accent);
     document.documentElement.style.setProperty("--release-accent-soft", hexToRgba(accent, 0.18));
     document.documentElement.style.setProperty("--release-glow", hexToRgba(accent, 0.18));
-    document.documentElement.style.setProperty(
-      "--page-backdrop-image",
-      image ? `url("${image}")` : "none"
-    );
+    document.documentElement.style.setProperty("--page-backdrop-opacity", backdropOpacity);
+    document.documentElement.style.setProperty("--page-backdrop-filter", backdropFilter);
 
-    if (backdrop) {
-      backdrop.style.backgroundImage = image ? `url("${image}")` : "";
+    const applyBackdrop = () => {
+      document.documentElement.style.setProperty("--page-backdrop-image", nextBackdrop);
+
+      if (backdrop) {
+        backdrop.style.backgroundImage = showBackdrop ? `url("${image}")` : "";
+      }
+    };
+
+    if (!showBackdrop) {
+      applyBackdrop();
+      return;
     }
+
+    if (document.readyState === "complete") {
+      if (typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(applyBackdrop, { timeout: 240 });
+      } else {
+        window.setTimeout(applyBackdrop, 90);
+      }
+      return;
+    }
+
+    window.addEventListener("load", applyBackdrop, { once: true });
   }
 
   function setMetaDescription(content) {

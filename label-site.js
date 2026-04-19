@@ -397,7 +397,7 @@
       <article class="pending-album">
         <div class="pending-album__art">
           <img
-            src="${escapeHtml(text(release.cover, "assets/brand/pawnisland-1200.jpg"))}"
+            src="${escapeHtml(text(release.cover, "assets/brand/pawnisland-256.jpg"))}"
             alt="${escapeHtml(release.title)} artwork"
             loading="lazy"
           />
@@ -750,9 +750,21 @@
     });
   }
 
-  function artworkMarkup(source, titleValue, subtitleValue, index) {
+  function artworkMarkup(source, titleValue, subtitleValue, index, options) {
+    const settings = options || {};
     const accent = index % 2 === 0 ? "#ffcc00" : "#4169e1";
     const alt = `${titleValue} artwork`;
+    const loading = settings.loading === "eager" ? "eager" : "lazy";
+    const fetchPriority = settings.fetchPriority || settings.fetchpriority || (loading === "eager" ? "high" : "low");
+    const format = settings.format === "landscape" ? "landscape" : "square";
+    const width = Number(settings.width) || (format === "landscape" ? 1600 : 1200);
+    const height = Number(settings.height) || (format === "landscape" ? 900 : 1200);
+    const sizes = String(
+      settings.sizes ||
+      (format === "landscape"
+        ? "(min-width: 1100px) 24rem, (min-width: 720px) 40vw, 92vw"
+        : "(min-width: 1100px) 18rem, (min-width: 720px) 30vw, 92vw")
+    ).trim();
 
     if (ui && ui.artworkImageMarkup) {
       return ui.artworkImageMarkup({
@@ -761,11 +773,16 @@
         subtitle: subtitleValue,
         accent,
         alt,
-        loading: "lazy"
+        loading,
+        fetchPriority,
+        format,
+        width,
+        height,
+        sizes
       });
     }
 
-    return `<img src="${escapeHtml(source)}" alt="${escapeHtml(alt)}" loading="lazy" />`;
+    return `<img src="${escapeHtml(source)}" alt="${escapeHtml(alt)}" loading="${escapeHtml(loading)}" decoding="async" />`;
   }
 
   function setActiveNav() {
@@ -923,7 +940,12 @@
                 featuredRelease.cover,
                 featuredRelease.title,
                 featuredArtist ? featuredArtist.name : "Featured release",
-                0
+                0,
+                {
+                  loading: "eager",
+                  fetchPriority: "high",
+                  sizes: "(min-width: 1100px) 18rem, (min-width: 720px) 38vw, 92vw"
+                }
               )}
             </div>
             <div class="feature-card__body">
@@ -978,7 +1000,11 @@
           artist.image || (latestRelease && latestRelease.cover) || "",
           artist.name,
           artist.lane || "Project placeholder",
-          index
+          index,
+          {
+            format: "square",
+            sizes: "(min-width: 1100px) 17rem, (min-width: 720px) 28vw, 80vw"
+          }
         );
         const cardActions = [
           projectPageVisible
@@ -1431,7 +1457,7 @@
     if (ui && ui.applyExperienceTheme) {
       ui.applyExperienceTheme({
         accent: (latestRelease && latestRelease.accent) || artist.accent || "#ffcc00",
-        image: (latestRelease && latestRelease.cover) || artist.image || "",
+        image: artist.image || (latestRelease && latestRelease.cover) || "",
         title: artist.name,
         subtitle: text(artist.lane, "Project page")
       });
@@ -2141,7 +2167,7 @@
     if (ui && ui.applyExperienceTheme) {
       ui.applyExperienceTheme({
         accent: (latestRelease && latestRelease.accent) || artist.accent || "#ffcc00",
-        image: (latestRelease && latestRelease.cover) || artist.image || "",
+        image: artist.image || (latestRelease && latestRelease.cover) || "",
         title: `${artist.name} Press Kit`,
         subtitle: text(artist.lane, "Press profile")
       });

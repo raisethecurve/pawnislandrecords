@@ -3,6 +3,8 @@
   --release-accent-soft: rgba(214, 176, 123, 0.18);
   --release-glow: rgba(214, 176, 123, 0.18);
   --page-backdrop-image: none;
+  --page-backdrop-opacity: 0.14;
+  --page-backdrop-filter: blur(16px) saturate(1.08);
   --bg: #050812;
   --bg-deep: #03050c;
   --panel: rgba(8, 12, 22, 0.66);
@@ -62,14 +64,14 @@ body::before {
 
 body::after {
   z-index: 0;
-  inset: -6%;
+  inset: -4%;
   background-image: var(--page-backdrop-image);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  opacity: 0.2;
-  filter: blur(24px) saturate(1.15);
-  transform: scale(1.08);
+  opacity: var(--page-backdrop-opacity);
+  filter: var(--page-backdrop-filter);
+  transform: scale(1.04);
 }
 
 body.is-ready .page-shell {

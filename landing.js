@@ -115,7 +115,9 @@
           subtitle: release.artist,
           accent: release.accent,
           alt: `${release.title} cover art`,
-          loading: config.link ? "eager" : "lazy"
+          loading: config.loading === "eager" ? "eager" : "lazy",
+          fetchPriority: config.loading === "eager" ? "high" : "low",
+          sizes: "(min-width: 1100px) 28rem, (min-width: 720px) 42vw, 92vw"
         })
       : `<img src="${release.cover}" alt="${release.title} cover art" />`;
 
@@ -147,7 +149,7 @@
     activeStage.innerHTML = stageMarkup(
       active,
       active.year ? `${active.type} / ${active.year}` : active.type,
-      { link: true }
+      { link: true, loading: "eager" }
     );
 
     nextStage.innerHTML = stageMarkup(next, next.artist, { link: true });
@@ -249,15 +251,44 @@
       return;
     }
 
-    heroMark.addEventListener("mousemove", (event) => {
-      const bounds = heroMark.getBoundingClientRect();
-      const x = (event.clientX - bounds.left) / bounds.width;
-      const y = (event.clientY - bounds.top) / bounds.height;
+    let frameRequested = false;
+    let pointerX = 0;
+    let pointerY = 0;
+    let bounds = null;
+
+    const refreshBounds = () => {
+      bounds = heroMark.getBoundingClientRect();
+    };
+
+    const updateTilt = () => {
+      frameRequested = false;
+
+      if (!bounds) {
+        refreshBounds();
+      }
+
+      const x = (pointerX - bounds.left) / bounds.width;
+      const y = (pointerY - bounds.top) / bounds.height;
       const tiltX = (x - 0.5) * 8;
       const tiltY = (0.5 - y) * 8;
 
       heroMark.style.setProperty("--tilt-x", tiltX.toFixed(2));
       heroMark.style.setProperty("--tilt-y", tiltY.toFixed(2));
+    };
+
+    heroMark.addEventListener("mouseenter", refreshBounds);
+    window.addEventListener("resize", refreshBounds);
+
+    heroMark.addEventListener("mousemove", (event) => {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+
+      if (frameRequested) {
+        return;
+      }
+
+      frameRequested = true;
+      window.requestAnimationFrame(updateTilt);
     });
 
     heroMark.addEventListener("mouseleave", () => {
