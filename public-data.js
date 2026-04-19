@@ -218,7 +218,7 @@ window.PAWN_PUBLIC_DATA = {
     },
     {
       slug: "matt-freeman",
-      name: "Matthew Freeman",
+      name: "Matt Freeman",
       lane: "Pop culture / uncategorized songs",
       accent: "#7b362b",
       image: "media/public/albums/freeman_time.png",
