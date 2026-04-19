@@ -434,12 +434,10 @@
     }
 
     return `
+      <p class="section-kicker pending-carousel__kicker">Pending Releases</p>
       <section class="pending-carousel" aria-label="Pending releases">
         <div class="pending-carousel__header">
-          <div>
-            <p class="feature-card__meta">Pending Releases</p>
-            <h3>On deck</h3>
-          </div>
+          <h3>On deck</h3>
           <p class="pending-carousel__count">${slides.length} slide${slides.length === 1 ? "" : "s"}</p>
         </div>
         <div class="pending-carousel__viewport">

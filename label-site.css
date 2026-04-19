@@ -598,7 +598,8 @@ button:focus-visible {
   align-content: start;
 }
 
-.feature-stack__kicker {
+.feature-stack__kicker,
+.pending-carousel__kicker {
   margin: 0 0 0.05rem;
   justify-self: center;
   text-align: center;
