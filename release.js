@@ -18,6 +18,10 @@
     : (data.artists || []).find((entry) => entry.slug === (release ? release.artist : "")) || null;
   const page = document.getElementById("release-page");
 
+  // release.js runs without label-site.js (release.html loads release.js instead).
+  // The URL helpers below mirror the equivalents in label-site.js intentionally —
+  // this file is self-contained so the release page has no dependency on the
+  // main renderer bundle.
   function youtubeEmbedUrl(videoId) {
     return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
   }
@@ -203,18 +207,38 @@
   }
 
   function renderFooter() {
-    const relatedCards = relatedReleases.length
-      ? relatedReleases.slice(0, 2).map((entry) => `
+    // Show up to 3 same-artist releases, then pad with cross-catalog releases if needed.
+    const sameArtistCards = relatedReleases.slice(0, 3);
+    const needMore = sameArtistCards.length < 1;
+    const otherReleases = needMore
+      ? (data.releases || [])
+          .filter((entry) => entry.artist !== artist.slug && entry.slug !== release.slug)
+          .slice(0, 2)
+      : [];
+    const footerReleases = [...sameArtistCards, ...otherReleases];
+
+    const relatedCards = footerReleases
+      .map((entry) => {
+        const isSameArtist = entry.artist === artist.slug;
+        const eyebrow = isSameArtist
+          ? `More from ${artist.name}`
+          : "From the catalog";
+        const entryArtistName = isSameArtist
+          ? artist.name
+          : ((data.artists || []).find((a) => a.slug === entry.artist) || {}).name || "Pawn Island Records";
+
+        return `
           <article class="footer-card">
-            <span class="footer-card__eyebrow">More from ${artist.name}</span>
+            <span class="footer-card__eyebrow">${eyebrow}</span>
             <h3>${entry.title}</h3>
-            <p>${entry.description || artist.summary || ""}</p>
+            <p>${entry.description || (isSameArtist ? artist.summary : entryArtistName) || ""}</p>
             <div class="footer-actions">
               <a class="action-link" href="${releaseUrl(entry.slug)}">Open release</a>
             </div>
           </article>
-        `).join("")
-      : "";
+        `;
+      })
+      .join("");
 
     releaseFooter.innerHTML = `
       <div class="release-footer__grid">
@@ -224,13 +248,14 @@
           <p>${artist.summary || artist.headline || ""}</p>
           <div class="footer-actions">
             <a class="action-link" href="${artistUrl(artist.slug, release.slug)}">Open artist page</a>
-            <a class="action-link" href="${epkUrl(artist.slug)}">Open artist Press Kit</a>
+            <a class="action-link" href="${epkUrl(artist.slug)}">Open press kit</a>
+            <a class="action-link" href="catalog.html?artist=${encodeURIComponent(artist.slug)}">Browse ${artist.name} releases</a>
+            <a class="action-link" href="catalog.html">\u2190 Full catalog</a>
             ${
               artist.slug === "matt-freeman"
                 ? '<a class="action-link" href="about.html">About Matthew</a><a class="action-link" href="process.html">Creative process</a>'
                 : ""
             }
-            <a class="action-link" href="index.html">Back to homepage</a>
           </div>
         </article>
         ${
@@ -240,6 +265,7 @@
             <h3>Keep moving through the catalog.</h3>
             <p>Return to the front page to move across the rest of the releases.</p>
             <div class="footer-actions">
+              <a class="action-link" href="catalog.html">\u2190 Full catalog</a>
               <a class="action-link" href="index.html">Back to homepage</a>
             </div>
           </article>`

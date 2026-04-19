@@ -3,6 +3,12 @@
   const loadingCard = document.getElementById("shell-loading");
   const fallbackPage = "index.html";
 
+  // Track whether the next load event is from a browser history traversal
+  // (back/forward) vs. a user-initiated navigation, so we know whether to
+  // push a new history entry or leave the browser URL alone.
+  let isInitialLoad = true;
+  let isHistoryTraversal = false;
+
   function sanitizeTarget(rawValue) {
     const raw = String(rawValue || fallbackPage).trim();
 
@@ -59,7 +65,17 @@
         document.title = childDocument.title;
       }
 
-      window.history.replaceState({ page: childUrl }, "", childUrl);
+      if (isInitialLoad) {
+        // Replace the shell.html entry so the initial page is addressable.
+        window.history.replaceState({ page: childUrl }, "", childUrl);
+        isInitialLoad = false;
+      } else if (isHistoryTraversal) {
+        // The URL is already correct from the popstate event; just sync the title.
+        isHistoryTraversal = false;
+      } else {
+        // User-initiated navigation: push a new history entry so back works.
+        window.history.pushState({ page: childUrl }, "", childUrl);
+      }
     } catch (error) {
       // Ignore sync failures if the frame is between navigations.
     }
@@ -74,6 +90,13 @@
   frame.addEventListener("load", () => {
     syncBrowserChrome();
     loadingCard.hidden = true;
+  });
+
+  // Handle browser back/forward: navigate the iframe to the recorded page.
+  window.addEventListener("popstate", (event) => {
+    const target = (event.state && event.state.page) || currentRequestedPage();
+    isHistoryTraversal = true;
+    navigate(sanitizeTarget(target));
   });
 
   navigate(currentRequestedPage());

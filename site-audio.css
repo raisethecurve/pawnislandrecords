@@ -141,6 +141,12 @@
   accent-color: #d6b07b;
 }
 
+.site-audio__volume input:focus-visible {
+  outline: 2px solid #d6b07b;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 .site-audio[data-collapsed="true"] {
   grid-template-columns: 1fr;
   gap: 0;

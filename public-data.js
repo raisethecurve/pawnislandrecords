@@ -58,7 +58,7 @@ window.PAWN_PUBLIC_DATA = {
       name: "Rhea Mauro",
       lane: "Songwriter soul / country dusk",
       accent: "#cb7c4c",
-      image: "media/public/rhea-hearthblood.jpg",
+      image: "media/public/promo/rhea_promo.png",
       summary:
         "Warm-blooded writing, ember-lit arrangements, and songs that feel handwritten even at their biggest.",
       headline:
@@ -89,7 +89,7 @@ window.PAWN_PUBLIC_DATA = {
       name: "High Ground",
       lane: "Rap / statement records",
       accent: "#53473d",
-      image: "media/public/high-ground-view.jpg",
+      image: "media/public/promo/high_promo.png",
       summary:
         "Direct writing, stripped-back graphics, and records that make their point quickly and clearly.",
       headline:
@@ -120,7 +120,7 @@ window.PAWN_PUBLIC_DATA = {
       name: "Velvet Orchard",
       lane: "Dream pop / neon romance",
       accent: "#9a4d73",
-      image: "media/public/velvet-orchard-on-the-gas.jpg",
+      image: "media/public/promo/velvet_promo.png",
       summary:
         "Soft-focus synth color, romantic tension, and hooks that stay luminous without becoming weightless.",
       headline:
@@ -151,7 +151,7 @@ window.PAWN_PUBLIC_DATA = {
       name: "Quiet Filter",
       lane: "Heavy slow-burn / doom pressure",
       accent: "#8a764f",
-      image: "media/public/quiet-filter-the-wall.jpg",
+      image: "media/public/promo/filter_promo.png",
       summary:
         "Low-end mass, ritual pacing, and songs that feel physical before they feel polished.",
       headline:
@@ -182,7 +182,7 @@ window.PAWN_PUBLIC_DATA = {
       name: "Resunant",
       lane: "Alternative metal / aftermath glow",
       accent: "#cb6c2a",
-      image: "media/public/resunant-evidence.jpg",
+      image: "media/public/promo/resunant_promo.png",
       summary:
         "Ash, tension, and flashes of melody inside a heavier project with real visual impact.",
       headline:
@@ -213,7 +213,7 @@ window.PAWN_PUBLIC_DATA = {
       name: "Matthew Freeman",
       lane: "Sound / language / atmosphere",
       accent: "#7b362b",
-      image: "media/public/matt-freeman-morris-trash.jpg",
+      image: "media/public/albums/freeman_time.png",
       summary:
         "A multidisciplinary creator building dark, disciplined release worlds from sound, language, and atmosphere.",
       headline:
@@ -244,7 +244,7 @@ window.PAWN_PUBLIC_DATA = {
       name: "Blackout State",
       lane: "Industrial panic / collapse rock",
       accent: "#c59b25",
-      image: "media/public/blackout-state-no-master.jpg",
+      image: "media/public/promo/state_promo.png",
       summary:
         "Collage-heavy chaos, abrasion, and release framing that feels torn from a wall rather than polished in a template.",
       headline:
@@ -274,7 +274,7 @@ window.PAWN_PUBLIC_DATA = {
       name: "Crick Kinnard",
       lane: "Roots noir / river-country writing",
       accent: "#b17d43",
-      image: "media/public/crick-kinnard-red-river.jpg",
+      image: "media/public/promo/crick_promo.png",
       summary:
         "Place-rich writing, long-view storytelling, and songs that carry landscape inside them.",
       headline:
@@ -305,7 +305,7 @@ window.PAWN_PUBLIC_DATA = {
       name: "second watch",
       lane: "Reflective dusk / spiritual horizon",
       accent: "#c08745",
-      image: "media/public/second-watch-psalm.jpg",
+      image: "media/public/promo/second_promo.png",
       summary:
         "Stillness, horizon light, and reflective material built for slower attention.",
       headline:
@@ -340,7 +340,7 @@ window.PAWN_PUBLIC_DATA = {
       vibe: "firelit, handwritten, cinematic",
       year: "2026",
       accent: "#cb7c4c",
-      cover: "media/public/rhea-hearthblood.jpg",
+      cover: "media/public/albums/rhea_hearth.png",
       description:
         "A songwriter world built around voice, weather, home, and the kind of emotional detail that grows larger the longer it lingers.",
       youtubeId: "ufrYH6hyT3Q",
@@ -363,6 +363,34 @@ window.PAWN_PUBLIC_DATA = {
       ]
     },
     {
+      slug: "rhea-mauro-aura",
+      artist: "rhea-mauro",
+      title: "Aura",
+      type: "Album",
+      vibe: "firelit, atmospheric, intimate",
+      year: "2026",
+      accent: "#cb7c4c",
+      cover: "media/public/albums/rhea_aura.png",
+      description:
+        "A warm-lit songwriter release built around presence, detail, and the feeling of a room coming into focus.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "rhea-mauro-jet",
+      artist: "rhea-mauro",
+      title: "Jet",
+      type: "Album",
+      vibe: "motion, horizon, open-road",
+      year: "2026",
+      accent: "#cb7c4c",
+      cover: "media/public/albums/rhea_jet.png",
+      description:
+        "A forward-moving release in the Rhea Mauro catalog, built for open-road emotional scale and distance.",
+      platforms: [],
+      tracks: []
+    },
+    {
       slug: "high-ground-the-view-from-up-here",
       artist: "high-ground",
       title: "The View From Up Here",
@@ -370,7 +398,7 @@ window.PAWN_PUBLIC_DATA = {
       vibe: "graphic, elevated, focused",
       year: "2026",
       accent: "#53473d",
-      cover: "media/public/high-ground-view.jpg",
+      cover: "media/public/albums/updated_high.png",
       description:
         "A direct rap project built for clarity, control, and clean visual framing that keeps the words in front.",
       platforms: [],
@@ -392,7 +420,7 @@ window.PAWN_PUBLIC_DATA = {
       vibe: "neon, romantic, nocturnal",
       year: "2026",
       accent: "#9a4d73",
-      cover: "media/public/velvet-orchard-on-the-gas.jpg",
+      cover: "media/public/albums/velvet_gas.png",
       description:
         "A late-night pop release that glows without losing edge, pairing saturated artwork with a darker emotional pull.",
       platforms: [],
@@ -405,6 +433,202 @@ window.PAWN_PUBLIC_DATA = {
       ]
     },
     {
+      slug: "velvet-orchard-afterglow",
+      artist: "velvet-orchard",
+      title: "Afterglow",
+      type: "Album",
+      vibe: "luminous, nocturnal, warm",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_afterglow.png",
+      description:
+        "A warm-lit dream-pop release built around the glow that lingers after the night peaks.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-borrowed",
+      artist: "velvet-orchard",
+      title: "Borrowed",
+      type: "Album",
+      vibe: "dreamy, intimate, soft-lit",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_borrowed.png",
+      description:
+        "An intimate dream-pop release shaped by softness, distance, and the feeling of holding something that was never yours.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-crush",
+      artist: "velvet-orchard",
+      title: "Crush",
+      type: "Album",
+      vibe: "romantic, electric, saturated",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_crush.png",
+      description:
+        "A saturated pop release built around electric romantic tension and the overloaded feeling of early infatuation.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-day",
+      artist: "velvet-orchard",
+      title: "Day",
+      type: "Album",
+      vibe: "bright, dreaming, sunlit",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_day.png",
+      description:
+        "A sunlit dream-pop release that trades nocturnal atmosphere for open sky and daydream warmth.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-door",
+      artist: "velvet-orchard",
+      title: "Door",
+      type: "Album",
+      vibe: "threshold, anticipation, moody",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_door.png",
+      description:
+        "A moody pop release built around the feeling of standing at a threshold, weighted with anticipation.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-empty",
+      artist: "velvet-orchard",
+      title: "Empty",
+      type: "Album",
+      vibe: "spacious, longing, cinematic",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_empty.png",
+      description:
+        "A spacious dream-pop release where absence becomes a texture and longing carries the melody.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-hand",
+      artist: "velvet-orchard",
+      title: "Hand",
+      type: "Album",
+      vibe: "tender, close, romantic",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_hand.png",
+      description:
+        "A tender, close-range pop release built around contact, warmth, and the weight of small gestures.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-lights",
+      artist: "velvet-orchard",
+      title: "Lights",
+      type: "Album",
+      vibe: "neon, glowing, night-coded",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_lights.png",
+      description:
+        "A neon-drenched dream-pop release built for glowing late nights and soft-focus cityscapes.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-magic",
+      artist: "velvet-orchard",
+      title: "Magic",
+      type: "Album",
+      vibe: "enchanted, glittering, after-hours",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_magic.png",
+      description:
+        "An after-hours pop release that leans into enchantment, glitter, and the strange pull of a perfect night.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-mercy",
+      artist: "velvet-orchard",
+      title: "Mercy",
+      type: "Album",
+      vibe: "soft, forgiving, lush",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_mercy.png",
+      description:
+        "A lush, forgiving dream-pop release shaped by surrender and soft emotional resolution.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-mirage",
+      artist: "velvet-orchard",
+      title: "Mirage",
+      type: "Album",
+      vibe: "hazy, distant, shimmering",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_mirage.png",
+      description:
+        "A hazy, shimmering pop release where distance is a visual texture and the hooks dissolve as soon as you reach them.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-quiet",
+      artist: "velvet-orchard",
+      title: "Quiet",
+      type: "Album",
+      vibe: "still, velvet, low-light",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_quiet.png",
+      description:
+        "A low-light dream-pop release built for stillness, intimacy, and the velvet texture of a song that asks nothing of you.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-shape",
+      artist: "velvet-orchard",
+      title: "Shape",
+      type: "Album",
+      vibe: "form, silhouette, atmospheric",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_shape.png",
+      description:
+        "An atmospheric pop release defined by silhouette, form, and the feeling of something just coming into focus.",
+      platforms: [],
+      tracks: []
+    },
+    {
+      slug: "velvet-orchard-therapy",
+      artist: "velvet-orchard",
+      title: "Therapy",
+      type: "Album",
+      vibe: "emotional, release, deep-glow",
+      year: "2026",
+      accent: "#9a4d73",
+      cover: "media/public/albums/velvet_therapy.png",
+      description:
+        "A deep-glow pop release built around emotional release, the act of naming what hurts, and the warmth that follows.",
+      platforms: [],
+      tracks: []
+    },
+    {
       slug: "quiet-filter-the-wall",
       artist: "quiet-filter",
       title: "The Wall",
@@ -412,7 +636,7 @@ window.PAWN_PUBLIC_DATA = {
       vibe: "slow-burn, heavy, physical",
       year: "2026",
       accent: "#8a764f",
-      cover: "media/public/quiet-filter-the-wall.jpg",
+      cover: "media/public/albums/quiet_wall.png",
       description:
         "A pressure-built heavy release with ritual pacing, stripped-down presentation, and room-shaping low end.",
       platforms: [],
@@ -436,7 +660,7 @@ window.PAWN_PUBLIC_DATA = {
       vibe: "ash-lit, tense, high-voltage",
       year: "2026",
       accent: "#cb6c2a",
-      cover: "media/public/resunant-evidence.jpg",
+      cover: "media/public/albums/resunant_ash.png",
       description:
         "A sharp-edged heavy record with strong visual contrast and a sense of aftermath baked into the release identity.",
       platforms: [],
@@ -452,6 +676,20 @@ window.PAWN_PUBLIC_DATA = {
       ]
     },
     {
+      slug: "resunant-revival",
+      artist: "resunant",
+      title: "Revival",
+      type: "Album",
+      vibe: "lift, aftermath, high-contrast",
+      year: "2026",
+      accent: "#cb6c2a",
+      cover: "media/public/albums/resunant_revival.png",
+      description:
+        "A high-contrast alt-metal release built around lift, ignition, and the momentum that comes after the wreckage clears.",
+      platforms: [],
+      tracks: []
+    },
+    {
       slug: "matt-freeman-morris-trash",
       artist: "matt-freeman",
       title: "Morris Trash",
@@ -459,7 +697,7 @@ window.PAWN_PUBLIC_DATA = {
       vibe: "direct, pointed, standalone",
       year: "2026",
       accent: "#7b362b",
-      cover: "media/public/matt-freeman-morris-trash.jpg",
+      cover: "media/public/albums/freeman_time.png",
       description:
         "A one-shot release framed tightly around the idea, the title, and the image with no excess around it.",
       platforms: [],
@@ -473,7 +711,7 @@ window.PAWN_PUBLIC_DATA = {
       vibe: "collaged, damaged, confrontational",
       year: "2026",
       accent: "#c59b25",
-      cover: "media/public/blackout-state-no-master.jpg",
+      cover: "media/public/albums/state_master.png",
       description:
         "A high-impact release world that trades polish for poster-rip energy, graphic abrasion, and hard contrast.",
       platforms: [],
@@ -491,7 +729,7 @@ window.PAWN_PUBLIC_DATA = {
       vibe: "river-lit, narrative, grounded",
       year: "2026",
       accent: "#b17d43",
-      cover: "media/public/crick-kinnard-red-river.jpg",
+      cover: "media/public/albums/crick_river.png",
       description:
         "A roots-driven songwriting release anchored in place, memory, and durable emotional detail.",
       platforms: [],
@@ -508,6 +746,20 @@ window.PAWN_PUBLIC_DATA = {
       ]
     },
     {
+      slug: "crick-kinnard-fair",
+      artist: "crick-kinnard",
+      title: "Fair",
+      type: "Album",
+      vibe: "weather, season, grounded",
+      year: "2026",
+      accent: "#b17d43",
+      cover: "media/public/albums/crick_fair.png",
+      description:
+        "A roots-noir release built around season, weather, and the durable honesty of songs that don't overstate.",
+      platforms: [],
+      tracks: []
+    },
+    {
       slug: "second-watch-psalm-of-myself",
       artist: "second-watch",
       title: "Psalm of Myself",
@@ -515,7 +767,7 @@ window.PAWN_PUBLIC_DATA = {
       vibe: "reflective, horizon-lit, devotional",
       year: "2026",
       accent: "#c08745",
-      cover: "media/public/second-watch-psalm.jpg",
+      cover: "media/public/albums/second_psalm.png",
       description:
         "A still, reflective release framed around horizon light, symbolic imagery, and slower listening.",
       platforms: [],
@@ -529,7 +781,7 @@ window.PAWN_PUBLIC_DATA = {
       title: "Hearthblood Collector Print",
       price: "$28",
       description: "Square archival print built from the Hearthblood cover world.",
-      image: "media/public/rhea-hearthblood.jpg",
+      image: "media/public/albums/rhea_hearth.png",
       url: ""
     },
     {
@@ -538,7 +790,7 @@ window.PAWN_PUBLIC_DATA = {
       title: "View From Up Here Tee",
       price: "$34",
       description: "Graphic shirt concept built around the project's clean visual language.",
-      image: "media/public/high-ground-view.jpg",
+      image: "media/public/albums/updated_high.png",
       url: ""
     },
     {
@@ -547,7 +799,7 @@ window.PAWN_PUBLIC_DATA = {
       title: "On the Gas Night Poster",
       price: "$24",
       description: "Square nightlife poster concept for the Velvet Orchard release cycle.",
-      image: "media/public/velvet-orchard-on-the-gas.jpg",
+      image: "media/public/albums/velvet_gas.png",
       url: ""
     },
     {
@@ -556,7 +808,7 @@ window.PAWN_PUBLIC_DATA = {
       title: "The Wall Slipmat",
       price: "$22",
       description: "Heavy-music collector slipmat concept using the square cover treatment.",
-      image: "media/public/quiet-filter-the-wall.jpg",
+      image: "media/public/albums/quiet_wall.png",
       url: ""
     },
     {
@@ -565,7 +817,7 @@ window.PAWN_PUBLIC_DATA = {
       title: "Evidence Hoodie",
       price: "$58",
       description: "High-contrast apparel concept tied to the Evidence visual world.",
-      image: "media/public/resunant-evidence.jpg",
+      image: "media/public/albums/resunant_ash.png",
       url: ""
     },
     {
@@ -574,7 +826,7 @@ window.PAWN_PUBLIC_DATA = {
       title: "Morris Trash Mini Print",
       price: "$18",
       description: "Compact square print concept built around the single artwork.",
-      image: "media/public/matt-freeman-morris-trash.jpg",
+      image: "media/public/albums/freeman_time.png",
       url: ""
     },
     {
@@ -583,7 +835,7 @@ window.PAWN_PUBLIC_DATA = {
       title: "No Master Poster",
       price: "$26",
       description: "Distressed poster concept pulled from the collage-heavy release design.",
-      image: "media/public/blackout-state-no-master.jpg",
+      image: "media/public/albums/state_master.png",
       url: ""
     },
     {
@@ -592,7 +844,7 @@ window.PAWN_PUBLIC_DATA = {
       title: "Red River Art Print",
       price: "$24",
       description: "Square print concept for the river-country release world.",
-      image: "media/public/crick-kinnard-red-river.jpg",
+      image: "media/public/albums/crick_river.png",
       url: ""
     },
     {
@@ -601,7 +853,7 @@ window.PAWN_PUBLIC_DATA = {
       title: "Psalm of Myself Tee",
       price: "$32",
       description: "Minimal symbol-led apparel concept for the second watch release.",
-      image: "media/public/second-watch-psalm.jpg",
+      image: "media/public/albums/second_psalm.png",
       url: ""
     }
   ]
