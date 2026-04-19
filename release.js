@@ -38,11 +38,98 @@
     return `epk.html?artist=${encodeURIComponent(slug)}`;
   }
 
+  function text(value, fallback) {
+    const resolved = String(value || "").trim();
+    return resolved || String(fallback || "").trim();
+  }
+
+  const launchModeValue = text(data.label && data.label.launchMode, "full").toLowerCase();
+
+  function showCatalogPage() {
+    return launchModeValue !== "essentials";
+  }
+
+  function showPressPages() {
+    return launchModeValue !== "essentials";
+  }
+
+  function showReleasePages() {
+    return launchModeValue !== "essentials";
+  }
+
+  function publicNavLinks() {
+    const links = [
+      { href: "index.html", label: "Home" },
+      { href: "roster.html", label: "Roster" }
+    ];
+
+    if (showCatalogPage()) {
+      links.push({ href: "catalog.html", label: "Catalog" });
+    }
+
+    links.push({ href: "about.html", label: "About" });
+
+    if (showPressPages()) {
+      links.push({ href: "epks.html", label: "Press" });
+    }
+
+    return links;
+  }
+
+  function renderPrimaryNav() {
+    const nav = document.querySelector(".release-header__nav");
+
+    if (!nav) {
+      return;
+    }
+
+    nav.innerHTML = publicNavLinks()
+      .map(
+        (link) => `
+          <a href="${link.href}">${link.label}</a>
+        `
+      )
+      .join("");
+  }
+
   function splitVibe(text) {
     return String(text || "")
       .split(",")
       .map((value) => value.trim())
       .filter(Boolean);
+  }
+
+  function sortReleases(list) {
+    return ui && ui.sortReleases ? ui.sortReleases(list) : [...list];
+  }
+
+  function releaseStatusValue(entry) {
+    return ui && ui.releaseStatusLabel ? ui.releaseStatusLabel(entry) : "Release";
+  }
+
+  function releaseAvailability(entry) {
+    return ui && ui.releaseAvailabilityText ? ui.releaseAvailabilityText(entry) : "";
+  }
+
+  function formatReleaseDateValue(value) {
+    return ui && ui.formatReleaseDate ? ui.formatReleaseDate(value) : text(value, "");
+  }
+
+  function releaseCampaignUrl(entry) {
+    return text(entry && (entry.tooFmUrl || entry.toofmUrl || entry.campaignUrl), "");
+  }
+
+  function releaseCta(entry) {
+    const url = releaseCampaignUrl(entry);
+
+    if (!url) {
+      return null;
+    }
+
+    return {
+      label: ui && ui.releaseCtaLabel ? ui.releaseCtaLabel(entry) : "Play now",
+      url
+    };
   }
 
   function renderNotFound() {
@@ -57,14 +144,54 @@
     `;
   }
 
+  function renderLaunchHoldState(options) {
+    const settings = options || {};
+    const title = text(settings.title, "Release pages are staying private for launch.");
+    const copy = text(
+      settings.copy,
+      "Fans can still use the live Too.fm links from the homepage and roster while the deeper release copy is being written."
+    );
+    const descriptionNode = document.getElementById("release-meta-description");
+
+    document.title = `${title} | Pawn Island Records`;
+
+    if (ui && ui.setMetaDescription) {
+      ui.setMetaDescription(copy);
+    } else if (descriptionNode) {
+      descriptionNode.setAttribute("content", copy);
+    }
+
+    page.innerHTML = `
+      <section class="empty-state">
+        <p class="eyebrow">Launch Mode</p>
+        <h2>${title}</h2>
+        <p>${copy}</p>
+        <div class="footer-actions">
+          <a class="action-link" href="index.html">Home</a>
+          <a class="action-link" href="roster.html">Roster</a>
+          <a class="action-link" href="about.html">About</a>
+        </div>
+      </section>
+    `;
+  }
+
+  renderPrimaryNav();
+
+  if (!showReleasePages()) {
+    renderLaunchHoldState();
+    return;
+  }
+
   if (!release || !artist) {
     renderNotFound();
     return;
   }
 
-  const relatedReleases = ui && ui.getArtistReleases
-    ? ui.getArtistReleases(artist.slug).filter((entry) => entry.slug !== release.slug)
-    : (data.releases || []).filter((entry) => entry.artist === artist.slug && entry.slug !== release.slug);
+  const relatedReleases = sortReleases(
+    ui && ui.getArtistReleases
+      ? ui.getArtistReleases(artist.slug).filter((entry) => entry.slug !== release.slug)
+      : (data.releases || []).filter((entry) => entry.artist === artist.slug && entry.slug !== release.slug)
+  );
 
   const releaseCover = document.getElementById("release-cover");
   const releaseKicker = document.getElementById("release-kicker");
@@ -85,8 +212,6 @@
   const artistHeadline = document.getElementById("artist-headline");
   const artistStory = document.getElementById("artist-story");
   const artistPageLink = document.getElementById("artist-page-link");
-  const headerArtistLink = document.getElementById("header-artist-link");
-  const headerEpkLink = document.getElementById("header-epk-link");
   const releaseFooter = document.getElementById("release-footer");
   const metaDescription = document.getElementById("release-meta-description");
 
@@ -116,10 +241,15 @@
   }
 
   function renderHero() {
+    const availability = releaseAvailability(release);
+    const campaignAction = releaseCta(release);
     const chips = [
+      releaseStatusValue(release),
+      availability,
       release.type,
-      release.year,
-      `${release.tracks.length} ${release.tracks.length === 1 ? "track" : "tracks"}`,
+      release.tracks.length
+        ? `${release.tracks.length} ${release.tracks.length === 1 ? "track" : "tracks"}`
+        : "",
       ...splitVibe(release.vibe)
     ].filter(Boolean);
 
@@ -136,12 +266,31 @@
       releaseCover.src = release.cover;
       releaseCover.alt = `${release.title} cover art`;
     }
-    releaseKicker.textContent = [release.type, release.year].filter(Boolean).join(" / ") || "Release";
+    releaseKicker.textContent = [
+      releaseStatusValue(release),
+      formatReleaseDateValue(release.releaseDate)
+    ].filter(Boolean).join(" / ") || "Release";
     releaseTitle.textContent = release.title;
     releaseArtist.textContent = artist.name;
     releaseSummary.textContent = release.description || artist.summary || "";
     releaseChips.innerHTML = chips.map((chip) => `<span class="chip">${chip}</span>`).join("");
-    heroArtistLink.href = artistUrl(artist.slug, release.slug);
+    heroArtistLink.parentElement.innerHTML = `
+      ${
+        campaignAction
+          ? `
+            <a
+              class="action-link action-link--accent"
+              href="${campaignAction.url}"
+              target="_blank"
+              rel="noreferrer"
+            >
+              ${campaignAction.label}
+            </a>
+          `
+          : ""
+      }
+      <a class="action-link" href="${artistUrl(artist.slug, release.slug)}">Open project page</a>
+    `;
     renderPlatforms();
   }
 
@@ -200,10 +349,6 @@
     artistHeadline.textContent = artist.headline || artist.summary || "";
     artistStory.textContent = artist.story || artist.summary || "";
     artistPageLink.href = artistUrl(artist.slug, release.slug);
-    headerArtistLink.href = artistUrl(artist.slug, release.slug);
-    if (headerEpkLink) {
-      headerEpkLink.href = epkUrl(artist.slug);
-    }
   }
 
   function renderFooter() {
@@ -247,7 +392,7 @@
           <h3>${artist.name}</h3>
           <p>${artist.summary || artist.headline || ""}</p>
           <div class="footer-actions">
-            <a class="action-link" href="${artistUrl(artist.slug, release.slug)}">Open artist page</a>
+            <a class="action-link" href="${artistUrl(artist.slug, release.slug)}">Open project page</a>
             <a class="action-link" href="${epkUrl(artist.slug)}">Open press kit</a>
             <a class="action-link" href="catalog.html?artist=${encodeURIComponent(artist.slug)}">Browse ${artist.name} releases</a>
             <a class="action-link" href="catalog.html">\u2190 Full catalog</a>
@@ -292,12 +437,18 @@
   function applyMeta() {
     document.title = `${release.title} | ${artist.name} | Pawn Island Records`;
 
-    const text = `${release.title} by ${artist.name}. ${release.description || artist.summary || "Explore the release, official embeds, and platform destinations."}`;
+    const metaDescriptionText = [
+      `${release.title} by ${artist.name}.`,
+      releaseAvailability(release) ? `${releaseAvailability(release)}.` : "",
+      release.description || artist.summary || "Explore the release, official embeds, and platform destinations."
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     if (ui && ui.setMetaDescription) {
-      ui.setMetaDescription(text);
+      ui.setMetaDescription(metaDescriptionText);
     } else if (metaDescription) {
-      metaDescription.setAttribute("content", text);
+      metaDescription.setAttribute("content", metaDescriptionText);
     }
   }
 

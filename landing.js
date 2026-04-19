@@ -73,7 +73,7 @@
   function artistUrl(release) {
     return release.artistSlug
       ? `artist.html?artist=${encodeURIComponent(release.artistSlug)}`
-      : "artists.html";
+      : "roster.html";
   }
 
   function hexToRgba(hex, alpha) {
@@ -309,7 +309,7 @@
       inlineReleaseIndex.textContent = "00 / 00";
     }
     openRelease.href = "catalog.html";
-    openArtist.href = "artists.html";
+    openArtist.href = "roster.html";
     document.documentElement.style.setProperty("--release-glow", hexToRgba("#d8c7a1", 0.18));
     document.documentElement.style.setProperty("--release-accent", "#d8c7a1");
   }

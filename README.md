@@ -5,8 +5,8 @@ This repo now contains a cleaner multi-page static site for Pawn Island Records,
 - `index.html` is the homepage landing page with one featured release.
 - `about.html` is the public-facing bio page for Matthew Freeman.
 - `process.html` is the public creative process page.
-- `artists.html` is the public roster page.
-- `artist.html` is the per-artist landing page, with `public`, `industry`, `press`, and `merch` views controlled by query params.
+- `roster.html` is the public roster page.
+- `artist.html` is the per-project landing page, with `public`, `industry`, `press`, and `merch` views controlled by query params.
 - `catalog.html` is the release catalog page.
 - `admin.html` is the catalog editor for managing artist profiles and release intake.
 

@@ -19,18 +19,18 @@
   ];
   const DEFAULTS = {
     identityLine:
-      "A discovery-led independent label space built for artist identity, direct listening, and clean release worlds.",
+      "A discovery-led independent label space built for distinct project identity, direct listening, and clean release worlds.",
     featuredCampaignTitle: "Featured Campaign",
     featuredCampaignSummary:
       "Move from discovery to action through the label's live Too.fm campaign hub.",
     aboutText:
-      "Pawn Island Records is an independent label built around distinct project identities, clear release worlds, and direct listening paths. New listeners should be able to move from curiosity to sound without friction, so every page is designed to feel immediate and readable. The label treats every artist as a separate entry point rather than flattening the roster into one generic style. The result is a catalog that feels unified by intent, not sameness.",
+      "Pawn Island Records is an independent label built around distinct project identities, clear release worlds, and direct listening paths. New listeners should be able to move from curiosity to sound without friction, so every page is designed to feel immediate and readable. The label treats every project as a separate entry point rather than flattening the roster into one generic style. The result is a catalog that feels unified by intent, not sameness.",
     ethos:
       "One label. Many projects. Every release gets enough room to feel intentional.",
     timeline: [
       {
         label: "01",
-        title: "Build Distinct Artists",
+        title: "Build Distinct Projects",
         text: "Shape each project like its own world instead of forcing the roster into one narrow lane."
       },
       {
@@ -41,14 +41,18 @@
       {
         label: "03",
         title: "Keep Discovery Fast",
-        text: "Make the catalog easy to browse so new listeners can move naturally from artist to release."
+        text: "Make the catalog easy to browse so new listeners can move naturally from project to release."
       }
     ]
   };
 
   const page = document.body.dataset.page || "";
   const artistLookup = new Map((data.artists || []).map((artist) => [artist.slug, artist]));
-  const releases = Array.isArray(data.releases) ? [...data.releases] : [];
+  const releases = Array.isArray(data.releases)
+    ? ui && ui.sortReleases
+      ? ui.sortReleases(data.releases)
+      : [...data.releases]
+    : [];
   const artists = Array.isArray(data.artists) ? [...data.artists] : [];
   const featuredRelease = (ui && ui.getFeaturedRelease && ui.getFeaturedRelease()) || releases[0] || null;
 
@@ -68,6 +72,116 @@
 
   function isExternalUrl(value) {
     return /^https?:\/\//i.test(text(value, ""));
+  }
+
+  const launchModeValue = text(data.label && data.label.launchMode, "full").toLowerCase();
+
+  function showProjectPages() {
+    return launchModeValue !== "essentials";
+  }
+
+  function showReleasePages() {
+    return launchModeValue !== "essentials";
+  }
+
+  function showPressPages() {
+    return launchModeValue !== "essentials";
+  }
+
+  function showCatalogPage() {
+    return launchModeValue !== "essentials";
+  }
+
+  function publicNavLinks() {
+    const links = [
+      { href: "index.html", label: "Home" },
+      { href: "roster.html", label: "Roster" }
+    ];
+
+    if (showCatalogPage()) {
+      links.push({ href: "catalog.html", label: "Catalog" });
+    }
+
+    links.push({ href: "about.html", label: "About" });
+
+    if (showPressPages()) {
+      links.push({ href: "epks.html", label: "Press" });
+    }
+
+    return links;
+  }
+
+  function renderPrimaryNav() {
+    const links = publicNavLinks();
+
+    document.querySelectorAll(".label-nav").forEach((nav) => {
+      nav.style.setProperty("--label-nav-columns", String(links.length));
+      nav.innerHTML = links
+        .map(
+          (link) => `
+            <a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>
+          `
+        )
+        .join("");
+    });
+  }
+
+  function launchHoldMarkup(options) {
+    const settings = options || {};
+    const actions = (settings.actions || publicNavLinks())
+      .map(
+        (link) => `
+          <a class="button button--ghost button--small" href="${escapeHtml(link.href)}">
+            ${escapeHtml(link.label)}
+          </a>
+        `
+      )
+      .join("");
+
+    return `
+      <article class="empty-card empty-card--launch">
+        <p class="section-kicker">${escapeHtml(text(settings.kicker, "Launch Mode"))}</p>
+        <h2>${escapeHtml(text(settings.title, "This page is staying private for now."))}</h2>
+        <p>${escapeHtml(
+          text(
+            settings.copy,
+            "We're keeping this section off the public site until the written copy is ready."
+          )
+        )}</p>
+        ${
+          actions
+            ? `<div class="action-row action-row--center">${actions}</div>`
+            : ""
+        }
+      </article>
+    `;
+  }
+
+  function renderLaunchHoldState(panel, options) {
+    if (!panel) {
+      return;
+    }
+
+    const settings = options || {};
+    const documentTitle = text(
+      settings.documentTitle,
+      text(settings.title, "Launch Mode")
+    );
+    const metaDescription = text(
+      settings.metaDescription,
+      text(
+        settings.copy,
+        "We're keeping this section off the public site until the written copy is ready."
+      )
+    );
+
+    document.title = `${documentTitle} | Pawn Island Records`;
+
+    if (ui && ui.setMetaDescription) {
+      ui.setMetaDescription(metaDescription);
+    }
+
+    panel.innerHTML = launchHoldMarkup(settings);
   }
 
   function syncViewportHeight() {
@@ -129,11 +243,19 @@
     return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
   }
 
-  function resolveTooFmUrl(release) {
-    return text(
-      release && (release.tooFmUrl || release.toofmUrl || release.campaignUrl),
-      text(data.label && data.label.defaultTooFmUrl, DEFAULT_TOOFM_URL)
-    );
+  function resolveTooFmUrl(release, options) {
+    const settings = options || {};
+    const directUrl = text(release && (release.tooFmUrl || release.toofmUrl || release.campaignUrl), "");
+
+    if (directUrl) {
+      return directUrl;
+    }
+
+    if (settings.allowFallback === false) {
+      return "";
+    }
+
+    return text(data.label && data.label.defaultTooFmUrl, DEFAULT_TOOFM_URL);
   }
 
   function campaignUrl() {
@@ -158,6 +280,225 @@
 
   function labelIdentityLine() {
     return text(data.label && data.label.identityLine, DEFAULTS.identityLine);
+  }
+
+  function releaseState(release) {
+    return ui && ui.releaseState ? ui.releaseState(release) : "catalog";
+  }
+
+  function releaseStatusLabel(release) {
+    return ui && ui.releaseStatusLabel ? ui.releaseStatusLabel(release) : "Release";
+  }
+
+  function releaseAvailability(release) {
+    return ui && ui.releaseAvailabilityText ? ui.releaseAvailabilityText(release) : "";
+  }
+
+  function formatReleaseDateValue(value) {
+    return ui && ui.formatReleaseDate ? ui.formatReleaseDate(value) : text(value, "");
+  }
+
+  function releaseCtaLabel(release) {
+    return ui && ui.releaseCtaLabel ? ui.releaseCtaLabel(release) : "Play now";
+  }
+
+  function splitReleaseGroups(list) {
+    if (ui && ui.splitReleases) {
+      return ui.splitReleases(list);
+    }
+
+    return {
+      upcoming: [],
+      live: Array.isArray(list) ? [...list] : [],
+      catalog: []
+    };
+  }
+
+  function releaseAction(release) {
+    if (!release) {
+      return null;
+    }
+
+    const url = resolveTooFmUrl(release, { allowFallback: false });
+
+    if (!url) {
+      return null;
+    }
+
+    return {
+      label: releaseCtaLabel(release),
+      url,
+      external: true
+    };
+  }
+
+  function releaseCountText(count) {
+    return `${count} release${count === 1 ? "" : "s"}`;
+  }
+
+  function availabilitySummary(groups) {
+    const items = [];
+
+    if (groups.upcoming.length) {
+      items.push(`${groups.upcoming.length} forthcoming`);
+    }
+
+    if (groups.live.length) {
+      items.push(`${groups.live.length} out now`);
+    }
+
+    if (groups.catalog.length) {
+      items.push(`${groups.catalog.length} in catalog`);
+    }
+
+    return items.join(", ");
+  }
+
+  function artistFocusLine(artist, release) {
+    if (!release) {
+      return `${artist.name} is building out its public catalog.`;
+    }
+
+    if (releaseState(release) === "upcoming") {
+      const date = formatReleaseDateValue(release.releaseDate);
+      return date
+        ? `Next release: ${release.title} arrives ${date}.`
+        : `Next release: ${release.title}.`;
+    }
+
+    const date = formatReleaseDateValue(release.releaseDate);
+    return date
+      ? `Out now: ${release.title}, released ${date}.`
+      : `Out now: ${release.title}.`;
+  }
+
+  function releaseCardMarkup(release, index, options) {
+    const settings = options || {};
+    const artist = artistForRelease(release);
+    const action = releaseAction(release);
+    const releasePageVisible = settings.showReleasePage !== false && showReleasePages();
+    const metaLine = [
+      text(release.type, "Release"),
+      text(release.year, ""),
+      release.tracks.length
+        ? `${release.tracks.length} ${release.tracks.length === 1 ? "track" : "tracks"}`
+        : ""
+    ].filter(Boolean);
+    const vibeLine = text(release.vibe, "");
+    const releasePageLabel = text(settings.releasePageLabel, "Release Page");
+    const artistLabel = settings.showArtistName === false
+      ? escapeHtml(metaLine.slice(0, 2).join(" / "))
+      : escapeHtml(artist ? artist.name : "Pawn Island Records");
+    const coverMarkup = artworkMarkup(
+      release.cover,
+      release.title,
+      artist ? artist.name : "Release",
+      index
+    );
+    const cardActions = [
+      releasePageVisible
+        ? `
+            <a
+              class="button button--ghost button--small"
+              href="${escapeHtml(releasePageUrl(release.slug))}"
+            >
+              ${escapeHtml(releasePageLabel)}
+            </a>
+          `
+        : "",
+      action
+        ? `
+            <a
+              class="button button--toofm button--small"
+              href="${escapeHtml(action.url)}"
+              target="_blank"
+              rel="noreferrer"
+            >
+              ${escapeHtml(action.label)}
+            </a>
+          `
+        : ""
+    ]
+      .filter(Boolean)
+      .join("");
+
+    return `
+      <article class="release-card ${settings.cardClass ? escapeHtml(settings.cardClass) : ""}">
+        ${
+          releasePageVisible
+            ? `
+                <a
+                  class="release-card__cover"
+                  href="${escapeHtml(releasePageUrl(release.slug))}"
+                  aria-label="Open ${escapeHtml(release.title)} release page"
+                >
+                  ${coverMarkup}
+                </a>
+              `
+            : `
+                <div class="release-card__cover">
+                  ${coverMarkup}
+                </div>
+              `
+        }
+        <p class="release-card__eyebrow">${escapeHtml(releaseStatusLabel(release))}</p>
+        <div>
+          <h2>${escapeHtml(release.title)}</h2>
+          <p class="release-card__artist">${artistLabel}</p>
+        </div>
+        <div class="release-card__catalog-meta">
+          <p class="release-card__meta-line">${escapeHtml(metaLine.join(" / "))}</p>
+          ${
+            releaseAvailability(release)
+              ? `<p class="release-card__date">${escapeHtml(releaseAvailability(release))}</p>`
+              : ""
+          }
+          ${
+            vibeLine
+              ? `<p class="release-card__mood">${escapeHtml(vibeLine)}</p>`
+              : ""
+          }
+        </div>
+        ${
+          cardActions
+            ? `<div class="release-card__actions">${cardActions}</div>`
+            : ""
+        }
+      </article>
+    `;
+  }
+
+  function releaseGroupMarkup(groupKey, title, copy, list, options) {
+    const settings = options || {};
+
+    if (!list.length) {
+      return "";
+    }
+
+    const groupId = `${settings.idPrefix || "group"}-${groupKey}`;
+
+    return `
+      <section class="catalog-group catalog-group--${escapeHtml(groupKey)}" aria-labelledby="${escapeHtml(groupId)}">
+        <div class="catalog-group__header">
+          <div>
+            <p class="section-kicker">${escapeHtml(title)}</p>
+            <h2 id="${escapeHtml(groupId)}">${escapeHtml(title)}</h2>
+          </div>
+          ${
+            copy
+              ? `<p class="catalog-group__copy">${escapeHtml(copy)}</p>`
+              : ""
+          }
+        </div>
+        <div class="release-strip catalog-group__strip">
+          ${list
+            .map((release, index) =>
+              releaseCardMarkup(release, index, settings.cardOptions)
+            )
+            .join("")}
+        </div>
+      </section>
+    `;
   }
 
   function aboutCopy() {
@@ -246,76 +587,12 @@
     return `<img src="${escapeHtml(source)}" alt="${escapeHtml(alt)}" loading="lazy" />`;
   }
 
-  function openAudioDock(options) {
-    const settings = options || {};
-    const docs = [];
-
-    try {
-      if (window.top && window.top.document) {
-        docs.push(window.top.document);
-      }
-    } catch (error) {
-      // Ignore top-window access failures.
-    }
-
-    docs.push(document);
-
-    let dock = null;
-    let toggle = null;
-
-    docs.some((candidate) => {
-      dock = candidate.querySelector(".site-audio");
-      toggle = candidate.querySelector("[data-audio-toggle]");
-      return Boolean(dock || toggle);
-    });
-
-    if (!dock && !toggle) {
-      return;
-    }
-
-    if (settings.play && toggle) {
-      const stateText = text(toggle.textContent).toLowerCase();
-
-      if (stateText === "play" || stateText === "resume") {
-        toggle.click();
-      }
-    }
-
-    if (dock && typeof dock.scrollIntoView === "function") {
-      try {
-        dock.scrollIntoView({
-          behavior: "smooth",
-          block: "end",
-          inline: "nearest"
-        });
-      } catch (error) {
-        dock.scrollIntoView();
-      }
-    }
-
-    if (toggle && typeof toggle.focus === "function") {
-      toggle.focus({ preventScroll: true });
-    }
-  }
-
-  function bindAudioButtons() {
-    document.addEventListener("click", (event) => {
-      const trigger = event.target.closest("[data-audio-focus]");
-
-      if (!trigger) {
-        return;
-      }
-
-      event.preventDefault();
-      openAudioDock({ play: true });
-    });
-  }
-
   function setActiveNav() {
     const pageToHref = {
       home: "index.html",
-      artists: "artists.html",
-      artist: "artists.html",
+      roster: "roster.html",
+      artists: "roster.html",
+      artist: "roster.html",
       releases: "catalog.html",
       about: "about.html",
       epks: "epks.html",
@@ -363,6 +640,33 @@
     const featuredReleaseLink = document.getElementById("home-featured-release-link");
     const featureStack = document.getElementById("home-feature-stack");
     const featuredArtist = artistForRelease(featuredRelease);
+    const featuredAction = releaseAction(featuredRelease);
+    const featuredState = releaseState(featuredRelease);
+    const featuredMetaLabel = featuredState === "upcoming" ? "Next Release" : "Featured Release";
+    const featuredReleasePageVisible = Boolean(featuredRelease) && showReleasePages();
+    const featuredCardActions = [
+      featuredAction
+        ? `
+            <a
+              class="button button--toofm button--small"
+              href="${escapeHtml(featuredAction.url)}"
+              target="_blank"
+              rel="noreferrer"
+            >
+              ${escapeHtml(featuredAction.label)}
+            </a>
+          `
+        : "",
+      featuredReleasePageVisible
+        ? `
+            <a class="button button--ghost button--small" href="${escapeHtml(releasePageUrl(featuredRelease.slug))}">
+              Release Page
+            </a>
+          `
+        : ""
+    ]
+      .filter(Boolean)
+      .join("");
 
     if (identityLine) {
       identityLine.textContent = labelIdentityLine();
@@ -401,19 +705,27 @@
     }
 
     if (featuredReleaseLink && featuredRelease) {
-      const featuredReleaseUrl = resolveTooFmUrl(featuredRelease);
-
-      featuredReleaseLink.href = featuredReleaseUrl;
-      featuredReleaseLink.target = isExternalUrl(featuredReleaseUrl) ? "_blank" : "_self";
-      if (isExternalUrl(featuredReleaseUrl)) {
-        featuredReleaseLink.rel = "noreferrer";
+      if (!featuredAction && !featuredReleasePageVisible) {
+        featuredReleaseLink.classList.add("is-hidden");
       } else {
-        featuredReleaseLink.removeAttribute("rel");
+        const featuredReleaseUrl = featuredAction ? featuredAction.url : releasePageUrl(featuredRelease.slug);
+
+        featuredReleaseLink.classList.remove("is-hidden");
+        featuredReleaseLink.href = featuredReleaseUrl;
+        featuredReleaseLink.textContent = featuredAction ? featuredAction.label : "Release Page";
+        featuredReleaseLink.target = isExternalUrl(featuredReleaseUrl) ? "_blank" : "_self";
+        if (isExternalUrl(featuredReleaseUrl)) {
+          featuredReleaseLink.rel = "noreferrer";
+        } else {
+          featuredReleaseLink.removeAttribute("rel");
+        }
+        featuredReleaseLink.setAttribute(
+          "aria-label",
+          featuredAction
+            ? `Open ${featuredRelease.title} by ${featuredArtist ? featuredArtist.name : "Pawn Island Records"} on Too.fm`
+            : `Open the ${featuredRelease.title} release page`
+        );
       }
-      featuredReleaseLink.setAttribute(
-        "aria-label",
-        `Open ${featuredRelease.title} by ${featuredArtist ? featuredArtist.name : "Pawn Island Records"} on Too.fm`
-      );
     }
 
     if (featureStack) {
@@ -429,27 +741,24 @@
               )}
             </div>
             <div class="feature-card__body">
-              <p class="feature-card__meta">Featured Release</p>
+              <p class="feature-card__meta">${escapeHtml(featuredMetaLabel)}</p>
               <h2>${escapeHtml(featuredRelease.title)}</h2>
               <p>${escapeHtml(
                 featuredArtist
-                  ? `${featuredArtist.name} / ${featuredRelease.type} / ${featuredRelease.year}`
+                  ? `${featuredArtist.name} / ${featuredRelease.type}`
                   : featuredRelease.type
               )}</p>
+              ${
+                releaseAvailability(featuredRelease)
+                  ? `<p class="feature-card__support">${escapeHtml(releaseAvailability(featuredRelease))}</p>`
+                  : ""
+              }
               <p>${escapeHtml(text(featuredRelease.description, "Step into the current release world."))}</p>
-              <div class="feature-card__actions">
-                <a
-                  class="button button--toofm button--small"
-                  href="${escapeHtml(resolveTooFmUrl(featuredRelease))}"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open on Too.fm
-                </a>
-                <a class="button button--ghost button--small" href="${escapeHtml(releasePageUrl(featuredRelease.slug))}">
-                  Release Page
-                </a>
-              </div>
+              ${
+                featuredCardActions
+                  ? `<div class="feature-card__actions">${featuredCardActions}</div>`
+                  : ""
+              }
             </div>
           </article>
         `
@@ -461,23 +770,7 @@
           </article>
         `;
 
-      featureStack.innerHTML = `
-        ${featureMarkup}
-        <div class="metric-row" aria-label="Label stats">
-          <article class="metric-pill">
-            <strong>${artists.length}</strong>
-            <span>Artists</span>
-          </article>
-          <article class="metric-pill">
-            <strong>${releases.length}</strong>
-            <span>Releases</span>
-          </article>
-          <article class="metric-pill">
-            <strong>${ui && ui.trackCount ? ui.trackCount() : 0}</strong>
-            <span>Tracks</span>
-          </article>
-        </div>
-      `;
+      featureStack.innerHTML = featureMarkup;
     }
   }
 
@@ -491,21 +784,57 @@
     collection.innerHTML = artists
       .map((artist, index) => {
         const latestRelease = latestReleaseForArtist(artist.slug);
+        const focusAction = releaseAction(latestRelease);
+        const projectPageVisible = showProjectPages();
+        const coverMarkup = artworkMarkup(
+          artist.image || (latestRelease && latestRelease.cover) || "",
+          artist.name,
+          artist.lane || "Project placeholder",
+          index
+        );
+        const cardActions = [
+          projectPageVisible
+            ? `
+                <a class="button button--ghost button--small" href="${escapeHtml(artistPageUrl(artist.slug, latestRelease && latestRelease.slug))}">
+                  Project Page
+                </a>
+              `
+            : "",
+          focusAction
+            ? `
+                <a
+                  class="button button--toofm button--small"
+                  href="${escapeHtml(focusAction.url)}"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  ${escapeHtml(focusAction.label)}
+                </a>
+              `
+            : ""
+        ]
+          .filter(Boolean)
+          .join("");
 
         return `
           <article class="artist-card">
-            <a
-              class="artist-card__cover"
-              href="${escapeHtml(artistPageUrl(artist.slug, latestRelease && latestRelease.slug))}"
-              aria-label="Open ${escapeHtml(artist.name)} artist page"
-            >
-              ${artworkMarkup(
-                "",
-                artist.name,
-                artist.lane || "Project placeholder",
-                index
-              )}
-            </a>
+            ${
+              projectPageVisible
+                ? `
+                    <a
+                      class="artist-card__cover"
+                      href="${escapeHtml(artistPageUrl(artist.slug, latestRelease && latestRelease.slug))}"
+                      aria-label="Open ${escapeHtml(artist.name)} project page"
+                    >
+                      ${coverMarkup}
+                    </a>
+                  `
+                : `
+                    <div class="artist-card__cover">
+                      ${coverMarkup}
+                    </div>
+                  `
+            }
             <p class="artist-card__index">Project ${String(index + 1).padStart(2, "0")}</p>
             <div>
               <h2>${escapeHtml(artist.name)}</h2>
@@ -521,25 +850,12 @@
                 )
               )}
             </p>
-            <div class="card-actions">
-              <a class="button button--ghost button--small" href="${escapeHtml(artistPageUrl(artist.slug, latestRelease && latestRelease.slug))}">
-                Artist Page
-              </a>
-              ${
-                latestRelease
-                  ? `
-                    <a
-                      class="button button--toofm button--small"
-                      href="${escapeHtml(resolveTooFmUrl(latestRelease))}"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Latest Release
-                    </a>
-                  `
-                  : ""
-              }
-            </div>
+            <p class="artist-card__status">${escapeHtml(artistFocusLine(artist, latestRelease))}</p>
+            ${
+              cardActions
+                ? `<div class="card-actions">${cardActions}</div>`
+                : ""
+            }
           </article>
         `;
       })
@@ -555,13 +871,23 @@
       return;
     }
 
+    if (!showProjectPages()) {
+      renderLaunchHoldState(panel, {
+        documentTitle: "Project Pages Coming Soon",
+        title: "Project pages are staying private for launch.",
+        copy:
+          "The public launch is focused on Home, Roster, and About while the deeper project copy gets written."
+      });
+      return;
+    }
+
     if (!artist) {
-      document.title = "Artist Not Found | Pawn Island Records";
+      document.title = "Project Not Found | Pawn Island Records";
       panel.innerHTML = `
         <article class="empty-card">
-          <p>That artist page is not available yet. Head back to the roster and choose another project.</p>
+          <p>That project page is not available yet. Head back to the roster and choose another project.</p>
           <div class="action-row">
-            <a class="button button--ghost button--small" href="artists.html">Back to Artists</a>
+            <a class="button button--ghost button--small" href="roster.html">Back to Roster</a>
           </div>
         </article>
       `;
@@ -570,9 +896,12 @@
 
     const discography = artistReleases(artist.slug);
     const latestRelease = discography[0] || null;
+    const groupedDiscography = splitReleaseGroups(discography);
+    const focusAction = releaseAction(latestRelease);
     const spotifySample = discography.find((release) => primaryEmbedFor(release).url);
     const youtubeSample = discography.find((release) => preferredYoutubeIdFor(release));
     const galleryReleases = discography.slice(0, 20);
+    const releasePageVisible = showReleasePages();
     const titleNode = document.getElementById("artist-page-title");
     const laneNode = document.getElementById("artist-page-lane");
     const headlineNode = document.getElementById("artist-page-headline");
@@ -587,14 +916,14 @@
 
     if (ui && ui.setMetaDescription) {
       ui.setMetaDescription(
-        `${artist.name}. ${artist.headline || artist.summary || "Explore the artist discography and sample listening embeds."}`
+        `${artist.name}. ${artist.headline || artist.summary || "Explore the project discography and sample listening embeds."}`
       );
     }
 
     const breadcrumb = document.createElement("nav");
     breadcrumb.setAttribute("aria-label", "Breadcrumb");
     breadcrumb.className = "breadcrumb";
-    breadcrumb.innerHTML = `<a href="artists.html">\u2190 Artists</a><span aria-hidden="true"> / </span><span>${escapeHtml(artist.name)}</span>`;
+    breadcrumb.innerHTML = `<a href="roster.html">\u2190 Roster</a><span aria-hidden="true"> / </span><span>${escapeHtml(artist.name)}</span>`;
     panel.insertBefore(breadcrumb, panel.firstElementChild);
 
     titleNode.textContent = artist.name;
@@ -602,115 +931,116 @@
     headlineNode.textContent = text(artist.headline, artist.summary);
     bodyNode.textContent = text(artist.story, artist.summary);
 
-    actionsNode.innerHTML = `
-      ${
-        latestRelease
-          ? `
+    actionsNode.innerHTML = [
+      focusAction
+        ? `
             <a
               class="button button--primary"
-              href="${escapeHtml(resolveTooFmUrl(latestRelease))}"
+              href="${escapeHtml(focusAction.url)}"
               target="_blank"
               rel="noreferrer"
             >
-              Listen Now
+              ${escapeHtml(focusAction.label)}
             </a>
           `
-          : ""
-      }
-      ${
-        latestRelease
-          ? `
-            <a
-              class="button button--toofm"
-              href="${escapeHtml(resolveTooFmUrl(latestRelease))}"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Latest Release
+        : "",
+      latestRelease && releasePageVisible
+        ? `
+            <a class="button button--ghost" href="${escapeHtml(releasePageUrl(latestRelease.slug))}">
+              Release Page
             </a>
           `
-          : ""
-      }
-      <a class="button button--ghost" href="${escapeHtml(epkPageUrl(artist.slug))}">Open Press Kit</a>
-      <a class="button button--ghost" href="artists.html">Back to Artists</a>
-    `;
+        : "",
+      showPressPages()
+        ? `<a class="button button--ghost" href="${escapeHtml(epkPageUrl(artist.slug))}">Open Press Kit</a>`
+        : "",
+      `<a class="button button--ghost" href="roster.html">Back to Roster</a>`
+    ]
+      .filter(Boolean)
+      .join("");
 
     visualNode.innerHTML = `
       <div class="artist-page-visual__cover">
         ${artworkMarkup(
           artist.image || (latestRelease && latestRelease.cover) || "",
           artist.name,
-          artist.lane || "Artist page",
+          artist.lane || "Project page",
           0
         )}
       </div>
       <p class="artist-page-visual__caption">
         ${
           latestRelease
-            ? escapeHtml(`${latestRelease.title} anchors the current release focus for ${artist.name}.`)
+            ? escapeHtml(
+                releaseState(latestRelease) === "upcoming"
+                  ? `${latestRelease.title} arrives ${formatReleaseDateValue(latestRelease.releaseDate) || "soon"} and currently leads the rollout for ${artist.name}.`
+                  : `${latestRelease.title} anchors the current out-now focus for ${artist.name}.`
+              )
             : escapeHtml(`${artist.name} will populate with release artwork and embeds as the catalog expands.`)
         }
       </p>
     `;
 
     discographyCopyNode.textContent = discography.length
-      ? `${discography.length} release${discography.length === 1 ? "" : "s"} across the current project catalog.`
-      : "No public releases are attached to this artist yet.";
+      ? `${releaseCountText(discography.length)} in the current catalog${availabilitySummary(groupedDiscography) ? `, with ${availabilitySummary(groupedDiscography)}.` : "."}`
+      : "No public releases are attached to this project yet.";
 
     discographyNode.innerHTML = discography.length
-      ? discography
-          .map((release, index) => {
-            const tags = [
-              text(release.type, "Release"),
-              text(release.year, ""),
-              `${release.tracks.length} ${release.tracks.length === 1 ? "track" : "tracks"}`
-            ].filter(Boolean);
-
-            return `
-              <article class="release-card">
-                <a
-                  class="release-card__cover"
-                  href="${escapeHtml(releasePageUrl(release.slug))}"
-                  aria-label="Open ${escapeHtml(release.title)} release page"
-                >
-                  ${artworkMarkup(
-                    release.cover,
-                    release.title,
-                    artist.name,
-                    index
-                  )}
-                </a>
-                <p class="release-card__eyebrow">Release</p>
-                <div>
-                  <h2>${escapeHtml(release.title)}</h2>
-                  <p class="release-card__artist">${escapeHtml([release.type, release.year].filter(Boolean).join(" / "))}</p>
-                </div>
-                <div class="release-card__tags">
-                  ${tags
-                    .slice(0, 3)
-                    .map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`)
-                    .join("")}
-                </div>
-                <div class="release-card__actions">
-                  <a class="button button--ghost button--small" href="${escapeHtml(releasePageUrl(release.slug))}">
-                    Open Release
-                  </a>
-                  <a
-                    class="button button--toofm button--small"
-                    href="${escapeHtml(resolveTooFmUrl(release))}"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Open on Too.fm
-                  </a>
-                </div>
-              </article>
-            `;
-          })
+      ? [
+          releaseGroupMarkup(
+            "upcoming",
+            "Forthcoming",
+            groupedDiscography.upcoming.length
+              ? `${releaseCountText(groupedDiscography.upcoming.length)} scheduled for ${artist.name}, ordered by release date.`
+              : "",
+            groupedDiscography.upcoming,
+            {
+              idPrefix: `${artist.slug}-artist-upcoming`,
+              cardOptions: {
+                showArtistName: false,
+                releasePageLabel: "Open Release",
+                showReleasePage: releasePageVisible
+              }
+            }
+          ),
+          releaseGroupMarkup(
+            "live",
+            "Out Now",
+            groupedDiscography.live.length
+              ? `${releaseCountText(groupedDiscography.live.length)} already live for ${artist.name}.`
+              : "",
+            groupedDiscography.live,
+            {
+              idPrefix: `${artist.slug}-artist-live`,
+              cardOptions: {
+                showArtistName: false,
+                releasePageLabel: "Open Release",
+                showReleasePage: releasePageVisible
+              }
+            }
+          ),
+          releaseGroupMarkup(
+            "catalog",
+            "Catalog Notes",
+            groupedDiscography.catalog.length
+              ? `${releaseCountText(groupedDiscography.catalog.length)} still needs release-state details.`
+              : "",
+            groupedDiscography.catalog,
+            {
+              idPrefix: `${artist.slug}-artist-catalog`,
+              cardOptions: {
+                showArtistName: false,
+                releasePageLabel: "Open Release",
+                showReleasePage: releasePageVisible
+              }
+            }
+          )
+        ]
+          .filter(Boolean)
           .join("")
       : `
           <article class="empty-card">
-            <p>This artist page is ready. Add releases to the catalog and the discography will appear here automatically.</p>
+            <p>This project page is ready. Add releases to the catalog and the discography will appear here automatically.</p>
           </article>
         `;
 
@@ -768,7 +1098,7 @@
       if (!galleryReleases.length) {
         mediaStage.innerHTML = `
           <article class="empty-card">
-            <p>No album covers are available for this artist yet.</p>
+            <p>No album covers are available for this project yet.</p>
           </article>
         `;
         return;
@@ -779,24 +1109,45 @@
           ${galleryReleases
             .map(
               (release, index) => `
-                <a
-                  class="cover-gallery__item"
-                  href="${escapeHtml(releasePageUrl(release.slug))}"
-                  aria-label="Open ${escapeHtml(release.title)} release page"
-                >
-                  <div class="cover-gallery__image">
-                    ${artworkMarkup(
-                      release.cover,
-                      release.title,
-                      artist.name,
-                      index
-                    )}
-                  </div>
-                  <div class="cover-gallery__copy">
-                    <strong>${escapeHtml(release.title)}</strong>
-                    <span>${escapeHtml([release.type, release.year].filter(Boolean).join(" / "))}</span>
-                  </div>
-                </a>
+                ${
+                  releasePageVisible
+                    ? `
+                        <a
+                          class="cover-gallery__item"
+                          href="${escapeHtml(releasePageUrl(release.slug))}"
+                          aria-label="Open ${escapeHtml(release.title)} release page"
+                        >
+                          <div class="cover-gallery__image">
+                            ${artworkMarkup(
+                              release.cover,
+                              release.title,
+                              artist.name,
+                              index
+                            )}
+                          </div>
+                          <div class="cover-gallery__copy">
+                            <strong>${escapeHtml(release.title)}</strong>
+                            <span>${escapeHtml([release.type, release.year].filter(Boolean).join(" / "))}</span>
+                          </div>
+                        </a>
+                      `
+                    : `
+                        <div class="cover-gallery__item">
+                          <div class="cover-gallery__image">
+                            ${artworkMarkup(
+                              release.cover,
+                              release.title,
+                              artist.name,
+                              index
+                            )}
+                          </div>
+                          <div class="cover-gallery__copy">
+                            <strong>${escapeHtml(release.title)}</strong>
+                            <span>${escapeHtml([release.type, release.year].filter(Boolean).join(" / "))}</span>
+                          </div>
+                        </div>
+                      `
+                }
               `
             )
             .join("")}
@@ -810,7 +1161,7 @@
             <article class="embed-card">
               <p class="embed-card__label">Spotify Sample</p>
               <h2>${escapeHtml(spotifySample.title)}</h2>
-              <p class="embed-card__eyebrow">${escapeHtml(`${spotifyEmbed.label || "Spotify"} embed from the artist discography.`)}</p>
+              <p class="embed-card__eyebrow">${escapeHtml(`${spotifyEmbed.label || "Spotify"} embed from the project discography.`)}</p>
               <div class="embed-card__frame embed-card__frame--audio">
                 <iframe
                   src="${escapeHtml(spotifyEmbed.url)}"
@@ -824,7 +1175,7 @@
           `
         : `
             <article class="empty-card">
-              <p>No Spotify embed is available in the current artist data.</p>
+              <p>No Spotify embed is available in the current project data.</p>
             </article>
           `;
     }
@@ -850,7 +1201,7 @@
           `
         : `
             <article class="empty-card">
-              <p>No YouTube embed is available in the current artist data.</p>
+              <p>No YouTube embed is available in the current project data.</p>
             </article>
           `;
     }
@@ -894,13 +1245,28 @@
         accent: (latestRelease && latestRelease.accent) || artist.accent || "#ffcc00",
         image: (latestRelease && latestRelease.cover) || artist.image || "",
         title: artist.name,
-        subtitle: text(artist.lane, "Artist page")
+        subtitle: text(artist.lane, "Project page")
       });
     }
   }
 
   function renderEpkIndex() {
+    const panel = document.querySelector(".press-panel");
     const collection = document.getElementById("epk-collection");
+
+    if (!panel && !collection) {
+      return;
+    }
+
+    if (!showPressPages()) {
+      renderLaunchHoldState(panel || collection, {
+        documentTitle: "Press Pages Coming Soon",
+        title: "Press pages are staying private for launch.",
+        copy:
+          "Press kits are being finished behind the scenes so the public site can stay focused on discovery tonight."
+      });
+      return;
+    }
 
     if (!collection) {
       return;
@@ -930,7 +1296,7 @@
               ${artworkMarkup(
                 coverSource,
                 artist.name,
-                artist.lane || "Artist press",
+                artist.lane || "Press profile",
                 index
               )}
             </a>
@@ -956,7 +1322,7 @@
                   Open Press Kit
                 </a>
                 <a class="button button--ghost button--small" href="${escapeHtml(artistPageUrl(artist.slug, latestRelease && latestRelease.slug))}">
-                  Artist Page
+                  Project Page
                 </a>
               </div>
             </div>
@@ -975,6 +1341,16 @@
       return;
     }
 
+    if (!showPressPages()) {
+      renderLaunchHoldState(panel, {
+        documentTitle: "Press Kit Coming Soon",
+        title: "Press kits are staying private for launch.",
+        copy:
+          "We're keeping press-facing pages off the public site until the bios, release notes, and kit copy are ready."
+      });
+      return;
+    }
+
     if (!artist) {
       document.title = "Press Kit Not Found | Pawn Island Records";
       panel.innerHTML = `
@@ -982,7 +1358,7 @@
           <p>That press kit is not available yet. Return to the press index and choose another project.</p>
           <div class="action-row">
             <a class="button button--ghost button--small" href="epks.html">Back to Press</a>
-            <a class="button button--ghost button--small" href="artists.html">Back to Artists</a>
+            <a class="button button--ghost button--small" href="roster.html">Back to Roster</a>
           </div>
         </article>
       `;
@@ -1003,8 +1379,10 @@
     const priorityMarkets = Array.isArray(artist.priorityMarkets)
       ? artist.priorityMarkets.filter(Boolean)
       : [];
+    const latestReleaseAction = releaseAction(latestRelease);
     const spotifyEmbed = spotifySample ? primaryEmbedFor(spotifySample) : { label: "", url: "" };
     const youtubeId = youtubeSample ? preferredYoutubeIdFor(youtubeSample) : "";
+    const releasePageVisible = showReleasePages();
     const titleNode = document.getElementById("epk-page-title");
     const laneNode = document.getElementById("epk-page-lane");
     const summaryNode = document.getElementById("epk-page-summary");
@@ -1027,7 +1405,7 @@
         label: "Press Quote",
         value: text(
           artist.pressQuote,
-          "Add an editorial quote, testimonial, or artist-approved pull line here."
+          "Add an editorial quote, testimonial, or project-approved pull line here."
         )
       },
       {
@@ -1049,7 +1427,7 @@
     ];
     const viewDescriptions = {
       overview: "A fast project snapshot built from positioning, story angles, and open campaign placeholders.",
-      bio: "Working language for press copy, artist framing, and direction-setting notes.",
+      bio: "Working language for press copy, project framing, and direction-setting notes.",
       catalog: "Current release context plus a scrollable discography strip for quick reference.",
       media: "Available Spotify, YouTube, and cover-art materials for immediate preview.",
       assets: "What is already in the kit and where specific campaign details can be added next."
@@ -1060,7 +1438,7 @@
       if (!list.length) {
         return `
           <article class="empty-card">
-            <p>No public releases are attached to this artist yet.</p>
+            <p>No public releases are attached to this project yet.</p>
           </article>
         `;
       }
@@ -1070,28 +1448,56 @@
           ${list
             .map(
               (release, index) => `
-                <a class="strip-card" href="${escapeHtml(releasePageUrl(release.slug))}">
-                  <div class="strip-card__thumb">
-                    ${artworkMarkup(
-                      release.cover,
-                      release.title,
-                      artist.name,
-                      index
-                    )}
-                  </div>
-                  <div class="strip-card__content">
-                    <strong>${escapeHtml(release.title)}</strong>
-                    <p>${escapeHtml(
-                      [
-                        [release.type, release.year].filter(Boolean).join(" / "),
-                        text(release.description, artist.summary)
-                      ]
-                        .filter(Boolean)
-                        .join(" | ")
-                    )}</p>
-                    <span class="strip-card__link">Open Release</span>
-                  </div>
-                </a>
+                ${
+                  releasePageVisible
+                    ? `
+                        <a class="strip-card" href="${escapeHtml(releasePageUrl(release.slug))}">
+                          <div class="strip-card__thumb">
+                            ${artworkMarkup(
+                              release.cover,
+                              release.title,
+                              artist.name,
+                              index
+                            )}
+                          </div>
+                          <div class="strip-card__content">
+                            <strong>${escapeHtml(release.title)}</strong>
+                            <p>${escapeHtml(
+                              [
+                                [release.type, release.year].filter(Boolean).join(" / "),
+                                text(release.description, artist.summary)
+                              ]
+                                .filter(Boolean)
+                                .join(" | ")
+                            )}</p>
+                            <span class="strip-card__link">Open Release</span>
+                          </div>
+                        </a>
+                      `
+                    : `
+                        <div class="strip-card">
+                          <div class="strip-card__thumb">
+                            ${artworkMarkup(
+                              release.cover,
+                              release.title,
+                              artist.name,
+                              index
+                            )}
+                          </div>
+                          <div class="strip-card__content">
+                            <strong>${escapeHtml(release.title)}</strong>
+                            <p>${escapeHtml(
+                              [
+                                [release.type, release.year].filter(Boolean).join(" / "),
+                                text(release.description, artist.summary)
+                              ]
+                                .filter(Boolean)
+                                .join(" | ")
+                            )}</p>
+                          </div>
+                        </div>
+                      `
+                }
               `
             )
             .join("")}
@@ -1113,24 +1519,45 @@
           ${galleryReleases
             .map(
               (release, index) => `
-                <a
-                  class="cover-gallery__item"
-                  href="${escapeHtml(releasePageUrl(release.slug))}"
-                  aria-label="Open ${escapeHtml(release.title)} release page"
-                >
-                  <div class="cover-gallery__image">
-                    ${artworkMarkup(
-                      release.cover,
-                      release.title,
-                      artist.name,
-                      index
-                    )}
-                  </div>
-                  <div class="cover-gallery__copy">
-                    <strong>${escapeHtml(release.title)}</strong>
-                    <span>${escapeHtml([release.type, release.year].filter(Boolean).join(" / "))}</span>
-                  </div>
-                </a>
+                ${
+                  releasePageVisible
+                    ? `
+                        <a
+                          class="cover-gallery__item"
+                          href="${escapeHtml(releasePageUrl(release.slug))}"
+                          aria-label="Open ${escapeHtml(release.title)} release page"
+                        >
+                          <div class="cover-gallery__image">
+                            ${artworkMarkup(
+                              release.cover,
+                              release.title,
+                              artist.name,
+                              index
+                            )}
+                          </div>
+                          <div class="cover-gallery__copy">
+                            <strong>${escapeHtml(release.title)}</strong>
+                            <span>${escapeHtml([release.type, release.year].filter(Boolean).join(" / "))}</span>
+                          </div>
+                        </a>
+                      `
+                    : `
+                        <div class="cover-gallery__item">
+                          <div class="cover-gallery__image">
+                            ${artworkMarkup(
+                              release.cover,
+                              release.title,
+                              artist.name,
+                              index
+                            )}
+                          </div>
+                          <div class="cover-gallery__copy">
+                            <strong>${escapeHtml(release.title)}</strong>
+                            <span>${escapeHtml([release.type, release.year].filter(Boolean).join(" / "))}</span>
+                          </div>
+                        </div>
+                      `
+                }
               `
             )
             .join("")}
@@ -1181,7 +1608,7 @@
         <div class="epk-detail-grid">
           <article class="epk-panel-card epk-panel-card--wide">
             <p class="embed-card__label">Press Bio</p>
-            <h2>Working Artist Bio</h2>
+            <h2>Working Project Bio</h2>
             <p class="epk-panel-card__copy">${escapeHtml(text(artist.pressBio, artist.story || artist.summary))}</p>
           </article>
           <article class="epk-panel-card">
@@ -1232,17 +1659,31 @@
                         .join("")}
                     </div>
                     <div class="feature-card__actions">
-                      <a
-                        class="button button--toofm button--small"
-                        href="${escapeHtml(resolveTooFmUrl(latestRelease))}"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Latest Release
-                      </a>
-                      <a class="button button--ghost button--small" href="${escapeHtml(releasePageUrl(latestRelease.slug))}">
-                        Release Page
-                      </a>
+                      ${
+                        [
+                          latestReleaseAction
+                            ? `
+                                <a
+                                  class="button button--toofm button--small"
+                                  href="${escapeHtml(latestReleaseAction.url)}"
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  ${escapeHtml(latestReleaseAction.label)}
+                                </a>
+                              `
+                            : "",
+                          releasePageVisible
+                            ? `
+                                <a class="button button--ghost button--small" href="${escapeHtml(releasePageUrl(latestRelease.slug))}">
+                                  Release Page
+                                </a>
+                              `
+                            : ""
+                        ]
+                          .filter(Boolean)
+                          .join("")
+                      }
                     </div>
                   </div>
                 </div>
@@ -1398,7 +1839,7 @@
 
     if (ui && ui.setMetaDescription) {
       ui.setMetaDescription(
-        `${artist.name} press kit. ${artist.pressBio || artist.summary || artist.headline || "Press materials, release context, and artist positioning."}`
+        `${artist.name} press kit. ${artist.pressBio || artist.summary || artist.headline || "Press materials, release context, and project positioning."}`
       );
     }
 
@@ -1410,33 +1851,37 @@
     );
     bodyNode.textContent = text(artist.pressBio, artist.story || artist.summary);
 
-    actionsNode.innerHTML = `
-      ${
-        latestRelease
-          ? `
+    actionsNode.innerHTML = [
+      latestReleaseAction
+        ? `
             <a
               class="button button--toofm"
-              href="${escapeHtml(resolveTooFmUrl(latestRelease))}"
+              href="${escapeHtml(latestReleaseAction.url)}"
               target="_blank"
               rel="noreferrer"
             >
-              Latest Release
+              ${escapeHtml(latestReleaseAction.label)}
             </a>
           `
-          : ""
-      }
-      <a class="button button--ghost" href="${escapeHtml(artistPageUrl(artist.slug, latestRelease && latestRelease.slug))}">
-        Artist Page
-      </a>
-      <a class="button button--ghost" href="epks.html">All Press</a>
-    `;
+        : "",
+      showProjectPages()
+        ? `
+            <a class="button button--ghost" href="${escapeHtml(artistPageUrl(artist.slug, latestRelease && latestRelease.slug))}">
+              Project Page
+            </a>
+          `
+        : "",
+      `<a class="button button--ghost" href="epks.html">All Press</a>`
+    ]
+      .filter(Boolean)
+      .join("");
 
     visualNode.innerHTML = `
       <div class="epk-page-visual__cover">
         ${artworkMarkup(
           artist.image || (latestRelease && latestRelease.cover) || "",
           artist.name,
-          artist.lane || "Artist press",
+          artist.lane || "Press profile",
           0
         )}
       </div>
@@ -1510,25 +1955,39 @@
         accent: (latestRelease && latestRelease.accent) || artist.accent || "#ffcc00",
         image: (latestRelease && latestRelease.cover) || artist.image || "",
         title: `${artist.name} Press Kit`,
-        subtitle: text(artist.lane, "Artist press")
+        subtitle: text(artist.lane, "Press profile")
       });
     }
   }
 
   function renderReleases() {
+    const panel = document.querySelector(".releases-panel");
     const collection = document.getElementById("releases-collection");
     const intro = document.getElementById("releases-intro");
     const resetLink = document.getElementById("release-filter-reset");
     const selectedArtistSlug = new URLSearchParams(window.location.search).get("artist");
     const selectedArtist = selectedArtistSlug ? artistLookup.get(selectedArtistSlug) || null : null;
+
+    if (!showCatalogPage()) {
+      renderLaunchHoldState(panel || collection, {
+        documentTitle: "Catalog Coming Soon",
+        title: "The full catalog page is tucked away for launch.",
+        copy:
+          "Fans can still use the featured release and roster links while the deeper release copy and catalog pages are still being written."
+      });
+      return;
+    }
+
     const visibleReleases = selectedArtist
       ? releases.filter((release) => release.artist === selectedArtist.slug)
       : releases;
+    const groupedReleases = splitReleaseGroups(visibleReleases);
+    const releasePageVisible = showReleasePages();
 
     if (intro) {
       intro.textContent = selectedArtist
-        ? `Showing ${visibleReleases.length} release${visibleReleases.length === 1 ? "" : "s"} for ${selectedArtist.name}.`
-        : `${releases.length} release${releases.length === 1 ? "" : "s"} in the catalog.`;
+        ? `${selectedArtist.name}: ${releaseCountText(visibleReleases.length)}${availabilitySummary(groupedReleases) ? `, with ${availabilitySummary(groupedReleases)}.` : "."}`
+        : `${releaseCountText(releases.length)} across the label${availabilitySummary(groupedReleases) ? `, including ${availabilitySummary(groupedReleases)}.` : "."}`;
     }
 
     if (resetLink) {
@@ -1545,67 +2004,63 @@
     if (!visibleReleases.length) {
       collection.innerHTML = `
         <article class="empty-card">
-          <p>No releases are attached to this artist filter yet.</p>
+          <p>No releases are attached to this project filter yet.</p>
         </article>
       `;
       return;
     }
 
-    collection.innerHTML = visibleReleases
-      .map((release, index) => {
-        const artist = artistForRelease(release);
-        const metaLine = [
-          text(release.type, "Release"),
-          text(release.year, ""),
-          release.tracks.length
-            ? `${release.tracks.length} ${release.tracks.length === 1 ? "track" : "tracks"}`
-            : ""
-        ].filter(Boolean);
-        const vibeLine = text(release.vibe, "");
-
-        return `
-          <article class="release-card release-card--catalog">
-            <a
-              class="release-card__cover"
-              href="${escapeHtml(releasePageUrl(release.slug))}"
-              aria-label="Open ${escapeHtml(release.title)} release page"
-            >
-              ${artworkMarkup(
-                release.cover,
-                release.title,
-                artist ? artist.name : "Release",
-                index
-              )}
-            </a>
-            <p class="release-card__eyebrow">Release</p>
-            <div>
-              <h2>${escapeHtml(release.title)}</h2>
-              <p class="release-card__artist">${escapeHtml(artist ? artist.name : "Pawn Island Records")}</p>
-            </div>
-            <div class="release-card__catalog-meta">
-              <p class="release-card__meta-line">${escapeHtml(metaLine.join(" / "))}</p>
-              ${
-                vibeLine
-                  ? `<p class="release-card__mood">${escapeHtml(vibeLine)}</p>`
-                  : ""
-              }
-            </div>
-            <div class="release-card__actions">
-              <button class="button button--ghost button--small" type="button" data-audio-focus>
-                Play
-              </button>
-              <a
-                class="button button--toofm button--small"
-                href="${escapeHtml(resolveTooFmUrl(release))}"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open on Too.fm
-              </a>
-            </div>
-          </article>
-        `;
-      })
+    collection.innerHTML = [
+      releaseGroupMarkup(
+        "upcoming",
+        "Forthcoming Releases",
+        groupedReleases.upcoming.length
+          ? "Exact release dates are listed here so fans can see what is landing next."
+          : "",
+        groupedReleases.upcoming,
+        {
+          idPrefix: selectedArtist ? `${selectedArtist.slug}-catalog-upcoming` : "catalog-upcoming",
+          cardOptions: {
+            cardClass: "release-card--catalog",
+            releasePageLabel: "Release Page",
+            showReleasePage: releasePageVisible
+          }
+        }
+      ),
+      releaseGroupMarkup(
+        "live",
+        "Out Now",
+        groupedReleases.live.length
+          ? "These releases are already live and linked directly into their current Too.fm pages."
+          : "",
+        groupedReleases.live,
+        {
+          idPrefix: selectedArtist ? `${selectedArtist.slug}-catalog-live` : "catalog-live",
+          cardOptions: {
+            cardClass: "release-card--catalog",
+            releasePageLabel: "Release Page",
+            showReleasePage: releasePageVisible
+          }
+        }
+      ),
+      releaseGroupMarkup(
+        "catalog",
+        "Catalog Notes",
+        groupedReleases.catalog.length
+          ? "These entries are part of the public catalog but still need release-state detail."
+          : "",
+        groupedReleases.catalog,
+        {
+          idPrefix: selectedArtist ? `${selectedArtist.slug}-catalog-notes` : "catalog-notes",
+          cardOptions: {
+            cardClass: "release-card--catalog",
+            releasePageLabel: "Release Page",
+            showReleasePage: releasePageVisible
+          }
+        }
+      )
+    ]
+      .filter(Boolean)
       .join("");
   }
 
@@ -1613,6 +2068,7 @@
     const bodyCopy = document.getElementById("about-body-copy");
     const ethosLine = document.getElementById("about-ethos-line");
     const campaignLinkNode = document.getElementById("about-campaign-link");
+    const secondaryLinkNode = document.getElementById("about-secondary-link");
     const timelineNode = document.getElementById("about-timeline");
 
     if (bodyCopy) {
@@ -1625,6 +2081,11 @@
 
     if (campaignLinkNode) {
       campaignLinkNode.href = campaignUrl();
+    }
+
+    if (secondaryLinkNode) {
+      secondaryLinkNode.href = showCatalogPage() ? "catalog.html" : "roster.html";
+      secondaryLinkNode.textContent = showCatalogPage() ? "Browse Releases" : "View Roster";
     }
 
     if (timelineNode) {
@@ -1653,12 +2114,12 @@
 
   function init() {
     syncViewportHeight();
-    bindAudioButtons();
+    renderPrimaryNav();
     setActiveNav();
 
     if (page === "home") {
       renderHome();
-    } else if (page === "artists") {
+    } else if (page === "roster" || page === "artists") {
       renderArtists();
     } else if (page === "artist") {
       renderArtistPage();

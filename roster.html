@@ -8,10 +8,10 @@
     <link rel="icon" type="image/jpeg" sizes="96x96" href="assets/brand/pawnisland-096.jpg" />
     <link rel="icon" type="image/jpeg" sizes="256x256" href="assets/brand/pawnisland-256.jpg" />
     <link rel="apple-touch-icon" sizes="512x512" href="assets/brand/pawnisland-512.jpg" />
-    <title>Pawn Island Records | Releases</title>
+    <title>Pawn Island Records | Roster</title>
     <meta
       name="description"
-      content="Explore the Pawn Island Records catalog in a single-panel releases view."
+      content="Browse the Pawn Island Records roster in a clean no-scroll discovery view."
     />
     <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="label-site.css" />
     <link rel="stylesheet" href="site-audio.css" />
   </head>
-  <body data-page="releases">
+  <body data-page="roster">
     <a class="skip-link" href="#label-main">Skip to content</a>
     <div class="label-page">
       <header class="label-header">
@@ -34,33 +34,32 @@
           />
           <span class="brand-mark__copy">
             <strong>Pawn Island Records</strong>
-            <span>Releases</span>
+            <span>Roster &amp; projects</span>
           </span>
         </a>
 
         <nav class="label-nav" aria-label="Primary">
           <a href="index.html">Home</a>
-          <a href="roster.html">Roster</a>
+          <a href="roster.html" aria-current="page">Roster</a>
           <a href="about.html">About</a>
         </nav>
       </header>
 
       <main class="label-main" id="label-main">
-        <section class="panel-shell releases-panel" aria-labelledby="releases-title">
+        <section class="panel-shell artists-panel" aria-labelledby="artists-title">
           <div class="panel-header">
             <div>
-              <p class="section-kicker">Catalog</p>
-              <h1 id="releases-title">Releases</h1>
+              <p class="section-kicker">Roster</p>
+              <h1 id="artists-title">Roster &amp; Projects</h1>
             </div>
             <div class="panel-note">
-              <p id="releases-intro">Explore the catalog.</p>
-              <a class="button button--ghost button--small is-hidden" id="release-filter-reset" href="catalog.html">
-                Show All
-              </a>
+              <p>
+                A multi-project label built to let each lane feel distinct while staying easy to discover.
+              </p>
             </div>
           </div>
 
-          <div class="catalog-groups" id="releases-collection" aria-label="Release groups"></div>
+          <div class="artists-grid" id="artists-collection" aria-label="Roster grid"></div>
         </section>
       </main>
     </div>

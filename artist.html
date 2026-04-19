@@ -8,10 +8,10 @@
     <link rel="icon" type="image/jpeg" sizes="96x96" href="assets/brand/pawnisland-096.jpg" />
     <link rel="icon" type="image/jpeg" sizes="256x256" href="assets/brand/pawnisland-256.jpg" />
     <link rel="apple-touch-icon" sizes="512x512" href="assets/brand/pawnisland-512.jpg" />
-    <title>Artist | Pawn Island Records</title>
+    <title>Project | Pawn Island Records</title>
     <meta
       name="description"
-      content="Explore an individual Pawn Island Records artist page with discography and sample listening embeds."
+      content="Explore an individual Pawn Island Records project page with discography and sample listening embeds."
     />
     <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -34,16 +34,14 @@
           />
           <span class="brand-mark__copy">
             <strong>Pawn Island Records</strong>
-            <span>Artist Page</span>
+            <span>Project Page</span>
           </span>
         </a>
 
         <nav class="label-nav" aria-label="Primary">
           <a href="index.html">Home</a>
-          <a href="artists.html" aria-current="page">Artists</a>
-          <a href="catalog.html">Catalog</a>
+          <a href="roster.html" aria-current="page">Roster</a>
           <a href="about.html">About</a>
-          <a href="epks.html">Press</a>
         </nav>
       </header>
 
@@ -51,8 +49,8 @@
         <section class="panel-shell artist-page-shell" id="artist-page-panel" aria-labelledby="artist-page-title">
           <div class="artist-page-hero">
             <article class="artist-page-copy">
-              <p class="section-kicker">Artist Page</p>
-              <h1 id="artist-page-title">Loading artist...</h1>
+              <p class="section-kicker">Project Page</p>
+              <h1 id="artist-page-title">Loading project...</h1>
               <p class="artist-page-copy__lane" id="artist-page-lane"></p>
               <p class="artist-page-copy__headline" id="artist-page-headline"></p>
               <p class="artist-page-copy__body" id="artist-page-body"></p>
@@ -73,7 +71,7 @@
                   Loading public discography.
                 </p>
               </div>
-              <div class="release-strip" id="artist-discography"></div>
+              <div class="catalog-groups catalog-groups--artist" id="artist-discography"></div>
             </section>
 
             <section class="artist-embeds" aria-labelledby="artist-embed-title">
@@ -83,7 +81,7 @@
                   <h2 id="artist-embed-title">Covers, Spotify &amp; YouTube</h2>
                 </div>
                 <p class="rail-copy">
-                  Switch between the cover gallery and available listening or video embeds for this artist.
+                  Switch between the cover gallery and available listening or video embeds for this project.
                 </p>
               </div>
               <div id="artist-embeds"></div>

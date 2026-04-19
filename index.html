@@ -11,7 +11,7 @@
     <title>Pawn Island Records</title>
     <meta
       name="description"
-      content="Pawn Island Records: a modern discovery-led homepage for artists, releases, and Too.fm campaigns."
+      content="Pawn Island Records: a modern discovery-led homepage for projects, releases, and Too.fm campaigns."
     />
     <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,10 +40,8 @@
 
         <nav class="label-nav" aria-label="Primary">
           <a href="index.html" aria-current="page">Home</a>
-          <a href="artists.html">Artists</a>
-          <a href="catalog.html">Catalog</a>
+          <a href="roster.html">Roster</a>
           <a href="about.html">About</a>
-          <a href="epks.html">Press</a>
         </nav>
       </header>
 
@@ -54,29 +52,25 @@
               <p class="section-kicker">Independent Record Label</p>
               <h1 id="home-title">Pawn Island Records</h1>
               <p class="hero-copy__body" id="home-identity-line">
-                A discovery-led independent label space built for artist identity, direct listening, and clean release worlds.
+                A discovery-led independent label space built for distinct project identity, direct listening, and clean release worlds.
               </p>
               <div class="platform-banner" aria-labelledby="home-platforms-title">
                 <p class="platform-banner__label" id="home-platforms-title">Find Us On</p>
                 <div class="platform-banner__row" id="home-platforms"></div>
               </div>
-              <div class="action-row action-row--center">
-                <a
-                  class="button button--primary"
-                  id="home-playlist-link"
-                  href="catalog.html"
-                >
-                  Pawn Island Playlist
-                </a>
-                <a
-                  class="button button--toofm"
-                  id="home-featured-release-link"
-                  href="https://too.fm/yn8xx7l"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Featured Release
-                </a>
+              <div class="hero-playlist-embed" aria-label="Pawn Island Playlist">
+                <iframe
+                  data-testid="embed-iframe"
+                  title="Pawn Island Playlist on Spotify"
+                  style="border-radius:12px"
+                  src="https://open.spotify.com/embed/playlist/7ru1FJZS5qFXAbrNlh5YwZ?utm_source=generator&amp;theme=0"
+                  width="85%"
+                  height="352"
+                  frameborder="0"
+                  allowfullscreen=""
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy"
+                ></iframe>
               </div>
             </article>
 

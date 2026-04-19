@@ -4,6 +4,7 @@
   }
 
   const defaults = {
+    enabled: true,
     src: "",
     title: "Background Audio",
     artist: "Site soundtrack",
@@ -14,7 +15,7 @@
   const config = Object.assign({}, defaults, window.PAWN_AUDIO_CONFIG || {});
   const src = String(config.src || "").trim();
 
-  if (!src) {
+  if (config.enabled === false || !src) {
     return;
   }
 
@@ -69,8 +70,10 @@
   if (session.src !== src) {
     session.src = src;
     session.currentTime = 0;
-    session.wantedPlaying = false;
+    session.wantedPlaying = true;
   }
+
+  session.wantedPlaying = true;
 
   const audio = new Audio(src);
   let resumeApplied = false;
@@ -88,42 +91,48 @@
   dock.className = "site-audio";
   dock.setAttribute("aria-label", "Background audio controls");
   dock.innerHTML = `
-    <div class="site-audio__row">
+    <div class="site-audio__panel">
       <div class="site-audio__meta">
-        <span class="site-audio__eyebrow">Site Audio</span>
         <strong class="site-audio__title"></strong>
         <span class="site-audio__status"></span>
       </div>
+      <label class="site-audio__volume">
+        <span class="site-audio__volume-label">Volume</span>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          value="32"
+          aria-label="Background audio volume"
+          data-audio-volume
+        />
+      </label>
       <div class="site-audio__controls">
-        <button class="site-audio__button" type="button" data-audio-toggle></button>
         <button class="site-audio__button site-audio__button--ghost" type="button" data-audio-mute></button>
         <button
-          class="site-audio__button site-audio__button--ghost site-audio__button--collapse"
+          class="site-audio__button site-audio__button--ghost site-audio__button--caret"
           type="button"
           data-audio-collapse
-          aria-expanded="true"
-        ></button>
+          aria-label="Hide audio bar"
+        >
+          <span class="site-audio__caret site-audio__caret--down" aria-hidden="true"></span>
+        </button>
       </div>
     </div>
-    <label class="site-audio__volume">
-      <span>Volume</span>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        step="1"
-        value="32"
-        aria-label="Background audio volume"
-        data-audio-volume
-      />
-    </label>
   `;
+  const tabButton = document.createElement("button");
+  tabButton.className = "site-audio-tab";
+  tabButton.type = "button";
+  tabButton.setAttribute("aria-label", "Show audio bar");
+  tabButton.setAttribute("data-audio-expand", "");
+  tabButton.innerHTML = '<span class="site-audio__caret site-audio__caret--up" aria-hidden="true"></span>';
   document.body.append(dock);
+  document.body.append(tabButton);
   document.body.classList.add("has-site-audio");
 
   const titleNode = dock.querySelector(".site-audio__title");
   const statusNode = dock.querySelector(".site-audio__status");
-  const toggleButton = dock.querySelector("[data-audio-toggle]");
   const muteButton = dock.querySelector("[data-audio-mute]");
   const collapseButton = dock.querySelector("[data-audio-collapse]");
   const volumeInput = dock.querySelector("[data-audio-volume]");
@@ -149,7 +158,10 @@
 
   function syncDockHeight() {
     const height = dock.offsetHeight || 104;
+    const tabHeight = tabButton.offsetHeight || 36;
+    const clearance = (prefs.collapsed ? tabHeight : height) + 12;
     document.documentElement.style.setProperty("--site-audio-height", `${height}px`);
+    document.documentElement.style.setProperty("--site-audio-clearance", `${clearance}px`);
   }
 
   function bindAutoplayUnlock() {
@@ -203,20 +215,22 @@
 
     dock.dataset.state = isPlaying ? "playing" : autoplayBlocked ? "blocked" : "paused";
     dock.dataset.collapsed = isCollapsed ? "true" : "false";
-    toggleButton.textContent = isPlaying ? "Pause" : autoplayBlocked ? "Resume" : "Play";
+    dock.setAttribute("aria-hidden", isCollapsed ? "true" : "false");
+    tabButton.dataset.visible = isCollapsed ? "true" : "false";
+    tabButton.setAttribute("aria-hidden", isCollapsed ? "false" : "true");
+    tabButton.tabIndex = isCollapsed ? 0 : -1;
+    muteButton.tabIndex = isCollapsed ? -1 : 0;
+    collapseButton.tabIndex = isCollapsed ? -1 : 0;
+    volumeInput.tabIndex = isCollapsed ? -1 : 0;
     muteButton.textContent = audio.muted ? "Unmute" : "Mute";
-    collapseButton.textContent = isCollapsed ? "Expand" : "Collapse";
-    collapseButton.setAttribute("aria-expanded", isCollapsed ? "false" : "true");
     volumeInput.value = String(Math.round(clamp(audio.volume, 0, 1) * 100));
 
     if (isPlaying) {
-      statusNode.textContent = audio.muted
-        ? "Playing muted across the site"
-        : "Playing site soundtrack";
+      statusNode.textContent = audio.muted ? "Muted" : "Playing";
     } else if (autoplayBlocked) {
-      statusNode.textContent = "Autoplay blocked. Click resume or interact to start.";
+      statusNode.textContent = "Interact anywhere to start audio";
     } else {
-      statusNode.textContent = "Paused";
+      statusNode.textContent = "Ready";
     }
 
     syncDockHeight();
@@ -262,19 +276,10 @@
     autoplayBlocked = false;
     persistSession({
       currentTime: safeCurrentTime(),
-      wantedPlaying: false
+      wantedPlaying: true
     });
     render();
   }
-
-  toggleButton.addEventListener("click", () => {
-    if (!audio.paused && !audio.ended) {
-      pausePlayback();
-      return;
-    }
-
-    attemptPlay(true);
-  });
 
   muteButton.addEventListener("click", () => {
     audio.muted = !audio.muted;
@@ -283,7 +288,13 @@
   });
 
   collapseButton.addEventListener("click", () => {
-    prefs.collapsed = !prefs.collapsed;
+    prefs.collapsed = true;
+    persistPrefs();
+    render();
+  });
+
+  tabButton.addEventListener("click", () => {
+    prefs.collapsed = false;
     persistPrefs();
     render();
   });
@@ -340,7 +351,7 @@
     persistPrefs();
     persistSession({
       currentTime: safeCurrentTime(),
-      wantedPlaying: !audio.paused && !audio.ended
+      wantedPlaying: session.wantedPlaying && !audio.ended
     });
   });
 
@@ -351,7 +362,7 @@
 
     persistSession({
       currentTime: safeCurrentTime(),
-      wantedPlaying: !audio.paused && !audio.ended
+      wantedPlaying: session.wantedPlaying && !audio.ended
     });
   });
 

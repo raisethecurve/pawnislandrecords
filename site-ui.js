@@ -94,6 +94,8 @@
         '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.76 10.32A4.5 4.5 0 0 1 17 12h.42a3.58 3.58 0 0 1 0 7.16H8.88a2.92 2.92 0 0 1-.12-5.84Z" fill="currentColor"></path><path d="M3.12 10.92h1.2v8.16h-1.2v-8.16Zm1.92-1.2h1.2v9.36h-1.2V9.72Zm-3.84 2.28h1.2v7.08H1.2V12Z" fill="currentColor"></path></svg>'
     }
   ];
+  const RELEASE_TIMEZONE = "America/New_York";
+  const RELEASE_SWITCH_HOUR = 4;
 
   function normalizePlatformLabel(label) {
     return String(label || "")
@@ -186,12 +188,248 @@
     return currentData().artists.find((artist) => artist.slug === slug) || null;
   }
 
+  function matchesReleaseSlug(release, slug) {
+    const requestedSlug = String(slug || "").trim();
+
+    if (!requestedSlug) {
+      return false;
+    }
+
+    if (String((release && release.slug) || "").trim() === requestedSlug) {
+      return true;
+    }
+
+    const aliases = Array.isArray(release && release.aliases) ? release.aliases : [];
+    return aliases.some((alias) => String(alias || "").trim() === requestedSlug);
+  }
+
   function getRelease(slug) {
-    return currentData().releases.find((release) => release.slug === slug) || null;
+    return currentData().releases.find((release) => matchesReleaseSlug(release, slug)) || null;
+  }
+
+  function parseReleaseDate(value) {
+    const normalized = String(value || "").trim();
+
+    if (!normalized) {
+      return null;
+    }
+
+    const match = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+    if (!match) {
+      return null;
+    }
+
+    const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function newYorkDateTime(date) {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: RELEASE_TIMEZONE,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23"
+    });
+    const resolvedDate = date instanceof Date ? date : new Date(date || Date.now());
+    const parts = formatter.formatToParts(resolvedDate).reduce((accumulator, part) => {
+      if (part.type !== "literal") {
+        accumulator[part.type] = part.value;
+      }
+
+      return accumulator;
+    }, {});
+
+    return {
+      year: Number(parts.year || 0),
+      month: Number(parts.month || 0),
+      day: Number(parts.day || 0),
+      hour: Number(parts.hour || 0),
+      minute: Number(parts.minute || 0),
+      second: Number(parts.second || 0),
+      ymd: `${parts.year || "0000"}-${parts.month || "00"}-${parts.day || "00"}`
+    };
+  }
+
+  function releaseIsLiveInNewYork(releaseDate, now) {
+    const current = newYorkDateTime(now);
+
+    if (current.ymd > releaseDate) {
+      return true;
+    }
+
+    if (current.ymd < releaseDate) {
+      return false;
+    }
+
+    return current.hour >= RELEASE_SWITCH_HOUR;
+  }
+
+  function formatReleaseDate(value) {
+    const date = parseReleaseDate(value);
+
+    if (!date) {
+      return "";
+    }
+
+    return new Intl.DateTimeFormat("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    }).format(date);
+  }
+
+  function releaseState(release, now) {
+    const status = String((release && release.status) || "")
+      .trim()
+      .toLowerCase();
+    const releaseDate = String((release && release.releaseDate) || "").trim();
+    const parsedReleaseDate = parseReleaseDate(releaseDate);
+    const switchedLive = parsedReleaseDate ? releaseIsLiveInNewYork(releaseDate, now) : false;
+
+    if (status === "live") {
+      return "live";
+    }
+
+    if (status === "upcoming" || status === "scheduled" || status === "announced") {
+      if (switchedLive) {
+        return "live";
+      }
+
+      return "upcoming";
+    }
+
+    if (parsedReleaseDate && !switchedLive) {
+      return "upcoming";
+    }
+
+    if (getLivePlatforms(release).length || String((release && release.tooFmUrl) || "").trim()) {
+      return "live";
+    }
+
+    return "catalog";
+  }
+
+  function releaseStatusLabel(release, now) {
+    const state = releaseState(release, now);
+
+    if (state === "upcoming") {
+      return "Forthcoming";
+    }
+
+    if (state === "live") {
+      return "Out Now";
+    }
+
+    return "Catalog";
+  }
+
+  function releaseAvailabilityText(release, now) {
+    const state = releaseState(release, now);
+    const formattedDate = formatReleaseDate(release && release.releaseDate);
+
+    if (state === "upcoming") {
+      return formattedDate ? `Releases ${formattedDate}` : "Release date coming soon";
+    }
+
+    if (state === "live") {
+      return formattedDate ? `Released ${formattedDate}` : "Out now";
+    }
+
+    return formattedDate ? `Cataloged ${formattedDate}` : "";
+  }
+
+  function releaseCtaLabel(release, now) {
+    const state = releaseState(release, now);
+
+    if (state === "upcoming") {
+      return "Pre-save now";
+    }
+
+    if (state === "live") {
+      return "Play now";
+    }
+
+    return "Play now";
+  }
+
+  function compareReleases(left, right) {
+    const groupRank = {
+      upcoming: 0,
+      live: 1,
+      catalog: 2
+    };
+    const leftState = releaseState(left);
+    const rightState = releaseState(right);
+    const leftRank = groupRank[leftState] ?? 99;
+    const rightRank = groupRank[rightState] ?? 99;
+
+    if (leftRank !== rightRank) {
+      return leftRank - rightRank;
+    }
+
+    const leftDate = parseReleaseDate(left && left.releaseDate);
+    const rightDate = parseReleaseDate(right && right.releaseDate);
+
+    if (leftState === "upcoming") {
+      const leftTime = leftDate ? leftDate.getTime() : Number.POSITIVE_INFINITY;
+      const rightTime = rightDate ? rightDate.getTime() : Number.POSITIVE_INFINITY;
+
+      if (leftTime !== rightTime) {
+        return leftTime - rightTime;
+      }
+    }
+
+    if (leftState === "live") {
+      if (leftDate && rightDate && leftDate.getTime() !== rightDate.getTime()) {
+        return rightDate.getTime() - leftDate.getTime();
+      }
+
+      if (leftDate && !rightDate) {
+        return -1;
+      }
+
+      if (!leftDate && rightDate) {
+        return 1;
+      }
+    }
+
+    return 0;
+  }
+
+  function sortReleases(list) {
+    return [...(Array.isArray(list) ? list : [])].sort(compareReleases);
+  }
+
+  function splitReleases(list) {
+    return sortReleases(list).reduce(
+      (groups, release) => {
+        const state = releaseState(release);
+
+        if (state === "upcoming") {
+          groups.upcoming.push(release);
+        } else if (state === "live") {
+          groups.live.push(release);
+        } else {
+          groups.catalog.push(release);
+        }
+
+        return groups;
+      },
+      {
+        upcoming: [],
+        live: [],
+        catalog: []
+      }
+    );
   }
 
   function getArtistReleases(artistSlug) {
-    return currentData().releases.filter((release) => release.artist === artistSlug);
+    return sortReleases(currentData().releases.filter((release) => release.artist === artistSlug));
   }
 
   function getArtistMerch(artistSlug) {
@@ -200,10 +438,45 @@
 
   function getFeaturedRelease() {
     const data = currentData();
+    const sortedReleases = sortReleases(data.releases || []);
+    const liveReleases = sortedReleases.filter((release) => releaseState(release) === "live");
+    const manualFeatured = getRelease(data.label && data.label.featuredReleaseSlug);
+    const datedLiveReleases = liveReleases.filter((release) => parseReleaseDate(release.releaseDate));
+
+    if (datedLiveReleases.length) {
+      const latestTime = Math.max(
+        ...datedLiveReleases.map((release) => parseReleaseDate(release.releaseDate).getTime())
+      );
+      const latestLiveReleases = datedLiveReleases.filter(
+        (release) => parseReleaseDate(release.releaseDate).getTime() === latestTime
+      );
+
+      // Same-day drops use the configured featured slug as the tiebreaker.
+      if (latestLiveReleases.length > 1 && manualFeatured) {
+        const manualMatch = latestLiveReleases.find((release) => release.slug === manualFeatured.slug);
+
+        if (manualMatch) {
+          return manualMatch;
+        }
+      }
+
+      return latestLiveReleases[0];
+    }
+
+    if (manualFeatured && releaseState(manualFeatured) === "live") {
+      return manualFeatured;
+    }
+
+    if (liveReleases.length) {
+      return liveReleases[0];
+    }
+
+    const nextUpcoming = sortedReleases.find((release) => releaseState(release) === "upcoming");
 
     return (
-      getRelease(data.label.featuredReleaseSlug) ||
-      data.releases[0] ||
+      manualFeatured ||
+      nextUpcoming ||
+      sortedReleases[0] ||
       null
     );
   }
@@ -661,6 +934,14 @@
     getFeaturedRelease,
     getPlatformDefinition,
     getLivePlatforms,
+    parseReleaseDate,
+    formatReleaseDate,
+    releaseState,
+    releaseStatusLabel,
+    releaseAvailabilityText,
+    releaseCtaLabel,
+    sortReleases,
+    splitReleases,
     preferredYoutubeId,
     primaryEmbed,
     trackCount,

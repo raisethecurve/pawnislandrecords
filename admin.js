@@ -684,8 +684,14 @@
       data = inlineArtistResult.data;
       const artistSlug = inlineArtistResult.artistSlug;
       const artist = data.artists.find((entry) => entry.slug === artistSlug);
+      const existingRelease = state.editingReleaseSlug
+        ? data.releases.find((entry) => entry.slug === state.editingReleaseSlug)
+        : null;
       const release = {
         slug: state.editingReleaseSlug || store.slugify(`${artistSlug}-${title}`, title),
+        aliases: Array.isArray(existingRelease && existingRelease.aliases)
+          ? [...new Set(existingRelease.aliases.map((alias) => String(alias || "").trim()).filter(Boolean))]
+          : [],
         artist: artistSlug,
         title,
         type: elements.releaseType.value,

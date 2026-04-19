@@ -390,10 +390,22 @@ button {
     background 180ms ease;
 }
 
+.action-link--accent {
+  background: var(--release-accent);
+  color: #050812;
+  border-color: transparent;
+}
+
 .action-link:hover,
 .action-link:focus-visible {
   transform: translateY(-1px);
   border-color: var(--line-strong);
+}
+
+.action-link--accent:hover,
+.action-link--accent:focus-visible {
+  color: #050812;
+  border-color: transparent;
 }
 
 .platform-logo-link {

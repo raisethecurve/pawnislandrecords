@@ -2,7 +2,9 @@
   const ui = window.PAWN_UI || null;
   const page = document.body.dataset.storyPage || "";
   const artist = ui && ui.getArtist ? ui.getArtist("matt-freeman") : null;
-  const release = ui && ui.getRelease ? ui.getRelease("matt-freeman-morris-trash") : null;
+  const release = ui && ui.getRelease
+    ? ui.getRelease("matt-freeman-time-out-zack-morris-is-trash")
+    : null;
 
   const metaByPage = {
     about: {

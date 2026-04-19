@@ -1,5 +1,6 @@
 (function () {
   const STORAGE_KEY = "pawn-island-site-v2";
+  const LEGACY_FEATURED_RELEASE_SLUG = "velvet-orchard-lights-on";
   const seed = deepClone(window.PAWN_PUBLIC_DATA || {});
 
   function deepClone(value) {
@@ -26,6 +27,39 @@
         .map((value) => String(value || "").trim())
         .filter(Boolean)
     )];
+  }
+
+  function normalizeReleaseDate(value) {
+    const raw = String(value || "").trim();
+
+    if (!raw) {
+      return "";
+    }
+
+    const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+    if (isoMatch) {
+      return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+    }
+
+    const shortMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+
+    if (!shortMatch) {
+      return "";
+    }
+
+    const year = shortMatch[3].length === 2 ? `20${shortMatch[3]}` : shortMatch[3];
+    return `${year.padStart(4, "0")}-${shortMatch[1].padStart(2, "0")}-${shortMatch[2].padStart(2, "0")}`;
+  }
+
+  function normalizeReleaseStatus(value) {
+    const normalized = String(value || "").trim().toLowerCase();
+
+    if (["live", "upcoming", "scheduled", "announced", "catalog", "archived"].includes(normalized)) {
+      return normalized;
+    }
+
+    return normalized || "catalog";
   }
 
   function normalizeTrack(track, index) {
@@ -68,37 +102,105 @@
     };
   }
 
-  function normalizeRelease(release, index, artists) {
-    const title = String((release && release.title) || `Release ${index + 1}`).trim();
+  function matchesReleaseSlug(release, slug) {
+    const requestedSlug = String(slug || "").trim();
+
+    if (!requestedSlug) {
+      return false;
+    }
+
+    if (String((release && release.slug) || "").trim() === requestedSlug) {
+      return true;
+    }
+
+    const aliases = Array.isArray(release && release.aliases) ? release.aliases : [];
+    return aliases.some((alias) => String(alias || "").trim() === requestedSlug);
+  }
+
+  function findSeedRelease(release, index) {
+    const releaseObject = release && typeof release === "object" ? release : {};
+    const requestedSlug = String((releaseObject && releaseObject.slug) || "").trim();
+    const requestedTitle = String((releaseObject && releaseObject.title) || "").trim().toLowerCase();
+
+    return (
+      ensureArray(seed.releases).find((candidate, candidateIndex) => {
+        if (requestedSlug && matchesReleaseSlug(candidate, requestedSlug)) {
+          return true;
+        }
+
+        if (
+          requestedTitle &&
+          String((candidate && candidate.title) || "")
+            .trim()
+            .toLowerCase() === requestedTitle
+        ) {
+          return true;
+        }
+
+        return !requestedSlug && !requestedTitle && candidateIndex === index;
+      }) || null
+    );
+  }
+
+  function normalizeRelease(release, index, artists, seedRelease) {
+    const base = release && typeof release === "object" ? release : {};
+    const fallback = seedRelease && typeof seedRelease === "object" ? seedRelease : {};
+    const title = String((base.title || fallback.title || `Release ${index + 1}`)).trim();
     const firstArtistSlug = artists[0] ? artists[0].slug : "artist";
-    const requestedArtistSlug = String((release && release.artist) || firstArtistSlug).trim();
+    const requestedArtistSlug = String((base.artist || fallback.artist || firstArtistSlug)).trim();
     const validArtistSlug = artists.some((artist) => artist.slug === requestedArtistSlug)
       ? requestedArtistSlug
       : firstArtistSlug;
+    const slug = slugify(base.slug || fallback.slug || title, `release-${index + 1}`);
+    const aliases = uniqueTextList([
+      ...ensureArray(fallback.aliases),
+      ...ensureArray(fallback.previousSlugs),
+      ...ensureArray(base.aliases),
+      ...ensureArray(base.previousSlugs)
+    ]).filter((alias) => alias !== slug);
 
     return {
-      slug: slugify(release && release.slug ? release.slug : title, `release-${index + 1}`),
+      slug,
+      aliases,
       artist: validArtistSlug,
       title,
-      type: String((release && release.type) || "Single").trim(),
-      vibe: String((release && release.vibe) || "").trim(),
-      year: String((release && release.year) || "").trim(),
-      accent: String((release && release.accent) || "#b77924").trim(),
-      cover: String((release && release.cover) || "").trim(),
-      description: String((release && release.description) || "").trim(),
+      type: String((base.type || fallback.type || "Single")).trim(),
+      vibe: String((base.vibe || fallback.vibe || "")).trim(),
+      year: String((base.year || fallback.year || "")).trim(),
+      status: normalizeReleaseStatus(base.status || fallback.status),
+      releaseDate: normalizeReleaseDate(base.releaseDate || fallback.releaseDate),
+      accent: String((base.accent || fallback.accent || "#b77924")).trim(),
+      cover: String((base.cover || fallback.cover || "")).trim(),
+      description: String((base.description || fallback.description || "")).trim(),
       tooFmUrl: String(
-        ((release && (release.tooFmUrl || release.toofmUrl || release.campaignUrl)) || "")
+        (
+          base.tooFmUrl ||
+          base.toofmUrl ||
+          base.campaignUrl ||
+          fallback.tooFmUrl ||
+          fallback.toofmUrl ||
+          fallback.campaignUrl ||
+          ""
+        )
       ).trim(),
       campaignUrl: String(
-        ((release && (release.campaignUrl || release.tooFmUrl || release.toofmUrl)) || "")
+        (
+          base.campaignUrl ||
+          base.tooFmUrl ||
+          base.toofmUrl ||
+          fallback.campaignUrl ||
+          fallback.tooFmUrl ||
+          fallback.toofmUrl ||
+          ""
+        )
       ).trim(),
-      primaryEmbedLabel: String((release && release.primaryEmbedLabel) || "").trim(),
-      primaryEmbedUrl: String((release && release.primaryEmbedUrl) || "").trim(),
-      youtubeId: String((release && release.youtubeId) || "").trim(),
-      platforms: ensureArray(release && release.platforms)
+      primaryEmbedLabel: String((base.primaryEmbedLabel || fallback.primaryEmbedLabel || "")).trim(),
+      primaryEmbedUrl: String((base.primaryEmbedUrl || fallback.primaryEmbedUrl || "")).trim(),
+      youtubeId: String((base.youtubeId || fallback.youtubeId || "")).trim(),
+      platforms: ensureArray(base.platforms !== undefined ? base.platforms : fallback.platforms)
         .map(normalizePlatform)
         .filter((platform) => platform.label || platform.url),
-      tracks: ensureArray(release && release.tracks).map(normalizeTrack)
+      tracks: ensureArray(base.tracks !== undefined ? base.tracks : fallback.tracks).map(normalizeTrack)
     };
   }
 
@@ -125,11 +227,16 @@
     const base = input && typeof input === "object" ? input : {};
     const baseLabel = base.label && typeof base.label === "object" ? base.label : {};
     const seedLabel = seed.label && typeof seed.label === "object" ? seed.label : {};
+    const storedFeaturedReleaseSlug = String(baseLabel.featuredReleaseSlug || "").trim();
+    const seedFeaturedReleaseSlug = String(seedLabel.featuredReleaseSlug || "").trim();
     const label = {
-      name: String(baseLabel.name || "Pawn Island Records").trim(),
-      tagline: String(baseLabel.tagline || "").trim(),
-      intro: String(baseLabel.intro || "").trim(),
-      featuredReleaseSlug: String(baseLabel.featuredReleaseSlug || "").trim(),
+      name: String(baseLabel.name || seedLabel.name || "Pawn Island Records").trim(),
+      tagline: String(baseLabel.tagline || seedLabel.tagline || "").trim(),
+      intro: String(baseLabel.intro || seedLabel.intro || "").trim(),
+      featuredReleaseSlug:
+        storedFeaturedReleaseSlug && storedFeaturedReleaseSlug !== LEGACY_FEATURED_RELEASE_SLUG
+          ? storedFeaturedReleaseSlug
+          : seedFeaturedReleaseSlug,
       identityLine: String((baseLabel.identityLine || seedLabel.identityLine) || "").trim(),
       aboutText: String(
         (baseLabel.aboutText || baseLabel.about || seedLabel.aboutText || seedLabel.about || "")
@@ -191,20 +298,22 @@
       : ensureArray(seed.artists).map(normalizeArtist);
     const releases = ensureArray(base.releases).length
       ? ensureArray(base.releases).map((release, index) =>
-          normalizeRelease(release, index, artists)
+          normalizeRelease(release, index, artists, findSeedRelease(release, index))
         )
       : ensureArray(seed.releases).map((release, index) =>
-          normalizeRelease(release, index, artists)
+          normalizeRelease(release, index, artists, release)
         );
     const merch = ensureArray(base.merch).length
       ? ensureArray(base.merch).map((item, index) => normalizeMerch(item, index, artists))
       : ensureArray(seed.merch).map((item, index) => normalizeMerch(item, index, artists));
 
-    if (
-      (!label.featuredReleaseSlug ||
-        !releases.some((release) => release.slug === label.featuredReleaseSlug)) &&
-      releases[0]
-    ) {
+    const featuredRelease = releases.find((release) =>
+      matchesReleaseSlug(release, label.featuredReleaseSlug)
+    );
+
+    if (featuredRelease) {
+      label.featuredReleaseSlug = featuredRelease.slug;
+    } else if (releases[0]) {
       label.featuredReleaseSlug = releases[0].slug;
     }
 
