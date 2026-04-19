@@ -1452,6 +1452,18 @@ button:focus-visible {
   max-width: 60ch;
 }
 
+.about-email-link {
+  color: var(--yellow);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 212, 59, 0.85);
+}
+
+.about-email-link:hover,
+.about-email-link:focus-visible {
+  color: #fff0a6;
+}
+
 .ethos-line {
   margin: 0;
   width: fit-content;
