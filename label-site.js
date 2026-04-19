@@ -55,6 +55,7 @@
     : [];
   const artists = Array.isArray(data.artists) ? [...data.artists] : [];
   const featuredRelease = (ui && ui.getFeaturedRelease && ui.getFeaturedRelease()) || releases[0] || null;
+  let homePendingCarouselTimer = null;
 
   function text(value, fallback) {
     const resolved = String(value || "").trim();
@@ -371,6 +372,184 @@
     return date
       ? `Out now: ${release.title}, released ${date}.`
       : `Out now: ${release.title}.`;
+  }
+
+  function chunkItems(list, size) {
+    const items = Array.isArray(list) ? list : [];
+    const chunkSize = Math.max(1, Number(size) || 1);
+    const groups = [];
+
+    for (let index = 0; index < items.length; index += chunkSize) {
+      groups.push(items.slice(index, index + chunkSize));
+    }
+
+    return groups;
+  }
+
+  function pendingReleaseCardMarkup(release) {
+    const artist = artistForRelease(release);
+    const action = releaseAction(release);
+
+    return `
+      <article class="pending-album">
+        <div class="pending-album__art">
+          <img
+            src="${escapeHtml(text(release.cover, "assets/brand/pawnisland-1200.jpg"))}"
+            alt="${escapeHtml(release.title)} artwork"
+            loading="lazy"
+          />
+        </div>
+        <div class="pending-album__body">
+          <p class="pending-album__status">${escapeHtml(releaseStatusLabel(release))}</p>
+          <h4>${escapeHtml(release.title)}</h4>
+          <p class="pending-album__meta">${escapeHtml(artist ? artist.name : "Pawn Island Records")}</p>
+          <p class="pending-album__date">${escapeHtml(releaseAvailability(release) || "Release date coming soon")}</p>
+          ${
+            action
+              ? `
+                  <a
+                    class="pending-album__link"
+                    href="${escapeHtml(action.url)}"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    ${escapeHtml(action.label)}
+                  </a>
+                `
+              : ""
+          }
+        </div>
+      </article>
+    `;
+  }
+
+  function pendingCarouselMarkup(list) {
+    const slides = chunkItems(list, 3);
+
+    if (!slides.length) {
+      return "";
+    }
+
+    return `
+      <section class="pending-carousel" aria-label="Pending releases">
+        <div class="pending-carousel__header">
+          <div>
+            <p class="feature-card__meta">Pending Releases</p>
+            <h3>On deck</h3>
+          </div>
+          <p class="pending-carousel__count">${slides.length} slide${slides.length === 1 ? "" : "s"}</p>
+        </div>
+        <div class="pending-carousel__viewport">
+          <div class="pending-carousel__track">
+            ${slides
+              .map(
+                (chunk, slideIndex) => `
+                  <div class="pending-carousel__slide" data-pending-slide="${slideIndex}" aria-hidden="${slideIndex === 0 ? "false" : "true"}">
+                    ${chunk.map((release) => pendingReleaseCardMarkup(release)).join("")}
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+        </div>
+        ${
+          slides.length > 1
+            ? `
+                <div class="pending-carousel__dots" aria-label="Pending release slider controls">
+                  ${slides
+                    .map(
+                      (_, slideIndex) => `
+                        <button
+                          class="pending-carousel__dot${slideIndex === 0 ? " is-active" : ""}"
+                          type="button"
+                          aria-label="Show pending release slide ${slideIndex + 1}"
+                          aria-pressed="${slideIndex === 0 ? "true" : "false"}"
+                          data-pending-dot="${slideIndex}"
+                        ></button>
+                      `
+                    )
+                    .join("")}
+                </div>
+              `
+            : ""
+        }
+      </section>
+    `;
+  }
+
+  function setupPendingCarousel(scope) {
+    const root = scope || document;
+    const carousel = root.querySelector(".pending-carousel");
+
+    if (homePendingCarouselTimer) {
+      window.clearInterval(homePendingCarouselTimer);
+      homePendingCarouselTimer = null;
+    }
+
+    if (!carousel) {
+      return;
+    }
+
+    const track = carousel.querySelector(".pending-carousel__track");
+    const slides = Array.from(carousel.querySelectorAll(".pending-carousel__slide"));
+    const dots = Array.from(carousel.querySelectorAll(".pending-carousel__dot"));
+
+    if (!track || slides.length <= 1) {
+      return;
+    }
+
+    let currentIndex = 0;
+
+    const setSlide = (nextIndex) => {
+      currentIndex = (nextIndex + slides.length) % slides.length;
+      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+      slides.forEach((slide, slideIndex) => {
+        slide.setAttribute("aria-hidden", String(slideIndex !== currentIndex));
+      });
+
+      dots.forEach((dot, dotIndex) => {
+        const isActive = dotIndex === currentIndex;
+        dot.classList.toggle("is-active", isActive);
+        dot.setAttribute("aria-pressed", String(isActive));
+      });
+    };
+
+    const startTimer = () => {
+      if (homePendingCarouselTimer || slides.length <= 1) {
+        return;
+      }
+
+      homePendingCarouselTimer = window.setInterval(() => {
+        setSlide(currentIndex + 1);
+      }, 4200);
+    };
+
+    const stopTimer = () => {
+      if (!homePendingCarouselTimer) {
+        return;
+      }
+
+      window.clearInterval(homePendingCarouselTimer);
+      homePendingCarouselTimer = null;
+    };
+
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        const nextIndex = Number(dot.getAttribute("data-pending-dot")) || 0;
+        setSlide(nextIndex);
+        stopTimer();
+        startTimer();
+      });
+    });
+
+    carousel.addEventListener("mouseenter", stopTimer);
+    carousel.addEventListener("mouseleave", startTimer);
+    carousel.addEventListener("focusin", stopTimer);
+    carousel.addEventListener("focusout", startTimer);
+
+    setSlide(0);
+    startTimer();
   }
 
   function releaseCardMarkup(release, index, options) {
@@ -730,6 +909,10 @@
     }
 
     if (featureStack) {
+      const groupedReleases = splitReleaseGroups(releases);
+      const pendingReleases = groupedReleases.upcoming.filter(
+        (release) => !featuredRelease || release.slug !== featuredRelease.slug
+      );
       const featureMarkup = featuredRelease
         ? `
           <article class="feature-card feature-card--featured">
@@ -754,7 +937,7 @@
                   ? `<p class="feature-card__support">${escapeHtml(releaseAvailability(featuredRelease))}</p>`
                   : ""
               }
-              <p>${escapeHtml(text(featuredRelease.description, "Step into the current release world."))}</p>
+              <p class="feature-card__summary">${escapeHtml(text(featuredRelease.description, "Step into the current release world."))}</p>
               ${
                 featuredCardActions
                   ? `<div class="feature-card__actions">${featuredCardActions}</div>`
@@ -762,6 +945,7 @@
               }
             </div>
           </article>
+          ${pendingReleases.length ? pendingCarouselMarkup(pendingReleases) : ""}
         `
         : `
           <article class="feature-card">
@@ -769,9 +953,11 @@
             <h2>Catalog In Motion</h2>
             <p>The next release world will appear here as soon as the public catalog is updated.</p>
           </article>
+          ${pendingReleases.length ? pendingCarouselMarkup(pendingReleases) : ""}
         `;
 
       featureStack.innerHTML = featureMarkup;
+      setupPendingCarousel(featureStack);
     }
   }
 
