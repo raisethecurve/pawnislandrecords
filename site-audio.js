@@ -139,6 +139,12 @@
 
   titleNode.textContent = String(config.title || defaults.title).trim();
 
+  function markUserStarted() {
+    if (!prefs.userStarted) {
+      prefs.userStarted = true;
+    }
+  }
+
   function persistPrefs() {
     writeStorage(window.localStorage, PREFS_KEY, {
       muted: audio.muted,
@@ -226,7 +232,7 @@
     volumeInput.value = String(Math.round(clamp(audio.volume, 0, 1) * 100));
 
     if (isPlaying) {
-      statusNode.textContent = audio.muted ? "Muted" : "Playing";
+      statusNode.textContent = audio.muted ? "Playing muted" : "Playing";
     } else if (autoplayBlocked) {
       statusNode.textContent = "Interact anywhere to start audio";
     } else {
@@ -238,9 +244,10 @@
 
   async function attemptPlay(userInitiated) {
     autoplayBlocked = false;
+    audio.muted = userInitiated ? Boolean(prefs.muted) : true;
 
     if (userInitiated) {
-      prefs.userStarted = true;
+      markUserStarted();
       persistPrefs();
     }
 
@@ -282,6 +289,7 @@
   }
 
   muteButton.addEventListener("click", () => {
+    markUserStarted();
     audio.muted = !audio.muted;
     persistPrefs();
     render();
@@ -300,6 +308,7 @@
   });
 
   volumeInput.addEventListener("input", () => {
+    markUserStarted();
     audio.volume = clamp(Number(volumeInput.value) / 100, 0, 1);
 
     if (audio.volume > 0 && audio.muted) {
