@@ -434,6 +434,25 @@ window.PAWN_PUBLIC_DATA = {
       ]
     },
     {
+      slug: "high-ground-final-analysis",
+      artist: "high-ground",
+      title: "Final Analysis",
+      type: "Single",
+      vibe: "nostalgic, reflective, boom bap",
+      year: "2026",
+      accent: "#53473d",
+      cover: "media/public/albums/high_analysis.png",
+      description:
+        "A poetic boom bap single from High Ground — a look back at childhood and the moment music became something to hold onto.",
+      status: "upcoming",
+      releaseDate: "2026-06-05",
+      tooFmUrl: "",
+      platforms: [],
+      tracks: [
+        { title: "Final Analysis", runtime: "", youtubeId: "" }
+      ]
+    },
+    {
       slug: "velvet-orchard-on-the-gas",
       artist: "velvet-orchard",
       title: "On the Gas",
