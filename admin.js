@@ -1,6 +1,14 @@
 (function () {
-  const store = window.PAWN_SITE_STORE;
   const ui = window.PAWN_UI;
+  const PUBLISHED_DATA = window.PAWN_PUBLIC_DATA || {
+    label: {
+      name: "Pawn Island Records",
+      platformPresets: []
+    },
+    artists: [],
+    releases: [],
+    merch: []
+  };
 
   const elements = {
     status: document.getElementById("editor-status"),
@@ -16,7 +24,6 @@
     releaseYoutubeId: document.getElementById("release-youtube-id"),
     releasePrimaryEmbedLabel: document.getElementById("release-primary-embed-label"),
     releasePrimaryEmbedUrl: document.getElementById("release-primary-embed-url"),
-    releaseFeatured: document.getElementById("release-featured"),
     releaseCover: document.getElementById("release-cover"),
     releaseCoverUpload: document.getElementById("release-cover-upload"),
     releaseCoverPreview: document.getElementById("release-cover-preview"),
@@ -61,15 +68,205 @@
 
   const state = {
     editingReleaseSlug: "",
-    editingArtistSlug: ""
+    editingArtistSlug: "",
+    data: null
   };
 
+  function deepClone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function ensureArray(value) {
+    return Array.isArray(value) ? value : [];
+  }
+
+  function uniqueTextList(values) {
+    return [...new Set(
+      ensureArray(values)
+        .map((value) => String(value || "").trim())
+        .filter(Boolean)
+    )];
+  }
+
+  function slugify(text, fallback) {
+    const normalized = String(text || fallback || "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+    return normalized || String(fallback || "entry");
+  }
+
+  function normalizeTrack(track, index) {
+    return {
+      title: String((track && track.title) || `Track ${index + 1}`).trim(),
+      runtime: String((track && track.runtime) || "").trim(),
+      youtubeId: String((track && track.youtubeId) || "").trim()
+    };
+  }
+
+  function normalizePlatform(platform, index) {
+    return {
+      label: String((platform && platform.label) || `Platform ${index + 1}`).trim(),
+      url: String((platform && platform.url) || "").trim()
+    };
+  }
+
+  function normalizeArtist(artist, index) {
+    const name = String((artist && artist.name) || `Artist ${index + 1}`).trim();
+
+    return {
+      slug: slugify(artist && artist.slug ? artist.slug : name, `artist-${index + 1}`),
+      name,
+      lane: String((artist && artist.lane) || "").trim(),
+      accent: String((artist && artist.accent) || "#b77924").trim(),
+      image: String((artist && artist.image) || "").trim(),
+      summary: String((artist && artist.summary) || "").trim(),
+      headline: String((artist && artist.headline) || "").trim(),
+      story: String((artist && artist.story) || "").trim(),
+      industryPitch: String((artist && artist.industryPitch) || "").trim(),
+      pressBio: String((artist && artist.pressBio) || "").trim(),
+      pressHighlights: uniqueTextList(artist && artist.pressHighlights),
+      pressAssets: uniqueTextList(artist && artist.pressAssets),
+      merchIntro: String((artist && artist.merchIntro) || "").trim()
+    };
+  }
+
+  function normalizeRelease(release, index, artists) {
+    const artistSlug = String((release && release.artist) || (artists[0] && artists[0].slug) || "artist").trim();
+    const validArtistSlug = artists.some((artist) => artist.slug === artistSlug)
+      ? artistSlug
+      : (artists[0] && artists[0].slug) || "artist";
+    const title = String((release && release.title) || `Release ${index + 1}`).trim();
+
+    return {
+      slug: slugify(release && release.slug ? release.slug : `${validArtistSlug}-${title}`, `release-${index + 1}`),
+      aliases: uniqueTextList(release && release.aliases),
+      artist: validArtistSlug,
+      title,
+      type: String((release && release.type) || "Single").trim(),
+      vibe: String((release && release.vibe) || "").trim(),
+      year: String((release && release.year) || "").trim(),
+      status: String((release && release.status) || "").trim(),
+      releaseDate: String((release && release.releaseDate) || "").trim(),
+      accent: String((release && release.accent) || "#b77924").trim(),
+      cover: String((release && release.cover) || "").trim(),
+      description: String((release && release.description) || "").trim(),
+      tooFmUrl: String((release && (release.tooFmUrl || release.toofmUrl || release.campaignUrl)) || "").trim(),
+      campaignUrl: String((release && (release.campaignUrl || release.tooFmUrl || release.toofmUrl)) || "").trim(),
+      primaryEmbedLabel: String((release && release.primaryEmbedLabel) || "").trim(),
+      primaryEmbedUrl: String((release && release.primaryEmbedUrl) || "").trim(),
+      youtubeId: String((release && release.youtubeId) || "").trim(),
+      platforms: ensureArray(release && release.platforms).map(normalizePlatform).filter((platform) => platform.label || platform.url),
+      tracks: ensureArray(release && release.tracks).map(normalizeTrack).filter((track) => track.title)
+    };
+  }
+
+  function normalizeMerch(item, index, artists) {
+    const title = String((item && item.title) || `Merch ${index + 1}`).trim();
+    const artistSlug = String((item && item.artist) || (artists[0] && artists[0].slug) || "artist").trim();
+    const validArtistSlug = artists.some((artist) => artist.slug === artistSlug)
+      ? artistSlug
+      : (artists[0] && artists[0].slug) || "artist";
+
+    return {
+      slug: slugify(item && item.slug ? item.slug : title, `merch-${index + 1}`),
+      artist: validArtistSlug,
+      title,
+      price: String((item && item.price) || "").trim(),
+      description: String((item && item.description) || "").trim(),
+      image: String((item && item.image) || "").trim(),
+      url: String((item && item.url) || "").trim()
+    };
+  }
+
+  function normalizeData(input) {
+    const base = input && typeof input === "object" ? input : {};
+    const label = base.label && typeof base.label === "object" ? base.label : {};
+    const seedLabel = PUBLISHED_DATA.label && typeof PUBLISHED_DATA.label === "object" ? PUBLISHED_DATA.label : {};
+    const hasArtists = Array.isArray(base.artists);
+    const hasReleases = Array.isArray(base.releases);
+    const hasMerch = Array.isArray(base.merch);
+    const normalizedArtists = (hasArtists ? base.artists : PUBLISHED_DATA.artists).map(normalizeArtist);
+    const releaseSource = hasReleases ? base.releases : PUBLISHED_DATA.releases;
+    const merchSource = hasMerch ? base.merch : PUBLISHED_DATA.merch;
+    const releases = ensureArray(releaseSource).map((release, index) => normalizeRelease(release, index, normalizedArtists));
+    const merch = ensureArray(merchSource).map((item, index) => normalizeMerch(item, index, normalizedArtists));
+
+    return {
+      label: {
+        name: String(label.name || seedLabel.name || "Pawn Island Records").trim(),
+        tagline: String(label.tagline || seedLabel.tagline || "").trim(),
+        intro: String(label.intro || seedLabel.intro || "").trim(),
+        identityLine: String((label.identityLine || seedLabel.identityLine || "")).trim(),
+        aboutText: String((label.aboutText || seedLabel.aboutText || "")).trim(),
+        about: String((label.about || seedLabel.about || "")).trim(),
+        ethos: String((label.ethos || seedLabel.ethos || "")).trim(),
+        launchMode: String(label.launchMode || seedLabel.launchMode || "full").trim().toLowerCase(),
+        featuredCampaignTitle: String((label.featuredCampaignTitle || seedLabel.featuredCampaignTitle || "")).trim(),
+        featuredCampaignSummary: String((label.featuredCampaignSummary || seedLabel.featuredCampaignSummary || "")).trim(),
+        featuredCampaignUrl: String((label.featuredCampaignUrl || seedLabel.featuredCampaignUrl || "")).trim(),
+        campaignUrl: String((label.campaignUrl || seedLabel.campaignUrl || "")).trim(),
+        defaultTooFmUrl: String((label.defaultTooFmUrl || seedLabel.defaultTooFmUrl || "")).trim(),
+        catalogPlaylistUrl: String((label.catalogPlaylistUrl || seedLabel.catalogPlaylistUrl || "")).trim(),
+        streamingPlatforms: uniqueTextList(
+          Array.isArray(label.streamingPlatforms) ? label.streamingPlatforms : seedLabel.streamingPlatforms
+        ),
+        timeline: ensureArray(Array.isArray(label.timeline) ? label.timeline : seedLabel.timeline).map((item) => ({
+          label: String((item && item.label) || "").trim(),
+          title: String((item && item.title) || "").trim(),
+          text: String((item && item.text) || "").trim()
+        })),
+        platformPresets: uniqueTextList(
+          Array.isArray(label.platformPresets) ? label.platformPresets : seedLabel.platformPresets
+        )
+      },
+      artists: normalizedArtists,
+      releases,
+      merch
+    };
+  }
+
+  const seedData = normalizeData(PUBLISHED_DATA);
+
   function loadData() {
-    return store.load();
+    if (!state.data) {
+      state.data = deepClone(seedData);
+    }
+
+    return state.data;
   }
 
   function saveData(nextData) {
-    return store.save(nextData);
+    state.data = normalizeData(nextData);
+    return state.data;
+  }
+
+  function resetDataToSeed() {
+    state.data = deepClone(seedData);
+    return state.data;
+  }
+
+  function upsertBySlug(list, item) {
+    const nextList = [...list];
+    const existingIndex = nextList.findIndex((entry) => entry.slug === item.slug);
+
+    if (existingIndex === -1) {
+      nextList.push(item);
+      return nextList;
+    }
+
+    nextList[existingIndex] = item;
+    return nextList;
+  }
+
+  function exportJson(data) {
+    return JSON.stringify(normalizeData(data || loadData()), null, 2);
+  }
+
+  function exportScript(data) {
+    return `window.PAWN_PUBLIC_DATA = ${exportJson(data || loadData())};\n`;
   }
 
   function escapeHtml(value) {
@@ -103,12 +300,118 @@
     return releases.reduce((total, release) => total + release.platforms.length, 0);
   }
 
+  function releaseRecencyValue(release, index) {
+    const parsedDate = parseReleaseDateValue(release && release.releaseDate);
+
+    if (parsedDate) {
+      return parsedDate.getTime();
+    }
+
+    const year = Number.parseInt(String((release && release.year) || "").trim(), 10);
+
+    if (Number.isFinite(year)) {
+      return new Date(year, 11, 31).getTime();
+    }
+
+    return index;
+  }
+
+  function parseReleaseDateValue(value) {
+    const raw = String(value || "").trim();
+    const isoMatch = raw.match(/^(\d{4})[-/](\d{2})[-/](\d{2})$/);
+
+    if (!isoMatch) {
+      return null;
+    }
+
+    const year = Number(isoMatch[1]);
+    const month = Number(isoMatch[2]);
+    const day = Number(isoMatch[3]);
+    const parsed = new Date(year, month - 1, day);
+
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+
+    if (parsed.getFullYear() !== year || parsed.getMonth() !== month - 1 || parsed.getDate() !== day) {
+      return null;
+    }
+
+    return parsed;
+  }
+
+  function releaseTypeWeightValue(release) {
+    const weights = {
+      album: 3,
+      ep: 2,
+      single: 1
+    };
+
+    return weights[String((release && release.type) || "").trim().toLowerCase()] || 0;
+  }
+
+  function releaseTieBreakKeyValue(release) {
+    return [
+      String((release && release.artist) || "").trim().toLowerCase(),
+      String((release && release.title) || "").trim().toLowerCase(),
+      String((release && release.slug) || "").trim().toLowerCase()
+    ].join("::");
+  }
+
+  function compareReleaseTieBreakValue(left, right) {
+    const typeDelta = releaseTypeWeightValue(right) - releaseTypeWeightValue(left);
+
+    if (typeDelta) {
+      return typeDelta;
+    }
+
+    return releaseTieBreakKeyValue(left).localeCompare(releaseTieBreakKeyValue(right));
+  }
+
+  function compareFeaturedReleaseValue(left, right, direction) {
+    const multiplier = direction === "asc" ? 1 : -1;
+    const leftDate = parseReleaseDateValue(left && left.releaseDate);
+    const rightDate = parseReleaseDateValue(right && right.releaseDate);
+    const dateDelta = (leftDate.getTime() - rightDate.getTime()) * multiplier;
+
+    if (dateDelta) {
+      return dateDelta;
+    }
+
+    return compareReleaseTieBreakValue(left, right);
+  }
+
+  function releaseStateValue(release) {
+    return ui && ui.releaseState
+      ? ui.releaseState(release)
+      : String((release && release.status) || "").trim().toLowerCase();
+  }
+
   function featuredRelease(data) {
-    return (
-      data.releases.find((release) => release.slug === data.label.featuredReleaseSlug) ||
-      data.releases[0] ||
-      null
-    );
+    const datedReleases = data.releases.filter((release) => parseReleaseDateValue(release && release.releaseDate));
+    const publishedDatedReleases = datedReleases
+      .filter((release) => releaseStateValue(release) !== "upcoming")
+      .sort((left, right) => compareFeaturedReleaseValue(left, right, "desc"));
+
+    if (publishedDatedReleases.length) {
+      return publishedDatedReleases[0];
+    }
+
+    const upcomingDatedReleases = datedReleases
+      .filter((release) => releaseStateValue(release) === "upcoming")
+      .sort((left, right) => compareFeaturedReleaseValue(left, right, "asc"));
+
+    if (upcomingDatedReleases.length) {
+      return upcomingDatedReleases[0];
+    }
+
+    return [...data.releases]
+      .map((release, index) => ({
+        release,
+        recency: releaseRecencyValue(release, index)
+      }))
+      .sort((left, right) => right.recency - left.recency)
+      .map((entry) => entry.release)[0] || null;
   }
 
   function downloadText(filename, content, type) {
@@ -170,7 +473,7 @@
       </article>
       <article class="stat-card">
         <strong>${featured ? escapeHtml(featured.title) : "None set"}</strong>
-        <span>${featuredArtist ? escapeHtml(featuredArtist.name) : "Featured release"}</span>
+        <span>${featuredArtist ? escapeHtml(featuredArtist.name) : "Most recent release"}</span>
       </article>
       <article class="stat-card">
         <strong>${data.merch.length}</strong>
@@ -383,8 +686,6 @@
     const releaseVideoId = elements.releaseYoutubeId.value.trim();
     const primaryEmbedLabel = elements.releasePrimaryEmbedLabel.value.trim();
     const primaryEmbedUrl = elements.releasePrimaryEmbedUrl.value.trim();
-    const featured = elements.releaseFeatured.checked;
-
     elements.releasePreview.innerHTML = `
       <article class="release-card">
         ${
@@ -407,7 +708,6 @@
             <span class="mini-chip">${platforms.length} link${platforms.length === 1 ? "" : "s"}</span>
             ${primaryEmbedUrl ? `<span class="mini-chip">${escapeHtml(primaryEmbedLabel || "Primary embed")} attached</span>` : ""}
             ${releaseVideoId ? '<span class="mini-chip">Hero video attached</span>' : ""}
-            ${featured ? '<span class="mini-chip">Homepage feature</span>' : ""}
           </div>
         </div>
       </article>
@@ -418,13 +718,14 @@
 
   function renderReleaseList() {
     const data = loadData();
-    const featuredSlug = data.label.featuredReleaseSlug;
+    const featured = featuredRelease(data);
+    const featuredSlug = featured ? featured.slug : "";
 
     if (!data.releases.length) {
       elements.releaseList.innerHTML = `
         <article class="empty-state">
           <h2>No releases saved yet.</h2>
-          <p>The first saved release will appear here for editing and homepage featuring.</p>
+          <p>The first saved release will appear here for editing and recency-based homepage placement.</p>
         </article>
       `;
       return;
@@ -447,12 +748,9 @@
               <div class="row-actions">
                 ${
                   featuredSlug === release.slug
-                    ? '<span class="chip">Featured</span>'
+                    ? '<span class="chip">Most Recent</span>'
                     : ""
                 }
-                <button class="button button--ghost" type="button" data-feature-release="${escapeHtml(release.slug)}">
-                  ${featuredSlug === release.slug ? "Featured" : "Feature"}
-                </button>
                 <button class="button button--ghost" type="button" data-edit-release="${escapeHtml(release.slug)}">
                   Edit
                 </button>
@@ -527,7 +825,6 @@
     elements.releaseYoutubeId.value = "";
     elements.releasePrimaryEmbedLabel.value = "";
     elements.releasePrimaryEmbedUrl.value = "";
-    elements.releaseFeatured.checked = false;
     elements.trackList.innerHTML = "";
     elements.platformList.innerHTML = "";
     populateArtistSelects();
@@ -576,7 +873,6 @@
     elements.releasePrimaryEmbedLabel.value = release.primaryEmbedLabel || "";
     elements.releasePrimaryEmbedUrl.value = release.primaryEmbedUrl || "";
     elements.releaseCover.value = release.cover;
-    elements.releaseFeatured.checked = data.label.featuredReleaseSlug === release.slug;
     elements.inlineArtistName.value = "";
     elements.inlineArtistLane.value = "";
     elements.inlineArtistSummary.value = "";
@@ -637,7 +933,7 @@
     }
 
     const summary = elements.inlineArtistSummary.value.trim();
-    const slug = store.slugify(name, "artist");
+    const slug = slugify(name, "artist");
     const artist = {
       slug,
       name,
@@ -658,7 +954,7 @@
       artistSlug: slug,
       data: {
         ...data,
-        artists: store.upsertBySlug(data.artists, artist)
+        artists: upsertBySlug(data.artists, artist)
       }
     };
   }
@@ -688,7 +984,7 @@
         ? data.releases.find((entry) => entry.slug === state.editingReleaseSlug)
         : null;
       const release = {
-        slug: state.editingReleaseSlug || store.slugify(`${artistSlug}-${title}`, title),
+        slug: state.editingReleaseSlug || slugify(`${artistSlug}-${title}`, title),
         aliases: Array.isArray(existingRelease && existingRelease.aliases)
           ? [...new Set(existingRelease.aliases.map((alias) => String(alias || "").trim()).filter(Boolean))]
           : [],
@@ -709,17 +1005,13 @@
 
       const nextData = {
         ...data,
-        releases: store.upsertBySlug(
+        releases: upsertBySlug(
           state.editingReleaseSlug
             ? data.releases.filter((entry) => entry.slug !== state.editingReleaseSlug)
             : data.releases,
           release
         )
       };
-
-      nextData.label.featuredReleaseSlug = elements.releaseFeatured.checked
-        ? release.slug
-        : nextData.label.featuredReleaseSlug || release.slug;
 
       saveData(nextData);
       renderAll();
@@ -748,7 +1040,7 @@
       : null;
 
     const artist = {
-      slug: existing ? existing.slug : store.slugify(name, "artist"),
+      slug: existing ? existing.slug : slugify(name, "artist"),
       name,
       lane: elements.artistLane.value.trim(),
       accent: elements.artistAccent.value,
@@ -765,7 +1057,7 @@
 
     saveData({
       ...data,
-      artists: store.upsertBySlug(data.artists, artist)
+      artists: upsertBySlug(data.artists, artist)
     });
     renderAll();
     resetArtistForm();
@@ -790,16 +1082,7 @@
     const remainingReleases = data.releases.filter((entry) => entry.slug !== releaseSlug);
     saveData({
       ...data,
-      releases: remainingReleases,
-      label: {
-        ...data.label,
-        featuredReleaseSlug:
-          data.label.featuredReleaseSlug === releaseSlug && remainingReleases[0]
-            ? remainingReleases[0].slug
-            : data.label.featuredReleaseSlug === releaseSlug
-              ? ""
-              : data.label.featuredReleaseSlug
-      }
+      releases: remainingReleases
     });
 
     renderAll();
@@ -807,30 +1090,6 @@
       resetReleaseForm();
     }
     setStatus(`Deleted "${release.title}" from the current catalog.`, "success");
-  }
-
-  function featureRelease(releaseSlug) {
-    const data = loadData();
-    const release = data.releases.find((entry) => entry.slug === releaseSlug);
-
-    if (!release) {
-      return;
-    }
-
-    saveData({
-      ...data,
-      label: {
-        ...data.label,
-        featuredReleaseSlug: release.slug
-      }
-    });
-    renderAll();
-
-    if (state.editingReleaseSlug === release.slug) {
-      elements.releaseFeatured.checked = true;
-    }
-
-    setStatus(`"${release.title}" is now featured on the homepage.`, "success");
   }
 
   function importFromText() {
@@ -847,7 +1106,7 @@
       renderAll();
       resetReleaseForm();
       resetArtistForm();
-      setStatus("Imported JSON into the current browser catalog.", "success");
+      setStatus("Imported JSON into the current editor catalog.", "success");
     } catch (error) {
       setStatus("That JSON could not be parsed. Check the format and try again.", "warning");
     }
@@ -877,34 +1136,34 @@
   }
 
   function loadCurrentJson() {
-    elements.catalogJson.value = store.exportJson(loadData());
+    elements.catalogJson.value = exportJson(loadData());
     setStatus("Loaded the current catalog JSON into the preview box.", "info");
   }
 
   function downloadJson() {
-    downloadText("pawn-island-records.json", store.exportJson(loadData()), "application/json");
+    downloadText("pawn-island-records.json", exportJson(loadData()), "application/json");
     setStatus("Downloaded the current catalog as JSON.", "success");
   }
 
   function downloadScript() {
     downloadText(
       "public-data.js",
-      store.exportScript(loadData()),
+      exportScript(loadData()),
       "application/javascript"
     );
     setStatus("Downloaded a publish-ready public-data.js file.", "success");
   }
 
   function resetData() {
-    if (!window.confirm("Reset the current browser catalog back to the seed data?")) {
+    if (!window.confirm("Reset the current editor catalog back to the seed data?")) {
       return;
     }
 
-    store.reset();
+    resetDataToSeed();
     renderAll();
     resetReleaseForm();
     resetArtistForm();
-    setStatus("Reset the current browser catalog back to the seed data.", "info");
+    setStatus("Reset the current editor catalog back to the seed data.", "info");
   }
 
   function renderAll() {
@@ -913,7 +1172,7 @@
     renderReleaseList();
     renderArtistList();
     renderPlatformPresets();
-    elements.catalogJson.value = store.exportJson(loadData());
+    elements.catalogJson.value = exportJson(loadData());
   }
 
   function bindEvents() {
@@ -1022,7 +1281,6 @@
     elements.releaseList.addEventListener("click", (event) => {
       const editButton = event.target.closest("[data-edit-release]");
       const deleteButton = event.target.closest("[data-delete-release]");
-      const featureButton = event.target.closest("[data-feature-release]");
 
       if (editButton) {
         fillReleaseForm(editButton.getAttribute("data-edit-release"));
@@ -1032,10 +1290,6 @@
       if (deleteButton) {
         deleteRelease(deleteButton.getAttribute("data-delete-release"));
         return;
-      }
-
-      if (featureButton) {
-        featureRelease(featureButton.getAttribute("data-feature-release"));
       }
     });
     elements.artistList.addEventListener("click", (event) => {
@@ -1067,7 +1321,7 @@
     renderReleasePreview();
     renderArtistImagePreview();
     setStatus(
-      "Start with a new release, or refine any existing artist profile. The public pages will read from this browser-saved catalog immediately.",
+      "Start with a new release, or refine any existing artist profile. This editor now works in-memory for the current session, with import and export handling the handoff.",
       "info"
     );
     ui.revealOnScroll();

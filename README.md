@@ -6,14 +6,13 @@ This repo now contains a cleaner multi-page static site for Pawn Island Records,
 - `about.html` is the public-facing bio page for Matthew Freeman.
 - `process.html` is the public creative process page.
 - `roster.html` is the public roster page.
-- `artist.html` is the per-project landing page, with `public`, `industry`, `press`, and `merch` views controlled by query params.
+- `artist.html` is the per-project landing page, with gallery and media views that can be restored from the query string.
 - `catalog.html` is the release catalog page.
-- `admin.html` is the catalog editor for managing artist profiles and release intake.
+- `admin.html` is the catalog editor for managing artist profiles, release intake, and JSON export.
 
 ## Core files
 
 - `public-data.js` is the published seed dataset for the site.
-- `site-store.js` manages the browser-saved local override in `localStorage`.
 - `site-ui.js` provides shared helpers for artist/release lookups and simple reveal animations.
 - `public.css` is the shared design system for the public pages and editor.
 - `site-audio-config.js` is the single place to point the site-wide background player at an audio file.
@@ -44,10 +43,9 @@ Open `admin.html` in the browser to:
 3. Attach square cover art by path/URL or browser upload.
 4. Add the track listing with optional YouTube video IDs for each track.
 5. Add streaming platform links.
-6. Mark a release as the homepage featured release if desired.
-7. Download the current dataset as JSON or as a publish-ready `public-data.js`.
+6. Download the current dataset as JSON or as a publish-ready `public-data.js`.
 
-The editor stores changes in the browser using `localStorage`. Public pages on that same browser will immediately read from the saved override.
+The editor now works in-memory for the current session. Use the JSON import/export tools when you want to move changes in or out of the repo.
 
 ## Data notes
 
@@ -59,7 +57,6 @@ The public data model is intentionally compact:
     name: "Pawn Island Records",
     tagline: "Release worlds with room to breathe.",
     intro: "Catalog introduction copy",
-    featuredReleaseSlug: "rhea-mauro-hearthblood",
     platformPresets: ["Spotify", "Apple Music", "YouTube"]
   },
   artists: [

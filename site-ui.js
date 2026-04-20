@@ -1,6 +1,6 @@
 (function () {
   function currentData() {
-    return window.PAWN_SITE_DATA || window.PAWN_PUBLIC_DATA || {
+    return window.PAWN_PUBLIC_DATA || {
       label: {},
       artists: [],
       releases: [],
@@ -207,21 +207,86 @@
     return currentData().releases.find((release) => matchesReleaseSlug(release, slug)) || null;
   }
 
-  function parseReleaseDate(value) {
+  function normalizeReleaseDateValue(value) {
     const normalized = String(value || "").trim();
+
+    if (!normalized) {
+      return "";
+    }
+
+    const match = normalized.match(/^(\d{4})[-/](\d{2})[-/](\d{2})$/);
+
+    if (!match) {
+      return "";
+    }
+
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const date = new Date(year, month - 1, day);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+      return "";
+    }
+
+    return `${match[1]}-${match[2]}-${match[3]}`;
+  }
+
+  function parseReleaseDate(value) {
+    const normalized = normalizeReleaseDateValue(value);
 
     if (!normalized) {
       return null;
     }
 
     const match = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-
-    if (!match) {
-      return null;
-    }
-
     const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
     return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function releaseTypeWeight(release) {
+    const weights = {
+      album: 3,
+      ep: 2,
+      single: 1
+    };
+
+    return weights[String((release && release.type) || "").trim().toLowerCase()] || 0;
+  }
+
+  function releaseTieBreakKey(release) {
+    return [
+      String((release && release.artist) || "").trim().toLowerCase(),
+      String((release && release.title) || "").trim().toLowerCase(),
+      String((release && release.slug) || "").trim().toLowerCase()
+    ].join("::");
+  }
+
+  function compareReleaseTieBreak(left, right) {
+    const typeDelta = releaseTypeWeight(right) - releaseTypeWeight(left);
+
+    if (typeDelta) {
+      return typeDelta;
+    }
+
+    return releaseTieBreakKey(left).localeCompare(releaseTieBreakKey(right));
+  }
+
+  function compareFeaturedReleaseDates(left, right, direction) {
+    const multiplier = direction === "asc" ? 1 : -1;
+    const leftDate = parseReleaseDate(left && left.releaseDate);
+    const rightDate = parseReleaseDate(right && right.releaseDate);
+    const dateDelta = (leftDate.getTime() - rightDate.getTime()) * multiplier;
+
+    if (dateDelta) {
+      return dateDelta;
+    }
+
+    return compareReleaseTieBreak(left, right);
   }
 
   function newYorkDateTime(date) {
@@ -257,12 +322,17 @@
 
   function releaseIsLiveInNewYork(releaseDate, now) {
     const current = newYorkDateTime(now);
+    const normalizedReleaseDate = normalizeReleaseDateValue(releaseDate);
 
-    if (current.ymd > releaseDate) {
+    if (!normalizedReleaseDate) {
+      return false;
+    }
+
+    if (current.ymd > normalizedReleaseDate) {
       return true;
     }
 
-    if (current.ymd < releaseDate) {
+    if (current.ymd < normalizedReleaseDate) {
       return false;
     }
 
@@ -398,6 +468,10 @@
       }
     }
 
+    if (leftState === "upcoming" || leftState === "live") {
+      return compareReleaseTieBreak(left, right);
+    }
+
     return 0;
   }
 
@@ -439,43 +513,30 @@
   function getFeaturedRelease() {
     const data = currentData();
     const sortedReleases = sortReleases(data.releases || []);
+    const datedReleases = sortedReleases.filter((release) => parseReleaseDate(release && release.releaseDate));
+    const publishedDatedReleases = datedReleases
+      .filter((release) => releaseState(release) !== "upcoming")
+      .sort((left, right) => compareFeaturedReleaseDates(left, right, "desc"));
+
+    if (publishedDatedReleases.length) {
+      return publishedDatedReleases[0];
+    }
+
+    const upcomingDatedReleases = datedReleases
+      .filter((release) => releaseState(release) === "upcoming")
+      .sort((left, right) => compareFeaturedReleaseDates(left, right, "asc"));
+
+    if (upcomingDatedReleases.length) {
+      return upcomingDatedReleases[0];
+    }
+
     const liveReleases = sortedReleases.filter((release) => releaseState(release) === "live");
-    const manualFeatured = getRelease(data.label && data.label.featuredReleaseSlug);
-    const datedLiveReleases = liveReleases.filter((release) => parseReleaseDate(release.releaseDate));
-
-    if (datedLiveReleases.length) {
-      const latestTime = Math.max(
-        ...datedLiveReleases.map((release) => parseReleaseDate(release.releaseDate).getTime())
-      );
-      const latestLiveReleases = datedLiveReleases.filter(
-        (release) => parseReleaseDate(release.releaseDate).getTime() === latestTime
-      );
-
-      // Same-day drops use the configured featured slug as the tiebreaker.
-      if (latestLiveReleases.length > 1 && manualFeatured) {
-        const manualMatch = latestLiveReleases.find((release) => release.slug === manualFeatured.slug);
-
-        if (manualMatch) {
-          return manualMatch;
-        }
-      }
-
-      return latestLiveReleases[0];
-    }
-
-    if (manualFeatured && releaseState(manualFeatured) === "live") {
-      return manualFeatured;
-    }
 
     if (liveReleases.length) {
       return liveReleases[0];
     }
 
-    const nextUpcoming = sortedReleases.find((release) => releaseState(release) === "upcoming");
-
     return (
-      manualFeatured ||
-      nextUpcoming ||
       sortedReleases[0] ||
       null
     );
@@ -513,6 +574,16 @@
     const nextUrl = new URL(window.location.href);
     nextUrl.searchParams.set("view", view);
     window.history.replaceState({}, "", nextUrl);
+
+    if (window.top !== window.self) {
+      try {
+        const childFile = nextUrl.pathname.split("/").pop() || "index.html";
+        const childUrl = `${childFile}${nextUrl.search}${nextUrl.hash}`;
+        window.top.history.replaceState({ page: childUrl }, "", childUrl);
+      } catch (error) {
+        // Ignore shell sync failures outside the managed iframe shell.
+      }
+    }
   }
 
   function normalizeHexColor(value, fallback) {

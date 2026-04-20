@@ -6,7 +6,6 @@ window.PAWN_PUBLIC_DATA = {
       "A one-person label imprint for songs that do not belong in one lane. Each project gives the writing its own weather, voice, and visual world.",
     // Switch back to "full" when project pages, release pages, and press pages are ready to publish.
     launchMode: "essentials",
-    featuredReleaseSlug: "rhea-mauro-aura-farming",
     featuredCampaignTitle: "May 1 Release Wave",
     featuredCampaignSummary:
       "Three new chapters arrive May 1, with pre-save links live now.",
@@ -352,6 +351,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A songwriter world built around voice, weather, home, and the kind of emotional detail that grows larger the longer it lingers.",
       status: "live",
+      releaseDate: "2026-02-04",
       tooFmUrl: "https://too.fm/d2d6eel",
       youtubeId: "ufrYH6hyT3Q",
       primaryEmbedLabel: "Spotify",
@@ -385,6 +385,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A playful, storybook songwriter-pop release following a young girl from childhood into adulthood.",
       status: "live",
+      releaseDate: "2026-04-03",
       tooFmUrl: "https://too.fm/ga4wykj",
       platforms: [],
       tracks: []
@@ -402,6 +403,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A forward-moving release in the Rhea Mauro catalog, built for open-road emotional scale and distance.",
       status: "live",
+      releaseDate: "2026-04-03",
       tooFmUrl: "https://too.fm/jdb6lgv",
       platforms: [],
       tracks: []
@@ -418,6 +420,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A direct rap project built for clarity, control, and clean visual framing that keeps the words in front.",
       status: "live",
+      releaseDate: "2026-02-05",
       tooFmUrl: "https://too.fm/d6evdk6",
       platforms: [],
       tracks: [
@@ -501,6 +504,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A saturated pop release built around electric romantic tension and the overloaded feeling of early infatuation.",
       status: "live",
+      releaseDate: "2026-02-27",
       tooFmUrl: "https://too.fm/6kjkwyd",
       platforms: [],
       tracks: []
@@ -536,6 +540,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A moody pop release built around the feeling of standing at a threshold, weighted with anticipation.",
       status: "live",
+      releaseDate: "2026-02-20",
       tooFmUrl: "https://too.fm/v4eknae",
       platforms: [],
       tracks: []
@@ -553,6 +558,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A spacious dream-pop release where absence becomes a texture and longing carries the melody.",
       status: "live",
+      releaseDate: "2026-04-03",
       tooFmUrl: "https://too.fm/noprn67",
       platforms: [],
       tracks: []
@@ -660,6 +666,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A low-light dream-pop release built for stillness, intimacy, and the velvet texture of a song that asks nothing of you.",
       status: "live",
+      releaseDate: "2026-02-13",
       tooFmUrl: "https://too.fm/87gp7ve",
       platforms: [],
       tracks: []
@@ -713,6 +720,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A pressure-built heavy release with ritual pacing, stripped-down presentation, and room-shaping low end.",
       status: "live",
+      releaseDate: "2026-02-14",
       tooFmUrl: "https://too.fm/qonnaz",
       platforms: [],
       tracks: [
@@ -740,6 +748,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A sharp-edged heavy record with strong visual contrast and a sense of aftermath baked into the release identity.",
       status: "live",
+      releaseDate: "2026-02-04",
       tooFmUrl: "https://too.fm/o0pxxyy",
       platforms: [],
       tracks: [
@@ -784,6 +793,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A one-shot release framed tightly around the idea, the title, and the image with no excess around it.",
       status: "live",
+      releaseDate: "2026-04-03",
       tooFmUrl: "https://too.fm/emww7xy",
       platforms: [],
       tracks: [{ title: "Time Out (Zack Morris is Trash!)", runtime: "", youtubeId: "" }]
@@ -801,6 +811,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A high-impact release world that trades polish for poster-rip energy, graphic abrasion, and hard contrast.",
       status: "live",
+      releaseDate: "2026-02-05",
       tooFmUrl: "https://too.fm/vbzk4bv",
       platforms: [],
       tracks: [
@@ -821,6 +832,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A roots-driven songwriting release anchored in place, memory, and durable emotional detail.",
       status: "live",
+      releaseDate: "2026-02-04",
       tooFmUrl: "https://too.fm/yn8xx7l",
       platforms: [],
       tracks: [
@@ -865,6 +877,7 @@ window.PAWN_PUBLIC_DATA = {
       description:
         "A still, reflective release framed around horizon light, symbolic imagery, and slower listening.",
       status: "live",
+      releaseDate: "2026-01-29",
       tooFmUrl: "https://too.fm/qyqq2qa",
       platforms: [],
       tracks: [{ title: "Psalm of Myself", runtime: "", youtubeId: "" }]

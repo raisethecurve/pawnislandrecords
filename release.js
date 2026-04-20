@@ -1,6 +1,6 @@
 (function () {
   const ui = window.PAWN_UI || null;
-  const fallbackData = window.PAWN_SITE_DATA || window.PAWN_PUBLIC_DATA || {
+  const fallbackData = window.PAWN_PUBLIC_DATA || {
     label: {
       platformPresets: []
     },
@@ -41,6 +41,37 @@
   function text(value, fallback) {
     const resolved = String(value || "").trim();
     return resolved || String(fallback || "").trim();
+  }
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function escapeAttribute(value) {
+    return escapeHtml(value);
+  }
+
+  function sanitizeUrl(value, fallback) {
+    const raw = String(value || "").trim();
+
+    if (!raw) {
+      return String(fallback || "").trim();
+    }
+
+    if (/^(https?:|mailto:|tel:)/i.test(raw)) {
+      return raw;
+    }
+
+    if (/^(?:[a-z0-9._-]+\.html(?:[?#].*)?|[?#/])/i.test(raw)) {
+      return raw;
+    }
+
+    return String(fallback || "").trim();
   }
 
   const launchModeValue = text(data.label && data.label.launchMode, "full").toLowerCase();
@@ -87,7 +118,7 @@
     nav.innerHTML = publicNavLinks()
       .map(
         (link) => `
-          <a href="${link.href}">${link.label}</a>
+          <a href="${escapeAttribute(link.href)}">${escapeHtml(link.label)}</a>
         `
       )
       .join("");
@@ -165,8 +196,8 @@
     page.innerHTML = `
       <section class="empty-state">
         <p class="eyebrow">Launch Mode</p>
-        <h2>${title}</h2>
-        <p>${copy}</p>
+        <h2>${escapeHtml(title)}</h2>
+        <p>${escapeHtml(copy)}</p>
         <div class="footer-actions">
           <a class="action-link" href="index.html">Home</a>
           <a class="action-link" href="roster.html">Roster</a>
@@ -224,14 +255,14 @@
         (platform) => `
           <a
             class="platform-logo-link"
-            href="${platform.url}"
+            href="${escapeAttribute(sanitizeUrl(platform.url, "#"))}"
             target="_blank"
             rel="noreferrer"
-            aria-label="${platform.label}"
-            title="${platform.label}"
+            aria-label="${escapeAttribute(platform.label)}"
+            title="${escapeAttribute(platform.label)}"
           >
             <span class="platform-logo-link__icon" aria-hidden="true">
-              ${platform.icon || `<span>${platform.label.slice(0, 1)}</span>`}
+              ${platform.icon || `<span>${escapeHtml(platform.label.slice(0, 1))}</span>`}
             </span>
           </a>
         `
@@ -276,23 +307,23 @@
     releaseTitle.textContent = release.title;
     releaseArtist.textContent = artist.name;
     releaseSummary.textContent = release.description || artist.summary || "";
-    releaseChips.innerHTML = chips.map((chip) => `<span class="chip">${chip}</span>`).join("");
+    releaseChips.innerHTML = chips.map((chip) => `<span class="chip">${escapeHtml(chip)}</span>`).join("");
     heroArtistLink.parentElement.innerHTML = `
       ${
         campaignAction
           ? `
             <a
               class="action-link action-link--accent"
-              href="${campaignAction.url}"
+              href="${escapeAttribute(sanitizeUrl(campaignAction.url, "#"))}"
               target="_blank"
               rel="noreferrer"
             >
-              ${campaignAction.label}
+              ${escapeHtml(campaignAction.label)}
             </a>
           `
           : ""
       }
-      <a class="action-link" href="${artistUrl(artist.slug, release.slug)}">Open project page</a>
+      <a class="action-link" href="${escapeAttribute(artistUrl(artist.slug, release.slug))}">Open project page</a>
     `;
     renderPlatforms();
   }
@@ -308,8 +339,8 @@
       ? `
           <div class="embed-frame embed-frame--audio">
             <iframe
-              src="${primaryEmbed.url}"
-              title="${primaryEmbed.label || release.title} embed"
+              src="${escapeAttribute(sanitizeUrl(primaryEmbed.url, ""))}"
+              title="${escapeAttribute(primaryEmbed.label || release.title)} embed"
               loading="lazy"
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
             ></iframe>
@@ -326,8 +357,8 @@
       ? `
           <div class="embed-frame">
             <iframe
-              src="${youtubeEmbedUrl(youtubeId)}"
-              title="${release.title} by ${artist.name}"
+              src="${escapeAttribute(youtubeEmbedUrl(youtubeId))}"
+              title="${escapeAttribute(`${release.title} by ${artist.name}`)}"
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen
@@ -345,7 +376,9 @@
   function renderStory() {
     releaseStoryHeading.textContent = `Inside ${release.title}`;
     releaseDescription.textContent = release.description || artist.summary || "";
-    releaseTracklist.innerHTML = release.tracks.map((track) => `<li>${track.title}</li>`).join("");
+    releaseTracklist.innerHTML = release.tracks
+      .map((track) => `<li>${escapeHtml(track.title)}</li>`)
+      .join("");
     releaseTracklist.hidden = !release.tracks.length;
 
     artistName.textContent = artist.name;
@@ -377,11 +410,11 @@
 
         return `
           <article class="footer-card">
-            <span class="footer-card__eyebrow">${eyebrow}</span>
-            <h3>${entry.title}</h3>
-            <p>${entry.description || (isSameArtist ? artist.summary : entryArtistName) || ""}</p>
+            <span class="footer-card__eyebrow">${escapeHtml(eyebrow)}</span>
+            <h3>${escapeHtml(entry.title)}</h3>
+            <p>${escapeHtml(entry.description || (isSameArtist ? artist.summary : entryArtistName) || "")}</p>
             <div class="footer-actions">
-              <a class="action-link" href="${releaseUrl(entry.slug)}">Open release</a>
+              <a class="action-link" href="${escapeAttribute(releaseUrl(entry.slug))}">Open release</a>
             </div>
           </article>
         `;
@@ -392,12 +425,12 @@
       <div class="release-footer__grid">
         <article class="footer-card">
           <span class="footer-card__eyebrow">Continue</span>
-          <h3>${artist.name}</h3>
-          <p>${artist.summary || artist.headline || ""}</p>
+          <h3>${escapeHtml(artist.name)}</h3>
+          <p>${escapeHtml(artist.summary || artist.headline || "")}</p>
           <div class="footer-actions">
-            <a class="action-link" href="${artistUrl(artist.slug, release.slug)}">Open project page</a>
-            <a class="action-link" href="${epkUrl(artist.slug)}">Open press kit</a>
-            <a class="action-link" href="catalog.html?artist=${encodeURIComponent(artist.slug)}">Browse ${artist.name} releases</a>
+            <a class="action-link" href="${escapeAttribute(artistUrl(artist.slug, release.slug))}">Open project page</a>
+            <a class="action-link" href="${escapeAttribute(epkUrl(artist.slug))}">Open press kit</a>
+            <a class="action-link" href="${escapeAttribute(`catalog.html?artist=${encodeURIComponent(artist.slug)}`)}">Browse ${escapeHtml(artist.name)} releases</a>
             <a class="action-link" href="catalog.html">\u2190 Full catalog</a>
             ${
               artist.slug === "matt-freeman"

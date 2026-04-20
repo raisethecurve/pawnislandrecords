@@ -7,7 +7,7 @@
     releases: []
   };
   const ui = window.PAWN_UI || null;
-  const data = (ui && ui.data) || window.PAWN_SITE_DATA || window.PAWN_PUBLIC_DATA || fallbackData;
+  const data = (ui && ui.data) || window.PAWN_PUBLIC_DATA || fallbackData;
   const artistLookup = new Map((data.artists || []).map((artist) => [artist.slug, artist]));
   const releases = (data.releases || []).map((release, index) => {
     const artist = artistLookup.get(release.artist) || null;

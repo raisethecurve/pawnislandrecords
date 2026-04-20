@@ -1,6 +1,6 @@
 (function () {
   const ui = window.PAWN_UI || null;
-  const data = (ui && ui.data) || window.PAWN_SITE_DATA || window.PAWN_PUBLIC_DATA || {
+  const data = (ui && ui.data) || window.PAWN_PUBLIC_DATA || {
     label: {},
     artists: [],
     releases: []
@@ -73,6 +73,34 @@
 
   function isExternalUrl(value) {
     return /^https?:\/\//i.test(text(value, ""));
+  }
+
+  function requestedView() {
+    if (ui && ui.getSearchParam) {
+      return text(ui.getSearchParam("view"), "");
+    }
+
+    return text(new URLSearchParams(window.location.search).get("view"), "");
+  }
+
+  function resolveView(requested, allowed, fallback) {
+    const valid = Array.isArray(allowed) ? allowed : [];
+    return valid.includes(requested) ? requested : fallback;
+  }
+
+  function syncView(view) {
+    if (!view) {
+      return;
+    }
+
+    if (ui && ui.updateViewParam) {
+      ui.updateViewParam(view);
+      return;
+    }
+
+    const nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.set("view", view);
+    window.history.replaceState({}, "", nextUrl);
   }
 
   const launchModeValue = text(data.label && data.label.launchMode, "full").toLowerCase();
@@ -1264,17 +1292,23 @@
       });
     }
 
+    const initialArtistView = resolveView(
+      requestedView(),
+      views.map((view) => view.key),
+      "gallery"
+    );
+
     embedsNode.innerHTML = `
       <div class="artist-media-panel">
         <div class="artist-media-panel__views" id="artist-media-views">
           ${views
             .map(
-              (view, index) => `
+              (view) => `
                 <button
-                  class="button button--ghost button--small ${index === 0 ? "is-active" : ""}"
+                  class="button button--ghost button--small ${view.key === initialArtistView ? "is-active" : ""}"
                   type="button"
                   data-artist-view="${escapeHtml(view.key)}"
-                  aria-pressed="${index === 0 ? "true" : "false"}"
+                  aria-pressed="${view.key === initialArtistView ? "true" : "false"}"
                 >
                   ${escapeHtml(view.label)}
                 </button>
@@ -1288,7 +1322,7 @@
 
     const mediaViews = document.getElementById("artist-media-views");
     const mediaStage = document.getElementById("artist-media-stage");
-    let activeView = "gallery";
+    let activeView = initialArtistView;
 
     function renderGalleryView() {
       if (!galleryReleases.length) {
@@ -1430,10 +1464,12 @@
           node.classList.toggle("is-active", selected);
           node.setAttribute("aria-pressed", selected ? "true" : "false");
         });
+        syncView(activeView);
         renderActiveArtistMediaView();
       });
     }
 
+    syncView(activeView);
     renderActiveArtistMediaView();
 
     if (ui && ui.applyExperienceTheme) {
@@ -1628,7 +1664,12 @@
       media: "Available Spotify, YouTube, and cover-art materials for immediate preview.",
       assets: "What is already in the kit and where specific campaign details can be added next."
     };
-    let activeView = "overview";
+    const initialEpkView = resolveView(
+      requestedView(),
+      views.map((view) => view.key),
+      "overview"
+    );
+    let activeView = initialEpkView;
 
     function releaseStripMarkup(list) {
       if (!list.length) {
@@ -2111,12 +2152,12 @@
 
     viewsNode.innerHTML = views
       .map(
-        (view, index) => `
+        (view) => `
           <button
-            class="button button--ghost button--small ${index === 0 ? "is-active" : ""}"
+            class="button button--ghost button--small ${view.key === initialEpkView ? "is-active" : ""}"
             type="button"
             data-epk-view="${escapeHtml(view.key)}"
-            aria-pressed="${index === 0 ? "true" : "false"}"
+            aria-pressed="${view.key === initialEpkView ? "true" : "false"}"
           >
             ${escapeHtml(view.label)}
           </button>
@@ -2137,9 +2178,11 @@
         node.classList.toggle("is-active", selected);
         node.setAttribute("aria-pressed", selected ? "true" : "false");
       });
+      syncView(activeView);
       renderActiveEpkView();
     });
 
+    syncView(activeView);
     renderActiveEpkView();
 
     if (ui && ui.hydrateArtwork) {

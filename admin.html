@@ -175,13 +175,6 @@
                       </label>
                     </div>
                   </div>
-                  <div class="field field--full">
-                    <span>Homepage feature</span>
-                    <label class="toggle-row" for="release-featured">
-                      <input id="release-featured" name="releaseFeatured" type="checkbox" />
-                      <span>Feature this release on the homepage landing page</span>
-                    </label>
-                  </div>
                 </div>
 
                 <div class="dropzone">
@@ -371,10 +364,10 @@
         <section id="current-catalog" class="reveal">
           <div class="section-head">
             <p class="eyebrow">Current Releases</p>
-            <h2>Review, edit, delete, or feature what is currently saved.</h2>
+            <h2>Review, edit, or delete what is currently saved.</h2>
             <p>
-              The list below reflects the current local catalog data that the
-              public pages will read from.
+              The list below reflects the current editor catalog. The homepage
+              lead is derived from recency, not manual selection.
             </p>
           </div>
 
@@ -421,7 +414,7 @@
                 </button>
                 <p class="helper-line">
                   Load the current JSON, edit it here if needed, then import it
-                  back into the browser catalog.
+                  back into the current editor catalog.
                 </p>
               </div>
             </article>
@@ -445,7 +438,6 @@
     </div>
 
     <script src="public-data.js"></script>
-    <script src="site-store.js"></script>
     <script src="site-ui.js"></script>
     <script src="admin.js"></script>
     <script src="site-audio-config.js"></script>
