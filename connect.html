@@ -8,10 +8,10 @@
     <link rel="icon" type="image/jpeg" sizes="96x96" href="assets/brand/pawnisland-096.jpg" />
     <link rel="icon" type="image/jpeg" sizes="256x256" href="assets/brand/pawnisland-256.jpg" />
     <link rel="apple-touch-icon" sizes="512x512" href="assets/brand/pawnisland-512.jpg" />
-    <title>About Pawn Island Records</title>
+    <title>Connect | Pawn Island Records</title>
     <meta
       name="description"
-      content="About Pawn Island Records, its project-first approach, and its discovery-led release philosophy."
+      content="Follow Pawn Island Records across social platforms, support the label, and browse curated Spotify playlists."
     />
     <script src="site-shell-bootstrap.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -23,11 +23,11 @@
     <link rel="stylesheet" href="label-site.css" />
     <link rel="stylesheet" href="site-audio.css" />
   </head>
-  <body data-page="about">
+  <body data-page="connect">
     <a class="skip-link" href="#label-main">Skip to content</a>
     <div class="label-page">
       <header class="label-header">
-        <a class="brand-mark" href="index.html" aria-label="Pawn Island home">
+        <a class="brand-mark" href="index.html" aria-label="Pawn Island Records home">
           <img
             src="assets/brand/pawnisland-256.jpg"
             alt="Pawn Island Records logo"
@@ -39,44 +39,58 @@
           />
           <span class="brand-mark__copy">
             <strong>Pawn Island Records</strong>
-            <span>About</span>
+            <span>Socials &amp; Playlists</span>
           </span>
         </a>
 
         <nav class="label-nav" aria-label="Primary">
           <a href="index.html">Home</a>
           <a href="roster.html">Roster</a>
-          <a href="about.html" aria-current="page">About</a>
+          <a href="connect.html" aria-current="page">Connect</a>
+          <a href="about.html">About</a>
         </nav>
       </header>
 
       <main class="label-main" id="label-main">
-        <section class="panel-shell" aria-labelledby="about-title">
-          <div class="about-layout">
-            <article class="about-copy">
-              <p class="section-kicker">About Pawn Island Records</p>
-              <h1 id="about-title">About Pawn Island Records</h1>
-              <p class="about-copy__body" id="about-body-copy">
-                Pawn Island Records is a one-person label built by a poet who follows feeling before format. Some songs arrive close to the page; others ask for noise, glow, weight, or motion. The project names exist to keep those lanes clear for listeners, so each release can live in its own world instead of everything being forced under one sound. The process is simple: stay with the song until it feels right, release it, and keep moving.
-              </p>
-              <p class="about-copy__body">
-                For business inquiries, contact <a class="about-email-link" href="mailto:pawnisland@outlook.com">pawnisland@outlook.com</a>.
-              </p>
-              <p class="ethos-line" id="about-ethos-line">
-                Follow the feeling. Finish the song. Let each world keep its own weather.
+        <section class="panel-shell connect-panel" aria-labelledby="connect-title">
+          <div class="connect-hero">
+            <article class="connect-copy">
+              <p class="section-kicker">Connect</p>
+              <h1 id="connect-title">Signals from the Island</h1>
+              <p>
+                Follow the label where each channel has a job: finished catalog, visual world,
+                unreleased tests, short-form discovery, and direct fan support.
               </p>
               <div class="action-row">
-                <a class="button button--ghost" id="about-secondary-link" href="roster.html">View Roster</a>
-                <a class="button button--ghost" id="about-youtube-link" href="https://www.youtube.com/@pawnislandrecords" target="_blank" rel="noreferrer">Open YouTube</a>
+                <a class="button button--primary" href="https://open.spotify.com/user/314rkearb5aecnuzrrjc7zv3ofpq" target="_blank" rel="noreferrer">
+                  Open Spotify
+                </a>
+                <a class="button button--ghost" id="connect-support-link" href="https://tiptopjar.com/pawnisland" target="_blank" rel="noreferrer">
+                  Support the Label
+                </a>
               </div>
             </article>
 
-            <aside class="timeline-shell" aria-labelledby="about-timeline-title">
-              <p class="section-kicker">Label Motion</p>
-              <h2 class="a11y-hidden" id="about-timeline-title">Pawn Island Records timeline</h2>
-              <div class="timeline-list" id="about-timeline"></div>
+            <aside class="connect-focus" aria-label="Discovery channels">
+              <p class="section-kicker">Discovery Board</p>
+              <div class="signal-grid" id="connect-socials"></div>
             </aside>
           </div>
+
+          <section class="playlist-board" aria-labelledby="playlist-board-title">
+            <div class="panel-header">
+              <div>
+                <p class="section-kicker">Curated Playlists</p>
+                <h2 id="playlist-board-title">Playlist Rooms</h2>
+              </div>
+              <div class="panel-note">
+                <p>
+                  Spotify influence maps and YouTube catalog rooms, separated by how listeners use them.
+                </p>
+              </div>
+            </div>
+            <div class="playlist-platform-stack" id="connect-playlists"></div>
+          </section>
         </section>
       </main>
     </div>

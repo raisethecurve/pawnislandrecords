@@ -13,14 +13,216 @@ window.PAWN_PUBLIC_DATA = {
     campaignUrl: "https://too.fm/ryxg0kk",
     defaultTooFmUrl: "https://too.fm/ryxg0kk",
     catalogPlaylistUrl: "https://open.spotify.com/playlist/7ru1FJZS5qFXAbrNlh5YwZ",
+    socialLinks: [
+      {
+        key: "instagram",
+        label: "Instagram",
+        url: "https://www.instagram.com/pawnislandrecords/",
+        role: "Artwork, visual worlds, and release moments."
+      },
+      {
+        key: "threads",
+        label: "Threads",
+        url: "https://www.threads.com/@pawnislandrecords",
+        role: "Short updates, notes, and release chatter."
+      },
+      {
+        key: "tiktok",
+        label: "TikTok",
+        url: "https://www.tiktok.com/@pawnislandrecords",
+        role: "Hooks, short clips, and fast discovery."
+      },
+      {
+        key: "youtube",
+        label: "YouTube",
+        url: "https://www.youtube.com/@pawnislandrecords",
+        role: "Full catalog video listening and project discographies."
+      },
+      {
+        key: "spotify",
+        label: "Spotify",
+        url: "https://open.spotify.com/user/314rkearb5aecnuzrrjc7zv3ofpq",
+        role: "Label playlists, catalog listening, and influence maps."
+      },
+      {
+        key: "soundcloud",
+        label: "SoundCloud",
+        url: "https://soundcloud.com/pawnisland",
+        role: "Unreleased teasers, experiments, and market tests."
+      },
+      {
+        key: "facebook",
+        label: "Facebook",
+        url: "https://www.facebook.com/pawnislandrecords/",
+        role: "Public label presence and broad updates."
+      },
+      {
+        key: "x",
+        label: "X",
+        url: "https://x.com/pawnislandmusic",
+        role: "Quick announcements and public notes."
+      },
+      {
+        key: "email",
+        label: "Email",
+        url: "mailto:pawnisland@outlook.com",
+        role: "Contact the label directly."
+      },
+      {
+        key: "tiptopjar",
+        label: "TipTopJar",
+        url: "https://tiptopjar.com/pawnisland",
+        role: "Direct fan support for the label."
+      }
+    ],
+    discoveryPlaylists: [
+      {
+        title: "Pawn Island Records Full Catalog",
+        category: "Spotify Catalog",
+        platform: "spotify",
+        url: "https://open.spotify.com/playlist/7ru1FJZS5qFXAbrNlh5YwZ",
+        image: "assets/brand/pawnisland-1200.jpg",
+        description: "The main label playlist: a clean front door into the released catalog."
+      },
+      {
+        title: "Golden Influence Map",
+        category: "Spotify Influences",
+        platform: "spotify",
+        url: "https://open.spotify.com/playlist/3mZQWH2rREFhUk4C8gsLlG",
+        image: "assets/playlists/spotify/spotify_golden.png",
+        description: "A warm influence shelf for the label's softer and stranger connective tissue."
+      },
+      {
+        title: "High Ground Hip Hop Playlist",
+        category: "Spotify Influences",
+        platform: "spotify",
+        url: "https://open.spotify.com/playlist/3tGVI8rcz498o5iHT3Ra5J",
+        image: "assets/playlists/spotify/spotify_hiphop.png",
+        description: "Rap references, regional energy, and tracks that sharpen the High Ground lane."
+      },
+      {
+        title: "Second Watch Spiritual Playlist",
+        category: "Spotify Influences",
+        platform: "spotify",
+        url: "https://open.spotify.com/playlist/6svwz9dcDgvlTAm3BInNSQ",
+        image: "assets/playlists/spotify/spotify_spiritual.png",
+        description: "Spiritual, reflective, and searching sounds around the Second Watch world."
+      },
+      {
+        title: "Crick's Country Corner",
+        category: "Spotify Influences",
+        platform: "spotify",
+        url: "https://open.spotify.com/playlist/3oYdU0Bt4WbhbXPloeyRwr",
+        image: "assets/playlists/spotify/spotify_corner.png",
+        description: "Country roots, plainspoken turns, and songwriter soil for Crick."
+      },
+      {
+        title: "Resunant's Rock Chamber",
+        category: "Spotify Influences",
+        platform: "spotify",
+        url: "https://open.spotify.com/playlist/72SiqUnRdOXfYbbOizYRhP",
+        image: "assets/playlists/spotify/spotify_chamber.png",
+        description: "Guitar-forward reference points for the Resunant side of the island."
+      },
+      {
+        title: "Velvet Orchard Dance Club",
+        category: "Spotify Influences",
+        platform: "spotify",
+        url: "https://open.spotify.com/playlist/7v1rz77ewnBQtJbkiA3AGh",
+        image: "assets/playlists/spotify/spotify_danceclub.png",
+        description: "Dance, glow, and low-end movement around the Velvet Orchard lane."
+      },
+      {
+        title: "Pawn Island Records Full Catalog",
+        category: "YouTube Catalog",
+        platform: "youtube",
+        url: "https://www.youtube.com/playlist?list=PLbOk__7W-1bGRbMxVt07H60_7Y2OGob7D",
+        image: "assets/playlists/youtube/ytplaylist_pawn.png",
+        description: "The full label catalog in video form."
+      },
+      {
+        title: "Second Watch Discography",
+        category: "YouTube Discography",
+        platform: "youtube",
+        url: "https://www.youtube.com/playlist?list=PLbOk__7W-1bG-Cugp2lUsJ31ay7wr4pXk",
+        image: "assets/playlists/youtube/ytplaylist_second.png",
+        description: "The Second Watch catalog gathered into one listening path."
+      },
+      {
+        title: "Crick Discography",
+        category: "YouTube Discography",
+        platform: "youtube",
+        url: "https://www.youtube.com/playlist?list=PLbOk__7W-1bFYnfu3wEtvzRZG13eqt7Nc",
+        image: "assets/playlists/youtube/ytplaylist_crick.png",
+        description: "Crick songs and releases collected for straight-through listening."
+      },
+      {
+        title: "Rhea Mauro Discography",
+        category: "YouTube Discography",
+        platform: "youtube",
+        url: "https://www.youtube.com/playlist?list=PLbOk__7W-1bHae8uXEJNAdBc1PTKLdtQH",
+        image: "assets/playlists/youtube/ytplaylist_rhea.png",
+        description: "Rhea Mauro releases in one project-focused video shelf."
+      },
+      {
+        title: "Matt Freeman Discography",
+        category: "YouTube Discography",
+        platform: "youtube",
+        url: "https://www.youtube.com/playlist?list=PLbOk__7W-1bHHJEjB13TRCaPTeSM5lOoW",
+        image: "assets/playlists/youtube/ytplaylist_matt.png",
+        description: "Matt Freeman's catalog gathered into a dedicated playlist."
+      },
+      {
+        title: "Quiet Filter Discography",
+        category: "YouTube Discography",
+        platform: "youtube",
+        url: "https://www.youtube.com/playlist?list=PLbOk__7W-1bHulY5t4U2TRCj4TpVZMvs1",
+        image: "assets/playlists/youtube/ytplaylist_quiet.png",
+        description: "Heavy, slow-burn Quiet Filter releases in one place."
+      },
+      {
+        title: "Velvet Orchard Discography",
+        category: "YouTube Discography",
+        platform: "youtube",
+        url: "https://www.youtube.com/playlist?list=PLbOk__7W-1bESpXfVLw6jZoytCusxOBNH",
+        image: "assets/playlists/youtube/ytplaylist_velvet.png",
+        description: "Velvet Orchard's dance-facing world collected on YouTube."
+      },
+      {
+        title: "High Ground Discography",
+        category: "YouTube Discography",
+        platform: "youtube",
+        url: "https://www.youtube.com/playlist?list=PLbOk__7W-1bEpoHxokwXu0MP23uEjyEVm",
+        image: "assets/playlists/youtube/ytplaylist_high.png",
+        description: "High Ground releases gathered for focused video listening."
+      },
+      {
+        title: "Blackout Discography",
+        category: "YouTube Discography",
+        platform: "youtube",
+        url: "https://www.youtube.com/playlist?list=PLbOk__7W-1bEGlBt4-1v6t7n7brfKCOZW",
+        image: "assets/playlists/youtube/ytplaylist_blackout.png",
+        description: "Blackout tracks collected as their own catalog room."
+      },
+      {
+        title: "Resunant Discography",
+        category: "YouTube Discography",
+        platform: "youtube",
+        url: "https://www.youtube.com/playlist?list=PLbOk__7W-1bHEjkEJsZ3Sz8-WkHcgwYpp",
+        image: "assets/playlists/youtube/ytplaylist_resunant.png",
+        description: "Resunant's rock catalog gathered in one YouTube playlist."
+      }
+    ],
     streamingPlatforms: [
       "Spotify",
+      "YouTube",
       "YouTube Music",
       "Apple Music",
       "Amazon Music",
       "iHeartRadio",
       "Pandora",
       "QQMusic",
+      "SoundCloud",
       "Tidal"
     ],
     aboutText:
