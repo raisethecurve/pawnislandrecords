@@ -1858,30 +1858,67 @@ button:focus-visible {
 }
 
 .signal-card__icon svg {
-  width: 1.3rem;
-  height: 1.3rem;
+  width: 2.25rem;
+  height: 2.25rem;
 }
 
 .signal-card__icon img {
-  width: 2rem;
-  height: 2rem;
+  width: 2.15rem;
+  height: 2.15rem;
   aspect-ratio: auto;
   object-fit: contain;
 }
 
 .signal-card--instagram .signal-card__icon img,
 .signal-card--facebook .signal-card__icon img {
-  width: 2.18rem;
-  height: 2.18rem;
+  width: 2.2rem;
+  height: 2.2rem;
 }
 
-.signal-card--youtube .signal-card__icon img,
-.signal-card--spotify .signal-card__icon img,
 .signal-card--threads .signal-card__icon img,
-.signal-card--tiktok .signal-card__icon img,
 .signal-card--x .signal-card__icon img {
-  width: 2.32rem;
-  height: 2.32rem;
+  width: 2.22rem;
+  height: 2.22rem;
+}
+
+.signal-card--tiktok .signal-card__icon img {
+  width: 2.48rem;
+  height: 2.48rem;
+}
+
+.signal-card--youtube .signal-card__icon img {
+  width: 2.72rem;
+  height: 2.72rem;
+}
+
+.signal-card--spotify .signal-card__icon img {
+  width: 1.98rem;
+  height: 1.98rem;
+}
+
+.signal-card--soundcloud .signal-card__icon svg {
+  width: 2.55rem;
+  height: 2.55rem;
+}
+
+.signal-card--email .signal-card__icon svg {
+  width: 2.58rem;
+  height: 2.58rem;
+}
+
+.signal-card--tiptopjar .signal-card__icon svg {
+  width: 2.45rem;
+  height: 2.45rem;
+}
+
+.signal-card--facebook .signal-card__icon img {
+  width: 2.08rem;
+  height: 2.08rem;
+}
+
+.signal-card--x .signal-card__icon img {
+  width: 2rem;
+  height: 2rem;
 }
 
 .signal-card--soundcloud .signal-card__icon {
@@ -2604,9 +2641,14 @@ button:focus-visible {
   .social-icon-row {
     width: 100%;
     max-width: 100%;
-    justify-content: center;
+    justify-content: flex-start;
     overflow-x: auto;
-    padding-bottom: 0.15rem;
+    padding: 0 0.8rem 0.15rem;
+    scroll-padding-inline: 0.8rem;
+  }
+
+  .social-footer .social-icon-row {
+    justify-content: flex-start;
   }
 
   .social-footer__copyright {
