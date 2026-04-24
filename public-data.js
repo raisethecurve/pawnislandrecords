@@ -446,7 +446,7 @@ window.PAWN_PUBLIC_DATA = {
         "A poetic boom bap single from High Ground — a look back at childhood and the moment music became something to hold onto.",
       status: "upcoming",
       releaseDate: "2026-06-05",
-      tooFmUrl: "",
+      tooFmUrl: "https://too.fm/drydpna",
       platforms: [],
       tracks: [
         { title: "Final Analysis", runtime: "", youtubeId: "" }
