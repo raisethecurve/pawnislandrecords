@@ -131,6 +131,14 @@ window.PAWN_PUBLIC_DATA = {
         description: "Dance, glow, and low-end movement around the Velvet Orchard lane."
       },
       {
+        title: "Matt's Meaningful Mix",
+        category: "Spotify Influences",
+        platform: "spotify",
+        url: "https://open.spotify.com/playlist/5dmk4LcJyHhCIDxsBEAS1D?si=9zas9U-gR6ukXxQvQHJVzA",
+        image: "assets/playlists/spotify/matt_meaningful.png",
+        description: "Some songs are a soundtrack for life's memorable moments, seasons, or milestones. Some are the reason we keep moving."
+      },
+      {
         title: "Pawn Island Records Full Catalog",
         category: "YouTube Catalog",
         platform: "youtube",
