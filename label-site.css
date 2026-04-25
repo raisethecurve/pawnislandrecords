@@ -438,30 +438,54 @@ button:focus-visible {
 }
 
 .social-footer {
-  width: 100%;
-  min-width: 0;
-  display: grid;
-  justify-items: center;
+  /* bleed to page edges — mirrors the shell navbar */
+  margin-inline: calc(-1 * var(--label-page-pad));
+  margin-bottom: calc(-1 * var(--label-page-pad));
+  /* layout */
+  display: flex;
   align-items: center;
-  gap: 0.7rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--white-faint);
-  border-radius: 24px;
+  justify-content: space-between;
+  gap: 0.8rem 1.4rem;
+  padding: 0.65rem 1.2rem;
+  /* glass — same values as .shell-header */
   background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .social-footer__copyright {
-  justify-self: center;
-  text-align: center;
+  flex-shrink: 0;
   color: rgba(255, 255, 255, 0.48);
-  font-size: 0.816rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .social-footer .social-icon-row {
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 0.15rem;
+}
+
+.social-footer .social-icon-link {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+.social-footer .social-icon-link svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.social-footer .social-icon-link img {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.social-footer .social-icon-link--x svg {
+  width: 1.2rem;
+  height: 1.2rem;
 }
 
 .label-main {
@@ -2634,11 +2658,6 @@ button:focus-visible {
     justify-content: space-between;
   }
 
-  .social-footer {
-    grid-template-columns: 1fr;
-    justify-items: center;
-  }
-
   .social-icon-row {
     width: 100%;
     max-width: 100%;
@@ -2648,12 +2667,18 @@ button:focus-visible {
     scroll-padding-inline: 0.8rem;
   }
 
+  .social-footer {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
   .social-footer .social-icon-row {
-    justify-content: flex-start;
+    order: -1;
+    justify-content: center;
   }
 
   .social-footer__copyright {
-    justify-self: center;
     text-align: center;
   }
 
@@ -2936,8 +2961,7 @@ button:focus-visible {
   }
 
   .social-footer {
-    padding: 0.8rem;
-    border-radius: 20px;
+    padding: 0.55rem 0.8rem;
   }
 
   .panel-shell {
