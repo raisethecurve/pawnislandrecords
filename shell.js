@@ -87,8 +87,27 @@
     frame.src = nextTarget;
   }
 
+  // Sync aria-current on shell nav links to match the active iframe page.
+  function syncShellNav() {
+    try {
+      const childFile = frame.contentWindow.location.pathname.split("/").pop() || "index.html";
+      const navParentMap = { "artist.html": "roster.html", "epk.html": "epks.html" };
+      const activeFile = navParentMap[childFile] || childFile;
+      document.querySelectorAll("[data-shell-page]").forEach((link) => {
+        if (link.dataset.shellPage === activeFile) {
+          link.setAttribute("aria-current", "page");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+    } catch (e) {
+      // Cross-origin or between navigations — ignore.
+    }
+  }
+
   frame.addEventListener("load", () => {
     syncBrowserChrome();
+    syncShellNav();
     loadingCard.hidden = true;
   });
 
@@ -97,6 +116,14 @@
     const target = (event.state && event.state.page) || currentRequestedPage();
     isHistoryTraversal = true;
     navigate(sanitizeTarget(target));
+  });
+
+  // Shell nav: intercept link clicks to navigate inside the iframe instead of the parent.
+  document.querySelectorAll("[data-shell-page]").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      navigate(link.dataset.shellPage);
+    });
   });
 
   navigate(currentRequestedPage());

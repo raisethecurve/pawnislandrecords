@@ -215,10 +215,12 @@ button:focus-visible {
   grid-template-rows: auto auto;
   gap: clamp(12px, 1.8vh, 20px);
   padding: var(--label-page-pad);
-  overflow-x: clip;
+  overflow-x: hidden;
 }
 
 .label-header {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -377,8 +379,7 @@ button:focus-visible {
   height: 2.2rem;
 }
 
-.social-icon-link--threads img,
-.social-icon-link--x img {
+.social-icon-link--threads img {
   width: 2.22rem;
   height: 2.22rem;
 }
@@ -418,9 +419,9 @@ button:focus-visible {
   height: 2.08rem;
 }
 
-.social-icon-link--x img {
-  width: 2rem;
-  height: 2rem;
+.social-icon-link--x svg {
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .social-icon-link--soundcloud {

@@ -2,8 +2,6 @@ window.PAWN_PUBLIC_DATA = {
   label: {
     name: "Pawn Island Records",
     tagline: "One writer, many worlds.",
-    intro:
-      "A one-person label imprint for songs that do not belong in one lane. Each project gives the writing its own weather, voice, and visual world.",
     // Switch back to "full" when project pages, release pages, and press pages are ready to publish.
     launchMode: "essentials",
     featuredCampaignTitle: "May 1 Release Wave",
@@ -12,7 +10,7 @@ window.PAWN_PUBLIC_DATA = {
     featuredCampaignUrl: "https://too.fm/ryxg0kk",
     campaignUrl: "https://too.fm/ryxg0kk",
     defaultTooFmUrl: "https://too.fm/ryxg0kk",
-    catalogPlaylistUrl: "https://open.spotify.com/playlist/7ru1FJZS5qFXAbrNlh5YwZ",
+    catalogPlaylistUrl: "https://open.spotify.com/playlist/6Ro52nZas5JxzVgQa353Cw?si=xzNAYGiqQXqMGn-h5q_pqA",
     socialLinks: [
       {
         key: "instagram",
@@ -80,7 +78,7 @@ window.PAWN_PUBLIC_DATA = {
         title: "Pawn Island Records Full Catalog",
         category: "Spotify Catalog",
         platform: "spotify",
-        url: "https://open.spotify.com/playlist/7ru1FJZS5qFXAbrNlh5YwZ",
+        url: "https://open.spotify.com/playlist/6Ro52nZas5JxzVgQa353Cw?si=xzNAYGiqQXqMGn-h5q_pqA",
         image: "assets/brand/pawnisland-1200.jpg",
         description: "The main label playlist: a clean front door into the released catalog."
       },
