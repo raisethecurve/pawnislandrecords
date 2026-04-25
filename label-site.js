@@ -1069,24 +1069,6 @@
     });
   }
 
-  function setupScrollFades() {
-    const scrollers = document.querySelectorAll(".release-strip, .artist-strip");
-
-    scrollers.forEach((el) => {
-      const update = () => {
-        const hasRight =
-          el.scrollWidth > el.clientWidth + 2 &&
-          el.scrollLeft + el.clientWidth < el.scrollWidth - 2;
-        const hasLeft = el.scrollLeft > 2;
-        el.classList.toggle("has-scroll-right", hasRight);
-        el.classList.toggle("has-scroll-left", hasLeft);
-      };
-
-      update();
-      el.addEventListener("scroll", update, { passive: true });
-    });
-  }
-
   function renderHome() {
     const identityLine = document.getElementById("home-identity-line");
     const platformsNode = document.getElementById("home-platforms");
@@ -2693,7 +2675,6 @@
     }
 
     hydrateArtwork();
-    requestAnimationFrame(setupScrollFades);
     window.addEventListener("resize", syncViewportHeight);
     window.addEventListener("orientationchange", syncViewportHeight);
   }

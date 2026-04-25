@@ -116,17 +116,6 @@
   background-size: auto;
 }
 
-/* ─── Horizontal scroll fades ───────────────────────────────── */
-
-.cover-gallery {
-  mask-image: linear-gradient(to right, black calc(100% - 3.5rem), transparent 100%);
-}
-
-.release-strip.has-scroll-right,
-.artist-strip.has-scroll-right {
-  mask-image: linear-gradient(to right, black calc(100% - 3.5rem), transparent 100%);
-}
-
 *,
 *::before,
 *::after {
@@ -496,8 +485,8 @@ button:focus-visible {
   position: relative;
   overflow: visible;
   padding: clamp(20px, 3vw, 40px);
-  border: 1px solid var(--white-faint);
-  border-radius: clamp(28px, 3vw, 42px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: clamp(32px, 3.5vw, 48px);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
     #050505;
@@ -514,19 +503,19 @@ button:focus-visible {
 }
 
 .panel-shell::before {
-  top: -7rem;
-  right: -5rem;
-  width: 20rem;
-  height: 20rem;
-  background: radial-gradient(circle, rgba(65, 105, 225, 0.28), transparent 70%);
+  top: -9rem;
+  right: -7rem;
+  width: 26rem;
+  height: 26rem;
+  background: radial-gradient(circle, rgba(65, 105, 225, 0.32), transparent 70%);
 }
 
 .panel-shell::after {
-  bottom: -8rem;
-  left: -5rem;
-  width: 18rem;
-  height: 18rem;
-  background: radial-gradient(circle, rgba(255, 204, 0, 0.18), transparent 70%);
+  bottom: -10rem;
+  left: -7rem;
+  width: 24rem;
+  height: 24rem;
+  background: radial-gradient(circle, rgba(255, 204, 0, 0.22), transparent 70%);
 }
 
 .panel-shell > * {
@@ -549,7 +538,7 @@ button:focus-visible {
 .home-hero {
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: clamp(16px, 2vw, 24px);
   align-items: start;
 }
@@ -569,6 +558,16 @@ button:focus-visible {
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.18em;
+}
+
+.section-kicker::before {
+  content: "";
+  display: block;
+  width: 1.4rem;
+  height: 2px;
+  margin-bottom: 0.42rem;
+  border-radius: 999px;
+  background: var(--yellow);
 }
 
 .hero-copy h1,
@@ -1189,6 +1188,8 @@ button:focus-visible {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 0.9rem 1.4rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .rail-header {
@@ -1226,39 +1227,12 @@ button:focus-visible {
 .release-strip,
 .timeline-list {
   min-height: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding-bottom: 0.2rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--blue) transparent;
-}
-
-.artist-strip::-webkit-scrollbar,
-.artists-grid::-webkit-scrollbar,
-.release-strip::-webkit-scrollbar,
-.timeline-list::-webkit-scrollbar {
-  height: 0.55rem;
-}
-
-.artist-strip::-webkit-scrollbar-track,
-.artists-grid::-webkit-scrollbar-track,
-.release-strip::-webkit-scrollbar-track,
-.timeline-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.artist-strip::-webkit-scrollbar-thumb,
-.artists-grid::-webkit-scrollbar-thumb,
-.release-strip::-webkit-scrollbar-thumb,
-.timeline-list::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: rgba(65, 105, 225, 0.6);
+  overflow: visible;
 }
 
 .artist-strip {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(230px, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 0.9rem;
 }
 
@@ -1292,7 +1266,7 @@ button:focus-visible {
 .timeline-item:focus-within {
   transform: translateY(-2px);
   border-color: rgba(65, 105, 225, 0.55);
-  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.44);
 }
 
 .strip-card__thumb {
@@ -1340,21 +1314,20 @@ button:focus-visible {
 .artists-panel,
 .releases-panel,
 .press-panel {
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
 }
 
 .artists-grid {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(248px, 18.5rem);
+  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
   gap: 0.9rem;
 }
 
 .artist-card,
 .release-card,
 .timeline-item {
-  border: 1px solid var(--white-faint);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
 }
 
 .artist-card,
@@ -1374,7 +1347,6 @@ button:focus-visible {
 .artist-card__cover {
   display: block;
   width: 100%;
-  aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -1383,10 +1355,8 @@ button:focus-visible {
 
 .artist-card__cover img {
   width: 100%;
-  height: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  object-position: center center;
+  height: auto;
+  display: block;
 }
 
 .artist-card__index {
@@ -1437,24 +1407,7 @@ button:focus-visible {
   grid-template-columns: minmax(0, 1fr);
   gap: 0.95rem;
   align-content: start;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding-right: 0.25rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--blue) transparent;
-}
-
-.press-stack::-webkit-scrollbar {
-  width: 0.55rem;
-}
-
-.press-stack::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.press-stack::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: rgba(65, 105, 225, 0.6);
+  overflow: visible;
 }
 
 .press-card {
@@ -1476,10 +1429,8 @@ button:focus-visible {
 
 .press-card__cover img {
   width: 100%;
-  height: 100%;
-  min-height: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
+  height: auto;
+  display: block;
 }
 
 .press-card__body {
@@ -1557,21 +1508,22 @@ button:focus-visible {
 
 .release-strip {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(248px, 18.5rem);
+  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
   gap: 0.9rem;
 }
 
 .catalog-groups {
   min-height: 0;
   display: grid;
-  gap: 1.05rem;
+  gap: 2.5rem;
 }
 
 .catalog-group {
   min-height: 0;
   display: grid;
   gap: 0.8rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .catalog-group__header {
@@ -1581,7 +1533,8 @@ button:focus-visible {
 
 .catalog-group__header h2 {
   margin: 0;
-  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  font-size: clamp(1.5rem, 2.5vw, 2.1rem);
+  letter-spacing: -0.02em;
   text-transform: uppercase;
 }
 
@@ -1727,12 +1680,11 @@ button:focus-visible {
 }
 
 .about-layout {
-  height: 100%;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.16fr) minmax(320px, 0.84fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: clamp(16px, 2.5vw, 28px);
-  align-items: stretch;
+  align-items: start;
 }
 
 .about-copy {
@@ -1779,9 +1731,7 @@ button:focus-visible {
 .timeline-list {
   min-height: 0;
   display: grid;
-  grid-template-rows: repeat(3, minmax(0, 1fr));
   gap: 0.85rem;
-  overflow: hidden;
 }
 
 .timeline-item {
@@ -1814,7 +1764,7 @@ button:focus-visible {
 
 .connect-hero {
   display: grid;
-  grid-template-columns: minmax(0, 0.78fr) minmax(360px, 1.22fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: clamp(18px, 2.4vw, 30px);
   align-items: start;
 }
@@ -1975,6 +1925,8 @@ button:focus-visible {
 .playlist-board {
   display: grid;
   gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .playlist-board h2 {
@@ -2104,7 +2056,7 @@ button:focus-visible {
 .epk-page-hero {
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: clamp(16px, 2vw, 24px);
 }
 
@@ -2172,8 +2124,8 @@ button:focus-visible {
 
 .epk-page-visual__cover img {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
+  height: auto;
+  display: block;
 }
 
 .epk-page-visual__caption {
@@ -2255,8 +2207,8 @@ button:focus-visible {
 
 .epk-spotlight__cover img {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
+  height: auto;
+  display: block;
 }
 
 .epk-spotlight__copy {
@@ -2319,7 +2271,7 @@ button:focus-visible {
 .artist-page-hero {
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.92fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: clamp(16px, 2vw, 24px);
 }
 
@@ -2385,8 +2337,8 @@ button:focus-visible {
 
 .artist-page-visual__cover img {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
+  height: auto;
+  display: block;
 }
 
 .artist-page-visual__caption {
@@ -2397,7 +2349,7 @@ button:focus-visible {
 .artist-page-content {
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: clamp(14px, 2vw, 22px);
 }
 
@@ -2409,7 +2361,7 @@ button:focus-visible {
 }
 
 .artist-discography .release-strip {
-  grid-auto-columns: minmax(220px, 17rem);
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
 .catalog-groups--artist .catalog-group__copy {
@@ -2417,7 +2369,7 @@ button:focus-visible {
 }
 
 .catalog-groups--artist .release-strip {
-  grid-auto-columns: minmax(220px, 17rem);
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
 .artist-media-panel {
@@ -2514,23 +2466,9 @@ button:focus-visible {
 .cover-gallery {
   min-height: 0;
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(136px, 10rem);
+  grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
   gap: 0.85rem;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding-bottom: 0.2rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--blue) transparent;
-}
-
-.cover-gallery::-webkit-scrollbar {
-  height: 0.55rem;
-}
-
-.cover-gallery::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: rgba(65, 105, 225, 0.6);
+  overflow: visible;
 }
 
 .cover-gallery__item {
@@ -2595,15 +2533,9 @@ button:focus-visible {
 }
 
 @media (max-width: 1080px) {
-  .home-hero,
-  .connect-hero,
-  .about-layout,
-  .epk-page-hero,
   .epk-detail-grid,
   .epk-catalog-grid,
-  .epk-media-grid,
-  .artist-page-hero,
-  .artist-page-content {
+  .epk-media-grid {
     grid-template-columns: 1fr;
   }
 
@@ -2623,11 +2555,6 @@ button:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .about-layout {
-    grid-template-rows: auto auto;
-    align-content: start;
-  }
-
   .about-copy {
     align-content: start;
   }
@@ -2637,9 +2564,7 @@ button:focus-visible {
   }
 
   .timeline-list {
-    grid-template-rows: repeat(3, minmax(0, auto));
     gap: 0.75rem;
-    overflow: visible;
   }
 
   .artist-media-panel__stage {
@@ -2684,10 +2609,6 @@ button:focus-visible {
 
   .pending-carousel__slide {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .artists-grid {
-    grid-auto-columns: minmax(214px, 1fr);
   }
 
   .playlist-grid {
@@ -2759,7 +2680,7 @@ button:focus-visible {
 
   .panel-shell {
     padding: 1.1rem;
-    border-radius: 28px;
+    border-radius: 32px;
   }
 
   .connect-copy h1 {
@@ -2827,10 +2748,6 @@ button:focus-visible {
     font-size: 1.1rem;
   }
 
-  .artist-strip {
-    grid-auto-columns: minmax(214px, 82vw);
-  }
-
   .platform-banner {
     width: 100%;
     padding: 0.85rem;
@@ -2867,10 +2784,6 @@ button:focus-visible {
     flex: 0 0 auto;
   }
 
-  .artists-grid {
-    grid-auto-columns: minmax(188px, 1fr);
-  }
-
   .press-card {
     grid-template-columns: 1fr;
     gap: 0.9rem;
@@ -2883,14 +2796,6 @@ button:focus-visible {
 
   .press-card__body {
     align-content: start;
-  }
-
-  .release-strip {
-    grid-auto-columns: minmax(218px, 84vw);
-  }
-
-  .artist-discography .release-strip {
-    grid-auto-columns: minmax(218px, 84vw);
   }
 
   .artist-page-copy h1 {
