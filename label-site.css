@@ -966,10 +966,6 @@ button:focus-visible {
   border: 0;
 }
 
-html.is-shell-framed .hero-playlist-embed iframe {
-  pointer-events: none;
-}
-
 .platform-banner {
   width: var(--home-card-width);
   display: grid;
