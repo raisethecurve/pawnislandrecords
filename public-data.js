@@ -99,7 +99,7 @@ window.PAWN_PUBLIC_DATA = {
         description: "Rap references, regional energy, and tracks that sharpen the High Ground lane."
       },
       {
-        title: "Second Watch Spiritual Playlist",
+        title: "Second Watch Worship Playlist",
         category: "Spotify Influences",
         platform: "spotify",
         url: "https://open.spotify.com/playlist/6svwz9dcDgvlTAm3BInNSQ",
