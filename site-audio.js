@@ -73,8 +73,6 @@
     session.wantedPlaying = true;
   }
 
-  session.wantedPlaying = true;
-
   const audio = new Audio(src);
   let resumeApplied = false;
   let autoplayBlocked = false;
@@ -146,9 +144,11 @@
   }
 
   function persistPrefs() {
+    prefs.muted = audio.muted;
+    prefs.volume = clamp(audio.volume, 0, 1);
     writeStorage(window.localStorage, PREFS_KEY, {
-      muted: audio.muted,
-      volume: clamp(audio.volume, 0, 1),
+      muted: prefs.muted,
+      volume: prefs.volume,
       userStarted: prefs.userStarted,
       collapsed: Boolean(prefs.collapsed)
     });
@@ -234,9 +234,9 @@
     if (isPlaying) {
       statusNode.textContent = audio.muted ? "Playing muted" : "Playing";
     } else if (autoplayBlocked) {
-      statusNode.textContent = "Interact anywhere to start audio";
+      statusNode.textContent = "Unmute to start audio";
     } else {
-      statusNode.textContent = "Ready";
+      statusNode.textContent = session.wantedPlaying ? "Ready" : "Paused";
     }
 
     syncDockHeight();
@@ -283,15 +283,22 @@
     autoplayBlocked = false;
     persistSession({
       currentTime: safeCurrentTime(),
-      wantedPlaying: true
+      wantedPlaying: false
     });
     render();
   }
 
   muteButton.addEventListener("click", () => {
     markUserStarted();
+    const wasMuted = audio.muted;
     audio.muted = !audio.muted;
     persistPrefs();
+
+    if (wasMuted && (audio.paused || autoplayBlocked)) {
+      attemptPlay(true);
+      return;
+    }
+
     render();
   });
 
@@ -316,6 +323,12 @@
     }
 
     persistPrefs();
+
+    if (audio.volume > 0 && (audio.paused || autoplayBlocked)) {
+      attemptPlay(true);
+      return;
+    }
+
     render();
   });
 
