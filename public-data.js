@@ -1048,6 +1048,23 @@ window.PAWN_PUBLIC_DATA = {
       ]
     },
     {
+      slug: "blackout-state-high-time",
+      artist: "blackout-state",
+      title: "High Time",
+      type: "Single",
+      vibe: "collaged, damaged, confrontational",
+      year: "2026",
+      accent: "#c59b25",
+      cover: "media/public/albums/blackout-time.png",
+      description:
+        "A sharp, high-impact single from Blackout State built for fast hooks and restless energy.",
+      status: "upcoming",
+      releaseDate: "2026-06-12",
+      tooFmUrl: "",
+      platforms: [],
+      tracks: [{ title: "High Time", runtime: "", youtubeId: "" }]
+    },
+    {
       slug: "crick-kinnard-red-river",
       artist: "crick-kinnard",
       title: "Red River",
