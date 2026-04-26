@@ -356,9 +356,10 @@
             title="${escapeHtml(link.label)}"
           >
             ${
-              link.image
+              link.icon ||
+              (link.image
                 ? `<img src="${escapeHtml(link.image)}" alt="" loading="eager" decoding="async" />`
-                : link.icon || `<span>${escapeHtml(link.label.slice(0, 1))}</span>`
+                : `<span>${escapeHtml(link.label.slice(0, 1))}</span>`)
             }
           </a>
         `
@@ -629,6 +630,26 @@
     return date
       ? `Out now: ${release.title}, released ${date}.`
       : `Out now: ${release.title}.`;
+  }
+
+  function artistFocusMarkup(artist, release) {
+    if (!release) {
+      return escapeHtml(artistFocusLine(artist, release));
+    }
+
+    const isUpcoming = releaseState(release) === "upcoming";
+    const date = formatReleaseDateValue(release.releaseDate);
+    const label = isUpcoming ? "Next release" : "Out now";
+    const tail = date
+      ? isUpcoming
+        ? ` arrives ${date}.`
+        : ` released ${date}.`
+      : ".";
+
+    return `
+      <span class="artist-card__status-label">${escapeHtml(label)}:</span>
+      <span class="artist-card__status-title">${escapeHtml(release.title)}</span>${escapeHtml(tail)}
+    `;
   }
 
   function chunkItems(list, size) {
@@ -1214,7 +1235,23 @@
       return;
     }
 
-    collection.innerHTML = artists
+    const rosterArtists = [...artists].sort((firstArtist, secondArtist) => {
+      const firstName = text(firstArtist.name, "");
+      const secondName = text(secondArtist.name, "");
+      const firstPinnedLast = firstName.toLowerCase() === "matt freeman";
+      const secondPinnedLast = secondName.toLowerCase() === "matt freeman";
+
+      if (firstPinnedLast !== secondPinnedLast) {
+        return firstPinnedLast ? 1 : -1;
+      }
+
+      return firstName.localeCompare(secondName, undefined, {
+        sensitivity: "base"
+      });
+    });
+
+    collection.dataset.count = String(rosterArtists.length);
+    collection.innerHTML = rosterArtists
       .map((artist, index) => {
         const latestRelease = latestReleaseForArtist(artist.slug);
         const focusAction = releaseAction(latestRelease);
@@ -1272,7 +1309,6 @@
                     </div>
                   `
             }
-            <p class="artist-card__index">Project ${String(index + 1).padStart(2, "0")}</p>
             <div>
               <h2>${escapeHtml(artist.name)}</h2>
               <p class="artist-card__genre">${escapeHtml(text(artist.lane, "Independent project"))}</p>
@@ -1287,7 +1323,7 @@
                 )
               )}
             </p>
-            <p class="artist-card__status">${escapeHtml(artistFocusLine(artist, latestRelease))}</p>
+            <p class="artist-card__status">${artistFocusMarkup(artist, latestRelease)}</p>
             ${
               cardActions
                 ? `<div class="card-actions">${cardActions}</div>`

@@ -1,5 +1,18 @@
 :root {
   color-scheme: dark;
+  --shell-header-height: 65px;
+}
+
+@keyframes shell-current-line {
+  0%,
+  100% {
+    opacity: 0.82;
+    transform: scaleX(0.72);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
 }
 
 *,
@@ -11,10 +24,20 @@
 html,
 body {
   margin: 0;
-  height: 100%;
+  width: 100%;
+  min-height: 100%;
+}
+
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-x: none;
 }
 
 body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-x: none;
   font-family: "Space Grotesk", "Segoe UI", sans-serif;
   color: #f6f0e4;
   background:
@@ -25,11 +48,7 @@ body {
 .shell-body {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
-}
-
-.shell-experience {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .shell-experience {
@@ -37,8 +56,11 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  min-height: 0;
-  padding-bottom: var(--site-audio-height, 92px);
+  min-height: 100dvh;
+  padding-top: var(--shell-header-height);
+  padding-bottom: var(--site-audio-clearance, 110px);
+  overflow: visible;
+  overscroll-behavior-x: none;
 }
 
 .shell-experience__wash,
@@ -76,12 +98,19 @@ body {
 .shell-frame {
   position: relative;
   z-index: 1;
-  flex: 1 1 0;
+  flex: 0 0 auto;
   width: 100%;
-  min-height: 0;
+  min-height: calc(100dvh - var(--site-audio-height, 92px) - 4rem);
   border: 0;
   background: transparent;
   display: block;
+  overflow: hidden;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+}
+
+.shell-frame::-webkit-scrollbar {
+  display: none;
 }
 
 .shell-loading {
@@ -103,6 +132,7 @@ body {
 }
 
 .shell-loading[hidden] {
+  display: none;
   opacity: 0;
   transform: translateY(-6px);
 }
@@ -151,7 +181,10 @@ body {
 /* ─── Shell header ──────────────────────────────────────────── */
 
 .shell-header {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 2;
   display: flex;
   align-items: center;
@@ -233,6 +266,13 @@ body {
   height: 2px;
   border-radius: 999px;
   background: #ffcc00;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .shell-nav a[aria-current="page"]::after {
+    animation: shell-current-line 3.8s ease-in-out infinite;
+  }
 }
 
 @media (max-width: 860px) {
@@ -242,5 +282,33 @@ body {
 
   .shell-brand__name {
     display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .shell-header {
+    justify-content: center;
+    padding: 0.5rem 0.65rem;
+  }
+
+  .shell-brand {
+    display: none;
+  }
+
+  .shell-nav {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.25rem;
+  }
+
+  .shell-nav a {
+    min-height: 2.25rem;
+    padding-inline: 0.25rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+
+  .shell-nav a[aria-current="page"]::after {
+    bottom: -0.2rem;
   }
 }

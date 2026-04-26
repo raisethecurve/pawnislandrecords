@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /downloads/
+Disallow: /tmp/
+
+Sitemap: https://pawnislandrecords.com/sitemap.xml
