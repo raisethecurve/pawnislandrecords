@@ -1060,7 +1060,7 @@ window.PAWN_PUBLIC_DATA = {
         "A sharp, high-impact single from Blackout State built for fast hooks and restless energy.",
       status: "upcoming",
       releaseDate: "2026-06-12",
-      tooFmUrl: "",
+      tooFmUrl: "https://too.fm/dazenaz",
       platforms: [],
       tracks: [{ title: "High Time", runtime: "", youtubeId: "" }]
     },
