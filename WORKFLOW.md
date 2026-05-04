@@ -65,6 +65,7 @@ Each sprint has:
 - A small implementation scope that can be reviewed independently.
 - A demoable increment at the end of the sprint.
 - Validation notes added to the PR.
+- A workflow and roadmap update before the sprint is considered closed.
 
 Definition of Ready:
 
@@ -83,6 +84,22 @@ Definition of Done:
 - Links, embeds, image paths, and query-string routes are validated.
 - The change does not expose `admin.html` or local-only docs.
 - The README and workflow are updated when architecture changes.
+- `WORKFLOW.md` has been updated with sprint outcomes, roadmap progress, new risks, and next recommended work.
+
+## Sprint Closeout Rule
+
+Every sprint must end with a documentation pass before the branch or PR is treated as complete.
+
+Update `WORKFLOW.md` after each sprint to capture:
+
+- Completed stories and acceptance criteria.
+- Roadmap progress, including any sprint status changes.
+- Scope that moved, split, or was intentionally deferred.
+- New risks, blockers, or dependencies.
+- Validation performed and known test gaps.
+- The recommended next sprint goal.
+
+If a sprint changes how the repo works, update `README.md` as part of the same closeout. If future-agent guidance changes, update local `agent.md` as well; keep `agent.md` ignored and out of commits.
 
 ## Delivery Roadmap
 
@@ -250,7 +267,8 @@ For each development PR:
 3. Keep one sprint story or tightly related set of tasks per PR.
 4. Update `WORKFLOW.md` when the route inventory, architecture, or launch plan changes.
 5. Run the available smoke checks. If checks are not yet automated, document manual browser coverage in the PR body.
-6. Open PRs as draft unless the user explicitly asks for ready review.
+6. Before closing a sprint PR, update the workflow and roadmap with what actually changed and what should happen next.
+7. Open PRs as draft unless the user explicitly asks for ready review.
 
 ## First Implementation Slice
 
