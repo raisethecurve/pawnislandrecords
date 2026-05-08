@@ -4,12 +4,12 @@ window.PAWN_PUBLIC_DATA = {
     tagline: "One writer, many worlds.",
     // Switch back to "full" when project pages, release pages, and press pages are ready to publish.
     launchMode: "essentials",
-    featuredCampaignTitle: "May 1 Release Wave",
+    featuredCampaignTitle: "Send Me",
     featuredCampaignSummary:
-      "Three new chapters arrive May 1, with pre-save links live now.",
-    featuredCampaignUrl: "https://too.fm/ryxg0kk",
-    campaignUrl: "https://too.fm/ryxg0kk",
-    defaultTooFmUrl: "https://too.fm/ryxg0kk",
+      "Crick Kinnard's new single opens for pre-save ahead of its June 1, 2026 release at 4 PM ET.",
+    featuredCampaignUrl: "https://too.fm/ypn96ka",
+    campaignUrl: "https://too.fm/ypn96ka",
+    defaultTooFmUrl: "https://too.fm/ypn96ka",
     catalogPlaylistUrl: "https://open.spotify.com/playlist/6Ro52nZas5JxzVgQa353Cw?si=xzNAYGiqQXqMGn-h5q_pqA",
     socialLinks: [
       {
@@ -1108,6 +1108,25 @@ window.PAWN_PUBLIC_DATA = {
       tooFmUrl: "https://too.fm/x11ebjp",
       platforms: [],
       tracks: []
+    },
+    {
+      slug: "crick-kinnard-send-me",
+      artist: "crick-kinnard",
+      title: "Send Me",
+      type: "Single",
+      vibe: "duty, family, country-soul",
+      year: "2026",
+      accent: "#b5844a",
+      cover: "media/public/albums/crick_send_me.jpg",
+      description:
+        "A roots-country single from Crick Kinnard about duty, family, and the heavy quiet around signing your name before stepping into the unknown.",
+      status: "upcoming",
+      releaseDate: "2026-06-01",
+      releaseTime: "4 PM ET",
+      releaseHour: 16,
+      tooFmUrl: "https://too.fm/ypn96ka",
+      platforms: [],
+      tracks: [{ title: "Send Me", runtime: "", youtubeId: "" }]
     },
     {
       slug: "second-watch-psalm-of-myself",
