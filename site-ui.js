@@ -184,6 +184,107 @@
     };
   }
 
+  function embedProviderName(source) {
+    const value = String(source || "").toLowerCase();
+
+    if (value.includes("spotify.com")) {
+      return "Spotify";
+    }
+
+    if (value.includes("youtube.com") || value.includes("youtu.be")) {
+      return "YouTube";
+    }
+
+    return "media";
+  }
+
+  function publicEmbedUrl(source) {
+    const value = String(source || "").trim();
+
+    if (!value) {
+      return "";
+    }
+
+    try {
+      const url = new URL(value, window.location.href);
+      const spotifyMatch = url.hostname.includes("spotify.com")
+        ? url.pathname.match(/^\/embed\/(album|track|playlist|episode|show)\/([^/?#]+)/i)
+        : null;
+
+      if (spotifyMatch) {
+        return `https://open.spotify.com/${spotifyMatch[1].toLowerCase()}/${spotifyMatch[2]}`;
+      }
+
+      const youtubeMatch = url.hostname.includes("youtube.com")
+        ? url.pathname.match(/^\/embed\/([^/?#]+)/i)
+        : null;
+
+      if (youtubeMatch) {
+        return `https://www.youtube.com/watch?v=${encodeURIComponent(youtubeMatch[1])}`;
+      }
+
+      if (url.hostname === "youtu.be") {
+        const videoId = url.pathname.replace(/^\/+/, "").split("/")[0];
+        return videoId ? `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}` : value;
+      }
+
+      return value;
+    } catch (error) {
+      return value;
+    }
+  }
+
+  function mediaEmbedFrameMarkup(options) {
+    const settings = options && typeof options === "object" ? options : {};
+    const src = String(settings.src || "").trim();
+    const provider = String(settings.provider || embedProviderName(src)).trim() || "media";
+    const variant = settings.variant === "video" ? "video" : "audio";
+    const className = String(settings.className || "").trim();
+    const frameClassName = [className, "media-embed", `media-embed--${variant}`].filter(Boolean).join(" ");
+    const title = String(settings.title || `${provider} embed`).trim();
+    const allow = String(
+      settings.allow ||
+        (variant === "video"
+          ? "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          : "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture")
+    ).trim();
+    const fallbackUrl = String(settings.fallbackUrl || publicEmbedUrl(src)).trim();
+    const fallbackLabel = String(settings.fallbackLabel || `Open on ${provider}`).trim();
+    const loading = settings.loading === "eager" ? "eager" : "lazy";
+    const allowFullscreen = settings.allowfullscreen || settings.allowFullscreen || variant === "video";
+
+    if (!src) {
+      return "";
+    }
+
+    return `
+      <div
+        class="${escapeAttribute(frameClassName)}"
+        data-media-embed-frame
+        data-embed-state="idle"
+        data-embed-provider="${escapeAttribute(provider)}"
+        data-media-embed-fallback="${escapeAttribute(fallbackUrl)}"
+      >
+        <iframe
+          data-media-embed
+          src="${escapeAttribute(src)}"
+          title="${escapeAttribute(title)}"
+          loading="${loading}"
+          allow="${escapeAttribute(allow)}"
+          ${allowFullscreen ? "allowfullscreen" : ""}
+        ></iframe>
+        <div class="media-embed__status" aria-live="polite">
+          <p class="media-embed__status-label" data-media-embed-status></p>
+          ${
+            fallbackUrl
+              ? `<a class="media-embed__action" href="${escapeAttribute(fallbackUrl)}" target="_blank" rel="noreferrer">${escapeAttribute(fallbackLabel)}</a>`
+              : ""
+          }
+        </div>
+      </div>
+    `.replace(/\s+/g, " ").trim();
+  }
+
   function getArtist(slug) {
     return currentData().artists.find((artist) => artist.slug === slug) || null;
   }
@@ -579,6 +680,71 @@
 
   function getSearchParam(name) {
     return new URLSearchParams(window.location.search).get(name);
+  }
+
+  function requestedLaunchMode() {
+    const search = new URLSearchParams(window.location.search);
+    const value = String(
+      search.get("preview") ||
+      search.get("launch") ||
+      search.get("launchMode") ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
+
+    if (value === "full" || value === "essentials") {
+      return value;
+    }
+
+    if (search.get("full") === "1") {
+      return "full";
+    }
+
+    return "";
+  }
+
+  function effectiveLaunchMode(label) {
+    const previewMode = requestedLaunchMode();
+
+    if (previewMode) {
+      return previewMode;
+    }
+
+    return String((label && label.launchMode) || "full").trim().toLowerCase() || "full";
+  }
+
+  function isLaunchPreview() {
+    return Boolean(requestedLaunchMode());
+  }
+
+  function withLaunchPreview(rawValue) {
+    const previewMode = requestedLaunchMode();
+    const original = String(rawValue || "").trim();
+
+    if (!previewMode || !original || original === "#" || original.startsWith("#")) {
+      return original;
+    }
+
+    if (/^(?:https?:)?\/\//i.test(original) || /^(?:mailto:|tel:|data:|blob:|javascript:)/i.test(original)) {
+      return original;
+    }
+
+    try {
+      const url = new URL(original, window.location.href);
+      const file = url.pathname.split("/").pop() || "";
+
+      if (url.origin !== window.location.origin || !/\.html$/i.test(file)) {
+        return original;
+      }
+
+      url.searchParams.set("preview", previewMode);
+      url.searchParams.delete("standalone");
+
+      return `${file}${url.search}${url.hash}`;
+    } catch (error) {
+      return original;
+    }
   }
 
   function normalizeView(value) {
@@ -979,6 +1145,156 @@
     root.querySelectorAll("img[data-artwork-fallback]").forEach(bindArtworkFallback);
   }
 
+  function mediaEmbedDelay(name, fallback) {
+    const value = Number(window[`PAWN_MEDIA_EMBED_${name}_MS`]);
+    return Number.isFinite(value) && value > 0 ? value : fallback;
+  }
+
+  function setMediaEmbedState(frame, state, message) {
+    if (!frame || !state) {
+      return;
+    }
+
+    frame.dataset.embedState = state;
+
+    const status = frame.querySelector("[data-media-embed-status]");
+    if (status && message !== undefined) {
+      status.textContent = message;
+    }
+  }
+
+  function bindMediaEmbed(frame) {
+    if (!(frame instanceof HTMLElement) || frame.dataset.mediaEmbedBound === "true") {
+      return;
+    }
+
+    const iframe = frame.querySelector("iframe");
+
+    if (!(iframe instanceof HTMLIFrameElement)) {
+      return;
+    }
+
+    const src = String(iframe.getAttribute("src") || "").trim();
+
+    if (!src) {
+      return;
+    }
+
+    const provider = String(frame.dataset.embedProvider || embedProviderName(src) || "media").trim();
+    const providerLabel = provider === "media" ? "Media" : provider;
+    let started = false;
+    let finished = false;
+    let slowTimer = 0;
+    let failTimer = 0;
+
+    frame.dataset.mediaEmbedBound = "true";
+
+    function clearTimers() {
+      window.clearTimeout(slowTimer);
+      window.clearTimeout(failTimer);
+    }
+
+    function markReady() {
+      if (!started || finished) {
+        return;
+      }
+
+      try {
+        if (iframe.contentWindow && iframe.contentWindow.location.href === "about:blank") {
+          return;
+        }
+      } catch (error) {
+        // Cross-origin access fails only after the external embed has actually navigated.
+      }
+
+      window.setTimeout(() => {
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+        clearTimers();
+        setMediaEmbedState(frame, "ready", "");
+      }, mediaEmbedDelay("READY", 180));
+    }
+
+    function markError() {
+      if (!started || finished) {
+        return;
+      }
+
+      finished = true;
+      clearTimers();
+      setMediaEmbedState(frame, "error", `${providerLabel} preview could not load here.`);
+    }
+
+    function startWatch() {
+      if (started || finished) {
+        return;
+      }
+
+      started = true;
+      setMediaEmbedState(frame, "loading", "");
+      slowTimer = window.setTimeout(() => {
+        if (!finished) {
+          setMediaEmbedState(frame, "slow", `${providerLabel} preview is taking longer than usual.`);
+        }
+      }, mediaEmbedDelay("SLOW", 4500));
+      failTimer = window.setTimeout(() => {
+        if (!finished) {
+          markError();
+        }
+      }, mediaEmbedDelay("FAIL", 14000));
+    }
+
+    iframe.addEventListener("load", markReady, { once: true });
+    iframe.addEventListener("error", markError, { once: true });
+
+    if (iframe.loading === "eager" || iframe.getAttribute("loading") === "eager") {
+      startWatch();
+      return;
+    }
+
+    if (typeof window.IntersectionObserver !== "function") {
+      startWatch();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            startWatch();
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: "360px 0px",
+        threshold: 0.01
+      }
+    );
+
+    observer.observe(frame);
+  }
+
+  function hydrateMediaEmbeds(root) {
+    if (!root) {
+      root = document;
+    }
+
+    if (root instanceof HTMLElement && root.matches("[data-media-embed-frame]")) {
+      bindMediaEmbed(root);
+      return;
+    }
+
+    if (typeof root.querySelectorAll !== "function") {
+      return;
+    }
+
+    root.querySelectorAll("[data-media-embed-frame]").forEach(bindMediaEmbed);
+  }
+
   function artworkImageMarkup(options) {
     const settings = options && typeof options === "object" ? options : {};
     const fallback = placeholderArtworkUrl(settings);
@@ -1107,10 +1423,124 @@
     meta.setAttribute("content", String(content || "").trim());
   }
 
+  function ensureMeta(kind, key) {
+    const selector = `meta[${kind}="${key}"]`;
+    let meta = document.head.querySelector(selector);
+
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute(kind, key);
+      document.head.append(meta);
+    }
+
+    return meta;
+  }
+
+  function setMetaContent(kind, key, value) {
+    const content = String(value || "").trim();
+
+    if (!content) {
+      return;
+    }
+
+    ensureMeta(kind, key).setAttribute("content", content);
+  }
+
+  function absoluteSiteUrl(value) {
+    const raw = String(value || "").trim();
+    const siteOrigin = "https://pawnislandrecords.com";
+
+    if (!raw) {
+      return `${siteOrigin}/`;
+    }
+
+    if (/^https?:\/\//i.test(raw)) {
+      return raw;
+    }
+
+    return new URL(raw.replace(/^\/+/, ""), `${siteOrigin}/`).toString();
+  }
+
+  function setCanonicalUrl(value) {
+    const href = absoluteSiteUrl(value);
+    let link = document.head.querySelector('link[rel="canonical"]');
+
+    if (!link) {
+      link = document.createElement("link");
+      link.setAttribute("rel", "canonical");
+      document.head.append(link);
+    }
+
+    link.setAttribute("href", href);
+    return href;
+  }
+
+  function setStructuredData(id, value) {
+    const scriptId = id || "pawn-structured-data";
+    let script = document.getElementById(scriptId);
+
+    if (!value) {
+      if (script) {
+        script.remove();
+      }
+      return;
+    }
+
+    if (!script) {
+      script = document.createElement("script");
+      script.id = scriptId;
+      script.type = "application/ld+json";
+      document.head.append(script);
+    }
+
+    script.textContent = JSON.stringify(value);
+  }
+
+  function setPageMeta(settings) {
+    const options = settings || {};
+    const title = String(options.title || "").trim();
+    const description = String(options.description || "").trim();
+    const canonicalPath = String(options.canonicalPath || options.url || "").trim();
+    const image = String(options.image || "assets/brand/pawnisland-1200.jpg").trim();
+    const ogType = String(options.ogType || "website").trim();
+    const canonicalUrl = canonicalPath ? setCanonicalUrl(canonicalPath) : "";
+    const absoluteImage = absoluteSiteUrl(image || "assets/brand/pawnisland-1200.jpg");
+
+    if (title) {
+      document.title = title;
+      setMetaContent("property", "og:title", title);
+      setMetaContent("name", "twitter:title", title);
+    }
+
+    if (description) {
+      setMetaDescription(description);
+      setMetaContent("property", "og:description", description);
+      setMetaContent("name", "twitter:description", description);
+    }
+
+    if (canonicalUrl) {
+      setMetaContent("property", "og:url", canonicalUrl);
+    }
+
+    setMetaContent("property", "og:type", ogType);
+    setMetaContent("property", "og:image", absoluteImage);
+    setMetaContent("name", "twitter:card", "summary_large_image");
+    setMetaContent("name", "twitter:image", absoluteImage);
+
+    if (options.robots) {
+      setMetaContent("name", "robots", options.robots);
+    }
+
+    if (Object.prototype.hasOwnProperty.call(options, "structuredData")) {
+      setStructuredData(options.structuredDataId, options.structuredData);
+    }
+  }
+
   function revealOnScroll() {
     const items = document.querySelectorAll(".reveal");
 
     hydrateArtwork(document);
+    hydrateMediaEmbeds(document);
 
     if (!items.length) {
       requestAnimationFrame(() => document.body.classList.add("is-ready"));
@@ -1163,6 +1593,10 @@
     trackCount,
     downloadText,
     getSearchParam,
+    requestedLaunchMode,
+    effectiveLaunchMode,
+    isLaunchPreview,
+    withLaunchPreview,
     normalizeView,
     updateViewParam,
     normalizeHexColor,
@@ -1170,10 +1604,14 @@
     placeholderArtworkUrl,
     resolveArtwork,
     hydrateArtwork,
+    hydrateMediaEmbeds,
     artworkImageMarkup,
+    mediaEmbedFrameMarkup,
     assignArtworkImage,
     applyExperienceTheme,
     setMetaDescription,
+    setPageMeta,
+    setStructuredData,
     revealOnScroll
   };
 

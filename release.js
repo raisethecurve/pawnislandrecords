@@ -26,16 +26,72 @@
     return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
   }
 
+  function mediaEmbedFrameMarkup(options) {
+    if (ui && ui.mediaEmbedFrameMarkup) {
+      return ui.mediaEmbedFrameMarkup(options);
+    }
+
+    const settings = options || {};
+    const src = text(settings.src, "");
+    const className = text(settings.className, "embed-frame");
+    const title = text(settings.title, "Media embed");
+    const allow = text(settings.allow, "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture");
+
+    return src
+      ? `
+          <div class="${escapeAttribute(className)}">
+            <iframe
+              src="${escapeAttribute(src)}"
+              title="${escapeAttribute(title)}"
+              loading="${settings.loading === "eager" ? "eager" : "lazy"}"
+              allow="${escapeAttribute(allow)}"
+              ${settings.allowfullscreen || settings.allowFullscreen ? "allowfullscreen" : ""}
+            ></iframe>
+          </div>
+        `
+      : "";
+  }
+
+  function hydrateMediaEmbeds(root) {
+    if (ui && ui.hydrateMediaEmbeds) {
+      ui.hydrateMediaEmbeds(root || document);
+    }
+  }
+
+  function withLaunchPreview(url) {
+    if (ui && ui.withLaunchPreview) {
+      return ui.withLaunchPreview(url);
+    }
+
+    return url;
+  }
+
+  function preservePreviewLinks(root) {
+    const scope = root || document;
+
+    if (ui && ui.isLaunchPreview && !ui.isLaunchPreview()) {
+      return;
+    }
+
+    if (!ui || !ui.withLaunchPreview) {
+      return;
+    }
+
+    scope.querySelectorAll("a[href]").forEach((link) => {
+      link.setAttribute("href", ui.withLaunchPreview(link.getAttribute("href")));
+    });
+  }
+
   function releaseUrl(slug) {
-    return `release.html?release=${encodeURIComponent(slug)}`;
+    return withLaunchPreview(`release.html?release=${encodeURIComponent(slug)}`);
   }
 
   function artistUrl(slug, releaseId) {
-    return `artist.html?artist=${encodeURIComponent(slug)}${releaseId ? `&release=${encodeURIComponent(releaseId)}` : ""}`;
+    return withLaunchPreview(`artist.html?artist=${encodeURIComponent(slug)}${releaseId ? `&release=${encodeURIComponent(releaseId)}` : ""}`);
   }
 
   function epkUrl(slug) {
-    return `epk.html?artist=${encodeURIComponent(slug)}`;
+    return withLaunchPreview(`epk.html?artist=${encodeURIComponent(slug)}`);
   }
 
   function text(value, fallback) {
@@ -74,7 +130,9 @@
     return String(fallback || "").trim();
   }
 
-  const launchModeValue = text(data.label && data.label.launchMode, "full").toLowerCase();
+  const launchModeValue = ui && ui.effectiveLaunchMode
+    ? ui.effectiveLaunchMode(data.label)
+    : text(data.label && data.label.launchMode, "full").toLowerCase();
   const isFullLaunchMode = launchModeValue === "full";
 
   function showCatalogPage() {
@@ -91,18 +149,19 @@
 
   function publicNavLinks() {
     const links = [
-      { href: "index.html", label: "Home" },
-      { href: "roster.html", label: "Roster" }
+      { href: withLaunchPreview("index.html"), label: "Home" },
+      { href: withLaunchPreview("roster.html"), label: "Roster" }
     ];
 
     if (showCatalogPage()) {
-      links.push({ href: "catalog.html", label: "Catalog" });
+      links.push({ href: withLaunchPreview("catalog.html"), label: "Catalog" });
     }
 
-    links.push({ href: "about.html", label: "About" });
+    links.push({ href: withLaunchPreview("connect.html"), label: "Connect" });
+    links.push({ href: withLaunchPreview("about.html"), label: "About" });
 
     if (showPressPages()) {
-      links.push({ href: "epks.html", label: "Press" });
+      links.push({ href: withLaunchPreview("epks.html"), label: "Press" });
     }
 
     return links;
@@ -154,13 +213,96 @@
   function releaseCta(entry) {
     const url = releaseCampaignUrl(entry);
 
-    if (!url) {
-      return null;
+    if (url) {
+      return {
+        label: ui && ui.releaseCtaLabel ? ui.releaseCtaLabel(entry) : "Play now",
+        url
+      };
     }
 
+    const platform = ui && ui.getLivePlatforms
+      ? ui.getLivePlatforms(entry)[0] || null
+      : null;
+
+    return platform
+      ? {
+          label: ui && ui.releaseCtaLabel ? ui.releaseCtaLabel(entry) : "Play now",
+          url: platform.url
+        }
+      : null;
+  }
+
+  function sitePath(fileName, params) {
+    const query = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      const resolved = text(value, "");
+
+      if (resolved) {
+        query.set(key, resolved);
+      }
+    });
+
+    const suffix = query.toString();
+    return `${fileName}${suffix ? `?${suffix}` : ""}`;
+  }
+
+  function siteUrl(pathValue) {
+    return new URL(String(pathValue || "").replace(/^\/+/, ""), "https://pawnislandrecords.com/").toString();
+  }
+
+  function organizationStructuredData() {
+    const sameAs = (Array.isArray(data.label && data.label.socialLinks) ? data.label.socialLinks : [])
+      .map((link) => text(link && link.url, ""))
+      .filter((url) => /^https?:\/\//i.test(url));
+
     return {
-      label: ui && ui.releaseCtaLabel ? ui.releaseCtaLabel(entry) : "Play now",
-      url
+      "@type": "Organization",
+      "@id": siteUrl("#organization"),
+      name: text(data.label && data.label.name, "Pawn Island Records"),
+      url: siteUrl("index.html"),
+      logo: siteUrl("assets/brand/pawnisland-512.jpg"),
+      sameAs
+    };
+  }
+
+  function releaseStructuredData() {
+    const action = releaseCta(release);
+    const releasePath = sitePath("release.html", { release: release.slug });
+    const type = String(release.type || "").toLowerCase().includes("single")
+      ? "MusicRecording"
+      : "MusicAlbum";
+
+    return {
+      "@context": "https://schema.org",
+      "@graph": [
+        organizationStructuredData(),
+        {
+          "@type": type,
+          "@id": siteUrl(`${releasePath}#release`),
+          name: release.title,
+          url: siteUrl(releasePath),
+          image: siteUrl(release.cover || "assets/brand/pawnisland-1200.jpg"),
+          datePublished: text(release.releaseDate, ""),
+          description: text(release.description, artist && artist.summary),
+          byArtist: {
+            "@type": "MusicGroup",
+            name: artist.name,
+            url: siteUrl(sitePath("artist.html", { artist: artist.slug }))
+          },
+          potentialAction: action
+            ? {
+                "@type": "ListenAction",
+                target: action.url
+              }
+            : undefined,
+          track: (Array.isArray(release.tracks) ? release.tracks : []).map((track, index) => ({
+            "@type": "MusicRecording",
+            position: index + 1,
+            name: text(track && track.title, `Track ${index + 1}`)
+          }))
+        }
+      ]
     };
   }
 
@@ -337,14 +479,13 @@
 
     releasePrimaryEmbed.innerHTML = primaryEmbed.url
       ? `
-          <div class="embed-frame embed-frame--audio">
-            <iframe
-              src="${escapeAttribute(sanitizeUrl(primaryEmbed.url, ""))}"
-              title="${escapeAttribute(primaryEmbed.label || release.title)} embed"
-              loading="lazy"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            ></iframe>
-          </div>
+          ${mediaEmbedFrameMarkup({
+            src: sanitizeUrl(primaryEmbed.url, ""),
+            title: `${primaryEmbed.label || release.title} embed`,
+            variant: "audio",
+            className: "embed-frame embed-frame--audio",
+            loading: "lazy"
+          })}
         `
       : `
           <div class="embed-empty">
@@ -355,15 +496,15 @@
 
     releaseYoutubeEmbed.innerHTML = youtubeId
       ? `
-          <div class="embed-frame">
-            <iframe
-              src="${escapeAttribute(youtubeEmbedUrl(youtubeId))}"
-              title="${escapeAttribute(`${release.title} by ${artist.name}`)}"
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
-          </div>
+          ${mediaEmbedFrameMarkup({
+            src: youtubeEmbedUrl(youtubeId),
+            title: `${release.title} by ${artist.name}`,
+            provider: "YouTube",
+            variant: "video",
+            className: "embed-frame",
+            loading: "lazy",
+            allowFullscreen: true
+          })}
         `
       : `
           <div class="embed-empty">
@@ -471,8 +612,6 @@
   }
 
   function applyMeta() {
-    document.title = `${release.title} | ${artist.name} | Pawn Island Records`;
-
     const metaDescriptionText = [
       `${release.title} by ${artist.name}.`,
       releaseAvailability(release) ? `${releaseAvailability(release)}.` : "",
@@ -481,9 +620,19 @@
       .filter(Boolean)
       .join(" ");
 
-    if (ui && ui.setMetaDescription) {
-      ui.setMetaDescription(metaDescriptionText);
+    if (ui && ui.setPageMeta) {
+      ui.setPageMeta({
+        title: `${release.title} | ${artist.name} | Pawn Island Records`,
+        description: metaDescriptionText,
+        canonicalPath: sitePath("release.html", { release: release.slug }),
+        image: release.cover || artist.image || "assets/brand/pawnisland-1200.jpg",
+        ogType: "music.album",
+        robots: "noindex,follow",
+        structuredData: releaseStructuredData(),
+        structuredDataId: "pawn-release-structured-data"
+      });
     } else if (metaDescription) {
+      document.title = `${release.title} | ${artist.name} | Pawn Island Records`;
       metaDescription.setAttribute("content", metaDescriptionText);
     }
   }
@@ -492,8 +641,10 @@
   applyMeta();
   renderHero();
   renderEmbeds();
+  hydrateMediaEmbeds(document);
   renderStory();
   renderFooter();
+  preservePreviewLinks(document);
 
   if (ui && ui.revealOnScroll) {
     ui.revealOnScroll();

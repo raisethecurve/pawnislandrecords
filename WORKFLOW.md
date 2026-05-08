@@ -1,15 +1,16 @@
 # Pawn Island Records Website Completion Workflow
 
-Status date: 2026-05-03
+Status date: 2026-05-04
 
 ## Current State
 
-Pawn Island Records is a static, data-driven website with no package manifest or build step. The public experience is controlled by HTML entry points, shared CSS/JS, and the published dataset in `public-data.js`.
+Pawn Island Records is a static, data-driven website. The public experience is controlled by HTML entry points, shared CSS/JS, and the published dataset in `public-data.js`. Sprint 0 added a lightweight npm toolchain for local serving, link/data validation, and Playwright route smoke coverage. Sprint 1 added a `preview=full` local route mode so hidden modern routes can be reviewed as complete pages while `public-data.js` stays in `essentials`. Sprint 2 classified the remaining lab/story routes, moved merch/support into the modern stack, and added route publication checks for robots and sitemap drift. Sprint 3 added accessibility automation, responsive polish, reduced-motion coverage, media fallback states, media fallback tests, and a public image budget check.
 
 The active public launch mode is `essentials`:
 
 - `public-data.js` sets `label.launchMode` to `essentials`.
-- `label-site.js` uses that flag to hide catalog, artist, release, and press surfaces from the primary nav.
+- `label-site.js` uses that flag to hide catalog, artist, release, press, and merch surfaces from the primary nav.
+- `site-ui.js`, `label-site.js`, and `release.js` allow `preview=full` to render hidden modern routes locally as if launch mode were `full`.
 - The published dataset currently includes 9 artists, 29 releases, 9 merch records, 14 live releases, and 15 upcoming releases.
 
 Primary public pages:
@@ -26,9 +27,10 @@ Hidden or gated pages:
 - `release.html`: dynamic release detail page, currently `noindex,follow`.
 - `epks.html`: press/EPK index, currently `noindex,follow`.
 - `epk.html`: dynamic artist press kit, currently `noindex,follow`.
+- `merch.html`: merch concept/support page on the modern public stack, currently `noindex,follow`.
 - `process.html`: creative-process story page, currently `noindex,follow`.
-- `merch.html`, `campaigns.html`, `brand-kit.html`: older internal/lab surfaces using `data.js`, `catalog-store.js`, `styles.css`, and the split `styles/` design stack.
-- `release-deck.html`: standalone coming-soon product/analytics page, currently `noindex,nofollow`.
+- `campaigns.html`, `brand-kit.html`: older internal/lab surfaces using `data.js`, `catalog-store.js`, `styles.css`, and the split `styles/` design stack; both are `noindex,nofollow` and blocked in `robots.txt`.
+- `release-deck.html`: standalone coming-soon product/analytics page, currently `noindex,nofollow` and blocked in `robots.txt`.
 - `admin.html`: local catalog editor, intentionally `noindex,nofollow`.
 - `shell.html`: persistent iframe shell for music continuity, intentionally `noindex,follow`.
 - `artists.html`: redirect shim to `roster.html`.
@@ -38,9 +40,15 @@ Key architecture facts:
 - The modern public site stack is `public-data.js`, `site-ui.js`, `label-site.js`, `label-site.css`, `site-audio.js`, `site-audio.css`, and `site-shell-bootstrap.js`.
 - `shell.html`, `shell.js`, and `shell.css` wrap pages in a persistent iframe so audio keeps playing during navigation.
 - `admin.html` and `admin.js` manage in-browser data intake and export.
-- Older lab pages still depend on `data.js`, `catalog-published.js`, `catalog-store.js`, `theme.js`, and `styles.css`.
-- `README.md` is directionally useful but stale in places: it references page scripts such as `home.js`, `artists.js`, `artist.js`, and `catalog.js` that are not present in the current repo.
-- There is no automated test, lint, accessibility, visual-regression, sitemap, or link-validation workflow yet.
+- The merch route now uses the modern stack; campaign and brand-kit labs still depend on `data.js`, `catalog-published.js`, `catalog-store.js`, `theme.js`, and `styles.css`.
+- `README.md` now matches the current route shape and documents local serve/test commands.
+- `ROUTE_INVENTORY.md` documents route classification; `tools/routes.js` is the executable route source used by checks.
+- `tools/check-links.js` validates local HTML links, route files, local assets, public data image references, slug uniqueness, release artist references, site-audio configuration, and route publication policy across `tools/routes.js`, page robots tags, `robots.txt`, and `sitemap.xml`.
+- `tools/check-performance.js` validates the public image asset budget and media iframe loading/hydration hooks.
+- `tests/smoke.spec.js` covers the primary public routes, hidden launch-hold samples, hidden `preview=full` samples, merch/process routes, internal lab samples, runtime metadata/JSON-LD checks, and shell-framed navigation across desktop and mobile viewports.
+- `tests/accessibility.spec.js` covers axe-backed accessibility smoke checks for key public and hidden-preview routes.
+- `tests/media.spec.js` verifies Spotify and YouTube fallback states when external players fail.
+- Playwright screenshots remain ignored manual review artifacts under `test-results/`; there is still no automated visual-regression baseline workflow.
 
 ## Product Goal
 
@@ -105,6 +113,8 @@ If a sprint changes how the repo works, update `README.md` as part of the same c
 
 ### Sprint 0: Baseline And Guardrails
 
+Status: completed 2026-05-04.
+
 Goal: make the repo safe to change repeatedly.
 
 Stories:
@@ -126,7 +136,32 @@ Acceptance criteria:
 - A new agent can clone, serve, inspect, and smoke-test the site in under ten minutes.
 - CI or a documented local command catches broken internal links and missing assets.
 
+Sprint 0 outcome:
+
+- Added `package.json` and `package-lock.json` with `serve`, `test:links`, `test:smoke`, and `test` scripts.
+- Added `ROUTE_INVENTORY.md` and `tools/routes.js` covering public, hidden, internal lab, admin, shell, and redirect routes.
+- Added `tools/check-links.js` for local route, link, data, and asset validation.
+- Added Playwright smoke tests for `index.html`, `roster.html`, `connect.html`, `about.html`, `catalog.html`, `artist.html?artist=rhea-mauro`, `release.html?release=rhea-mauro-hearthblood`, `epks.html`, and `epk.html?artist=rhea-mauro`.
+- Added shell smoke coverage for Home, Roster, Connect, and About.
+- Updated `README.md` to match the actual file structure and local workflow.
+- Kept existing tracked `tmp/` screenshots as legacy QA captures for now; new Playwright screenshots go to ignored `test-results/`.
+- Fixed stale legacy lab links from `campaigns.html` and `merch.html` that pointed to removed `index.html#catalog` and `index.html#vault` anchors.
+
+Sprint 0 validation:
+
+- `npm run test:links` passed on 2026-05-04.
+- `npm run test:smoke` passed on 2026-05-04 with 26 Playwright checks across desktop and mobile.
+
+Sprint 0 deferred scope and risks:
+
+- No accessibility automation has been added yet.
+- Sitemap/robots consistency is now covered by Sprint 2 route publication checks; deeper metadata validation remains future work.
+- No visual baseline comparison exists yet; smoke tests capture comparable screenshots but do not diff them.
+- `tmp/` still contains legacy tracked QA screenshots and browser-profile artifacts. Cleanup should be a separate, explicit maintenance task.
+
 ### Sprint 1: Public Route Completion
+
+Status: completed 2026-05-04.
 
 Goal: finish the hidden routes that are already part of the modern public site.
 
@@ -152,7 +187,33 @@ Acceptance criteria:
 - Every live artist and release has a usable route.
 - Upcoming releases show clear status, date, pre-save/listen action, and no broken platform CTA.
 
+Sprint 1 outcome:
+
+- Added `preview=full` launch-mode override for local review without changing `public-data.js`.
+- Preserved the preview flag across generated internal route links so catalog, project, release, and press routes work directly and inside `shell.html`.
+- Added catalog project, status, and release-type filters with durable query parameters and empty states.
+- Completed hidden route rendering for catalog, project pages, release pages, press index, and EPK pages under full-preview behavior.
+- Normalized release actions to prefer campaign/Too.fm URLs and fall back to live platform links where available.
+- Replaced press/EPK placeholder language with status-aware fallback copy and direct email press contact paths.
+- Added runtime title, description, canonical, Open Graph, Twitter card, robots, and JSON-LD metadata for previewed catalog, artist, release, press index, and EPK routes.
+- Expanded `tools/routes.js` and Playwright smoke coverage for direct and shell `preview=full` hidden routes.
+- Updated `README.md`, `ROUTE_INVENTORY.md`, `WORKFLOW.md`, and `ROADMAP.md` for Sprint 1 closeout.
+
+Sprint 1 validation:
+
+- `npm run test:links` passed on 2026-05-04.
+- `npm run test:smoke` passed on 2026-05-04 with 48 Playwright checks across desktop and mobile.
+
+Sprint 1 deferred scope and risks:
+
+- `public-data.js` remains in `essentials`; hidden routes are still `noindex,follow` until Sprint 4 launch criteria pass.
+- Query-string artist/release URLs remain the canonical strategy for now; generated static pages are still an open SEO decision.
+- EPK asset lists are credible text/status entries, but real downloadable press kits and one-sheets remain future work.
+- Accessibility coverage is still smoke/manual only; automated axe-style checks remain planned for Sprint 3.
+
 ### Sprint 2: Press, Campaign, And Merch Decisions
+
+Status: completed 2026-05-04.
 
 Goal: decide what becomes public, what stays internal, and what gets retired.
 
@@ -172,10 +233,36 @@ Tasks:
 
 Acceptance criteria:
 
-- Every route has an explicit classification: public, hidden-but-shareable, admin-only, redirect, or retired.
+- Every route has an explicit classification: public, hidden-but-shareable, admin-only, internal-lab, redirect, or retired.
 - Public pages use one design system and one data source unless there is a documented reason not to.
 
+Sprint 2 outcome:
+
+- Classified `merch.html` as hidden-but-shareable on the modern public stack.
+- Classified `process.html` as hidden-but-shareable story content outside primary nav.
+- Kept `campaigns.html`, `brand-kit.html`, and `release-deck.html` as internal lab/product surfaces with `noindex,nofollow` and `robots.txt` disallow rules.
+- Rebuilt `merch.html` against `public-data.js`, `site-ui.js`, `label-site.js`, and `label-site.css`.
+- Rendered empty merch URLs as checkout-pending states; only real item URLs produce store buttons.
+- Added support-first merch CTA wiring from the published TipTopJar support link.
+- Added route publication validation for explicit route robots policy, page robots meta, sitemap membership, and `robots.txt` blocking.
+- Expanded smoke coverage for merch, process, campaigns, brand kit, and Release Deck.
+- Updated `README.md`, `ROUTE_INVENTORY.md`, `WORKFLOW.md`, and `ROADMAP.md` for Sprint 2 closeout.
+
+Sprint 2 validation:
+
+- `npm run test:links` passed on 2026-05-04.
+- `npm run test:smoke` passed on 2026-05-04 with 62 Playwright checks across desktop and mobile.
+
+Sprint 2 deferred scope and risks:
+
+- `public-data.js` remains in `essentials`; merch stays hidden from primary navigation until later launch criteria pass.
+- Merch items still have no live checkout URLs, so the route remains concept/support-first.
+- Campaign and brand-kit labs remain on the older design/data stack because they are intentionally internal for now.
+- Accessibility automation remains planned for Sprint 3.
+
 ### Sprint 3: State-Of-The-Art UX Layer
+
+Status: completed 2026-05-04.
 
 Goal: make the site feel polished, fast, accessible, and resilient.
 
@@ -199,6 +286,40 @@ Acceptance criteria:
 - Lighthouse or equivalent checks are green enough to be actionable: performance, accessibility, best practices, and SEO.
 - No page has incoherent overlap at common mobile and desktop breakpoints.
 - The audio shell is tested both with direct page entry and shell-framed navigation.
+
+Sprint 3 slice 1 outcome:
+
+- Added `npm run test:a11y` with `@axe-core/playwright` coverage for Home, Roster, Connect, About, full-preview Catalog, Project, Release, Press, EPK, and Merch routes across desktop and mobile.
+- Added route-level accessibility fixtures in `tools/routes.js`.
+- The accessibility smoke harness checks serious/critical axe violations, exactly one main landmark on direct routes, primary navigation presence, visible initial keyboard focus, primary control tap target sizing, and page-level horizontal overflow.
+- Restored standalone direct-page primary navigation outside the iframe shell while keeping shell-framed pages uncluttered.
+- Fixed carousel hidden-slide focus semantics, catalog filter ARIA, platform strip keyboard access, small artist/action buttons, footer/social/audio tap targets, mobile nav scrolling, and reduced-motion CSS coverage for the public, release, shell, and audio stacks.
+
+Sprint 3 slice 1 validation:
+
+- `npm run test:a11y` passed on 2026-05-04 with 20 Playwright accessibility checks across desktop and mobile.
+
+Sprint 3 slice 2 outcome:
+
+- Added shared media embed state handling in `site-ui.js` for idle, loading, slow, ready, and error states.
+- Wired Spotify and YouTube fallback states into the home playlist embed, project media panels, EPK media panels, and release-detail embeds.
+- Added fallback actions that open the public Spotify or YouTube destination when an iframe cannot load in-page.
+- Added `npm run test:media` with Playwright coverage for Spotify and YouTube error fallback behavior.
+- Added `npm run test:perf` with a public image asset budget and media iframe loading/hydration checks.
+- Switched Connect social cards to inline SVG icons before image assets so oversized brand PNGs are not pulled into the public page.
+- Decided screenshot QA posture: Playwright screenshots stay in ignored `test-results/` as manual review artifacts; no automated visual diff baseline is added yet.
+
+Sprint 3 slice 2 validation:
+
+- `npm run test:perf` passed on 2026-05-04 for 57 public image assets at a 716800-byte budget.
+- `npm run test:media` passed on 2026-05-04 with 4 Playwright checks across desktop and mobile.
+- `npm test` passed on 2026-05-04: links, performance, 20 accessibility checks, 4 media checks, and 62 smoke checks.
+
+Sprint 3 deferred scope and risks:
+
+- No automated visual-regression diff baseline exists; add one later only if screenshot review becomes frequent enough to justify baseline upkeep.
+- Shell-framed accessibility has smoke coverage, but deeper shell-specific axe checks remain optional unless shell interaction changes.
+- The image budget is byte-size based; deeper lab-style Lighthouse audits can still be run manually before full launch.
 
 ### Sprint 4: Launch Mode And Publishing
 
@@ -255,8 +376,8 @@ Epic: Quality And Automation
 
 - Add Playwright smoke coverage for every route class.
 - Add link and asset checks.
-- Add basic accessibility checks.
-- Add visual screenshot baselines for desktop and mobile.
+- Maintain accessibility, media fallback, and public image budget checks.
+- Add visual screenshot baselines for desktop and mobile later if manual screenshots become too costly to review.
 
 ## PR Workflow
 
@@ -270,13 +391,15 @@ For each development PR:
 6. Before closing a sprint PR, update the workflow and roadmap with what actually changed and what should happen next.
 7. Open PRs as draft unless the user explicitly asks for ready review.
 
-## First Implementation Slice
+For detailed branch, commit, stacked branch, staged PR, review, and merge rules, see `GITHUB_PRACTICES.md`. Treat that document as the source of truth for GitHub mechanics, and keep this section as the short sprint-level reminder.
 
-Recommended next PR after this workflow:
+## Next Recommended Sprint
 
-1. Add `package.json` with `serve`, `test:smoke`, and `test:links` scripts.
-2. Add Playwright route smoke tests for the modern public and hidden pages.
-3. Update `README.md` to match the actual file structure.
-4. Add a route inventory document that classifies public, hidden, admin, redirect, and retired pages.
+Proceed to Sprint 4: launch mode and publishing readiness.
 
-That gives the project a reliable runway before deeper page-completion work begins.
+Recommended first slice:
+
+1. Audit the final public route set for full-launch navigation.
+2. Decide the query-string versus generated-static URL strategy for artist and release SEO.
+3. Prepare `public-data.js` launch-mode, robots, sitemap, and metadata changes behind a reviewable branch.
+4. Write the release-day publishing checklist before flipping `launchMode` to `full`.

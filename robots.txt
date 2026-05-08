@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
+Disallow: /campaigns.html
+Disallow: /brand-kit.html
+Disallow: /release-deck.html
 Disallow: /downloads/
 Disallow: /tmp/
 

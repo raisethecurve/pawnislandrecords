@@ -318,6 +318,7 @@ button:focus-visible {
 .label-main,
 .panel-shell,
 .artists-grid,
+.merch-grid,
 .release-strip,
 .playlist-grid,
 .timeline-list {
@@ -344,6 +345,8 @@ button:focus-visible {
   align-items: center;
   gap: 0.95rem;
   min-width: 0;
+  color: inherit;
+  text-decoration: none;
 }
 
 .brand-mark img {
@@ -413,6 +416,7 @@ button:focus-visible {
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.14em;
+  text-decoration: none;
   transition:
     color 180ms ease,
     transform 180ms ease;
@@ -575,8 +579,8 @@ button:focus-visible {
 }
 
 .social-footer .social-icon-link {
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.65rem;
+  height: 2.65rem;
   border-color: rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.045);
   color: rgba(255, 255, 255, 0.92);
@@ -966,6 +970,71 @@ button:focus-visible {
   border: 0;
 }
 
+.media-embed {
+  position: relative;
+}
+
+.media-embed iframe {
+  transition: opacity 180ms ease;
+}
+
+.media-embed__status {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: none;
+  align-content: center;
+  justify-items: center;
+  gap: 0.7rem;
+  padding: 1rem;
+  text-align: center;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.74), rgba(0, 0, 0, 0.58)),
+    rgba(12, 16, 26, 0.92);
+  color: var(--white);
+}
+
+.media-embed__status-label {
+  max-width: 22rem;
+  margin: 0;
+  color: var(--white-soft);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.media-embed__action {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.72rem 1rem;
+  border: 1px solid var(--yellow);
+  border-radius: 999px;
+  color: var(--black);
+  background: var(--yellow);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.media-embed__action:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 3px;
+}
+
+.media-embed[data-embed-state="slow"] iframe,
+.media-embed[data-embed-state="error"] iframe {
+  opacity: 0.22;
+}
+
+.media-embed[data-embed-state="slow"] .media-embed__status,
+.media-embed[data-embed-state="error"] .media-embed__status {
+  display: grid;
+}
+
 .platform-banner {
   width: var(--home-card-width);
   display: grid;
@@ -992,6 +1061,12 @@ button:focus-visible {
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.65rem;
+}
+
+.platform-banner__row:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 18px;
 }
 
 .platform-chip {
@@ -1385,6 +1460,10 @@ button:focus-visible {
   gap: 0.7rem;
 }
 
+.pending-carousel__slide[inert] {
+  visibility: hidden;
+}
+
 .pending-album {
   min-height: 0;
   display: grid;
@@ -1456,17 +1535,34 @@ button:focus-visible {
 }
 
 .pending-carousel__dot {
-  min-height: 0;
-  width: 0.68rem;
-  height: 0.68rem;
+  display: grid;
+  place-items: center;
+  min-height: 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
   padding: 0;
   border-radius: 999px;
-  border: 1px solid var(--white-faint);
-  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid transparent;
+  background: transparent;
   box-shadow: none;
 }
 
+.pending-carousel__dot::before {
+  content: "";
+  display: block;
+  width: 0.68rem;
+  height: 0.68rem;
+  border-radius: 999px;
+  border: 1px solid var(--white-faint);
+  background: rgba(255, 255, 255, 0.16);
+}
+
 .pending-carousel__dot.is-active {
+  background: transparent;
+  border-color: transparent;
+}
+
+.pending-carousel__dot.is-active::before {
   background: var(--yellow);
   border-color: var(--yellow);
 }
@@ -1474,6 +1570,7 @@ button:focus-visible {
 .strip-card,
 .feature-card,
 .artist-card,
+.merch-card,
 .press-card,
 .release-card,
 .timeline-item,
@@ -1809,7 +1906,7 @@ button:focus-visible {
 
 .artist-card .button {
   flex: 1 1 auto;
-  min-height: 2.25rem;
+  min-height: 2.5rem;
   padding: 0.52rem 0.7rem;
   font-size: 0.66rem;
   letter-spacing: 0.09em;
@@ -1936,6 +2033,75 @@ button:focus-visible {
   min-height: 0;
   display: grid;
   gap: 2.5rem;
+}
+
+.catalog-filters {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) minmax(16rem, 2fr) minmax(9rem, 0.8fr);
+  gap: 0.85rem;
+  align-items: end;
+  margin-bottom: 1.45rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.catalog-filters__field {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.catalog-filters label,
+.catalog-filters__field > span {
+  color: var(--white-soft);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.catalog-filters select {
+  min-height: 2.65rem;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: #101010;
+  color: var(--white);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.catalog-filter-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.catalog-filter-tab {
+  display: inline-flex;
+  min-height: 2.65rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.62rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  color: var(--white-soft);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.catalog-filter-tab:hover,
+.catalog-filter-tab:focus-visible,
+.catalog-filter-tab.is-active {
+  border-color: rgba(255, 204, 0, 0.58);
+  background: rgba(255, 204, 0, 0.1);
+  color: var(--white);
+  outline: none;
 }
 
 .catalog-group {
@@ -2065,6 +2231,10 @@ button:focus-visible {
   background: rgba(255, 255, 255, 0.06);
   color: var(--white);
   outline: none;
+}
+
+.tag--muted {
+  color: rgba(255, 255, 255, 0.58);
 }
 
 .empty-card {
@@ -2509,6 +2679,230 @@ button:focus-visible {
   color: var(--white-soft);
   font-size: 0.76rem;
   line-height: 1.34;
+}
+
+.merch-panel {
+  display: grid;
+  gap: clamp(1.2rem, 2.2vw, 2rem);
+}
+
+.merch-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.65fr);
+  gap: clamp(1rem, 2vw, 1.6rem);
+  align-items: stretch;
+}
+
+.merch-copy {
+  display: grid;
+  align-content: center;
+  gap: 0.85rem;
+}
+
+.merch-copy h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.6rem, 10vw, 8.7rem);
+  line-height: 0.82;
+  text-transform: uppercase;
+}
+
+.merch-copy p:not(.section-kicker) {
+  max-width: 58rem;
+  margin: 0;
+  color: var(--white-soft);
+  font-size: clamp(1rem, 1.4vw, 1.18rem);
+  line-height: 1.55;
+}
+
+.merch-status-card {
+  display: grid;
+  align-content: start;
+  gap: 0.8rem;
+  padding: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(65, 105, 225, 0.16), rgba(255, 255, 255, 0.035));
+}
+
+.merch-status-card h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3vw, 2.7rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.merch-stats dl {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.merch-stats div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.merch-stats div:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.merch-stats dt {
+  color: var(--white-soft);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.merch-stats dd {
+  margin: 0;
+  color: var(--yellow);
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  line-height: 1;
+}
+
+.merch-board {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.merch-board h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.merch-filter-strip {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+  scroll-padding-inline: 0.2rem;
+}
+
+.merch-filter {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--white-soft);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.merch-filter:hover,
+.merch-filter:focus-visible,
+.merch-filter.is-active {
+  border-color: rgba(255, 204, 0, 0.56);
+  background: rgba(255, 204, 0, 0.1);
+  color: var(--white);
+  outline: none;
+}
+
+.merch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.merch-card {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0.85rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.merch-card:hover,
+.merch-card:focus-within {
+  border-color: rgba(65, 105, 225, 0.56);
+  background: rgba(255, 255, 255, 0.052);
+  transform: translateY(-2px);
+}
+
+.merch-card__art {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: #101010;
+}
+
+.merch-card__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.merch-card__body {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 0.7rem;
+}
+
+.merch-card__meta,
+.merch-card__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.merch-card__copy {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.merch-card__copy h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  line-height: 0.98;
+  text-transform: uppercase;
+}
+
+.merch-card__copy p {
+  margin: 0;
+  color: var(--white-soft);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.merch-card__facts {
+  align-self: end;
+  color: var(--yellow);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.merch-card__actions {
+  margin-top: 0.1rem;
 }
 
 .epk-page-shell {
@@ -3030,12 +3424,24 @@ button:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .merch-hero {
+    grid-template-columns: 1fr;
+  }
+
   .about-copy {
     align-content: start;
   }
 
   .feature-card--featured {
     grid-template-columns: 1fr;
+  }
+
+  .catalog-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .catalog-filters__field--status {
+    grid-column: 1 / -1;
   }
 
   .timeline-list {
@@ -3146,14 +3552,21 @@ button:focus-visible {
   }
 
   .label-nav {
-    display: grid;
-    grid-template-columns: repeat(var(--label-nav-columns), minmax(0, 1fr));
+    display: flex;
+    justify-content: flex-start;
     gap: 0.65rem;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.15rem;
+    scroll-padding-inline: 0.2rem;
   }
 
   .label-nav a {
+    flex: 0 0 auto;
     justify-content: center;
     min-height: 2.75rem;
+    padding-inline: 0.72rem;
     font-size: 0.68rem;
     letter-spacing: 0.06em;
     white-space: nowrap;
@@ -3173,6 +3586,17 @@ button:focus-visible {
 
   .panel-note {
     max-width: 100%;
+  }
+
+  .catalog-filters {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    padding: 0.8rem;
+    border-radius: 16px;
+  }
+
+  .catalog-filter-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .artists-grid {
@@ -3221,6 +3645,7 @@ button:focus-visible {
   }
 
   .signal-grid,
+  .merch-grid,
   .playlist-grid {
     grid-template-columns: 1fr;
   }
@@ -3409,7 +3834,7 @@ button:focus-visible {
 
 @media (max-width: 480px) {
   .label-nav {
-    grid-template-columns: repeat(var(--label-nav-columns), minmax(0, 1fr));
+    display: flex;
   }
 
   .label-nav a {
@@ -3426,7 +3851,7 @@ button:focus-visible {
   }
 
   .button--small {
-    min-height: 2.2rem;
+    min-height: 2.5rem;
     padding: 0.55rem 0.82rem;
   }
 }
@@ -3465,7 +3890,7 @@ button:focus-visible {
   }
 
   .platform-chip {
-    min-height: 2.3rem;
+    min-height: 2.5rem;
     padding: 0.48rem 0.72rem;
   }
 
@@ -3484,7 +3909,7 @@ button:focus-visible {
   }
 
   .button--small {
-    min-height: 2.3rem;
+    min-height: 2.5rem;
   }
 
   .strip-card {
@@ -3493,6 +3918,15 @@ button:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+
   .section-kicker::before {
     animation: none;
     background-position: center;
