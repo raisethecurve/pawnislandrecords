@@ -3,7 +3,8 @@
   const data = (ui && ui.data) || window.PAWN_PUBLIC_DATA || {
     label: {},
     artists: [],
-    releases: []
+    releases: [],
+    merch: []
   };
 
   const DEFAULT_TOOFM_URL = "https://too.fm/yn8xx7l";
@@ -168,8 +169,34 @@
     window.history.replaceState({}, "", nextUrl);
   }
 
-  const launchModeValue = text(data.label && data.label.launchMode, "full").toLowerCase();
+  const launchModeValue = ui && ui.effectiveLaunchMode
+    ? ui.effectiveLaunchMode(data.label)
+    : text(data.label && data.label.launchMode, "full").toLowerCase();
   const isFullLaunchMode = launchModeValue === "full";
+
+  function withLaunchPreview(url) {
+    if (ui && ui.withLaunchPreview) {
+      return ui.withLaunchPreview(url);
+    }
+
+    return url;
+  }
+
+  function preservePreviewLinks(root) {
+    const scope = root || document;
+
+    if (ui && ui.isLaunchPreview && !ui.isLaunchPreview()) {
+      return;
+    }
+
+    if (!ui || !ui.withLaunchPreview) {
+      return;
+    }
+
+    scope.querySelectorAll("a[href]").forEach((link) => {
+      link.setAttribute("href", ui.withLaunchPreview(link.getAttribute("href")));
+    });
+  }
 
   function showProjectPages() {
     return isFullLaunchMode;
@@ -189,19 +216,19 @@
 
   function publicNavLinks() {
     const links = [
-      { href: "index.html", label: "Home" },
-      { href: "roster.html", label: "Roster" }
+      { href: withLaunchPreview("index.html"), label: "Home" },
+      { href: withLaunchPreview("roster.html"), label: "Roster" }
     ];
 
     if (showCatalogPage()) {
-      links.push({ href: "catalog.html", label: "Catalog" });
+      links.push({ href: withLaunchPreview("catalog.html"), label: "Catalog" });
     }
 
-    links.push({ href: "connect.html", label: "Connect" });
-    links.push({ href: "about.html", label: "About" });
+    links.push({ href: withLaunchPreview("connect.html"), label: "Connect" });
+    links.push({ href: withLaunchPreview("about.html"), label: "About" });
 
     if (showPressPages()) {
-      links.push({ href: "epks.html", label: "Press" });
+      links.push({ href: withLaunchPreview("epks.html"), label: "Press" });
     }
 
     return links;
@@ -243,6 +270,19 @@
         };
       })
       .filter((item) => item.key && item.url);
+  }
+
+  function pressContactLink() {
+    return (
+      socialLinks().find((link) => link.key === "email") ||
+      socialLinks().find((link) => /^mailto:/i.test(link.url)) ||
+      {
+        key: "email",
+        label: "Email",
+        url: "mailto:pawnisland@outlook.com",
+        role: "Contact the label directly."
+      }
+    );
   }
 
   function discoveryPlaylists() {
@@ -383,6 +423,42 @@
     );
   }
 
+  function renderStandaloneHeader() {
+    if (window.top !== window.self) {
+      return;
+    }
+
+    const pageShell = document.querySelector(".label-page");
+
+    if (!pageShell || pageShell.querySelector(".label-header")) {
+      return;
+    }
+
+    pageShell.insertAdjacentHTML(
+      "afterbegin",
+      `
+        <header class="label-header" aria-label="Site header">
+          <a class="brand-mark" href="${escapeHtml(withLaunchPreview("index.html"))}" aria-label="Pawn Island Records home">
+            <img
+              src="assets/brand/pawnisland-256.jpg"
+              alt=""
+              width="64"
+              height="64"
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+            />
+            <span class="brand-mark__copy">
+              <strong>Pawn Island Records</strong>
+              <span>Independent label</span>
+            </span>
+          </a>
+          <nav class="label-nav" aria-label="Primary"></nav>
+        </header>
+      `
+    );
+  }
+
   function launchHoldMarkup(options) {
     const settings = options || {};
     const actions = (settings.actions || publicNavLinks())
@@ -454,15 +530,15 @@
   }
 
   function artistFilterUrl(artistSlug) {
-    return `catalog.html?artist=${encodeURIComponent(artistSlug)}`;
+    return withLaunchPreview(`catalog.html?artist=${encodeURIComponent(artistSlug)}`);
   }
 
   function artistPageUrl(artistSlug, releaseSlug) {
-    return `artist.html?artist=${encodeURIComponent(artistSlug)}${releaseSlug ? `&release=${encodeURIComponent(releaseSlug)}` : ""}`;
+    return withLaunchPreview(`artist.html?artist=${encodeURIComponent(artistSlug)}${releaseSlug ? `&release=${encodeURIComponent(releaseSlug)}` : ""}`);
   }
 
   function epkPageUrl(artistSlug) {
-    return `epk.html?artist=${encodeURIComponent(artistSlug)}`;
+    return withLaunchPreview(`epk.html?artist=${encodeURIComponent(artistSlug)}`);
   }
 
   function artistReleases(artistSlug) {
@@ -474,7 +550,7 @@
   }
 
   function releasePageUrl(slug) {
-    return `release.html?release=${encodeURIComponent(slug)}`;
+    return withLaunchPreview(`release.html?release=${encodeURIComponent(slug)}`);
   }
 
   function primaryEmbedFor(release) {
@@ -498,6 +574,38 @@
 
   function youtubeEmbedUrl(videoId) {
     return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
+  }
+
+  function mediaEmbedFrameMarkup(options) {
+    if (ui && ui.mediaEmbedFrameMarkup) {
+      return ui.mediaEmbedFrameMarkup(options);
+    }
+
+    const settings = options || {};
+    const src = text(settings.src, "");
+    const className = text(settings.className, "embed-card__frame");
+    const title = text(settings.title, "Media embed");
+    const allow = text(settings.allow, "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture");
+
+    return src
+      ? `
+          <div class="${escapeHtml(className)}">
+            <iframe
+              src="${escapeHtml(src)}"
+              title="${escapeHtml(title)}"
+              loading="${settings.loading === "eager" ? "eager" : "lazy"}"
+              allow="${escapeHtml(allow)}"
+              ${settings.allowfullscreen || settings.allowFullscreen ? "allowfullscreen" : ""}
+            ></iframe>
+          </div>
+        `
+      : "";
+  }
+
+  function hydrateMediaEmbeds(root) {
+    if (ui && ui.hydrateMediaEmbeds) {
+      ui.hydrateMediaEmbeds(root || document);
+    }
   }
 
   function resolveTooFmUrl(release, options) {
@@ -581,15 +689,138 @@
 
     const url = resolveTooFmUrl(release, { allowFallback: false });
 
-    if (!url) {
-      return null;
+    if (url) {
+      return {
+        label: releaseCtaLabel(release),
+        url,
+        external: true
+      };
     }
 
+    const platform = ui && ui.getLivePlatforms
+      ? ui.getLivePlatforms(release)[0] || null
+      : null;
+
+    return platform
+      ? {
+          label: releaseCtaLabel(release),
+          url: platform.url,
+          external: true
+        }
+      : null;
+  }
+
+  function sitePath(fileName, params) {
+    const query = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      const resolved = text(value, "");
+
+      if (resolved) {
+        query.set(key, resolved);
+      }
+    });
+
+    const suffix = query.toString();
+    return `${fileName}${suffix ? `?${suffix}` : ""}`;
+  }
+
+  function siteUrl(pathValue) {
+    return new URL(String(pathValue || "").replace(/^\/+/, ""), "https://pawnislandrecords.com/").toString();
+  }
+
+  function compactDescription(parts, fallback) {
+    const value = (Array.isArray(parts) ? parts : [parts])
+      .map((part) => text(part, ""))
+      .filter(Boolean)
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    return value || fallback;
+  }
+
+  function organizationStructuredData() {
     return {
-      label: releaseCtaLabel(release),
-      url,
-      external: true
+      "@type": "Organization",
+      "@id": siteUrl("#organization"),
+      name: text(data.label && data.label.name, "Pawn Island Records"),
+      url: siteUrl("index.html"),
+      logo: siteUrl("assets/brand/pawnisland-512.jpg"),
+      sameAs: socialLinks()
+        .filter((link) => isExternalUrl(link.url))
+        .map((link) => link.url)
     };
+  }
+
+  function releaseStructuredData(release, artist) {
+    const releasePath = sitePath("release.html", { release: release.slug });
+    const type = String(release.type || "").toLowerCase().includes("single")
+      ? "MusicRecording"
+      : "MusicAlbum";
+
+    return {
+      "@type": type,
+      "@id": siteUrl(`${releasePath}#release`),
+      name: release.title,
+      url: siteUrl(releasePath),
+      image: siteUrl(release.cover || "assets/brand/pawnisland-1200.jpg"),
+      byArtist: artist
+        ? {
+            "@type": "MusicGroup",
+            name: artist.name,
+            url: siteUrl(sitePath("artist.html", { artist: artist.slug }))
+          }
+        : undefined,
+      datePublished: text(release.releaseDate, ""),
+      description: text(release.description, artist && artist.summary),
+      potentialAction: releaseAction(release)
+        ? {
+            "@type": "ListenAction",
+            target: releaseAction(release).url
+          }
+        : undefined
+    };
+  }
+
+  function artistStructuredData(artist, discography, pagePath) {
+    return {
+      "@type": "MusicGroup",
+      "@id": siteUrl(`${pagePath}#artist`),
+      name: artist.name,
+      url: siteUrl(pagePath),
+      image: siteUrl(artist.image || "assets/brand/pawnisland-1200.jpg"),
+      genre: text(artist.lane, ""),
+      description: text(artist.pressBio || artist.story || artist.summary, ""),
+      album: (discography || []).slice(0, 12).map((release) => releaseStructuredData(release, artist))
+    };
+  }
+
+  function graphStructuredData(items) {
+    return {
+      "@context": "https://schema.org",
+      "@graph": [organizationStructuredData(), ...(items || [])].filter(Boolean)
+    };
+  }
+
+  function setRouteMeta(settings) {
+    const options = settings || {};
+
+    if (ui && ui.setPageMeta) {
+      ui.setPageMeta({
+        title: options.title,
+        description: options.description,
+        canonicalPath: options.canonicalPath,
+        image: options.image,
+        ogType: options.ogType || "website",
+        robots: options.robots || "noindex,follow",
+        structuredData: options.structuredData,
+        structuredDataId: options.structuredDataId || "pawn-route-structured-data"
+      });
+      return;
+    }
+
+    document.title = options.title;
   }
 
   function releaseCountText(count) {
@@ -720,7 +951,7 @@
             ${slides
               .map(
                 (chunk, slideIndex) => `
-                  <div class="pending-carousel__slide" data-pending-slide="${slideIndex}" aria-hidden="${slideIndex === 0 ? "false" : "true"}">
+                  <div class="pending-carousel__slide" data-pending-slide="${slideIndex}" aria-hidden="${slideIndex === 0 ? "false" : "true"}"${slideIndex === 0 ? "" : " inert"}>
                     ${chunk.map((release) => pendingReleaseCardMarkup(release)).join("")}
                   </div>
                 `
@@ -781,7 +1012,9 @@
       track.style.transform = `translateX(-${currentIndex * 100}%)`;
 
       slides.forEach((slide, slideIndex) => {
-        slide.setAttribute("aria-hidden", String(slideIndex !== currentIndex));
+        const isHidden = slideIndex !== currentIndex;
+        slide.setAttribute("aria-hidden", String(isHidden));
+        slide.toggleAttribute("inert", isHidden);
       });
 
       dots.forEach((dot, dotIndex) => {
@@ -1129,10 +1362,13 @@
     }
 
     if (platformsNode) {
+      platformsNode.setAttribute("role", "region");
+      platformsNode.setAttribute("tabindex", "0");
+      platformsNode.setAttribute("aria-label", "Streaming platform availability");
       platformsNode.innerHTML = homeStreamingPlatforms()
         .map(
           (platform) => `
-            <div class="platform-chip platform-chip--${escapeHtml(platform.key || "platform")}" aria-label="${escapeHtml(platform.label)}">
+            <div class="platform-chip platform-chip--${escapeHtml(platform.key || "platform")}">
               <span class="platform-chip__icon" aria-hidden="true">
                 ${
                   platform.image
@@ -1259,7 +1495,7 @@
         const coverMarkup = artworkMarkup(
           artist.image || (latestRelease && latestRelease.cover) || "",
           artist.name,
-          artist.lane || "Project placeholder",
+                      artist.lane || "Project profile",
           index,
           {
             format: "square",
@@ -1385,13 +1621,23 @@
     const discographyNode = document.getElementById("artist-discography");
     const embedsNode = document.getElementById("artist-embeds");
 
-    document.title = `${artist.name} | Pawn Island Records`;
-
-    if (ui && ui.setMetaDescription) {
-      ui.setMetaDescription(
-        `${artist.name}. ${artist.headline || artist.summary || "Explore the project discography and sample listening embeds."}`
-      );
-    }
+    setRouteMeta({
+      title: `${artist.name} | Pawn Island Records`,
+      description: compactDescription(
+        [
+          `${artist.name}.`,
+          artist.headline || artist.summary,
+          discography.length ? `${releaseCountText(discography.length)} in the current catalog.` : ""
+        ],
+        "Explore the project discography and sample listening embeds."
+      ),
+      canonicalPath: sitePath("artist.html", { artist: artist.slug }),
+      image: artist.image || (latestRelease && latestRelease.cover) || "assets/brand/pawnisland-1200.jpg",
+      ogType: "profile",
+      structuredData: graphStructuredData([
+        artistStructuredData(artist, discography, sitePath("artist.html", { artist: artist.slug }))
+      ])
+    });
 
     const breadcrumb = document.createElement("nav");
     breadcrumb.setAttribute("aria-label", "Breadcrumb");
@@ -1513,7 +1759,7 @@
           .join("")
       : `
           <article class="empty-card">
-            <p>This project page is ready. Add releases to the catalog and the discography will appear here automatically.</p>
+            <p>This project page is ready for release context; current catalog details are available through the label contact.</p>
           </article>
         `;
 
@@ -1641,14 +1887,14 @@
               <p class="embed-card__label">Spotify Sample</p>
               <h2>${escapeHtml(spotifySample.title)}</h2>
               <p class="embed-card__eyebrow">${escapeHtml(`${spotifyEmbed.label || "Spotify"} embed from the project discography.`)}</p>
-              <div class="embed-card__frame embed-card__frame--audio">
-                <iframe
-                  src="${escapeHtml(spotifyEmbed.url)}"
-                  title="${escapeHtml(spotifySample.title)} Spotify embed"
-                  loading="lazy"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                ></iframe>
-              </div>
+              ${mediaEmbedFrameMarkup({
+                src: spotifyEmbed.url,
+                title: `${spotifySample.title} Spotify embed`,
+                provider: "Spotify",
+                variant: "audio",
+                className: "embed-card__frame embed-card__frame--audio",
+                loading: "lazy"
+              })}
               <p class="embed-card__caption">${escapeHtml(text(spotifySample.description, artist.summary))}</p>
             </article>
           `
@@ -1666,15 +1912,15 @@
               <p class="embed-card__label">YouTube Sample</p>
               <h2>${escapeHtml(youtubeSample.title)}</h2>
               <p class="embed-card__eyebrow">Featured visual pulled from the available release media.</p>
-              <div class="embed-card__frame embed-card__frame--video">
-                <iframe
-                  src="${escapeHtml(youtubeEmbedUrl(youtubeId))}"
-                  title="${escapeHtml(youtubeSample.title)} YouTube embed"
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                ></iframe>
-              </div>
+              ${mediaEmbedFrameMarkup({
+                src: youtubeEmbedUrl(youtubeId),
+                title: `${youtubeSample.title} YouTube embed`,
+                provider: "YouTube",
+                variant: "video",
+                className: "embed-card__frame embed-card__frame--video",
+                loading: "lazy",
+                allowFullscreen: true
+              })}
               <p class="embed-card__caption">${escapeHtml(text(youtubeSample.description, artist.summary))}</p>
             </article>
           `
@@ -1697,6 +1943,9 @@
       if (ui && ui.hydrateArtwork) {
         ui.hydrateArtwork(mediaStage);
       }
+
+      hydrateMediaEmbeds(mediaStage);
+      preservePreviewLinks(mediaStage);
     }
 
     if (mediaViews) {
@@ -1753,6 +2002,32 @@
       return;
     }
 
+    setRouteMeta({
+      title: "Press | Pawn Island Records",
+      description: "Browse Pawn Island Records project press kits, bios, release context, media previews, and contact paths.",
+      canonicalPath: "epks.html",
+      image: "assets/brand/pawnisland-1200.jpg",
+      structuredData: graphStructuredData([
+        {
+          "@type": "CollectionPage",
+          "@id": siteUrl("epks.html#press"),
+          name: "Pawn Island Records Press",
+          url: siteUrl("epks.html"),
+          mainEntity: {
+            "@type": "ItemList",
+            itemListElement: artists.map((artist, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              url: siteUrl(sitePath("epk.html", { artist: artist.slug })),
+              name: `${artist.name} Press Kit`
+            }))
+          }
+        }
+      ])
+    });
+
+    const pressContact = pressContactLink();
+
     collection.innerHTML = artists
       .map((artist, index) => {
         const discography = artistReleases(artist.slug);
@@ -1804,6 +2079,9 @@
                 </a>
                 <a class="button button--ghost button--small" href="${escapeHtml(artistPageUrl(artist.slug, latestRelease && latestRelease.slug))}">
                   Project Page
+                </a>
+                <a class="button button--ghost button--small" href="${escapeHtml(pressContact.url)}">
+                  Email Press
                 </a>
               </div>
             </div>
@@ -1861,6 +2139,7 @@
       ? artist.priorityMarkets.filter(Boolean)
       : [];
     const latestReleaseAction = releaseAction(latestRelease);
+    const pressContact = pressContactLink();
     const spotifyEmbed = spotifySample ? primaryEmbedFor(spotifySample) : { label: "", url: "" };
     const youtubeId = youtubeSample ? preferredYoutubeIdFor(youtubeSample) : "";
     const releasePageVisible = showReleasePages();
@@ -1879,14 +2158,14 @@
         label: "Live History",
         value: text(
           artist.liveShowNote,
-          `Add venue history, support slots, festival billing, or session details for ${artist.name}.`
+          `Live history and session specifics for ${artist.name} are available directly from the label when confirmed.`
         )
       },
       {
         label: "Press Quote",
         value: text(
           artist.pressQuote,
-          "Add an editorial quote, testimonial, or project-approved pull line here."
+          "No approved editorial pull quote is attached yet; use the project bio and release context as the current source."
         )
       },
       {
@@ -1894,8 +2173,8 @@
         value: text(
           artist.bookingNote,
           latestRelease
-            ? `Add rollout timing, team notes, and campaign specifics for ${latestRelease.title}.`
-            : "Add rollout timing, team notes, and campaign specifics here."
+            ? `${latestRelease.title} is the current campaign anchor; contact the label for timing, approvals, and placement notes.`
+            : "Campaign timing and placement notes are available by request."
         )
       }
     ];
@@ -1907,11 +2186,11 @@
       { key: "assets", label: "Assets" }
     ];
     const viewDescriptions = {
-      overview: "A fast project snapshot built from positioning, story angles, and open campaign placeholders.",
+      overview: "A fast project snapshot built from positioning, story angles, and current campaign status.",
       bio: "Working language for press copy, project framing, and direction-setting notes.",
       catalog: "Current release context plus a scrollable discography strip for quick reference.",
       media: "Available Spotify, YouTube, and cover-art materials for immediate preview.",
-      assets: "What is already in the kit and where specific campaign details can be added next."
+      assets: "What is already in the kit and how to request current campaign details."
     };
     const initialEpkView = resolveView(
       requestedView(),
@@ -2063,15 +2342,15 @@
             <p class="embed-card__label">Story Angles</p>
             <h2>Editorial Hooks</h2>
             <ul class="epk-bullet-list">
-              ${(pressHighlights.length ? pressHighlights : ["Add press angles and approved talking points."])
+              ${(pressHighlights.length ? pressHighlights : ["Project-approved story angles are available through the label contact."])
                 .slice(0, 4)
                 .map((item) => `<li>${escapeHtml(item)}</li>`)
                 .join("")}
             </ul>
           </article>
           <article class="epk-panel-card">
-            <p class="embed-card__label">Specifics To Add</p>
-            <h2>Open Slots</h2>
+            <p class="embed-card__label">Availability</p>
+            <h2>Status Notes</h2>
             <div class="epk-placeholder-list">
               ${specifics
                 .map(
@@ -2110,7 +2389,7 @@
                 text(artist.merchIntro, ""),
                 priorityMarkets.length
                   ? `Priority markets: ${priorityMarkets.join(", ")}.`
-                  : "Add target territories, priority publications, and live-market notes."
+                  : "Target territories, priority publications, and live-market notes are handled through direct press contact."
               ]
                 .filter(Boolean)
                 .join(" ")
@@ -2183,7 +2462,7 @@
           `
         : `
             <article class="empty-card">
-              <p>This press kit is ready for release context. Add a public release and the catalog view will populate automatically.</p>
+              <p>This press kit is ready for release context; current catalog details are available through the label contact.</p>
             </article>
           `;
     }
@@ -2198,24 +2477,24 @@
               ${escapeHtml(
                 spotifyEmbed.url
                   ? `${spotifyEmbed.label || "Spotify"} embed ready from the public discography.`
-                  : "Add a Spotify embed URL to any release and it will appear here."
+                  : "No Spotify preview is attached yet; use the campaign and catalog links for current listening context."
               )}
             </p>
             ${
               spotifyEmbed.url
                 ? `
-                  <div class="embed-card__frame embed-card__frame--audio">
-                    <iframe
-                      src="${escapeHtml(spotifyEmbed.url)}"
-                      title="${escapeHtml(spotifySample.title)} Spotify embed"
-                      loading="lazy"
-                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    ></iframe>
-                  </div>
+                  ${mediaEmbedFrameMarkup({
+                    src: spotifyEmbed.url,
+                    title: `${spotifySample.title} Spotify embed`,
+                    provider: "Spotify",
+                    variant: "audio",
+                    className: "embed-card__frame embed-card__frame--audio",
+                    loading: "lazy"
+                  })}
                 `
                 : `
                   <div class="embed-card__placeholder">
-                    <p>Spotify sample slot ready when a release embed is available.</p>
+                    <p>Spotify preview is not attached to this kit yet.</p>
                   </div>
                 `
             }
@@ -2227,25 +2506,25 @@
               ${escapeHtml(
                 youtubeId
                   ? "Release-level YouTube visual pulled from the current catalog."
-                  : "Add a YouTube ID to any release and the video slot will appear here."
+                  : "No YouTube visual is attached yet; artwork and release context remain available below."
               )}
             </p>
             ${
               youtubeId
                 ? `
-                  <div class="embed-card__frame embed-card__frame--video">
-                    <iframe
-                      src="${escapeHtml(youtubeEmbedUrl(youtubeId))}"
-                      title="${escapeHtml(youtubeSample.title)} YouTube embed"
-                      loading="lazy"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowfullscreen
-                    ></iframe>
-                  </div>
+                  ${mediaEmbedFrameMarkup({
+                    src: youtubeEmbedUrl(youtubeId),
+                    title: `${youtubeSample.title} YouTube embed`,
+                    provider: "YouTube",
+                    variant: "video",
+                    className: "embed-card__frame embed-card__frame--video",
+                    loading: "lazy",
+                    allowFullscreen: true
+                  })}
                 `
                 : `
                   <div class="embed-card__placeholder embed-card__placeholder--video">
-                    <p>YouTube visual slot ready when release media is attached.</p>
+                    <p>YouTube preview is not attached to this kit yet.</p>
                   </div>
                 `
             }
@@ -2260,12 +2539,13 @@
     }
 
     function renderAssetsView() {
+      const pressContact = pressContactLink();
       const readinessItems = [
-        artist.pressBio ? "Working press bio is already populated." : "Add a press bio.",
+        artist.pressBio ? "Working press bio is populated." : "Press bio is available through the label contact.",
         `${pressAssets.length} asset${pressAssets.length === 1 ? "" : "s"} currently listed.`,
-        latestRelease ? `Latest release context is tied to ${latestRelease.title}.` : "Add a public release for campaign context.",
-        spotifyEmbed.url ? "Spotify sample is live in the press kit." : "Spotify sample slot is still open.",
-        youtubeId ? "YouTube sample is live in the press kit." : "YouTube sample slot is still open."
+        latestRelease ? `Latest release context is tied to ${latestRelease.title}.` : "Release campaign context is available by request.",
+        spotifyEmbed.url ? "Spotify sample is live in the press kit." : "Spotify sample is not attached yet.",
+        youtubeId ? "YouTube sample is live in the press kit." : "YouTube sample is not attached yet."
       ];
 
       stageNode.innerHTML = `
@@ -2274,7 +2554,7 @@
             <p class="embed-card__label">Available Assets</p>
             <h2>What Is Listed</h2>
             <ul class="epk-bullet-list">
-              ${(pressAssets.length ? pressAssets : ["Add high-resolution photos, one-sheets, and approved copy items."])
+              ${(pressAssets.length ? pressAssets : ["Current photos, one-sheets, and approved copy are available by request."])
                 .map((item) => `<li>${escapeHtml(item)}</li>`)
                 .join("")}
             </ul>
@@ -2287,13 +2567,18 @@
             </ul>
           </article>
           <article class="epk-panel-card">
-            <p class="embed-card__label">Next Specifics</p>
-            <h2>Still To Add</h2>
+            <p class="embed-card__label">Contact</p>
+            <h2>Request Current Materials</h2>
             <ul class="epk-bullet-list">
-              <li>Add recent press quotes or editorial pull lines.</li>
-              <li>Add streaming, ticketing, or campaign metrics when they exist.</li>
-              <li>Add live history, personnel credits, and official photo selections.</li>
+              <li>Use ${escapeHtml(pressContact.label)} for current approvals, credits, and photo selections.</li>
+              <li>Campaign metrics and live history are shared when confirmed for press use.</li>
+              <li>Release-specific notes can be requested for playlist, editorial, or booking context.</li>
             </ul>
+            <div class="feature-card__actions">
+              <a class="button button--ghost button--small" href="${escapeHtml(pressContact.url)}">
+                Email Press
+              </a>
+            </div>
           </article>
         </div>
       `;
@@ -2319,15 +2604,37 @@
       if (ui && ui.hydrateArtwork) {
         ui.hydrateArtwork(stageNode);
       }
+
+      hydrateMediaEmbeds(stageNode);
+      preservePreviewLinks(stageNode);
     }
 
-    document.title = `${artist.name} Press Kit | Pawn Island Records`;
-
-    if (ui && ui.setMetaDescription) {
-      ui.setMetaDescription(
-        `${artist.name} press kit. ${artist.pressBio || artist.summary || artist.headline || "Press materials, release context, and project positioning."}`
-      );
-    }
+    setRouteMeta({
+      title: `${artist.name} Press Kit | Pawn Island Records`,
+      description: compactDescription(
+        [
+          `${artist.name} press kit.`,
+          artist.pressBio || artist.summary || artist.headline,
+          latestRelease ? `Current release context includes ${latestRelease.title}.` : ""
+        ],
+        "Press materials, release context, and project positioning."
+      ),
+      canonicalPath: sitePath("epk.html", { artist: artist.slug }),
+      image: artist.image || (latestRelease && latestRelease.cover) || "assets/brand/pawnisland-1200.jpg",
+      structuredData: graphStructuredData([
+        {
+          "@type": "ProfilePage",
+          "@id": siteUrl(`${sitePath("epk.html", { artist: artist.slug })}#press-kit`),
+          name: `${artist.name} Press Kit`,
+          url: siteUrl(sitePath("epk.html", { artist: artist.slug })),
+          mainEntity: artistStructuredData(
+            artist,
+            discography,
+            sitePath("artist.html", { artist: artist.slug })
+          )
+        }
+      ])
+    });
 
     titleNode.textContent = artist.name;
     laneNode.textContent = text(artist.lane, "Independent project");
@@ -2357,7 +2664,8 @@
             </a>
           `
         : "",
-      `<a class="button button--ghost" href="epks.html">All Press</a>`
+      `<a class="button button--ghost" href="${escapeHtml(pressContact.url)}">Email Press</a>`,
+      `<a class="button button--ghost" href="${escapeHtml(withLaunchPreview("epks.html"))}">All Press</a>`
     ]
       .filter(Boolean)
       .join("");
@@ -2453,8 +2761,139 @@
     const collection = document.getElementById("releases-collection");
     const intro = document.getElementById("releases-intro");
     const resetLink = document.getElementById("release-filter-reset");
-    const selectedArtistSlug = new URLSearchParams(window.location.search).get("artist");
+    const params = new URLSearchParams(window.location.search);
+    const selectedArtistSlug = params.get("artist");
     const selectedArtist = selectedArtistSlug ? artistLookup.get(selectedArtistSlug) || null : null;
+    const statusOptions = [
+      { key: "all", label: "All" },
+      { key: "upcoming", label: "Forthcoming" },
+      { key: "live", label: "Out Now" },
+      { key: "catalog", label: "Catalog Notes" }
+    ];
+    const requestedStatus = text(params.get("status"), "all").toLowerCase();
+    const selectedStatus = statusOptions.some((option) => option.key === requestedStatus)
+      ? requestedStatus
+      : "all";
+    const normalizeType = (value) =>
+      text(value, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    const releaseTypes = Array.from(
+      new Map(
+        releases
+          .map((release) => [normalizeType(release.type), text(release.type, "Release")])
+          .filter(([key]) => key)
+      )
+    ).sort((left, right) => left[1].localeCompare(right[1]));
+    const requestedType = normalizeType(params.get("type"));
+    const selectedType = releaseTypes.some(([key]) => key === requestedType) ? requestedType : "";
+
+    function catalogFilterUrl(overrides) {
+      const settings = Object.assign(
+        {
+          artist: selectedArtist ? selectedArtist.slug : "",
+          status: selectedStatus === "all" ? "" : selectedStatus,
+          type: selectedType
+        },
+        overrides || {}
+      );
+      const nextParams = new URLSearchParams();
+
+      if (settings.artist) {
+        nextParams.set("artist", settings.artist);
+      }
+
+      if (settings.status && settings.status !== "all") {
+        nextParams.set("status", settings.status);
+      }
+
+      if (settings.type) {
+        nextParams.set("type", settings.type);
+      }
+
+      const query = nextParams.toString();
+      return withLaunchPreview(`catalog.html${query ? `?${query}` : ""}`);
+    }
+
+    function renderCatalogFilters() {
+      if (!panel || !collection) {
+        return;
+      }
+
+      let filters = document.getElementById("catalog-filters");
+
+      if (!filters) {
+        collection.insertAdjacentHTML("beforebegin", '<section class="catalog-filters" id="catalog-filters" aria-label="Catalog filters"></section>');
+        filters = document.getElementById("catalog-filters");
+      }
+
+      filters.innerHTML = `
+        <div class="catalog-filters__field">
+          <label for="catalog-filter-artist">Project</label>
+          <select id="catalog-filter-artist" data-catalog-filter="artist">
+            <option value="">All projects</option>
+            ${artists
+              .map(
+                (artist) => `
+                  <option value="${escapeHtml(artist.slug)}"${selectedArtist && selectedArtist.slug === artist.slug ? " selected" : ""}>
+                    ${escapeHtml(artist.name)}
+                  </option>
+                `
+              )
+              .join("")}
+          </select>
+        </div>
+        <div class="catalog-filters__field catalog-filters__field--status">
+          <span>Status</span>
+          <div class="catalog-filter-tabs" role="group" aria-label="Release status">
+            ${statusOptions
+              .map(
+                (option) => `
+                  <a
+                    class="catalog-filter-tab${selectedStatus === option.key ? " is-active" : ""}"
+                    href="${escapeHtml(catalogFilterUrl({ status: option.key }))}"
+                    ${selectedStatus === option.key ? 'aria-current="true"' : ""}
+                  >
+                    ${escapeHtml(option.label)}
+                  </a>
+                `
+              )
+              .join("")}
+          </div>
+        </div>
+        <div class="catalog-filters__field">
+          <label for="catalog-filter-type">Type</label>
+          <select id="catalog-filter-type" data-catalog-filter="type">
+            <option value="">All types</option>
+            ${releaseTypes
+              .map(
+                ([key, label]) => `
+                  <option value="${escapeHtml(key)}"${selectedType === key ? " selected" : ""}>
+                    ${escapeHtml(label)}
+                  </option>
+                `
+              )
+              .join("")}
+          </select>
+        </div>
+      `;
+
+      filters.querySelectorAll("[data-catalog-filter]").forEach((control) => {
+        control.addEventListener("change", () => {
+          const filter = control.getAttribute("data-catalog-filter");
+          const value = control.value || "";
+
+          if (filter === "artist") {
+            window.location.assign(catalogFilterUrl({ artist: value }));
+          } else if (filter === "type") {
+            window.location.assign(catalogFilterUrl({ type: value }));
+          }
+        });
+      });
+
+      preservePreviewLinks(filters);
+    }
 
     if (!showCatalogPage()) {
       renderLaunchHoldState(panel || collection, {
@@ -2466,21 +2905,78 @@
       return;
     }
 
-    const visibleReleases = selectedArtist
+    renderCatalogFilters();
+
+    const artistScopedReleases = selectedArtist
       ? releases.filter((release) => release.artist === selectedArtist.slug)
       : releases;
+    const visibleReleases = artistScopedReleases.filter((release) => {
+      const statusMatches = selectedStatus === "all" || releaseState(release) === selectedStatus;
+      const typeMatches = !selectedType || normalizeType(release.type) === selectedType;
+
+      return statusMatches && typeMatches;
+    });
     const groupedReleases = splitReleaseGroups(visibleReleases);
     const releasePageVisible = showReleasePages();
+    const activeFilterText = [
+      selectedArtist ? selectedArtist.name : "",
+      selectedStatus !== "all"
+        ? (statusOptions.find((option) => option.key === selectedStatus) || {}).label
+        : "",
+      selectedType ? (releaseTypes.find(([key]) => key === selectedType) || [null, ""])[1] : ""
+    ].filter(Boolean);
+    const catalogCanonicalPath = sitePath("catalog.html", {
+      artist: selectedArtist ? selectedArtist.slug : "",
+      status: selectedStatus !== "all" ? selectedStatus : "",
+      type: selectedType
+    });
+
+    setRouteMeta({
+      title: `${activeFilterText.length ? `${activeFilterText.join(" / ")} | ` : ""}Catalog | Pawn Island Records`,
+      description: compactDescription(
+        [
+          activeFilterText.length
+            ? `Pawn Island Records catalog filtered by ${activeFilterText.join(", ")}.`
+            : "Explore the Pawn Island Records catalog.",
+          `${releaseCountText(visibleReleases.length)} visible.`,
+          availabilitySummary(groupedReleases)
+            ? `Includes ${availabilitySummary(groupedReleases)}.`
+            : ""
+        ],
+        "Explore releases, forthcoming campaigns, out-now records, and project-specific catalog paths."
+      ),
+      canonicalPath: catalogCanonicalPath,
+      image: (visibleReleases[0] && visibleReleases[0].cover) || "assets/brand/pawnisland-1200.jpg",
+      structuredData: graphStructuredData([
+        {
+          "@type": "CollectionPage",
+          "@id": siteUrl(`${catalogCanonicalPath}#catalog`),
+          name: "Pawn Island Records Catalog",
+          url: siteUrl(catalogCanonicalPath),
+          mainEntity: {
+            "@type": "ItemList",
+            itemListElement: visibleReleases.slice(0, 30).map((release, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              url: siteUrl(sitePath("release.html", { release: release.slug })),
+              name: release.title
+            }))
+          }
+        }
+      ])
+    });
 
     if (intro) {
       intro.textContent = selectedArtist
         ? `${selectedArtist.name}: ${releaseCountText(visibleReleases.length)}${availabilitySummary(groupedReleases) ? `, with ${availabilitySummary(groupedReleases)}.` : "."}`
-        : `${releaseCountText(releases.length)} across the label${availabilitySummary(groupedReleases) ? `, including ${availabilitySummary(groupedReleases)}.` : "."}`;
+        : `${releaseCountText(visibleReleases.length)} across the label${availabilitySummary(groupedReleases) ? `, including ${availabilitySummary(groupedReleases)}.` : "."}`;
     }
 
     if (resetLink) {
-      resetLink.classList.toggle("is-hidden", !selectedArtist);
-      if (selectedArtist) {
+      const hasFilters = Boolean(selectedArtist || selectedStatus !== "all" || selectedType);
+      resetLink.classList.toggle("is-hidden", !hasFilters);
+      resetLink.href = withLaunchPreview("catalog.html");
+      if (hasFilters) {
         resetLink.textContent = "\u2190 All releases";
       }
     }
@@ -2492,7 +2988,10 @@
     if (!visibleReleases.length) {
       collection.innerHTML = `
         <article class="empty-card">
-          <p>No releases are attached to this project filter yet.</p>
+          <p>No releases match${activeFilterText.length ? ` ${escapeHtml(activeFilterText.join(" / "))}` : " the current filters"}.</p>
+          <div class="action-row action-row--center">
+            <a class="button button--ghost button--small" href="${escapeHtml(withLaunchPreview("catalog.html"))}">Reset Filters</a>
+          </div>
         </article>
       `;
       return;
@@ -2622,9 +3121,10 @@
             >
               <span class="signal-card__icon" aria-hidden="true">
                 ${
-                  link.image
+                  link.icon ||
+                  (link.image
                     ? `<img src="${escapeHtml(link.image)}" alt="" loading="eager" decoding="async" />`
-                    : link.icon || `<span>${escapeHtml(link.label.slice(0, 1))}</span>`
+                    : `<span>${escapeHtml(link.label.slice(0, 1))}</span>`)
                 }
               </span>
               <span class="signal-card__copy">
@@ -2680,14 +3180,252 @@
     }
   }
 
+  function merchItems() {
+    return Array.isArray(data.merch) ? data.merch : [];
+  }
+
+  function merchArtist(item) {
+    const artistSlug = text(item && item.artist, "");
+
+    if (!artistSlug || artistSlug === "label") {
+      return null;
+    }
+
+    return artistLookup.get(artistSlug) || null;
+  }
+
+  function merchArtistName(item) {
+    const artist = merchArtist(item);
+
+    if (artist) {
+      return artist.name;
+    }
+
+    return text(data.label && data.label.name, "Pawn Island Records");
+  }
+
+  function merchCategory(item) {
+    const configured = text(item && item.category, "");
+
+    if (configured) {
+      return configured;
+    }
+
+    const title = text(item && item.title, "").toLowerCase();
+
+    if (/(hoodie|tee|shirt|apparel)/.test(title)) {
+      return "Apparel";
+    }
+
+    if (/(slipmat|accessory)/.test(title)) {
+      return "Accessory";
+    }
+
+    if (/(poster|print)/.test(title)) {
+      return "Print";
+    }
+
+    return "Concept";
+  }
+
+  function merchStatusLabel(item) {
+    return text(item && item.url, "") ? "Store link live" : "Checkout pending";
+  }
+
+  function merchFilterUrl(artistSlug) {
+    return withLaunchPreview(
+      artistSlug ? sitePath("merch.html", { artist: artistSlug }) : "merch.html"
+    );
+  }
+
+  function merchCardMarkup(item, index) {
+    const artist = merchArtist(item);
+    const image = text(item && item.image, artist && artist.image);
+    const title = text(item && item.title, "Merch concept");
+    const url = text(item && item.url, "");
+    const price = text(item && item.price, "");
+    const canOpenProject = artist && showProjectPages();
+
+    return `
+      <article class="merch-card">
+        <div class="merch-card__art">
+          ${artworkMarkup(image || "assets/brand/pawnisland-256.jpg", title, merchArtistName(item), index)}
+        </div>
+        <div class="merch-card__body">
+          <div class="merch-card__meta">
+            <span class="tag">${escapeHtml(merchCategory(item))}</span>
+            <span class="tag">${escapeHtml(merchStatusLabel(item))}</span>
+          </div>
+          <div class="merch-card__copy">
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml(text(item && item.description, "Merch concept staged for future production review."))}</p>
+          </div>
+          <div class="merch-card__facts">
+            ${price ? `<span>${escapeHtml(price)}</span>` : ""}
+            <span>${escapeHtml(merchArtistName(item))}</span>
+          </div>
+          <div class="action-row merch-card__actions">
+            ${
+              url
+                ? `
+                    <a class="button button--primary button--small" href="${escapeHtml(url)}" target="_blank" rel="noreferrer">
+                      Open Store
+                    </a>
+                  `
+                : '<span class="tag tag--muted">No checkout link yet</span>'
+            }
+            ${
+              canOpenProject
+                ? `
+                    <a class="button button--ghost button--small" href="${escapeHtml(artistPageUrl(artist.slug))}">
+                      Project Page
+                    </a>
+                  `
+                : ""
+            }
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderMerch() {
+    const panel = document.querySelector(".merch-panel");
+    const intro = document.getElementById("merch-intro");
+    const statsNode = document.getElementById("merch-stats");
+    const filtersNode = document.getElementById("merch-artist-filters");
+    const gridNode = document.getElementById("merch-grid");
+    const summaryNode = document.getElementById("merch-results-summary");
+    const supportLink = document.getElementById("merch-support-link");
+    const items = merchItems();
+    const params = new URLSearchParams(window.location.search);
+    const selectedArtistSlug = text(params.get("artist"), "");
+    const selectedArtist = selectedArtistSlug ? artistLookup.get(selectedArtistSlug) || null : null;
+    const visibleItems = selectedArtist
+      ? items.filter((item) => text(item && item.artist, "") === selectedArtist.slug)
+      : items;
+    const liveItems = items.filter((item) => text(item && item.url, ""));
+    const merchArtists = Array.from(new Set(items.map((item) => text(item && item.artist, "")).filter(Boolean)))
+      .map((slug) => artistLookup.get(slug))
+      .filter(Boolean)
+      .sort((left, right) => left.name.localeCompare(right.name));
+    const support = socialLinks().find((link) => link.key === "tiptopjar");
+
+    setRouteMeta({
+      title: selectedArtist
+        ? `${selectedArtist.name} Merch Concepts | Pawn Island Records`
+        : "Merch Concepts | Pawn Island Records",
+      description: compactDescription(
+        [
+          selectedArtist
+            ? `${selectedArtist.name} merch concepts staged for Pawn Island Records.`
+            : "Preview Pawn Island Records merch concepts.",
+          "Checkout links only appear when real store URLs exist."
+        ],
+        "Preview Pawn Island Records merch concepts and active support paths."
+      ),
+      canonicalPath: sitePath("merch.html", { artist: selectedArtist ? selectedArtist.slug : "" }),
+      image: (visibleItems[0] && visibleItems[0].image) || "assets/brand/pawnisland-1200.jpg",
+      robots: "noindex,follow",
+      structuredData: graphStructuredData([
+        {
+          "@type": "CollectionPage",
+          "@id": siteUrl("merch.html#merch"),
+          name: "Pawn Island Records Merch Concepts",
+          url: siteUrl(sitePath("merch.html", { artist: selectedArtist ? selectedArtist.slug : "" })),
+          mainEntity: {
+            "@type": "ItemList",
+            itemListElement: visibleItems.map((item, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              name: text(item && item.title, "Merch concept")
+            }))
+          }
+        }
+      ])
+    });
+
+    if (supportLink && support) {
+      supportLink.href = support.url;
+      supportLink.target = "_blank";
+      supportLink.rel = "noreferrer";
+    }
+
+    if (intro) {
+      intro.textContent = liveItems.length
+        ? "Merch concepts are staged for review. Only items with real store URLs show checkout actions."
+        : "Merch concepts are not checkout-ready yet. Browse the staged release-world ideas, then use the support path if you want to help fund the next run.";
+    }
+
+    if (statsNode) {
+      statsNode.innerHTML = `
+        <dl>
+          <div>
+            <dt>Concepts</dt>
+            <dd>${items.length}</dd>
+          </div>
+          <div>
+            <dt>Live checkout links</dt>
+            <dd>${liveItems.length}</dd>
+          </div>
+          <div>
+            <dt>Artist worlds</dt>
+            <dd>${merchArtists.length}</dd>
+          </div>
+        </dl>
+      `;
+    }
+
+    if (filtersNode) {
+      filtersNode.innerHTML = [
+        `<a class="merch-filter${selectedArtist ? "" : " is-active"}" href="${escapeHtml(merchFilterUrl(""))}"${selectedArtist ? "" : ' aria-current="page"'}>All</a>`,
+        ...merchArtists.map(
+          (artist) => `
+            <a
+              class="merch-filter${selectedArtist && selectedArtist.slug === artist.slug ? " is-active" : ""}"
+              href="${escapeHtml(merchFilterUrl(artist.slug))}"
+              ${selectedArtist && selectedArtist.slug === artist.slug ? 'aria-current="page"' : ""}
+            >
+              ${escapeHtml(artist.name)}
+            </a>
+          `
+        )
+      ].join("");
+    }
+
+    if (summaryNode) {
+      summaryNode.textContent = selectedArtist
+        ? `${visibleItems.length} merch concept${visibleItems.length === 1 ? "" : "s"} for ${selectedArtist.name}.`
+        : `${visibleItems.length} merch concept${visibleItems.length === 1 ? "" : "s"} staged; ${liveItems.length} checkout link${liveItems.length === 1 ? "" : "s"} live.`;
+    }
+
+    if (gridNode) {
+      gridNode.innerHTML = visibleItems.length
+        ? visibleItems.map((item, index) => merchCardMarkup(item, index)).join("")
+        : `
+            <article class="empty-card">
+              <p>No merch concepts match this route yet.</p>
+              <div class="action-row action-row--center">
+                <a class="button button--ghost button--small" href="${escapeHtml(merchFilterUrl(""))}">Show All</a>
+              </div>
+            </article>
+          `;
+    }
+
+    preservePreviewLinks(panel);
+  }
+
   function hydrateArtwork() {
     if (ui && ui.hydrateArtwork) {
       ui.hydrateArtwork(document);
     }
+
+    hydrateMediaEmbeds(document);
   }
 
   function init() {
     syncViewportHeight();
+    renderStandaloneHeader();
     renderPrimaryNav();
     renderSocialFooter();
     setActiveNav();
@@ -2704,12 +3442,15 @@
       renderEpkPage();
     } else if (page === "releases") {
       renderReleases();
+    } else if (page === "merch") {
+      renderMerch();
     } else if (page === "connect") {
       renderConnect();
     } else if (page === "about") {
       renderAbout();
     }
 
+    preservePreviewLinks(document);
     hydrateArtwork();
     window.addEventListener("resize", syncViewportHeight);
     window.addEventListener("orientationchange", syncViewportHeight);

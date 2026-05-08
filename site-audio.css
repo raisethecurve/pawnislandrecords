@@ -122,7 +122,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.35rem;
+  min-height: 2.5rem;
   padding: 0.55rem 0.82rem;
   border: 1px solid rgba(246, 240, 228, 0.14);
   border-radius: 999px;
@@ -153,7 +153,7 @@
 }
 
 .site-audio__button--caret {
-  min-width: 2.35rem;
+  min-width: 2.5rem;
   padding-inline: 0;
 }
 
@@ -237,12 +237,12 @@ body.has-site-audio:not(.shell-body) .label-page {
   }
 
   .site-audio__button {
-    min-height: 2.16rem;
+    min-height: 2.5rem;
     padding: 0.48rem 0.72rem;
   }
 
   .site-audio__button--caret {
-    min-width: 2.16rem;
+    min-width: 2.5rem;
     padding-inline: 0;
   }
 }
@@ -267,5 +267,20 @@ body.has-site-audio:not(.shell-body) .label-page {
 
   .site-audio-tab {
     min-width: 2.7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-audio,
+  .site-audio *,
+  .site-audio *::before,
+  .site-audio *::after,
+  .site-audio-tab,
+  .site-audio-tab *,
+  .site-audio-tab *::before,
+  .site-audio-tab *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
   }
 }

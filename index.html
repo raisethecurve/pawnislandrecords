@@ -78,8 +78,15 @@
                 <div class="platform-banner__row" id="home-platforms"></div>
               </div>
               <div class="hero-playlist-embed" aria-label="Pawn Island Playlist">
-                <div class="hero-playlist-embed__frame">
+                <div
+                  class="hero-playlist-embed__frame media-embed media-embed--audio"
+                  data-media-embed-frame
+                  data-embed-state="idle"
+                  data-embed-provider="Spotify"
+                  data-media-embed-fallback="https://open.spotify.com/playlist/6Ro52nZas5JxzVgQa353Cw"
+                >
                   <iframe
+                    data-media-embed
                     data-testid="embed-iframe"
                     title="Pawn Island Playlist on Spotify"
                     src="https://open.spotify.com/embed/playlist/6Ro52nZas5JxzVgQa353Cw?utm_source=generator&amp;theme=0"
@@ -90,6 +97,10 @@
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                     loading="eager"
                   ></iframe>
+                  <div class="media-embed__status" aria-live="polite">
+                    <p class="media-embed__status-label" data-media-embed-status></p>
+                    <a class="media-embed__action" href="https://open.spotify.com/playlist/6Ro52nZas5JxzVgQa353Cw" target="_blank" rel="noreferrer">Open on Spotify</a>
+                  </div>
                 </div>
               </div>
             </article>
