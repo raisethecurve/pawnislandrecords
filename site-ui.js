@@ -320,7 +320,21 @@
     };
   }
 
-  function releaseIsLiveInNewYork(releaseDate, now) {
+  function releaseSwitchHour(release) {
+    const configuredHour = Number(release && release.releaseHour);
+
+    if (Number.isFinite(configuredHour) && configuredHour >= 0 && configuredHour <= 23) {
+      return configuredHour;
+    }
+
+    return RELEASE_SWITCH_HOUR;
+  }
+
+  function releaseTimeLabel(release) {
+    return String((release && (release.releaseTime || release.releaseTimeLabel)) || "").trim();
+  }
+
+  function releaseIsLiveInNewYork(releaseDate, now, release) {
     const current = newYorkDateTime(now);
     const normalizedReleaseDate = normalizeReleaseDateValue(releaseDate);
 
@@ -336,7 +350,7 @@
       return false;
     }
 
-    return current.hour >= RELEASE_SWITCH_HOUR;
+    return current.hour >= releaseSwitchHour(release);
   }
 
   function formatReleaseDate(value) {
@@ -359,7 +373,7 @@
       .toLowerCase();
     const releaseDate = String((release && release.releaseDate) || "").trim();
     const parsedReleaseDate = parseReleaseDate(releaseDate);
-    const switchedLive = parsedReleaseDate ? releaseIsLiveInNewYork(releaseDate, now) : false;
+    const switchedLive = parsedReleaseDate ? releaseIsLiveInNewYork(releaseDate, now, release) : false;
 
     if (status === "live") {
       return "live";
@@ -401,13 +415,15 @@
   function releaseAvailabilityText(release, now) {
     const state = releaseState(release, now);
     const formattedDate = formatReleaseDate(release && release.releaseDate);
+    const timeLabel = releaseTimeLabel(release);
+    const datedTime = formattedDate && timeLabel ? `${formattedDate} at ${timeLabel}` : formattedDate;
 
     if (state === "upcoming") {
-      return formattedDate ? `Releases ${formattedDate}` : "Release date coming soon";
+      return datedTime ? `Releases ${datedTime}` : "Release date coming soon";
     }
 
     if (state === "live") {
-      return formattedDate ? `Released ${formattedDate}` : "Out now";
+      return datedTime ? `Released ${datedTime}` : "Out now";
     }
 
     return formattedDate ? `Cataloged ${formattedDate}` : "";
