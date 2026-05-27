@@ -1129,6 +1129,22 @@ window.PAWN_PUBLIC_DATA = {
       tracks: [{ title: "Send Me", runtime: "", youtubeId: "" }]
     },
     {
+      slug: "crick-kinnard-empty-chambers",
+      artist: "crick-kinnard",
+      title: "Empty Chambers",
+      type: "Single",
+      vibe: "haunted, penitent, roots-noir",
+      year: "2026",
+      accent: "#b89462",
+      cover: "media/public/albums/crick_empty_chambers.png",
+      description:
+        "A roots-noir Crick Kinnard single set in the heavy quiet between guilt, mercy, and one more road out.",
+      status: "upcoming",
+      releaseDate: "2026-07-03",
+      platforms: [],
+      tracks: [{ title: "Empty Chambers", runtime: "", youtubeId: "" }]
+    },
+    {
       slug: "second-watch-psalm-of-myself",
       artist: "second-watch",
       title: "Psalm of Myself",
