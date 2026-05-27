@@ -200,6 +200,10 @@ function checkPublicData() {
 
     artistSlugs.add(artist.slug);
     checkDataAsset("public-data.js", artist.image, `artist ${artist.slug}`);
+
+    for (const asset of artist.pressAssetRecords || []) {
+      checkDataAsset("public-data.js", asset && (asset.path || asset.url), `artist ${artist.slug} press asset`);
+    }
   }
 
   for (const release of data.releases || []) {

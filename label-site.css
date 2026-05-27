@@ -227,13 +227,15 @@ body {
 
 html {
   background: var(--black);
+  overflow-x: hidden;
+  overflow-y: auto;
   overscroll-behavior-x: none;
 }
 
 body {
   margin: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow-x: clip;
+  overflow-y: visible;
   font-family: var(--font-body);
   color: var(--white);
   background:
@@ -311,7 +313,8 @@ button:focus-visible {
   grid-template-rows: auto auto;
   gap: clamp(12px, 1.8vh, 20px);
   padding: var(--label-page-pad);
-  overflow-x: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 .label-page > *,
@@ -944,7 +947,7 @@ button:focus-visible {
 .hero-playlist-embed__frame {
   position: relative;
   width: 100%;
-  overflow: hidden;
+  overflow: clip;
   border-radius: 14px;
   background: #121212;
   box-shadow:
@@ -1257,7 +1260,7 @@ button:focus-visible {
 }
 
 #connect-support-link {
-  overflow: hidden;
+  overflow: clip;
   border-color: rgba(255, 204, 0, 0.76);
   background:
     linear-gradient(135deg, rgba(255, 204, 0, 0.98), rgba(255, 239, 164, 0.94) 52%, rgba(255, 204, 0, 0.98));
@@ -1321,6 +1324,38 @@ button:focus-visible {
   display: none !important;
 }
 
+.seo-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.seo-list li {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--white-fainter);
+}
+
+.seo-list a {
+  color: var(--white);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.seo-list a:hover,
+.seo-list a:focus-visible {
+  color: var(--yellow);
+  outline: none;
+}
+
+.seo-list span {
+  color: var(--white-soft);
+  font-size: 0.9rem;
+}
+
 .feature-stack {
   display: grid;
   gap: 0.9rem;
@@ -1374,7 +1409,7 @@ button:focus-visible {
   width: 100%;
   aspect-ratio: 1 / 1;
   align-self: start;
-  overflow: hidden;
+  overflow: clip;
   display: grid;
   place-items: center;
   border-radius: 22px;
@@ -1443,7 +1478,7 @@ button:focus-visible {
 }
 
 .pending-carousel__viewport {
-  overflow: hidden;
+  overflow: clip;
   border-radius: 20px;
 }
 
@@ -1475,7 +1510,7 @@ button:focus-visible {
 }
 
 .pending-album__art {
-  overflow: hidden;
+  overflow: clip;
   border-radius: 14px;
   aspect-ratio: 1 / 1;
   background: #101010;
@@ -1734,7 +1769,7 @@ button:focus-visible {
 }
 
 .strip-card__thumb {
-  overflow: hidden;
+  overflow: clip;
   aspect-ratio: 1 / 1;
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -1825,7 +1860,7 @@ button:focus-visible {
   position: relative;
   display: block;
   width: 100%;
-  overflow: hidden;
+  overflow: clip;
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: #101010;
@@ -1938,7 +1973,7 @@ button:focus-visible {
 
 .press-card__cover {
   display: block;
-  overflow: hidden;
+  overflow: clip;
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: #101010;
@@ -2141,7 +2176,7 @@ button:focus-visible {
 
 .release-card__cover {
   display: block;
-  overflow: hidden;
+  overflow: clip;
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: #101010;
@@ -2619,9 +2654,11 @@ button:focus-visible {
   min-width: 0;
   display: grid;
   grid-template-rows: auto 1fr;
+  gap: 0.55rem;
+  padding: 0.55rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 18px;
-  overflow: hidden;
+  overflow: clip;
   background: rgba(255, 255, 255, 0.028);
   transition: border-color 170ms ease, background 170ms ease, transform 170ms ease;
 }
@@ -2637,8 +2674,9 @@ button:focus-visible {
   display: block;
   width: 100%;
   aspect-ratio: 1 / 1;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.06);
-  overflow: hidden;
+  overflow: clip;
 }
 
 .playlist-card__art img {
@@ -2657,7 +2695,7 @@ button:focus-visible {
   display: grid;
   align-content: start;
   gap: 0.35rem;
-  padding: 0.75rem;
+  padding: 0.1rem 0.15rem 0.2rem;
 }
 
 .playlist-card__category {
@@ -2847,7 +2885,7 @@ button:focus-visible {
 .merch-card__art {
   width: 100%;
   aspect-ratio: 1 / 1;
-  overflow: hidden;
+  overflow: clip;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
   background: #101010;
@@ -2974,7 +3012,7 @@ button:focus-visible {
 }
 
 .epk-page-visual__cover {
-  overflow: hidden;
+  overflow: clip;
   border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: #101010;
@@ -3057,7 +3095,7 @@ button:focus-visible {
 }
 
 .epk-spotlight__cover {
-  overflow: hidden;
+  overflow: clip;
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: #101010;
@@ -3187,7 +3225,7 @@ button:focus-visible {
 }
 
 .artist-page-visual__cover {
-  overflow: hidden;
+  overflow: clip;
   border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: #101010;
@@ -3289,7 +3327,7 @@ button:focus-visible {
 }
 
 .embed-card__frame {
-  overflow: hidden;
+  overflow: clip;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.03);
@@ -3336,7 +3374,7 @@ button:focus-visible {
 }
 
 .cover-gallery__image {
-  overflow: hidden;
+  overflow: clip;
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: #101010;
@@ -3421,7 +3459,7 @@ button:focus-visible {
   }
 
   .playlist-grid--youtube {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .merch-hero {
@@ -3573,7 +3611,7 @@ button:focus-visible {
   }
 
   .panel-shell {
-    overflow: hidden;
+    overflow: clip;
     padding: 1.1rem;
     border-radius: 32px;
   }
@@ -3651,22 +3689,41 @@ button:focus-visible {
   }
 
   .playlist-card {
-    grid-template-columns: 6rem minmax(0, 1fr);
+    grid-template-columns: 5.25rem minmax(0, 1fr);
     grid-template-rows: 1fr;
-    min-height: 6rem;
+    min-height: 5.25rem;
+    gap: 0.65rem;
+    padding: 0.55rem;
   }
 
   .playlist-card__art,
   .playlist-card--youtube .playlist-card__art {
-    width: 6rem;
-    height: 100%;
-    min-height: 6rem;
+    align-self: center;
+    width: 5.25rem;
+    height: auto;
+    min-height: 0;
     aspect-ratio: 1 / 1;
+  }
+
+  .playlist-card--youtube {
+    grid-template-columns: 6.75rem minmax(0, 1fr);
+    min-height: 4.55rem;
+  }
+
+  .playlist-card--youtube .playlist-card__art {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+  }
+
+  .playlist-card--youtube .playlist-card__art img {
+    object-fit: contain;
   }
 
   .playlist-card__copy {
     align-content: center;
-    padding: 0.7rem 0.8rem;
+    padding: 0.35rem 0.35rem 0.35rem 0;
   }
 
   .signal-card {
@@ -3751,12 +3808,42 @@ button:focus-visible {
     padding: 0.85rem;
   }
 
+  .home-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .hero-playlist-embed {
     width: 100%;
   }
 
   .hero-playlist-embed iframe {
     width: 100%;
+  }
+
+  .feature-stack {
+    width: 100%;
+    max-width: 100%;
+    justify-self: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .feature-card,
+  .pending-carousel {
+    width: 100%;
+    max-width: 100%;
+    justify-self: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pending-carousel__header,
+  .pending-carousel__header h3,
+  .pending-carousel__count,
+  .pending-carousel__viewport,
+  .pending-carousel__dots {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .platform-banner__row {

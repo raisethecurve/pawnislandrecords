@@ -7,4 +7,58 @@ Disallow: /release-deck.html
 Disallow: /downloads/
 Disallow: /tmp/
 
+User-agent: Googlebot
+Allow: /
+Disallow: /admin.html
+Disallow: /campaigns.html
+Disallow: /brand-kit.html
+Disallow: /release-deck.html
+Disallow: /downloads/
+Disallow: /tmp/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin.html
+Disallow: /campaigns.html
+Disallow: /brand-kit.html
+Disallow: /release-deck.html
+Disallow: /downloads/
+Disallow: /tmp/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin.html
+Disallow: /campaigns.html
+Disallow: /brand-kit.html
+Disallow: /release-deck.html
+Disallow: /downloads/
+Disallow: /tmp/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin.html
+Disallow: /campaigns.html
+Disallow: /brand-kit.html
+Disallow: /release-deck.html
+Disallow: /downloads/
+Disallow: /tmp/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /admin.html
+Disallow: /campaigns.html
+Disallow: /brand-kit.html
+Disallow: /release-deck.html
+Disallow: /downloads/
+Disallow: /tmp/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /admin.html
+Disallow: /campaigns.html
+Disallow: /brand-kit.html
+Disallow: /release-deck.html
+Disallow: /downloads/
+Disallow: /tmp/
+
 Sitemap: https://pawnislandrecords.com/sitemap.xml

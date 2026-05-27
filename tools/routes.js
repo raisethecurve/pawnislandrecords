@@ -175,7 +175,7 @@ const routes = [
     expectedText: "Open Press Kit",
     absentText: ["Launch Mode", "tucked away", "staying private"],
     expectedTitle: "Press | Pawn Island Records",
-    expectedMetaDescription: "Browse Pawn Island Records project press kits",
+    expectedMetaDescription: "Browse source-approved Pawn Island Records project press kits",
     expectedCanonical: "https://pawnislandrecords.com/epks.html",
     expectedJsonLd: "CollectionPage"
   },
@@ -205,6 +205,21 @@ const routes = [
     expectedMetaDescription: "Rhea Mauro press kit",
     expectedCanonical: "https://pawnislandrecords.com/epk.html?artist=rhea-mauro",
     expectedJsonLd: "ProfilePage"
+  },
+  {
+    path: "epk.html?artist=high-ground&preview=full",
+    label: "Press Kit Hold Preview",
+    classification: "hidden-but-shareable",
+    stack: "modern public",
+    dataSource: "public-data.js",
+    robots: "noindex,follow",
+    smoke: true,
+    accessibilitySmoke: true,
+    expectedText: "Press kit is available by request.",
+    absentText: ["Kit Views", "Open Press Kit"],
+    expectedTitle: "High Ground Press Kit By Request | Pawn Island Records",
+    expectedMetaDescription: "High Ground press materials are available by request",
+    expectedCanonical: "https://pawnislandrecords.com/epk.html?artist=high-ground"
   },
   {
     path: "process.html",

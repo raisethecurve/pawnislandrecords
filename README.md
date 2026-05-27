@@ -1,6 +1,6 @@
 # Pawn Island Records
 
-Static, data-driven website for Pawn Island Records. The current public launch mode is `essentials`, so the primary public flow is Home, Roster, Connect, and About while deeper catalog, release, project, press, merch, and process routes stay hidden-but-shareable.
+Static, data-driven website for Pawn Island Records. The current public launch mode is `essentials`, so the primary interactive flow is Home, Roster, Connect, and About while deeper catalog, release, project, press, merch, and process routes stay hidden-but-shareable. Generated static SEO pages under `artists/`, `releases/`, and `press/` provide crawlable canonical entity pages while the richer interactive routes remain gated.
 
 ## Quick Start
 
@@ -28,6 +28,11 @@ To preview hidden modern routes as if launch mode were `full` without changing `
 
 ## Validation
 
+- `npm run audit:data` prints the current source-truth audit for release, artist, Spotify, and EPK readiness.
+- `npm run generate:data` regenerates `public-data.js` from the source catalog and Spotify cache.
+- `npm run generate:seo` regenerates static SEO entity pages, `sitemap.xml`, and `llms.txt` from `public-data.js`.
+- `npm run sync:spotify` fetches seeded Spotify artist/release/track facts into the local cache. It requires `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`.
+- `npm run test:data` validates source coverage, seeded Spotify URL parsing, strict-ready EPK requirements, and release action readiness.
 - `npm run test:links` checks route inventory files, local HTML links, local assets, `public-data.js` image references, slug uniqueness, release artist references, the configured site-audio file, and route publication policy across page robots tags, `robots.txt`, and `sitemap.xml`.
 - `npm run test:perf` checks the public image asset budget and verifies media iframes keep explicit loading and embed hydration hooks.
 - `npm run test:a11y` runs axe-backed Playwright accessibility smoke checks across key public and hidden-preview routes on desktop and mobile. It also checks primary tap target sizing, visible initial focus, landmarks/navigation, and page-level horizontal overflow.
@@ -58,6 +63,13 @@ Hidden or gated modern routes:
 - `merch.html`: modern merch concept/support page, currently `noindex,follow`; checkout actions only appear when item URLs are present.
 - `process.html`: creative-process story page, currently `noindex,follow`.
 
+Generated public SEO artifacts:
+
+- `artists/index.html` and `artists/<slug>/index.html`: crawlable artist/project entity pages.
+- `releases/index.html` and `releases/<slug>/index.html`: crawlable release entity pages.
+- `press/index.html` and ready `press/<slug>/index.html`: crawlable public press-kit snapshots.
+- `sitemap.xml` and `llms.txt`: generated discovery manifests.
+
 Internal, shell, and legacy surfaces:
 
 - `admin.html`: local catalog editor, intentionally `noindex,nofollow`.
@@ -67,13 +79,17 @@ Internal, shell, and legacy surfaces:
 
 ## Core Files
 
-- `public-data.js`: published artist, release, playlist, merch, and label data.
+- `data/source-catalog.json`: maintainer-owned source overlay for verified Spotify seeds, Too.fm links, YouTube IDs, press readiness, and approved asset metadata.
+- `data/spotify-cache.json`: local/build-time Spotify API cache generated from seeded URLs. Do not put Spotify secrets in public files.
+- `public-data.js`: generated public artist, release, playlist, merch, and label data consumed by the static site.
 - `site-ui.js`: shared data helpers, release-state helpers, artwork fallbacks, metadata helpers, and reveal behavior.
 - `label-site.js`: modern public rendering for home, roster, connect, about, catalog, project, merch, and press routes.
 - `label-site.css`: modern public design system.
 - `release.js` and `release.css`: standalone release-detail experience.
 - `site-audio-config.js`, `site-audio.js`, and `site-audio.css`: site-wide background audio configuration and controls.
 - `admin.html` and `admin.js`: in-browser catalog intake and export workflow.
+- `tools/audit-data.js`, `tools/generate-public-data.js`, `tools/sync-spotify.js`, and `tools/check-data.js`: source-backed catalog audit, generation, Spotify sync, and data readiness checks.
+- `tools/generate-seo-artifacts.js`: static SEO page, sitemap, and `llms.txt` generator.
 - `tools/check-links.js`: local route, link, data, and asset validator.
 - `tools/check-performance.js`: public image and media-embed budget validator.
 - `tests/smoke.spec.js`: Playwright route smoke tests.
@@ -93,9 +109,12 @@ Open `admin.html` in the browser to:
 
 The editor works in memory for the current session. Use JSON import/export when moving changes in or out of the repo.
 
+Source-backed fields such as Spotify metadata, identifiers, EPK status, approval flags, and structured press assets are preserved by the editor, but the preferred path for platform facts is still `data/source-catalog.json` plus `npm run generate:data`.
+
 ## Publishing Notes
 
 - Keep `public-data.js` `label.launchMode` set to `essentials` until the Sprint 4 launch criteria pass.
+- Do not flip release, artist, or EPK routes public until `npm run test:data -- --launch-gate` passes or the remaining missing Spotify seeds are intentionally waived in the launch PR.
 - Public pages should render from `public-data.js` unless they are intentionally local/admin-only.
 - Update `WORKFLOW.md` at sprint closeout with completed work, validation, risks, and the next recommended sprint.
 - Follow `GITHUB_PRACTICES.md` for branch naming, stacked branches, staged draft PRs, validation notes, review readiness, and merge hygiene.

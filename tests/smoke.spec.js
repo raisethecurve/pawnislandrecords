@@ -11,6 +11,28 @@ function screenshotName(route, projectName) {
   return `${projectName}-${route.label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}.png`;
 }
 
+async function dragPageUpWithTouch(page) {
+  const client = await page.context().newCDPSession(page);
+
+  await client.send("Input.dispatchTouchEvent", {
+    type: "touchStart",
+    touchPoints: [{ x: 196, y: 700, radiusX: 2, radiusY: 2, id: 1 }]
+  });
+
+  for (let step = 1; step <= 12; step += 1) {
+    const y = 700 + ((300 - 700) * step) / 12;
+
+    await client.send("Input.dispatchTouchEvent", {
+      type: "touchMove",
+      touchPoints: [{ x: 196, y, radiusX: 2, radiusY: 2, id: 1 }]
+    });
+    await page.waitForTimeout(16);
+  }
+
+  await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await page.waitForTimeout(200);
+}
+
 test.describe("direct route smoke", () => {
   for (const route of smokeRoutes) {
     test(`${route.label} renders directly`, async ({ page }, testInfo) => {
@@ -71,6 +93,67 @@ test.describe("persistent shell smoke", () => {
       for (const absentText of route.absentText || []) {
         await expect(page.frameLocator("#site-shell-frame").locator("body")).not.toContainText(absentText);
       }
+    });
+  }
+});
+
+test.describe("public routing scroll", () => {
+  test("public pages keep one native document scroller", async ({ page }, testInfo) => {
+    const response = await page.goto("roster.html", { waitUntil: "domcontentloaded" });
+
+    expect(response && response.status()).toBeLessThan(400);
+    await expect(page.locator("#site-shell-frame")).toHaveCount(0);
+    await expect(page.locator("body")).toContainText("Roster & Projects");
+
+    const canScroll = await page.evaluate(() => {
+      const scroller = document.scrollingElement || document.documentElement;
+      return scroller.scrollHeight > window.innerHeight;
+    });
+
+    expect(canScroll).toBe(true);
+
+    if (testInfo.project.name === "mobile") {
+      await dragPageUpWithTouch(page);
+    } else {
+      await page.mouse.wheel(0, 500);
+    }
+
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  });
+
+  for (const route of shellSmokeRoutes) {
+    test(`${route.label} has no nested vertical scroll container`, async ({ page }) => {
+      const response = await page.goto(route.path, { waitUntil: "domcontentloaded" });
+
+      expect(response && response.status(), route.path).toBeLessThan(400);
+      await expect(page.locator("#site-shell-frame")).toHaveCount(0);
+
+      const nestedScrollers = await page.evaluate(() => {
+        return Array.from(document.querySelectorAll("body *"))
+          .map((element) => {
+            const style = window.getComputedStyle(element);
+            const overflowY = style.overflowY;
+
+            if (!["auto", "scroll"].includes(overflowY)) {
+              return null;
+            }
+
+            if (element.scrollHeight <= element.clientHeight + 2) {
+              return null;
+            }
+
+            const id = element.id ? `#${element.id}` : "";
+            const className =
+              typeof element.className === "string" && element.className
+                ? `.${element.className.trim().replace(/\s+/g, ".")}`
+                : "";
+
+            return `${element.tagName.toLowerCase()}${id}${className}`;
+          })
+          .filter(Boolean);
+      });
+
+      expect(nestedScrollers).toEqual([]);
     });
   }
 });

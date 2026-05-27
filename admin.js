@@ -100,9 +100,20 @@
 
   function normalizeTrack(track, index) {
     return {
+      ...(track && typeof track === "object" ? track : {}),
       title: String((track && track.title) || `Track ${index + 1}`).trim(),
       runtime: String((track && track.runtime) || "").trim(),
-      youtubeId: String((track && track.youtubeId) || "").trim()
+      youtubeId: String((track && track.youtubeId) || "").trim(),
+      spotify: track && track.spotify && typeof track.spotify === "object" ? deepClone(track.spotify) : {
+        id: "",
+        type: "",
+        url: "",
+        embedUrl: "",
+        fetchedAt: ""
+      },
+      identifiers: track && track.identifiers && typeof track.identifiers === "object" ? deepClone(track.identifiers) : {
+        isrc: ""
+      }
     };
   }
 
@@ -117,6 +128,7 @@
     const name = String((artist && artist.name) || `Artist ${index + 1}`).trim();
 
     return {
+      ...(artist && typeof artist === "object" ? artist : {}),
       slug: slugify(artist && artist.slug ? artist.slug : name, `artist-${index + 1}`),
       name,
       lane: String((artist && artist.lane) || "").trim(),
@@ -129,6 +141,20 @@
       pressBio: String((artist && artist.pressBio) || "").trim(),
       pressHighlights: uniqueTextList(artist && artist.pressHighlights),
       pressAssets: uniqueTextList(artist && artist.pressAssets),
+      spotify: artist && artist.spotify && typeof artist.spotify === "object" ? deepClone(artist.spotify) : {
+        id: "",
+        url: "",
+        genres: [],
+        fetchedAt: ""
+      },
+      epkStatus: ["ready", "hold"].includes(String((artist && artist.epkStatus) || "").trim().toLowerCase())
+        ? String(artist.epkStatus).trim().toLowerCase()
+        : "hold",
+      pressApproval: artist && artist.pressApproval && typeof artist.pressApproval === "object" ? deepClone(artist.pressApproval) : {
+        bioApproved: false,
+        highlightsApproved: false
+      },
+      pressAssetRecords: ensureArray(artist && artist.pressAssetRecords).map(deepClone),
       merchIntro: String((artist && artist.merchIntro) || "").trim()
     };
   }
@@ -141,6 +167,7 @@
     const title = String((release && release.title) || `Release ${index + 1}`).trim();
 
     return {
+      ...(release && typeof release === "object" ? release : {}),
       slug: slugify(release && release.slug ? release.slug : `${validArtistSlug}-${title}`, `release-${index + 1}`),
       aliases: uniqueTextList(release && release.aliases),
       artist: validArtistSlug,
@@ -158,6 +185,16 @@
       primaryEmbedLabel: String((release && release.primaryEmbedLabel) || "").trim(),
       primaryEmbedUrl: String((release && release.primaryEmbedUrl) || "").trim(),
       youtubeId: String((release && release.youtubeId) || "").trim(),
+      spotify: release && release.spotify && typeof release.spotify === "object" ? deepClone(release.spotify) : {
+        id: "",
+        type: "",
+        url: "",
+        embedUrl: "",
+        fetchedAt: ""
+      },
+      identifiers: release && release.identifiers && typeof release.identifiers === "object" ? deepClone(release.identifiers) : {
+        upc: ""
+      },
       platforms: ensureArray(release && release.platforms).map(normalizePlatform).filter((platform) => platform.label || platform.url),
       tracks: ensureArray(release && release.tracks).map(normalizeTrack).filter((track) => track.title)
     };
@@ -947,6 +984,18 @@
       pressBio: summary,
       pressHighlights: [],
       pressAssets: [],
+      spotify: {
+        id: "",
+        url: "",
+        genres: [],
+        fetchedAt: ""
+      },
+      epkStatus: "hold",
+      pressApproval: {
+        bioApproved: false,
+        highlightsApproved: false
+      },
+      pressAssetRecords: [],
       merchIntro: `${name} merch can be added and refined from the artist profile editor.`
     };
 
@@ -984,6 +1033,7 @@
         ? data.releases.find((entry) => entry.slug === state.editingReleaseSlug)
         : null;
       const release = {
+        ...(existingRelease || {}),
         slug: state.editingReleaseSlug || slugify(`${artistSlug}-${title}`, title),
         aliases: Array.isArray(existingRelease && existingRelease.aliases)
           ? [...new Set(existingRelease.aliases.map((alias) => String(alias || "").trim()).filter(Boolean))]
@@ -999,8 +1049,26 @@
         primaryEmbedLabel: elements.releasePrimaryEmbedLabel.value.trim(),
         primaryEmbedUrl: elements.releasePrimaryEmbedUrl.value.trim(),
         youtubeId: elements.releaseYoutubeId.value.trim(),
+        spotify: existingRelease && existingRelease.spotify ? existingRelease.spotify : {
+          id: "",
+          type: "",
+          url: "",
+          embedUrl: "",
+          fetchedAt: ""
+        },
+        identifiers: existingRelease && existingRelease.identifiers ? existingRelease.identifiers : {
+          upc: ""
+        },
         platforms: collectPlatforms(),
-        tracks
+        tracks: tracks.map((track) => {
+          const existingTrack = Array.isArray(existingRelease && existingRelease.tracks)
+            ? existingRelease.tracks.find((entry) => String(entry && entry.title).trim().toLowerCase() === track.title.toLowerCase())
+            : null;
+          return {
+            ...(existingTrack || {}),
+            ...track
+          };
+        })
       };
 
       const nextData = {
@@ -1040,6 +1108,7 @@
       : null;
 
     const artist = {
+      ...(existing || {}),
       slug: existing ? existing.slug : slugify(name, "artist"),
       name,
       lane: elements.artistLane.value.trim(),
