@@ -108,6 +108,7 @@
     },
     x: {
       label: "X",
+      image: "assets/brand/external/x_logo-white.png",
       svg: brandSvg("M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z")
     }
   };
@@ -272,6 +273,27 @@
       .filter((item) => item.key && item.url);
   }
 
+  function socialIconMarkup(link, options) {
+    const settings = options || {};
+    const imageMarkup = link.image
+      ? `<img src="${escapeHtml(link.image)}" alt="" loading="eager" decoding="async" />`
+      : "";
+
+    if (settings.preferImage && imageMarkup) {
+      return imageMarkup;
+    }
+
+    if (link.icon) {
+      return link.icon;
+    }
+
+    if (imageMarkup) {
+      return imageMarkup;
+    }
+
+    return `<span>${escapeHtml(link.label.slice(0, 1))}</span>`;
+  }
+
   function pressContactLink() {
     return (
       socialLinks().find((link) => link.key === "email") ||
@@ -283,6 +305,57 @@
         role: "Contact the label directly."
       }
     );
+  }
+
+  function approvedPressAssetRecords(artist) {
+    return (Array.isArray(artist && artist.pressAssetRecords) ? artist.pressAssetRecords : [])
+      .filter((asset) => {
+        return asset &&
+          asset.approved === true &&
+          (text(asset.path, "") || text(asset.url, "") || text(asset.label, ""));
+      });
+  }
+
+  function pressAssetLabel(asset) {
+    const credit = text(asset && asset.credit, "");
+    return [text(asset && asset.label, "Approved press asset"), credit ? `Credit: ${credit}` : ""]
+      .filter(Boolean)
+      .join(" / ");
+  }
+
+  function artistGenreTags(artist) {
+    return Array.isArray(artist && artist.spotify && artist.spotify.genres)
+      ? artist.spotify.genres.map((genre) => text(genre, "")).filter(Boolean)
+      : [];
+  }
+
+  function releaseHasSourceBackedMedia(release) {
+    return Boolean(
+      releaseAction(release) ||
+        primaryEmbedFor(release).url ||
+        preferredYoutubeIdFor(release) ||
+        text(release && release.spotify && release.spotify.url, "")
+    );
+  }
+
+  function artistReadyForEpk(artist) {
+    if (text(artist && artist.epkStatus, "hold").toLowerCase() !== "ready") {
+      return false;
+    }
+
+    if (!artist || !text(artist.pressBio, "") || !(artist.pressApproval && artist.pressApproval.bioApproved)) {
+      return false;
+    }
+
+    if (!approvedPressAssetRecords(artist).length) {
+      return false;
+    }
+
+    if (!text(pressContactLink().url, "")) {
+      return false;
+    }
+
+    return artistReleases(artist.slug).some((release) => releaseHasSourceBackedMedia(release));
   }
 
   function discoveryPlaylists() {
@@ -395,12 +468,7 @@
             aria-label="${escapeHtml(link.label)}"
             title="${escapeHtml(link.label)}"
           >
-            ${
-              link.icon ||
-              (link.image
-                ? `<img src="${escapeHtml(link.image)}" alt="" loading="eager" decoding="async" />`
-                : `<span>${escapeHtml(link.label.slice(0, 1))}</span>`)
-            }
+            ${socialIconMarkup(link)}
           </a>
         `
       )
@@ -741,12 +809,27 @@
   }
 
   function organizationStructuredData() {
+    const founderName = text(data.label && data.label.founder, "Matthew H. Freeman");
+
     return {
       "@type": "Organization",
       "@id": siteUrl("#organization"),
       name: text(data.label && data.label.name, "Pawn Island Records"),
+      alternateName: "Pawn Island",
       url: siteUrl("index.html"),
       logo: siteUrl("assets/brand/pawnisland-512.jpg"),
+      founder: {
+        "@type": "Person",
+        "@id": siteUrl("about.html#matthew-h-freeman"),
+        name: founderName,
+        alternateName: Array.isArray(data.label && data.label.founderAliases)
+          ? data.label.founderAliases
+          : ["Matthew Freeman", "Matt Freeman"]
+      },
+      description: text(
+        data.label && data.label.entityDescription,
+        "The official independent label and project-world home for music written and built by Matthew H. Freeman."
+      ),
       sameAs: socialLinks()
         .filter((link) => isExternalUrl(link.url))
         .map((link) => link.url)
@@ -772,6 +855,9 @@
             url: siteUrl(sitePath("artist.html", { artist: artist.slug }))
           }
         : undefined,
+      recordLabel: {
+        "@id": siteUrl("#organization")
+      },
       datePublished: text(release.releaseDate, ""),
       description: text(release.description, artist && artist.summary),
       potentialAction: releaseAction(release)
@@ -784,14 +870,19 @@
   }
 
   function artistStructuredData(artist, discography, pagePath) {
+    const spotifyGenres = artistGenreTags(artist);
+
     return {
       "@type": "MusicGroup",
       "@id": siteUrl(`${pagePath}#artist`),
       name: artist.name,
       url: siteUrl(pagePath),
       image: siteUrl(artist.image || "assets/brand/pawnisland-1200.jpg"),
-      genre: text(artist.lane, ""),
+      genre: spotifyGenres.length ? spotifyGenres : undefined,
       description: text(artist.pressBio || artist.story || artist.summary, ""),
+      memberOf: {
+        "@id": siteUrl("#organization")
+      },
       album: (discography || []).slice(0, 12).map((release) => releaseStructuredData(release, artist))
     };
   }
@@ -2002,9 +2093,11 @@
       return;
     }
 
+    const readyArtists = artists.filter((artist) => artistReadyForEpk(artist));
+
     setRouteMeta({
       title: "Press | Pawn Island Records",
-      description: "Browse Pawn Island Records project press kits, bios, release context, media previews, and contact paths.",
+      description: "Browse source-approved Pawn Island Records project press kits, bios, release context, media previews, and contact paths.",
       canonicalPath: "epks.html",
       image: "assets/brand/pawnisland-1200.jpg",
       structuredData: graphStructuredData([
@@ -2015,7 +2108,7 @@
           url: siteUrl("epks.html"),
           mainEntity: {
             "@type": "ItemList",
-            itemListElement: artists.map((artist, index) => ({
+            itemListElement: readyArtists.map((artist, index) => ({
               "@type": "ListItem",
               position: index + 1,
               url: siteUrl(sitePath("epk.html", { artist: artist.slug })),
@@ -2028,18 +2121,29 @@
 
     const pressContact = pressContactLink();
 
-    collection.innerHTML = artists
+    if (!readyArtists.length) {
+      collection.innerHTML = `
+        <article class="empty-card">
+          <p>No press kits are public-ready yet. Current bios, assets, and release facts are available through direct press contact.</p>
+          <div class="action-row">
+            <a class="button button--ghost button--small" href="${escapeHtml(pressContact.url)}">Email Press</a>
+            <a class="button button--ghost button--small" href="${escapeHtml(withLaunchPreview("roster.html"))}">Roster</a>
+          </div>
+        </article>
+      `;
+      return;
+    }
+
+    collection.innerHTML = readyArtists
       .map((artist, index) => {
         const discography = artistReleases(artist.slug);
         const latestRelease = discography[0] || null;
-        const pressAssets = Array.isArray(artist.pressAssets)
-          ? artist.pressAssets.filter(Boolean)
-          : [];
+        const pressAssets = approvedPressAssetRecords(artist);
         const coverSource = artist.image || (latestRelease && latestRelease.cover) || "";
         const facts = [
           `${discography.length} ${discography.length === 1 ? "release" : "releases"}`,
-          latestRelease ? `Latest: ${latestRelease.title}` : "Catalog in development",
-          pressAssets.length ? `${pressAssets.length} press assets` : "Asset list open"
+          latestRelease ? `Latest: ${latestRelease.title}` : "",
+          `${pressAssets.length} approved ${pressAssets.length === 1 ? "asset" : "assets"}`
         ].filter(Boolean);
 
         return `
@@ -2124,6 +2228,33 @@
       return;
     }
 
+    if (!artistReadyForEpk(artist)) {
+      const pressContact = pressContactLink();
+
+      setRouteMeta({
+        title: `${artist.name} Press Kit By Request | Pawn Island Records`,
+        description: `${artist.name} press materials are available by request while approved public assets and source-backed release details are being finalized.`,
+        canonicalPath: sitePath("epk.html", { artist: artist.slug }),
+        image: artist.image || "assets/brand/pawnisland-1200.jpg"
+      });
+
+      panel.innerHTML = `
+        <article class="empty-card">
+          <p class="eyebrow">Press Hold</p>
+          <h2>Press kit is available by request.</h2>
+          <p>
+            ${escapeHtml(artist.name)} is not marked public-ready for EPK display yet. Use the press contact for current approved bios, assets, credits, and release details.
+          </p>
+          <div class="action-row">
+            <a class="button button--primary button--small" href="${escapeHtml(pressContact.url)}">Email Press</a>
+            <a class="button button--ghost button--small" href="${escapeHtml(artistPageUrl(artist.slug))}">Project Page</a>
+            <a class="button button--ghost button--small" href="${escapeHtml(withLaunchPreview("epks.html"))}">All Press</a>
+          </div>
+        </article>
+      `;
+      return;
+    }
+
     const discography = artistReleases(artist.slug);
     const latestRelease = discography[0] || null;
     const spotifySample = discography.find((release) => primaryEmbedFor(release).url);
@@ -2132,12 +2263,8 @@
     const pressHighlights = Array.isArray(artist.pressHighlights)
       ? artist.pressHighlights.filter(Boolean)
       : [];
-    const pressAssets = Array.isArray(artist.pressAssets)
-      ? artist.pressAssets.filter(Boolean)
-      : [];
-    const priorityMarkets = Array.isArray(artist.priorityMarkets)
-      ? artist.priorityMarkets.filter(Boolean)
-      : [];
+    const approvedHighlights = artist.pressApproval && artist.pressApproval.highlightsApproved ? pressHighlights : [];
+    const pressAssets = approvedPressAssetRecords(artist);
     const latestReleaseAction = releaseAction(latestRelease);
     const pressContact = pressContactLink();
     const spotifyEmbed = spotifySample ? primaryEmbedFor(spotifySample) : { label: "", url: "" };
@@ -2153,29 +2280,23 @@
     const stageCopyNode = document.getElementById("epk-stage-copy");
     const viewsNode = document.getElementById("epk-page-views");
     const stageNode = document.getElementById("epk-page-stage");
+    const spotifyGenres = artistGenreTags(artist);
     const specifics = [
       {
-        label: "Live History",
-        value: text(
-          artist.liveShowNote,
-          `Live history and session specifics for ${artist.name} are available directly from the label when confirmed.`
-        )
+        label: "Spotify Genres",
+        value: spotifyGenres.length ? spotifyGenres.join(", ") : "No Spotify artist genres are attached yet."
       },
       {
-        label: "Press Quote",
-        value: text(
-          artist.pressQuote,
-          "No approved editorial pull quote is attached yet; use the project bio and release context as the current source."
-        )
+        label: "Press Approval",
+        value: artist.pressApproval && artist.pressApproval.bioApproved
+          ? "Bio and listed assets are approved for public EPK use."
+          : "Press copy is held for approval."
       },
       {
-        label: "Campaign Specifics",
-        value: text(
-          artist.bookingNote,
-          latestRelease
-            ? `${latestRelease.title} is the current campaign anchor; contact the label for timing, approvals, and placement notes.`
-            : "Campaign timing and placement notes are available by request."
-        )
+        label: "Current Release Context",
+        value: latestRelease
+          ? `${latestRelease.title} is the current catalog anchor for this kit.`
+          : "No public release context is attached yet."
       }
     ];
     const views = [
@@ -2334,15 +2455,15 @@
       stageNode.innerHTML = `
         <div class="epk-overview-grid">
           <article class="epk-panel-card">
-            <p class="embed-card__label">Industry Pitch</p>
+            <p class="embed-card__label">Approved Bio</p>
             <h2>How The Project Lands</h2>
-            <p class="epk-panel-card__copy">${escapeHtml(text(artist.industryPitch, artist.summary))}</p>
+            <p class="epk-panel-card__copy">${escapeHtml(text(artist.pressBio, artist.summary))}</p>
           </article>
           <article class="epk-panel-card">
             <p class="embed-card__label">Story Angles</p>
             <h2>Editorial Hooks</h2>
             <ul class="epk-bullet-list">
-              ${(pressHighlights.length ? pressHighlights : ["Project-approved story angles are available through the label contact."])
+              ${(approvedHighlights.length ? approvedHighlights : ["No public story angles are approved yet."])
                 .slice(0, 4)
                 .map((item) => `<li>${escapeHtml(item)}</li>`)
                 .join("")}
@@ -2373,23 +2494,26 @@
         <div class="epk-detail-grid">
           <article class="epk-panel-card epk-panel-card--wide">
             <p class="embed-card__label">Press Bio</p>
-            <h2>Working Project Bio</h2>
+            <h2>Approved Project Bio</h2>
             <p class="epk-panel-card__copy">${escapeHtml(text(artist.pressBio, artist.story || artist.summary))}</p>
           </article>
           <article class="epk-panel-card">
-            <p class="embed-card__label">Current World</p>
-            <h2>Project Direction</h2>
-            <p class="epk-panel-card__copy">${escapeHtml(text(artist.story, artist.headline || artist.summary))}</p>
+            <p class="embed-card__label">Approved Hooks</p>
+            <h2>Story Angles</h2>
+            <ul class="epk-bullet-list">
+              ${(approvedHighlights.length ? approvedHighlights : ["No public story angles are approved yet."])
+                .slice(0, 4)
+                .map((item) => `<li>${escapeHtml(item)}</li>`)
+                .join("")}
+            </ul>
           </article>
           <article class="epk-panel-card">
-            <p class="embed-card__label">Visual &amp; Market Notes</p>
-            <h2>Room For Specifics</h2>
+            <p class="embed-card__label">Source Notes</p>
+            <h2>Verified Context</h2>
             <p class="epk-panel-card__copy">${escapeHtml(
               [
-                text(artist.merchIntro, ""),
-                priorityMarkets.length
-                  ? `Priority markets: ${priorityMarkets.join(", ")}.`
-                  : "Target territories, priority publications, and live-market notes are handled through direct press contact."
+                spotifyGenres.length ? `Spotify genres: ${spotifyGenres.join(", ")}.` : "No Spotify artist genres are attached yet.",
+                `${pressAssets.length} approved ${pressAssets.length === 1 ? "asset" : "assets"} listed.`
               ]
                 .filter(Boolean)
                 .join(" ")
@@ -2541,9 +2665,9 @@
     function renderAssetsView() {
       const pressContact = pressContactLink();
       const readinessItems = [
-        artist.pressBio ? "Working press bio is populated." : "Press bio is available through the label contact.",
-        `${pressAssets.length} asset${pressAssets.length === 1 ? "" : "s"} currently listed.`,
-        latestRelease ? `Latest release context is tied to ${latestRelease.title}.` : "Release campaign context is available by request.",
+        artist.pressApproval && artist.pressApproval.bioApproved ? "Press bio is approved for public use." : "Press bio is held for approval.",
+        `${pressAssets.length} approved asset${pressAssets.length === 1 ? "" : "s"} currently listed.`,
+        latestRelease ? `Latest release context is tied to ${latestRelease.title}.` : "Release context is not public-ready yet.",
         spotifyEmbed.url ? "Spotify sample is live in the press kit." : "Spotify sample is not attached yet.",
         youtubeId ? "YouTube sample is live in the press kit." : "YouTube sample is not attached yet."
       ];
@@ -2554,8 +2678,14 @@
             <p class="embed-card__label">Available Assets</p>
             <h2>What Is Listed</h2>
             <ul class="epk-bullet-list">
-              ${(pressAssets.length ? pressAssets : ["Current photos, one-sheets, and approved copy are available by request."])
-                .map((item) => `<li>${escapeHtml(item)}</li>`)
+              ${(pressAssets.length ? pressAssets : [])
+                .map((item) => {
+                  const href = text(item.url || item.path, "");
+                  const label = pressAssetLabel(item);
+                  return href
+                    ? `<li><a class="inline-link" href="${escapeHtml(href)}">${escapeHtml(label)}</a></li>`
+                    : `<li>${escapeHtml(label)}</li>`;
+                })
                 .join("")}
             </ul>
           </article>
@@ -2571,7 +2701,7 @@
             <h2>Request Current Materials</h2>
             <ul class="epk-bullet-list">
               <li>Use ${escapeHtml(pressContact.label)} for current approvals, credits, and photo selections.</li>
-              <li>Campaign metrics and live history are shared when confirmed for press use.</li>
+              <li>Only approved bios, asset paths, and release facts are surfaced on this public kit.</li>
               <li>Release-specific notes can be requested for playlist, editorial, or booking context.</li>
             </ul>
             <div class="feature-card__actions">
@@ -2638,11 +2768,8 @@
 
     titleNode.textContent = artist.name;
     laneNode.textContent = text(artist.lane, "Independent project");
-    summaryNode.textContent = text(
-      artist.epkTagline,
-      artist.headline || artist.summary || artist.pressBio
-    );
-    bodyNode.textContent = text(artist.pressBio, artist.story || artist.summary);
+    summaryNode.textContent = text(artist.epkTagline, artist.pressBio || artist.summary);
+    bodyNode.textContent = text(artist.pressBio, artist.summary);
 
     actionsNode.innerHTML = [
       latestReleaseAction
@@ -2702,7 +2829,7 @@
         <span>Media Slots</span>
       </article>
       <article class="metric-pill">
-        <strong>${pressHighlights.length || 0}</strong>
+        <strong>${approvedHighlights.length || 0}</strong>
         <span>Story Angles</span>
       </article>
     `;
@@ -3120,12 +3247,7 @@
               rel="noreferrer"
             >
               <span class="signal-card__icon" aria-hidden="true">
-                ${
-                  link.icon ||
-                  (link.image
-                    ? `<img src="${escapeHtml(link.image)}" alt="" loading="eager" decoding="async" />`
-                    : `<span>${escapeHtml(link.label.slice(0, 1))}</span>`)
-                }
+                ${socialIconMarkup(link, { preferImage: true })}
               </span>
               <span class="signal-card__copy">
                 <strong>${escapeHtml(link.label)}</strong>

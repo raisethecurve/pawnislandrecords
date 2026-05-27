@@ -115,7 +115,14 @@
   }
 
   function getLivePlatforms(release) {
-    return (Array.isArray(release && release.platforms) ? release.platforms : [])
+    const configuredPlatforms = Array.isArray(release && release.platforms) ? release.platforms : [];
+    const spotifyUrl = String((release && release.spotify && release.spotify.url) || "").trim();
+    const platformList = spotifyUrl &&
+      !configuredPlatforms.some((platform) => /spotify\.com/i.test(String((platform && platform.url) || "")))
+      ? [{ label: "Spotify", url: spotifyUrl }, ...configuredPlatforms]
+      : configuredPlatforms;
+
+    return platformList
       .filter((platform) => String(platform && platform.url || "").trim())
       .map((platform) => {
         const definition = getPlatformDefinition(platform.label);
@@ -157,6 +164,7 @@
   function primaryEmbed(release) {
     const configuredUrl = String((release && release.primaryEmbedUrl) || "").trim();
     const configuredLabel = String((release && release.primaryEmbedLabel) || "").trim();
+    const spotify = release && release.spotify ? release.spotify : null;
 
     if (configuredUrl) {
       return {
@@ -165,10 +173,17 @@
       };
     }
 
-    const spotify = getLivePlatforms(release).find((platform) => platform.key === "spotify");
+    if (spotify && spotify.embedUrl) {
+      return {
+        label: "Spotify",
+        url: spotify.embedUrl
+      };
+    }
 
-    if (spotify) {
-      const derivedUrl = spotifyEmbedUrl(spotify.url);
+    const spotifyPlatform = getLivePlatforms(release).find((platform) => platform.key === "spotify");
+
+    if (spotifyPlatform) {
+      const derivedUrl = spotifyEmbedUrl(spotifyPlatform.url);
 
       if (derivedUrl) {
         return {

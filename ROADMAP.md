@@ -1,6 +1,6 @@
 # Pawn Island Records Project Roadmap
 
-Status date: 2026-05-04
+Status date: 2026-05-27
 
 This roadmap is the strategic plan for the Pawn Island Records website. Use it to decide what to build next, what is launch-critical, what can wait, and how to measure whether the site is ready to move from `essentials` launch mode to `full` launch mode.
 
@@ -19,9 +19,11 @@ Current launch mode:
 Current data shape:
 
 - 9 artists.
-- 29 releases.
+- 31 releases.
 - 14 live releases.
-- 15 upcoming releases.
+- 17 upcoming releases.
+- 1 strict-ready EPK.
+- 8 held EPKs.
 - 9 merch records.
 - 18 discovery playlists.
 - 10 social/contact/support links.
@@ -29,6 +31,7 @@ Current data shape:
 Current route groups:
 
 - Public: `index.html`, `roster.html`, `connect.html`, `about.html`.
+- Generated public SEO: `artists/`, `artists/<slug>/`, `releases/`, `releases/<slug>/`, `press/`, ready `press/<slug>/`, `llms.txt`.
 - Hidden-but-shareable: `catalog.html`, `artist.html`, `release.html`, `epks.html`, `epk.html`, `merch.html`, `process.html`.
 - Admin-only: `admin.html`.
 - Shell: `shell.html`.
@@ -48,12 +51,15 @@ Current guardrails:
 Known gaps:
 
 - Hidden modern routes are complete under `preview=full` but remain gated while `launchMode` is `essentials`.
-- Full public SEO still needs final indexability, sitemap, robots, and query-string/static-route decisions.
+- Interactive artist/release/press routes are still gated, but generated static entity pages now provide indexable canonical URLs for core project and release discovery.
+- Full public SEO still needs external profile corroboration, Search Console/Bing submission, and remaining Spotify seed completion.
 - No automated visual regression baseline is present; Playwright screenshots are manual review artifacts under ignored `test-results/`.
 - Campaign, brand-kit, and Release Deck pages are quarantined as internal, but campaigns and brand-kit still use the older lab stack.
 - Merch is modern and hidden-but-shareable, but store item URLs are still empty.
 - Some downloadable fan files are placeholders.
-- Release action rendering is normalized, but deeper validation by release status is still needed.
+- Release action rendering is normalized, and source-backed data validation now checks release action readiness before launch.
+- Spotify seeds are still incomplete: 9 artist seeds and 30 release seeds are missing before the full launch gate.
+- Press pages now use strict EPK readiness: held kits render request-by-email states instead of partial public kits.
 - The tracked `tmp/` folder contains legacy QA screenshots and browser-profile artifacts that should be cleaned up in a dedicated maintenance pass.
 
 ## Product North Star
@@ -301,8 +307,8 @@ Acceptance criteria:
 Launch gate checklist:
 
 - Route readiness: every public route renders complete content.
-- Data readiness: every live release has at least one listen action; every upcoming release has a campaign/pre-save action or a clear status.
-- Press readiness: every public EPK has bio, highlights, assets, and contact path.
+- Data readiness: every live release has at least one listen action; every upcoming release has a campaign/pre-save action or a clear status; `npm run test:data` passes.
+- Press readiness: every public EPK has approved bio, approved structured asset, current release context, media/listen path, and contact path.
 - SEO readiness: title, description, canonical, robots, sitemap, Open Graph, and Twitter card state are aligned.
 - Accessibility readiness: keyboard, focus, headings, contrast, labels, and reduced motion are checked.
 - Performance readiness: image loading, embed behavior, and mobile layout are acceptable.
@@ -332,7 +338,8 @@ Possible outcomes:
 
 Near-term:
 
-- Add validation for release actions across `platforms`, `tooFmUrl`, `primaryEmbedUrl`, and `youtubeId`.
+- Fill missing Spotify artist and release seeds in `data/source-catalog.json`, then run `npm run sync:spotify` and `npm run generate:data`.
+- Keep `npm run test:data` passing as the source-data readiness gate.
 - Keep every live release pointed at a valid listen path.
 - Keep every upcoming release supplied with release date/status and a campaign/pre-save path.
 - Fill missing track lists where release pages should show track detail.
@@ -362,7 +369,8 @@ Later:
 Near-term:
 
 - Keep brand-kit assets internal for now; promote specific assets into EPK pages only when they are press-ready.
-- Keep EPK pages using existing `pressBio`, `pressHighlights`, `pressAssets`, release data, and social/contact links.
+- Keep EPK pages strict: only `epkStatus: "ready"` artists with approved bio, approved structured asset, source-backed release context, media/listen path, and contact path appear in the press index.
+- Replace held EPKs with approved source entries in `data/source-catalog.json` instead of filling page fallbacks.
 - Replace text-only asset lists with downloadable press kits when real files are ready.
 
 Later:
@@ -426,14 +434,15 @@ Later:
 
 Sprint goal:
 
-- Move from `essentials` launch mode to `full` only after final route, SEO, publishing, and rollback decisions are reviewable.
+- Complete the remaining source-data gate before moving from `essentials` launch mode to `full`.
 
 Recommended scope:
 
 | Priority | Story | Main files | Acceptance notes |
 | --- | --- | --- | --- |
-| P0 | Final public route audit | `tools/routes.js`, `ROUTE_INVENTORY.md`, `README.md` | Every route has a final launch classification before nav, robots, or sitemap changes. |
-| P0 | Launch-mode toggle plan | `public-data.js`, `label-site.js`, `site-ui.js` | The `full` launch toggle is isolated, reviewable, and reversible. |
+| P0 | Spotify seed completion | `data/source-catalog.json`, `data/spotify-cache.json`, `public-data.js` | Missing artist/release seeds are filled or explicitly waived, sync runs, generated data is reviewed. |
+| P0 | Strict EPK completion | `data/source-catalog.json`, `public-data.js`, `label-site.js` | Every public EPK has approved bio, structured asset, release context, media/listen path, and contact path. |
+| P1 | Final public route audit | `tools/routes.js`, `ROUTE_INVENTORY.md`, `README.md` | Every route has a final launch classification before nav, robots, or sitemap changes. |
 | P1 | SEO and publication alignment | `robots.txt`, `sitemap.xml`, HTML metadata | Robots tags, sitemap entries, canonicals, and public navigation agree. |
 | P1 | URL strategy decision | `ROADMAP.md`, `WORKFLOW.md`, optional tooling | Query-string artist/release URLs are accepted for launch or a static-page generation slice is created first. |
 | P1 | Release-day publishing checklist | `README.md`, `WORKFLOW.md` | Maintainer steps for data updates, validation, publish, and rollback are documented. |
@@ -441,10 +450,10 @@ Recommended scope:
 
 Suggested Sprint 4 slices:
 
-1. Route/nav/SEO launch audit without flipping `launchMode`.
-2. URL strategy and sitemap/canonical decision.
-3. Launch-mode implementation branch.
-4. Release-day checklist and closeout.
+1. Fill and sync Spotify seeds without flipping `launchMode`.
+2. Promote held EPKs only when approved source data exists.
+3. Route/nav/SEO launch audit.
+4. Launch-mode implementation branch and release-day checklist.
 
 Sprint 3 closeout:
 

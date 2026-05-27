@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "updatedAt": "2026-05-27",
+  "notes": "Maintainer-owned source overlay for verified external IDs, press readiness, and approved assets. Empty Spotify fields mean no verified seed has been attached yet.",
+  "artists": {
+    "rhea-mauro": {
+      "spotifyUrl": "",
+      "epkStatus": "ready",
+      "press": {
+        "bioApproved": true,
+        "highlightsApproved": true,
+        "assets": [
+          {
+            "label": "Rhea Mauro promo image",
+            "path": "media/public/promo/rhea_promo.png",
+            "type": "image",
+            "credit": "Pawn Island Records",
+            "approved": true
+          }
+        ]
+      }
+    },
+    "high-ground": { "spotifyUrl": "", "epkStatus": "hold", "press": { "bioApproved": false, "highlightsApproved": false, "assets": [] } },
+    "velvet-orchard": { "spotifyUrl": "", "epkStatus": "hold", "press": { "bioApproved": false, "highlightsApproved": false, "assets": [] } },
+    "quiet-filter": { "spotifyUrl": "", "epkStatus": "hold", "press": { "bioApproved": false, "highlightsApproved": false, "assets": [] } },
+    "resunant": { "spotifyUrl": "", "epkStatus": "hold", "press": { "bioApproved": false, "highlightsApproved": false, "assets": [] } },
+    "matt-freeman": { "spotifyUrl": "", "epkStatus": "hold", "press": { "bioApproved": false, "highlightsApproved": false, "assets": [] } },
+    "blackout-state": { "spotifyUrl": "", "epkStatus": "hold", "press": { "bioApproved": false, "highlightsApproved": false, "assets": [] } },
+    "crick-kinnard": { "spotifyUrl": "", "epkStatus": "hold", "press": { "bioApproved": false, "highlightsApproved": false, "assets": [] } },
+    "second-watch": { "spotifyUrl": "", "epkStatus": "hold", "press": { "bioApproved": false, "highlightsApproved": false, "assets": [] } }
+  },
+  "releases": {
+    "rhea-mauro-hearthblood": { "spotifyUrl": "https://open.spotify.com/track/27tmWIHA2BkQauKlFuDPQG", "tooFmUrl": "https://too.fm/d2d6eel", "youtubeId": "ufrYH6hyT3Q", "tracks": {} },
+    "rhea-mauro-aura-farming": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/ga4wykj", "youtubeId": "", "tracks": {} },
+    "rhea-mauro-save-a-horse-buy-a-jet": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/jdb6lgv", "youtubeId": "", "tracks": {} },
+    "high-ground-the-view-from-up-here": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/d6evdk6", "youtubeId": "", "tracks": {} },
+    "high-ground-final-analysis": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/drydpna", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-on-the-gas": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/6padq59", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-afterglow": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/k7mqrnj", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-borrowed-brightness": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/kyajkbn", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-dark-crush": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/6kjkwyd", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-independence-day": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/k9vba0b", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-red-door": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/v4eknae", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-youre-empty": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/noprn67", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-hold-my-hand": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/9pdm2mm", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-lights-on": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/ryxg0kk", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-like-magic": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/3ryrv4r", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-ripe-with-mercy": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/4ro4apx", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-semantic-mirage": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/67vkpe7", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-carry-the-quiet": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/87gp7ve", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-taking-shape": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/j2mjj5k", "youtubeId": "", "tracks": {} },
+    "velvet-orchard-exposure-therapy": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/oggqy0p", "youtubeId": "", "tracks": {} },
+    "quiet-filter-through-the-wall": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/qonnaz", "youtubeId": "", "tracks": {} },
+    "resunant-ash-as-evidence": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/o0pxxyy", "youtubeId": "", "tracks": {} },
+    "resunant-midnight-revival": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/bkxbxm3", "youtubeId": "", "tracks": {} },
+    "matt-freeman-time-out-zack-morris-is-trash": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/emww7xy", "youtubeId": "", "tracks": {} },
+    "blackout-state-no-manual-no-master": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/vbzk4bv", "youtubeId": "", "tracks": {} },
+    "blackout-state-high-time": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/dazenaz", "youtubeId": "", "tracks": {} },
+    "crick-kinnard-red-river": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/yn8xx7l", "youtubeId": "", "tracks": {} },
+    "crick-kinnard-thats-fair": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/x11ebjp", "youtubeId": "", "tracks": {} },
+    "crick-kinnard-send-me": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/ypn96ka", "youtubeId": "", "tracks": {} },
+    "crick-kinnard-empty-chambers": { "spotifyUrl": "", "tooFmUrl": "", "youtubeId": "", "tracks": {} },
+    "second-watch-psalm-of-myself": { "spotifyUrl": "", "tooFmUrl": "https://too.fm/qyqq2qa", "youtubeId": "", "tracks": {} }
+  }
+}
