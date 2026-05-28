@@ -2326,7 +2326,7 @@ window.PAWN_PUBLIC_DATA = {
           }
         }
       ],
-      "tooFmUrl": "",
+      "tooFmUrl": "https://too.fm/qj461aa",
       "youtubeId": "",
       "spotify": {
         "id": "",
