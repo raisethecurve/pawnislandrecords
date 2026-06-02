@@ -2814,12 +2814,34 @@ button:focus-visible {
   border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
+.merch-store-mvp {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
 .merch-board h2 {
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 3.5rem);
   line-height: 0.95;
   text-transform: uppercase;
+}
+
+.merch-store-mvp h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.merch-store-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.35fr);
+  gap: 0.9rem;
+  align-items: start;
 }
 
 .merch-filter-strip {
@@ -2941,6 +2963,160 @@ button:focus-visible {
 
 .merch-card__actions {
   margin-top: 0.1rem;
+}
+
+.printful-variant-slot {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.printful-variant-form,
+.merch-checkout-form {
+  display: grid;
+  gap: 0.65rem;
+  padding-top: 0.2rem;
+}
+
+.printful-variant-form label,
+.merch-checkout-form label {
+  display: grid;
+  gap: 0.32rem;
+}
+
+.printful-variant-form label span,
+.merch-checkout-form label span {
+  color: var(--white-soft);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.printful-variant-form select,
+.printful-variant-form input,
+.merch-checkout-form input {
+  width: 100%;
+  min-height: 2.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--white);
+  padding: 0.55rem 0.65rem;
+  font-size: 0.88rem;
+}
+
+.printful-variant-form select:focus,
+.printful-variant-form input:focus,
+.merch-checkout-form input:focus {
+  border-color: rgba(255, 204, 0, 0.58);
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(255, 204, 0, 0.16);
+}
+
+.merch-checkout-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
+  gap: 0.55rem;
+}
+
+.merch-inline-status {
+  margin: 0;
+  color: var(--white-soft);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.merch-cart {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.merch-cart h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.merch-cart__empty {
+  margin: 0;
+  color: var(--white-soft);
+  font-size: 0.9rem;
+}
+
+.merch-cart__items {
+  display: grid;
+  gap: 0.62rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.merch-cart__items li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: start;
+  padding-bottom: 0.62rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.merch-cart__items strong,
+.merch-cart__items span {
+  display: block;
+}
+
+.merch-cart__items strong {
+  font-size: 0.88rem;
+  line-height: 1.25;
+}
+
+.merch-cart__items span {
+  margin-top: 0.2rem;
+  color: var(--white-soft);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.merch-cart__remove {
+  min-height: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--white-soft);
+  padding: 0.35rem 0.55rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.merch-cart__remove:hover,
+.merch-cart__remove:focus-visible {
+  border-color: rgba(255, 204, 0, 0.58);
+  color: var(--white);
+  outline: none;
+}
+
+.merch-cart__total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: var(--yellow);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.merch-cart__total span {
+  color: var(--white-soft);
+  font-size: 0.7rem;
 }
 
 .epk-page-shell {
@@ -3466,6 +3642,10 @@ button:focus-visible {
     grid-template-columns: 1fr;
   }
 
+  .merch-store-layout {
+    grid-template-columns: 1fr;
+  }
+
   .about-copy {
     align-content: start;
   }
@@ -3492,6 +3672,10 @@ button:focus-visible {
 }
 
 @media (max-width: 860px) {
+  .merch-checkout-form__row {
+    grid-template-columns: 1fr;
+  }
+
   .artists-grid {
     --artist-columns: 2;
     --artist-card-max: 19rem;

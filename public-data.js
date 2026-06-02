@@ -290,7 +290,6 @@ window.PAWN_PUBLIC_DATA = {
         "Selected lyrics",
         "Release one-sheet"
       ],
-      "merchIntro": "Rhea Mauro merch should feel tactile, low-gloss, and collector oriented rather than loud.",
       "spotify": {
         "id": "",
         "url": "",
@@ -336,7 +335,6 @@ window.PAWN_PUBLIC_DATA = {
         "Track-by-track notes",
         "Press image selects"
       ],
-      "merchIntro": "High Ground merch should feel graphic, wearable, and stripped down to typography and mark-making.",
       "spotify": {
         "id": "",
         "url": "",
@@ -359,7 +357,7 @@ window.PAWN_PUBLIC_DATA = {
       "summary": "A neon-born dance lane that has evolved into bass-forward EDM with pop instincts intact.",
       "headline": "A high-color project built for movement, glow, and late-night release.",
       "story": "Velvet Orchard began in neon synth-pop and has grown into something heavier on rhythm and low end. It is the dance-facing world of the label, built to move without losing heart.",
-      "industryPitch": "Best presented through strong artwork, visual-first rollouts, and a collector aesthetic that feels nocturnal rather than slick.",
+      "industryPitch": "Best presented through strong artwork and visual-first rollouts that feel nocturnal rather than slick.",
       "pressBio": "Velvet Orchard is the dream-pop arm of Pawn Island Records, leaning into saturated color, romantic pull, and songs that stay human beneath the glow.",
       "pressHighlights": [
         "Highly visual release identity",
@@ -373,7 +371,6 @@ window.PAWN_PUBLIC_DATA = {
         "Track list",
         "Press-ready project statement"
       ],
-      "merchIntro": "Velvet Orchard merch should feel lush, night-coded, and collectible without becoming overly ornate.",
       "spotify": {
         "id": "",
         "url": "",
@@ -410,7 +407,6 @@ window.PAWN_PUBLIC_DATA = {
         "Track list",
         "Project statement"
       ],
-      "merchIntro": "Quiet Filter merch should feel durable, dark, and almost utility-like in presentation.",
       "spotify": {
         "id": "",
         "url": "",
@@ -447,7 +443,6 @@ window.PAWN_PUBLIC_DATA = {
         "Selected press pulls",
         "Track list"
       ],
-      "merchIntro": "Resunant merch should feel bold, sharp, and closer to poster culture than standard band apparel.",
       "spotify": {
         "id": "",
         "url": "",
@@ -484,7 +479,6 @@ window.PAWN_PUBLIC_DATA = {
         "Project note",
         "Track details"
       ],
-      "merchIntro": "Matthew Freeman merch should extend the atmosphere of the work: disciplined, tactile, and emotionally loaded rather than decorative.",
       "spotify": {
         "id": "",
         "url": "",
@@ -507,11 +501,11 @@ window.PAWN_PUBLIC_DATA = {
       "summary": "A pop-punk lane built for fast hooks, restless energy, and a little beautiful damage.",
       "headline": "A confrontational project driven by momentum, abrasion, and sing-along impact.",
       "story": "Blackout State is the loud, fast-moving corner of the label, where sharp edges and catchy release energy meet.",
-      "industryPitch": "Best supported with graphic campaigns, distressed visuals, and limited merch that leans into collage and contrast.",
+      "industryPitch": "Best supported with graphic campaigns, distressed visuals, and compact release identity that leans into collage and contrast.",
       "pressBio": "Blackout State is the industrial-panic side of the label, pairing distressed graphics with songs that feel like alerts and aftermath.",
       "pressHighlights": [
-        "Strong poster-ready visual language",
-        "Natural fit for graphic merch",
+        "Strong high-contrast visual language",
+        "Natural fit for sharp visual campaigns",
         "High-impact campaign identity"
       ],
       "pressAssets": [
@@ -520,7 +514,6 @@ window.PAWN_PUBLIC_DATA = {
         "Campaign stills",
         "Release statement"
       ],
-      "merchIntro": "Blackout State merch should feel torn, distressed, and graphic-led.",
       "spotify": {
         "id": "",
         "url": "",
@@ -543,7 +536,7 @@ window.PAWN_PUBLIC_DATA = {
       "summary": "A bluesy, soulful southern-country lane with grit, warmth, and deep roots.",
       "headline": "A grounded project built from southern weather, soulful phrasing, and durable songcraft.",
       "story": "Crick Kinnard carries the earthy, blues-soaked side of the label, where country structure and soul feeling meet without pretense.",
-      "industryPitch": "A good fit for Americana press, lyric features, intimate performance clips, and simple artwork-led merch.",
+      "industryPitch": "A good fit for Americana press, lyric features, intimate performance clips, and simple artwork-led campaign assets.",
       "pressBio": "Crick Kinnard is the roots-noir arm of Pawn Island Records, built for patient storytelling, grounded imagery, and sturdy emotional truth.",
       "pressHighlights": [
         "Narrative-led songwriting identity",
@@ -557,7 +550,6 @@ window.PAWN_PUBLIC_DATA = {
         "Selected lyric lines",
         "Release notes"
       ],
-      "merchIntro": "Crick Kinnard merch should feel grounded, earthy, and quietly premium.",
       "spotify": {
         "id": "",
         "url": "",
@@ -593,7 +585,6 @@ window.PAWN_PUBLIC_DATA = {
         "Short bio",
         "Track details"
       ],
-      "merchIntro": "second watch merch should feel understated, symbolic, and warm rather than loud.",
       "spotify": {
         "id": "",
         "url": "",
@@ -1941,7 +1932,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fdb846",
       "cover": "media/public/albums/state_master.png",
-      "description": "A high-impact release world that trades polish for poster-rip energy, graphic abrasion, and hard contrast.",
+      "description": "A high-impact release world that trades polish for graphic abrasion and hard contrast.",
       "status": "live",
       "releaseDate": "2026-02-05",
       "tooFmUrl": "https://too.fm/vbzk4bv",
@@ -2387,87 +2378,5 @@ window.PAWN_PUBLIC_DATA = {
       "primaryEmbedLabel": ""
     }
   ],
-  "merch": [
-    {
-      "slug": "rhea-hearthblood-print",
-      "artist": "rhea-mauro",
-      "title": "Hearthblood Collector Print",
-      "price": "$28",
-      "description": "Square archival print built from the Hearthblood cover world.",
-      "image": "media/public/albums/rhea_hearth.png",
-      "url": ""
-    },
-    {
-      "slug": "high-ground-view-tee",
-      "artist": "high-ground",
-      "title": "The View From Up Here Tee",
-      "price": "$34",
-      "description": "Graphic shirt concept built around the project's clean visual language.",
-      "image": "media/public/albums/updated_high.png",
-      "url": ""
-    },
-    {
-      "slug": "velvet-orchard-night-poster",
-      "artist": "velvet-orchard",
-      "title": "On the Gas Night Poster",
-      "price": "$24",
-      "description": "Square nightlife poster concept for the Velvet Orchard release cycle.",
-      "image": "media/public/albums/velvet_gas.png",
-      "url": ""
-    },
-    {
-      "slug": "quiet-filter-wall-slipmat",
-      "artist": "quiet-filter",
-      "title": "Through the Wall Slipmat",
-      "price": "$22",
-      "description": "Heavy-music collector slipmat concept using the square cover treatment.",
-      "image": "media/public/albums/quiet_wall.png",
-      "url": ""
-    },
-    {
-      "slug": "resunant-evidence-hoodie",
-      "artist": "resunant",
-      "title": "Ash as Evidence Hoodie",
-      "price": "$58",
-      "description": "High-contrast apparel concept tied to the Ash as Evidence visual world.",
-      "image": "media/public/albums/resunant_ash.png",
-      "url": ""
-    },
-    {
-      "slug": "matt-freeman-zack-print",
-      "artist": "matt-freeman",
-      "title": "Time Out Mini Print",
-      "price": "$18",
-      "description": "Compact square print concept built around the single artwork.",
-      "image": "media/public/albums/freeman_time.png",
-      "url": ""
-    },
-    {
-      "slug": "blackout-state-poster",
-      "artist": "blackout-state",
-      "title": "No Manual, No Master Poster",
-      "price": "$26",
-      "description": "Distressed poster concept pulled from the No Manual, No Master release design.",
-      "image": "media/public/albums/state_master.png",
-      "url": ""
-    },
-    {
-      "slug": "crick-kinnard-red-river-print",
-      "artist": "crick-kinnard",
-      "title": "Red River Art Print",
-      "price": "$24",
-      "description": "Square print concept for the river-country release world.",
-      "image": "media/public/albums/crick_river.png",
-      "url": ""
-    },
-    {
-      "slug": "second-watch-psalm-tee",
-      "artist": "second-watch",
-      "title": "Psalm of Myself Tee",
-      "price": "$32",
-      "description": "Minimal symbol-led apparel concept for the second watch release.",
-      "image": "media/public/albums/second_psalm.png",
-      "url": ""
-    }
-  ]
+  "merch": []
 };

@@ -12,4 +12,7 @@ playwright-report/
 test-results/
 blob-report/
 
+.dev.vars*
+.env*
+
 /tmp/*.log

@@ -8,28 +8,28 @@
     <link rel="icon" type="image/jpeg" sizes="96x96" href="assets/brand/pawnisland-096.jpg" />
     <link rel="icon" type="image/jpeg" sizes="256x256" href="assets/brand/pawnisland-256.jpg" />
     <link rel="apple-touch-icon" sizes="512x512" href="assets/brand/pawnisland-512.jpg" />
-    <title>Merch Concepts | Pawn Island Records</title>
+    <title>T-Shirts | Pawn Island Records</title>
     <meta
       name="description"
-      content="Preview Pawn Island Records merch concepts and use the active support path while checkout links are still pending."
+      content="Browse Pawn Island Records T-shirts powered by secure Printful API access."
     />
     <link rel="canonical" href="https://www.pawnislandrecords.com/merch.html" />
     <meta name="robots" content="noindex,follow" />
     <meta property="og:site_name" content="Pawn Island Records" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Pawn Island Records Merch Concepts" />
+    <meta property="og:title" content="Pawn Island Records T-Shirts" />
     <meta
       property="og:description"
-      content="Merch concepts are staged for release-world review; checkout links are only shown when real store URLs exist."
+      content="Browse Pawn Island Records T-shirts powered by secure Printful API access."
     />
     <meta property="og:url" content="https://www.pawnislandrecords.com/merch.html" />
     <meta property="og:image" content="https://www.pawnislandrecords.com/assets/brand/pawnisland-1200.jpg" />
     <meta property="og:image:alt" content="Pawn Island Records logo artwork" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Pawn Island Records Merch Concepts" />
+    <meta name="twitter:title" content="Pawn Island Records T-Shirts" />
     <meta
       name="twitter:description"
-      content="Preview staged merch concepts and support the label while checkout links are pending."
+      content="Browse Pawn Island Records T-shirts powered by secure Printful API access."
     />
     <meta name="twitter:image" content="https://www.pawnislandrecords.com/assets/brand/pawnisland-1200.jpg" />
     <script src="site-shell-bootstrap.js"></script>
@@ -49,11 +49,10 @@
         <section class="panel-shell merch-panel" aria-labelledby="merch-title">
           <div class="merch-hero">
             <article class="merch-copy">
-              <p class="section-kicker">Merch Concepts</p>
-              <h1 id="merch-title">Merch</h1>
+              <p class="section-kicker">Merch Store</p>
+              <h1 id="merch-title">T-Shirts</h1>
               <p id="merch-intro">
-                Merch concepts are not checkout-ready yet. Browse the staged release-world ideas,
-                then use the support path if you want to help fund the next run.
+                Pawn Island Records merch currently starts with T-shirts. Live inventory loads through the secure Printful API layer.
               </p>
               <div class="action-row">
                 <a class="button button--primary" id="merch-support-link" href="https://tiptopjar.com/pawnisland" target="_blank" rel="noreferrer">
@@ -65,24 +64,28 @@
 
             <aside class="merch-status-card" aria-labelledby="merch-status-title">
               <p class="section-kicker">Store State</p>
-              <h2 id="merch-status-title">Concept review</h2>
+              <h2 id="merch-status-title">Store MVP</h2>
               <div class="merch-stats" id="merch-stats"></div>
             </aside>
           </div>
 
-          <section class="merch-board" aria-labelledby="merch-board-title">
+          <section class="merch-store-mvp" aria-labelledby="merch-store-title">
             <div class="panel-header">
               <div>
-                <p class="section-kicker">Store Grid</p>
-                <h2 id="merch-board-title">Release-world goods</h2>
+                <p class="section-kicker">Printful Store</p>
+                <h2 id="merch-store-title">T-shirts</h2>
               </div>
               <div class="panel-note">
-                <p id="merch-results-summary">Loading merch concepts.</p>
+                <p id="printful-store-status">Checking Printful inventory.</p>
               </div>
             </div>
-
-            <nav class="merch-filter-strip" id="merch-artist-filters" aria-label="Merch artist filters"></nav>
-            <div class="merch-grid" id="merch-grid"></div>
+            <div class="merch-store-layout">
+              <div class="merch-grid merch-grid--live" id="printful-store-grid"></div>
+              <aside class="merch-cart" id="printful-cart" aria-labelledby="printful-cart-title" aria-live="polite">
+                <h3 id="printful-cart-title">Cart</h3>
+                <div id="printful-cart-body"></div>
+              </aside>
+            </div>
           </section>
         </section>
       </main>

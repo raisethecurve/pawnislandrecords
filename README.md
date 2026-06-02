@@ -42,6 +42,28 @@ To preview hidden modern routes as if launch mode were `full` without changing `
 
 Playwright screenshots are written under ignored `test-results/` output and are treated as manual review artifacts, not visual-regression baselines. If a fresh machine reports a missing browser executable, run `npx playwright install chromium` once and rerun the smoke tests.
 
+## Cloudflare Pages Merch MVP
+
+The merch MVP uses Cloudflare Pages Functions as a same-origin API layer for Printful v1. The browser never receives the Printful token.
+
+Required Cloudflare secret:
+
+- `PRINTFUL_API_TOKEN`: private Printful token with the store/product/order scopes needed for the MVP.
+
+Optional Cloudflare variables:
+
+- `PRINTFUL_STORE_ID`: store context header for account-level tokens.
+- `MERCH_DRAFT_ORDERS_ENABLED=true`: enables `/api/merch/draft-order`; leave unset in previews unless draft orders should be created in Printful.
+
+The current MVP routes are:
+
+- `GET /api/merch/products`: v1 `/store/products` proxy for synced pre-designed merch.
+- `GET /api/merch/products/:id`: v1 `/store/products/{id}` proxy for product variants.
+- `POST /api/merch/shipping-rates`: v1 `/shipping/rates`.
+- `POST /api/merch/draft-order`: v1 `/orders?confirm=false`, gated by `MERCH_DRAFT_ORDERS_ENABLED`.
+
+Use `.dev.vars` for local Pages Functions testing and never commit it.
+
 ## Route Inventory
 
 See `ROUTE_INVENTORY.md` for the human-readable route classification. The executable route list lives in `tools/routes.js` and is used by the link checker and smoke tests.
@@ -60,7 +82,7 @@ Hidden or gated modern routes:
 - `release.html`: dynamic release detail page, currently `noindex,follow`.
 - `epks.html`: press/EPK index, currently `noindex,follow`.
 - `epk.html`: dynamic artist press kit, currently `noindex,follow`.
-- `merch.html`: modern merch concept/support page, currently `noindex,follow`; checkout actions only appear when item URLs are present.
+- `merch.html`: modern T-shirt MVP page, currently `noindex,follow`; live Printful inventory loads through Cloudflare Pages Functions.
 - `process.html`: creative-process story page, currently `noindex,follow`.
 
 Generated public SEO artifacts:
