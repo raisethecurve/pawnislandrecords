@@ -3310,7 +3310,7 @@
     },
     "velvet orchard - borrowed brightness tee": {
       src: "media/public/merch/velvet-borrowed.webp",
-      ground: "dark",
+      ground: "light",
       label: "Borrowed Brightness dusk"
     },
     "velvet orchard - borrowed brightness - ghost tee": {
@@ -3335,17 +3335,17 @@
     },
     "resunant - midnight revival tee": {
       src: "media/public/merch/resunant-revival-05.webp",
-      ground: "light",
+      ground: "dark",
       label: "Midnight Revival crest"
     },
     "resunant - midnight revival - summoning tee": {
       src: "media/public/merch/resunant-confessional.webp",
-      ground: "light",
+      ground: "dark",
       label: "Summoning"
     },
     "resunant - midnight revival - cheap gospel honey tee": {
       src: "media/public/merch/resunant-honey.webp",
-      ground: "dark",
+      ground: "light",
       label: "Cheap Gospel Honey"
     },
     "resunant - midnight revival - neon communion tee": {
