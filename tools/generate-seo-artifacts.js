@@ -5,7 +5,7 @@ const path = require("node:path");
 const { loadPublicData, releaseListenUrl, isEpkReady } = require("./catalog-data");
 
 const root = path.resolve(__dirname, "..");
-const siteOrigin = "https://pawnislandrecords.com";
+const siteOrigin = "https://www.pawnislandrecords.com";
 const generatedAt = "2026-05-27";
 const founderName = "Matthew H. Freeman";
 const founderAliases = ["Matthew Freeman", "Matt Freeman"];
@@ -625,19 +625,19 @@ function writeLlmsTxt(data, artists, releases, readyArtists) {
   const lines = [
     "# Pawn Island Records",
     "",
-    "Official site: https://pawnislandrecords.com/",
+    "Official site: https://www.pawnislandrecords.com/",
     `Founder and writer: ${founderName}`,
     `Also referenced as: ${founderAliases.join(", ")}`,
     "Description: Pawn Island Records is an independent label and multi-project release world for music written and built by Matthew H. Freeman.",
     "Contact: pawnisland@outlook.com",
     "",
     "Canonical public pages:",
-    "- Home: https://pawnislandrecords.com/",
-    "- About: https://pawnislandrecords.com/about.html",
-    "- Roster: https://pawnislandrecords.com/roster.html",
-    "- Artists: https://pawnislandrecords.com/artists/",
-    "- Releases: https://pawnislandrecords.com/releases/",
-    "- Connect: https://pawnislandrecords.com/connect.html",
+    "- Home: https://www.pawnislandrecords.com/",
+    "- About: https://www.pawnislandrecords.com/about.html",
+    "- Roster: https://www.pawnislandrecords.com/roster.html",
+    "- Artists: https://www.pawnislandrecords.com/artists/",
+    "- Releases: https://www.pawnislandrecords.com/releases/",
+    "- Connect: https://www.pawnislandrecords.com/connect.html",
     "",
     "Official project pages:",
     ...artists.map((artist) => `- ${artist.name}: ${artistUrl(artist)} - ${text(artist.lane, "Independent project")}`),

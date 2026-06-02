@@ -794,7 +794,7 @@
   }
 
   function siteUrl(pathValue) {
-    return new URL(String(pathValue || "").replace(/^\/+/, ""), "https://pawnislandrecords.com/").toString();
+    return new URL(String(pathValue || "").replace(/^\/+/, ""), "https://www.pawnislandrecords.com/").toString();
   }
 
   function compactDescription(parts, fallback) {

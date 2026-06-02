@@ -61,4 +61,4 @@ Disallow: /release-deck.html
 Disallow: /downloads/
 Disallow: /tmp/
 
-Sitemap: https://pawnislandrecords.com/sitemap.xml
+Sitemap: https://www.pawnislandrecords.com/sitemap.xml

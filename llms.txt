@@ -1,64 +1,64 @@
 # Pawn Island Records
 
-Official site: https://pawnislandrecords.com/
+Official site: https://www.pawnislandrecords.com/
 Founder and writer: Matthew H. Freeman
 Also referenced as: Matthew Freeman, Matt Freeman
 Description: Pawn Island Records is an independent label and multi-project release world for music written and built by Matthew H. Freeman.
 Contact: pawnisland@outlook.com
 
 Canonical public pages:
-- Home: https://pawnislandrecords.com/
-- About: https://pawnislandrecords.com/about.html
-- Roster: https://pawnislandrecords.com/roster.html
-- Artists: https://pawnislandrecords.com/artists/
-- Releases: https://pawnislandrecords.com/releases/
-- Connect: https://pawnislandrecords.com/connect.html
+- Home: https://www.pawnislandrecords.com/
+- About: https://www.pawnislandrecords.com/about.html
+- Roster: https://www.pawnislandrecords.com/roster.html
+- Artists: https://www.pawnislandrecords.com/artists/
+- Releases: https://www.pawnislandrecords.com/releases/
+- Connect: https://www.pawnislandrecords.com/connect.html
 
 Official project pages:
-- Rhea Mauro: https://pawnislandrecords.com/artists/rhea-mauro/ - Soulful belting / adult contemporary / country
-- High Ground: https://pawnislandrecords.com/artists/high-ground/ - Urban hip hop / New England identity
-- Velvet Orchard: https://pawnislandrecords.com/artists/velvet-orchard/ - Bass-forward EDM / dance pop
-- Quiet Filter: https://pawnislandrecords.com/artists/quiet-filter/ - Stoner doom / heavy ritual
-- Resunant: https://pawnislandrecords.com/artists/resunant/ - Alternative rock / glam rock
-- Matt Freeman: https://pawnislandrecords.com/artists/matt-freeman/ - Pop culture / uncategorized songs
-- Blackout State: https://pawnislandrecords.com/artists/blackout-state/ - Pop punk / shutdown energy
-- Crick Kinnard: https://pawnislandrecords.com/artists/crick-kinnard/ - Bluesy southern country / soul
-- second watch: https://pawnislandrecords.com/artists/second-watch/ - Contemporary gospel / modern church music
+- Rhea Mauro: https://www.pawnislandrecords.com/artists/rhea-mauro/ - Soulful belting / adult contemporary / country
+- High Ground: https://www.pawnislandrecords.com/artists/high-ground/ - Urban hip hop / New England identity
+- Velvet Orchard: https://www.pawnislandrecords.com/artists/velvet-orchard/ - Bass-forward EDM / dance pop
+- Quiet Filter: https://www.pawnislandrecords.com/artists/quiet-filter/ - Stoner doom / heavy ritual
+- Resunant: https://www.pawnislandrecords.com/artists/resunant/ - Alternative rock / glam rock
+- Matt Freeman: https://www.pawnislandrecords.com/artists/matt-freeman/ - Pop culture / uncategorized songs
+- Blackout State: https://www.pawnislandrecords.com/artists/blackout-state/ - Pop punk / shutdown energy
+- Crick Kinnard: https://www.pawnislandrecords.com/artists/crick-kinnard/ - Bluesy southern country / soul
+- second watch: https://www.pawnislandrecords.com/artists/second-watch/ - Contemporary gospel / modern church music
 
 Official release pages:
-- Hearthblood: https://pawnislandrecords.com/releases/rhea-mauro-hearthblood/
-- Aura Farming: https://pawnislandrecords.com/releases/rhea-mauro-aura-farming/
-- Save a Horse Buy a Jet: https://pawnislandrecords.com/releases/rhea-mauro-save-a-horse-buy-a-jet/
-- The View From Up Here: https://pawnislandrecords.com/releases/high-ground-the-view-from-up-here/
-- Final Analysis: https://pawnislandrecords.com/releases/high-ground-final-analysis/
-- On the Gas: https://pawnislandrecords.com/releases/velvet-orchard-on-the-gas/
-- Afterglow: https://pawnislandrecords.com/releases/velvet-orchard-afterglow/
-- Borrowed Brightness: https://pawnislandrecords.com/releases/velvet-orchard-borrowed-brightness/
-- Dark Crush: https://pawnislandrecords.com/releases/velvet-orchard-dark-crush/
-- Independence Day: https://pawnislandrecords.com/releases/velvet-orchard-independence-day/
-- Red Door: https://pawnislandrecords.com/releases/velvet-orchard-red-door/
-- You're Empty: https://pawnislandrecords.com/releases/velvet-orchard-youre-empty/
-- Hold My Hand: https://pawnislandrecords.com/releases/velvet-orchard-hold-my-hand/
-- Lights On: https://pawnislandrecords.com/releases/velvet-orchard-lights-on/
-- Like Magic: https://pawnislandrecords.com/releases/velvet-orchard-like-magic/
-- Ripe with Mercy: https://pawnislandrecords.com/releases/velvet-orchard-ripe-with-mercy/
-- Semantic Mirage: https://pawnislandrecords.com/releases/velvet-orchard-semantic-mirage/
-- Carry the Quiet: https://pawnislandrecords.com/releases/velvet-orchard-carry-the-quiet/
-- Taking Shape: https://pawnislandrecords.com/releases/velvet-orchard-taking-shape/
-- Exposure Therapy: https://pawnislandrecords.com/releases/velvet-orchard-exposure-therapy/
-- Through the Wall: https://pawnislandrecords.com/releases/quiet-filter-through-the-wall/
-- Ash as Evidence: https://pawnislandrecords.com/releases/resunant-ash-as-evidence/
-- Midnight Revival: https://pawnislandrecords.com/releases/resunant-midnight-revival/
-- Time Out (Zack Morris is Trash!): https://pawnislandrecords.com/releases/matt-freeman-time-out-zack-morris-is-trash/
-- No Manual, No Master: https://pawnislandrecords.com/releases/blackout-state-no-manual-no-master/
-- High Time: https://pawnislandrecords.com/releases/blackout-state-high-time/
-- Red River: https://pawnislandrecords.com/releases/crick-kinnard-red-river/
-- That's Fair: https://pawnislandrecords.com/releases/crick-kinnard-thats-fair/
-- Send Me: https://pawnislandrecords.com/releases/crick-kinnard-send-me/
-- Empty Chambers: https://pawnislandrecords.com/releases/crick-kinnard-empty-chambers/
-- Psalm of Myself: https://pawnislandrecords.com/releases/second-watch-psalm-of-myself/
+- Hearthblood: https://www.pawnislandrecords.com/releases/rhea-mauro-hearthblood/
+- Aura Farming: https://www.pawnislandrecords.com/releases/rhea-mauro-aura-farming/
+- Save a Horse Buy a Jet: https://www.pawnislandrecords.com/releases/rhea-mauro-save-a-horse-buy-a-jet/
+- The View From Up Here: https://www.pawnislandrecords.com/releases/high-ground-the-view-from-up-here/
+- Final Analysis: https://www.pawnislandrecords.com/releases/high-ground-final-analysis/
+- On the Gas: https://www.pawnislandrecords.com/releases/velvet-orchard-on-the-gas/
+- Afterglow: https://www.pawnislandrecords.com/releases/velvet-orchard-afterglow/
+- Borrowed Brightness: https://www.pawnislandrecords.com/releases/velvet-orchard-borrowed-brightness/
+- Dark Crush: https://www.pawnislandrecords.com/releases/velvet-orchard-dark-crush/
+- Independence Day: https://www.pawnislandrecords.com/releases/velvet-orchard-independence-day/
+- Red Door: https://www.pawnislandrecords.com/releases/velvet-orchard-red-door/
+- You're Empty: https://www.pawnislandrecords.com/releases/velvet-orchard-youre-empty/
+- Hold My Hand: https://www.pawnislandrecords.com/releases/velvet-orchard-hold-my-hand/
+- Lights On: https://www.pawnislandrecords.com/releases/velvet-orchard-lights-on/
+- Like Magic: https://www.pawnislandrecords.com/releases/velvet-orchard-like-magic/
+- Ripe with Mercy: https://www.pawnislandrecords.com/releases/velvet-orchard-ripe-with-mercy/
+- Semantic Mirage: https://www.pawnislandrecords.com/releases/velvet-orchard-semantic-mirage/
+- Carry the Quiet: https://www.pawnislandrecords.com/releases/velvet-orchard-carry-the-quiet/
+- Taking Shape: https://www.pawnislandrecords.com/releases/velvet-orchard-taking-shape/
+- Exposure Therapy: https://www.pawnislandrecords.com/releases/velvet-orchard-exposure-therapy/
+- Through the Wall: https://www.pawnislandrecords.com/releases/quiet-filter-through-the-wall/
+- Ash as Evidence: https://www.pawnislandrecords.com/releases/resunant-ash-as-evidence/
+- Midnight Revival: https://www.pawnislandrecords.com/releases/resunant-midnight-revival/
+- Time Out (Zack Morris is Trash!): https://www.pawnislandrecords.com/releases/matt-freeman-time-out-zack-morris-is-trash/
+- No Manual, No Master: https://www.pawnislandrecords.com/releases/blackout-state-no-manual-no-master/
+- High Time: https://www.pawnislandrecords.com/releases/blackout-state-high-time/
+- Red River: https://www.pawnislandrecords.com/releases/crick-kinnard-red-river/
+- That's Fair: https://www.pawnislandrecords.com/releases/crick-kinnard-thats-fair/
+- Send Me: https://www.pawnislandrecords.com/releases/crick-kinnard-send-me/
+- Empty Chambers: https://www.pawnislandrecords.com/releases/crick-kinnard-empty-chambers/
+- Psalm of Myself: https://www.pawnislandrecords.com/releases/second-watch-psalm-of-myself/
 
 Approved press pages:
-- Rhea Mauro Press Kit: https://pawnislandrecords.com/press/rhea-mauro/
+- Rhea Mauro Press Kit: https://www.pawnislandrecords.com/press/rhea-mauro/
 
 Last updated: 2026-05-27

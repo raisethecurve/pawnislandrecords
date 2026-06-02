@@ -71,7 +71,7 @@ const routes = [
     absentText: ["Launch Mode", "tucked away", "staying private"],
     expectedTitle: "Catalog | Pawn Island Records",
     expectedMetaDescription: "Explore the Pawn Island Records catalog",
-    expectedCanonical: "https://pawnislandrecords.com/catalog.html",
+    expectedCanonical: "https://www.pawnislandrecords.com/catalog.html",
     expectedJsonLd: "CollectionPage"
   },
   {
@@ -95,7 +95,7 @@ const routes = [
     absentText: ["Launch Mode", "tucked away", "staying private"],
     expectedTitle: "Rhea Mauro | Catalog | Pawn Island Records",
     expectedMetaDescription: "catalog filtered by Rhea Mauro",
-    expectedCanonical: "https://pawnislandrecords.com/catalog.html?artist=rhea-mauro",
+    expectedCanonical: "https://www.pawnislandrecords.com/catalog.html?artist=rhea-mauro",
     expectedJsonLd: "CollectionPage"
   },
   {
@@ -122,7 +122,7 @@ const routes = [
     absentText: ["Launch Mode", "tucked away", "staying private"],
     expectedTitle: "Rhea Mauro | Pawn Island Records",
     expectedMetaDescription: "Rhea Mauro",
-    expectedCanonical: "https://pawnislandrecords.com/artist.html?artist=rhea-mauro",
+    expectedCanonical: "https://www.pawnislandrecords.com/artist.html?artist=rhea-mauro",
     expectedJsonLd: "MusicGroup"
   },
   {
@@ -149,7 +149,7 @@ const routes = [
     absentText: ["Launch Mode", "tucked away", "staying private"],
     expectedTitle: "Hearthblood | Rhea Mauro | Pawn Island Records",
     expectedMetaDescription: "Hearthblood by Rhea Mauro",
-    expectedCanonical: "https://pawnislandrecords.com/release.html?release=rhea-mauro-hearthblood",
+    expectedCanonical: "https://www.pawnislandrecords.com/release.html?release=rhea-mauro-hearthblood",
     expectedJsonLd: "MusicAlbum"
   },
   {
@@ -176,7 +176,7 @@ const routes = [
     absentText: ["Launch Mode", "tucked away", "staying private"],
     expectedTitle: "Press | Pawn Island Records",
     expectedMetaDescription: "Browse source-approved Pawn Island Records project press kits",
-    expectedCanonical: "https://pawnislandrecords.com/epks.html",
+    expectedCanonical: "https://www.pawnislandrecords.com/epks.html",
     expectedJsonLd: "CollectionPage"
   },
   {
@@ -203,7 +203,7 @@ const routes = [
     absentText: ["Launch Mode", "tucked away", "staying private"],
     expectedTitle: "Rhea Mauro Press Kit | Pawn Island Records",
     expectedMetaDescription: "Rhea Mauro press kit",
-    expectedCanonical: "https://pawnislandrecords.com/epk.html?artist=rhea-mauro",
+    expectedCanonical: "https://www.pawnislandrecords.com/epk.html?artist=rhea-mauro",
     expectedJsonLd: "ProfilePage"
   },
   {
@@ -219,7 +219,7 @@ const routes = [
     absentText: ["Kit Views", "Open Press Kit"],
     expectedTitle: "High Ground Press Kit By Request | Pawn Island Records",
     expectedMetaDescription: "High Ground press materials are available by request",
-    expectedCanonical: "https://pawnislandrecords.com/epk.html?artist=high-ground"
+    expectedCanonical: "https://www.pawnislandrecords.com/epk.html?artist=high-ground"
   },
   {
     path: "process.html",
@@ -245,7 +245,7 @@ const routes = [
     expectedText: "Merch concepts are not checkout-ready yet",
     expectedTitle: "Merch Concepts | Pawn Island Records",
     expectedMetaDescription: "Preview Pawn Island Records merch concepts",
-    expectedCanonical: "https://pawnislandrecords.com/merch.html",
+    expectedCanonical: "https://www.pawnislandrecords.com/merch.html",
     expectedJsonLd: "CollectionPage"
   },
   {

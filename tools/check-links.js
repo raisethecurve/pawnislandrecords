@@ -4,7 +4,7 @@ const vm = require("node:vm");
 const { routes } = require("./routes");
 
 const root = path.resolve(__dirname, "..");
-const siteOrigin = "https://pawnislandrecords.com";
+const siteOrigin = "https://www.pawnislandrecords.com";
 const ignoredDirectories = new Set([".git", "node_modules", "playwright-report", "test-results", "blob-report"]);
 const failures = [];
 

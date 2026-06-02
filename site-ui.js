@@ -1463,7 +1463,7 @@
 
   function absoluteSiteUrl(value) {
     const raw = String(value || "").trim();
-    const siteOrigin = "https://pawnislandrecords.com";
+    const siteOrigin = "https://www.pawnislandrecords.com";
 
     if (!raw) {
       return `${siteOrigin}/`;
