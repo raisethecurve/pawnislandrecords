@@ -234,7 +234,7 @@ const routes = [
   },
   {
     path: "merch.html",
-    label: "T-Shirts",
+    label: "Merch Store",
     classification: "hidden-but-shareable",
     stack: "modern public",
     dataSource: "public-data.js",
@@ -242,9 +242,9 @@ const routes = [
     smoke: true,
     shellSmoke: true,
     accessibilitySmoke: true,
-    expectedText: "Pawn Island Records merch currently starts with T-shirts",
-    expectedTitle: "T-Shirts | Pawn Island Records",
-    expectedMetaDescription: "Browse Pawn Island Records T-shirts",
+    expectedText: "Shop limited-run Pawn Island Records T-shirts",
+    expectedTitle: "Merch Store | Pawn Island Records",
+    expectedMetaDescription: "Shop Pawn Island Records artist T-shirts",
     expectedCanonical: "https://www.pawnislandrecords.com/merch.html",
     expectedJsonLd: "CollectionPage"
   },
