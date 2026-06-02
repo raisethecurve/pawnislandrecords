@@ -242,9 +242,9 @@ const routes = [
     smoke: true,
     shellSmoke: true,
     accessibilitySmoke: true,
-    expectedText: "Shop limited-run Pawn Island Records T-shirts",
+    expectedText: "Start with two live Pawn Island Records T-shirt picks",
     expectedTitle: "Merch Store | Pawn Island Records",
-    expectedMetaDescription: "Shop Pawn Island Records artist T-shirts",
+    expectedMetaDescription: "Shop the curated Pawn Island Records merch pair",
     expectedCanonical: "https://www.pawnislandrecords.com/merch.html",
     expectedJsonLd: "CollectionPage"
   },

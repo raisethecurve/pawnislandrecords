@@ -175,16 +175,134 @@ export function normalizeStoreProduct(product) {
   };
 }
 
+export function normalizeImageCandidate(input, fallbackLabel = "Product image") {
+  if (!input) {
+    return null;
+  }
+
+  if (typeof input === "string") {
+    const url = cleanText(input, "", 800);
+    return url ? { url, thumbnailUrl: url, label: fallbackLabel, type: "image" } : null;
+  }
+
+  if (typeof input !== "object") {
+    return null;
+  }
+
+  const url = cleanText(
+    input.preview_url ||
+      input.previewUrl ||
+      input.mockup_file_url ||
+      input.mockupFileUrl ||
+      input.mockup_url ||
+      input.mockupUrl ||
+      input.url ||
+      input.image_url ||
+      input.imageUrl ||
+      input.image ||
+      input.src ||
+      input.thumbnail_url ||
+      input.thumbnailUrl ||
+      input.thumbnail,
+    "",
+    800
+  );
+  const thumbnailUrl = cleanText(
+    input.thumbnail_url ||
+      input.thumbnailUrl ||
+      input.thumbnail ||
+      input.preview_url ||
+      input.previewUrl ||
+      input.mockup_file_url ||
+      input.mockupFileUrl ||
+      input.mockup_url ||
+      input.mockupUrl ||
+      input.url ||
+      input.image_url ||
+      input.imageUrl ||
+      input.image ||
+      input.src,
+    url,
+    800
+  );
+
+  if (!url) {
+    return null;
+  }
+
+  return {
+    id: cleanText(input.id || input.file_id || input.fileId || input.hash || url, url, 160),
+    url,
+    thumbnailUrl,
+    label: cleanText(input.label || input.title || input.name || input.filename || input.type, fallbackLabel, 120),
+    type: cleanText(input.type || input.placement || input.role, "image", 80)
+  };
+}
+
+function addImageCandidate(images, candidate) {
+  if (!candidate || !candidate.url) {
+    return;
+  }
+
+  const key = candidate.url.toLowerCase();
+
+  if (images.some((image) => image.url.toLowerCase() === key)) {
+    return;
+  }
+
+  images.push(candidate);
+}
+
+function collectImageCandidates(images, source, fallbackLabel) {
+  if (!source || typeof source !== "object") {
+    return;
+  }
+
+  [
+    source.thumbnail_url,
+    source.thumbnail,
+    source.preview_url,
+    source.previewUrl,
+    source.mockup_file_url,
+    source.mockupFileUrl,
+    source.mockup_url,
+    source.mockupUrl,
+    source.image_url,
+    source.imageUrl,
+    source.image,
+    source.url
+  ].forEach((value) => addImageCandidate(images, normalizeImageCandidate(value, fallbackLabel)));
+
+  [
+    source.files,
+    source.images,
+    source.mockups,
+    source.previews,
+    source.placements,
+    source.product_images,
+    source.productImages,
+    source.preview_images,
+    source.previewImages
+  ]
+    .filter(Array.isArray)
+    .flat()
+    .forEach((value) => addImageCandidate(images, normalizeImageCandidate(value, fallbackLabel)));
+}
+
 export function normalizeSyncVariant(variant) {
   return {
     id: String(variant.id || variant.sync_variant_id || variant.external_id || ""),
     syncVariantId: positiveInt(variant.id || variant.sync_variant_id),
     externalId: cleanText(variant.external_id, "", 80),
     catalogVariantId: positiveInt(variant.variant_id || variant.catalog_variant_id),
+    catalogProductId: positiveInt(variant.product && variant.product.product_id),
     name: cleanText(variant.name, "Variant", 140),
     retailPrice: cleanMoney(variant.retail_price || variant.price),
     currency: cleanText(variant.currency, "USD", 8),
     sku: cleanText(variant.sku, "", 80),
+    size: cleanText(variant.size || (variant.product && variant.product.size), "", 40),
+    color: cleanText(variant.color || (variant.product && variant.product.color), "", 80),
+    imageUrl: cleanText(variant.product && variant.product.image, "", 800),
     isSynced: variant.synced !== false && !variant.is_ignored
   };
 }
@@ -197,11 +315,48 @@ export function normalizeDetailedProduct(data) {
     : Array.isArray(result.variants)
       ? result.variants
       : [];
+  const images = [];
+
+  collectImageCandidates(images, syncProduct, cleanText(syncProduct.name, "Product image", 120));
+  variants.forEach((variant) => {
+    collectImageCandidates(images, variant, cleanText(variant.name, "Product mockup", 120));
+    collectImageCandidates(images, variant.product, cleanText(variant.name, "Product mockup", 120));
+  });
 
   return {
-    product: normalizeStoreProduct(syncProduct),
-    variants: variants.map(normalizeSyncVariant).filter((variant) => variant.id)
+    product: {
+      ...normalizeStoreProduct(syncProduct),
+      images
+    },
+    variants: variants.map(normalizeSyncVariant).filter((variant) => variant.id),
+    images
   };
+}
+
+export function normalizeMockupTaskImages(task) {
+  const result = task && task.result && typeof task.result === "object" ? task.result : task;
+  const mockups = Array.isArray(result && result.mockups) ? result.mockups : [];
+  const images = [];
+
+  mockups.forEach((mockup) => {
+    addImageCandidate(
+      images,
+      normalizeImageCandidate(
+        mockup && (mockup.mockup_url || mockup.url || mockup.image_url),
+        cleanText(mockup && (mockup.display_name || mockup.placement), "Generated mockup", 120)
+      )
+    );
+
+    const extras = Array.isArray(mockup && mockup.extra) ? mockup.extra : [];
+    extras.forEach((extra) => {
+      addImageCandidate(
+        images,
+        normalizeImageCandidate(extra, cleanText(extra && (extra.title || extra.option), "Generated mockup", 120))
+      );
+    });
+  });
+
+  return images;
 }
 
 export function sanitizeRecipient(input, { requireFullAddress = true } = {}) {
