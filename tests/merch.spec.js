@@ -412,6 +412,7 @@ test.describe("merch discovery", () => {
     await expect(page.locator(".merch-cart__items")).toContainText("Borrowed Brightness Crest Tee");
     await expect(page.locator(".merch-cart__items")).toContainText("$28.00");
     await expect(page.locator(".merch-policy-check")).toContainText("not a completed payment");
+    await expect(page.locator("#printful-cart-body")).toContainText("1-2 business days");
 
     const eventNames = await page.evaluate(() => window.__merchEvents.map((event) => event.name));
     expect(eventNames).toContain("view_store");

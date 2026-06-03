@@ -3359,6 +3359,17 @@
     );
   }
 
+  function merchSupportResponseCopy() {
+    return text(printfulMerchState.metadata.launchPosture.supportResponseWindow, "1-2 business days");
+  }
+
+  function merchCancellationCopy() {
+    return text(
+      printfulMerchState.metadata.launchPosture.cancellationWindow,
+      "Order requests can be changed or cancelled until the payment link is paid."
+    );
+  }
+
   function merchPolicyCopy() {
     return text(
       printfulMerchState.metadata.launchPosture.returnPolicy,
@@ -4614,6 +4625,7 @@
           <li>Printed on demand after invoice payment.</li>
           <li>Shipping is estimated before the request leaves the site.</li>
           <li>${escapeHtml(merchPaymentCopy())}</li>
+          <li>Support replies within ${escapeHtml(merchSupportResponseCopy())}.</li>
         </ul>
       `;
       return;
@@ -4711,7 +4723,7 @@
           <input name="policy" type="checkbox" required />
           <span>I understand this sends an order request, not a completed payment. ${escapeHtml(merchPaymentCopy())}</span>
         </label>
-        <p class="merch-cart__note">Your address is used to estimate shipping and prepare the invoice. Support: <a href="mailto:${escapeHtml(merchSupportEmail())}">${escapeHtml(merchSupportEmail())}</a>.</p>
+        <p class="merch-cart__note">Your address is used to estimate shipping and prepare the invoice. ${escapeHtml(merchCancellationCopy())} Support replies within ${escapeHtml(merchSupportResponseCopy())}: <a href="mailto:${escapeHtml(merchSupportEmail())}">${escapeHtml(merchSupportEmail())}</a>.</p>
         <button class="button button--primary button--small" type="submit">Request Invoice</button>
         <p class="merch-inline-status" id="printful-cart-status"></p>
       </form>
@@ -5290,7 +5302,8 @@
                   <section>
                     <h4>Returns & Support</h4>
                     <p>${escapeHtml(returnPolicy)}</p>
-                    <p>${escapeHtml(meta.supportCopy)} <a href="mailto:${escapeHtml(merchSupportEmail())}">${escapeHtml(merchSupportEmail())}</a></p>
+                    <p>${escapeHtml(merchCancellationCopy())}</p>
+                    <p>${escapeHtml(meta.supportCopy)} Support replies within ${escapeHtml(merchSupportResponseCopy())}: <a href="mailto:${escapeHtml(merchSupportEmail())}">${escapeHtml(merchSupportEmail())}</a></p>
                   </section>
                 </div>
               `
