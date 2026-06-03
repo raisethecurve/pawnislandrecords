@@ -45,12 +45,16 @@ export async function onRequestPost(context) {
       );
     }
 
+    const customerNotes = cleanText(body.notes, "", 500);
     const payload = {
       external_id: cleanText(body.external_id, shortOrderId(), 32),
       recipient: sanitizeRecipient(body.recipient),
       items: sanitizeOrderItems(body.items),
       shipping: cleanText(body.shipping, "STANDARD", 40),
-      notes: "Pawn Island Records merch desk request. Confirm manually after payment is collected."
+      notes: [
+        "Pawn Island Records merch desk request. Confirm manually after payment is collected.",
+        customerNotes ? `Customer notes: ${customerNotes}` : ""
+      ].filter(Boolean).join("\n")
     };
     const response = await printfulFetch(context, "/orders?confirm=false", {
       method: "POST",

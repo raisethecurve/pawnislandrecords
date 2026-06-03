@@ -76,7 +76,7 @@ Manual order launch brief:
 - Support: `pawnisland@outlook.com`, expected response window 1-2 business days.
 - Payment and cancellation: payment link is emailed before production; requests can be changed or cancelled until that payment link is paid.
 - Returns: printed-on-demand returns are limited to damaged, misprinted, or incorrect items.
-- Operator process: keep `MERCH_DRAFT_ORDERS_ENABLED=false` until someone is actively monitoring Printful draft orders and the support inbox. When enabled, use the Printful dashboard draft order and `external_id` to reconcile the request, then email the payment link manually.
+- Operator process: keep `MERCH_DRAFT_ORDERS_ENABLED=false` until someone is actively monitoring Printful draft orders and the support inbox. When enabled, use the Printful dashboard draft order, optional customer notes, and `external_id` to reconcile the request, then email the payment link manually.
 
 Use `.dev.vars` for local Pages Functions testing and never commit it.
 

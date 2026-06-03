@@ -4489,8 +4489,34 @@
     return printfulMerchState.cart.reduce((total, item) => total + item.quantity, 0);
   }
 
+  function printfulSelectedShippingRate() {
+    if (!printfulMerchState.shippingRates.length) {
+      return null;
+    }
+
+    const selected = text(printfulMerchState.selectedShipping, "");
+    return (
+      printfulMerchState.shippingRates.find((rate, index) => printfulShippingRateId(rate, index) === selected) ||
+      printfulMerchState.shippingRates[0]
+    );
+  }
+
+  function printfulShippingAmount(rate) {
+    const amount = Number.parseFloat(rate && (rate.rate || rate.price));
+    return Number.isFinite(amount) ? amount : null;
+  }
+
+  function printfulEstimatedTotal() {
+    const subtotal = printfulCartTotal();
+    const shipping = printfulShippingAmount(printfulSelectedShippingRate());
+
+    return Number.isFinite(shipping) ? subtotal + shipping : subtotal;
+  }
+
   function printfulCartSummaryText() {
     const lines = ["Pawn Island Records merch request", ""];
+    const shippingRate = printfulSelectedShippingRate();
+    const shippingAmount = printfulShippingAmount(shippingRate);
 
     printfulMerchState.cart.forEach((item) => {
       const amount = Number.parseFloat(item.retailPrice);
@@ -4500,6 +4526,12 @@
 
     lines.push("");
     lines.push(`Subtotal: ${printfulCartTotal() ? printfulMoney(printfulCartTotal(), "USD") : "Price pending"}`);
+    if (shippingRate) {
+      lines.push(`Shipping estimate: ${printfulShippingRateLabel(shippingRate)}`);
+      if (Number.isFinite(shippingAmount)) {
+        lines.push(`Estimated total: ${printfulMoney(printfulEstimatedTotal(), shippingRate.currency || "USD")}`);
+      }
+    }
     lines.push(merchPaymentCopy());
     lines.push(`Support: ${merchSupportEmail()} (${merchSupportResponseCopy()})`);
 
@@ -4510,6 +4542,19 @@
     const subject = encodeURIComponent("Pawn Island Records merch request");
     const body = encodeURIComponent(printfulCartSummaryText());
     return `mailto:${merchSupportEmail()}?subject=${subject}&body=${body}`;
+  }
+
+  function refreshPrintfulCartSnapshot() {
+    const summaryNode = document.querySelector("[data-printful-cart-summary-text]");
+    const emailLink = document.querySelector("[data-printful-email-cart]");
+
+    if (summaryNode) {
+      summaryNode.textContent = printfulCartSummaryText();
+    }
+
+    if (emailLink) {
+      emailLink.href = printfulCartSummaryMailto();
+    }
   }
 
   async function copyPrintfulCartSummary() {
@@ -4679,6 +4724,8 @@
       ratesNode.innerHTML = "";
     }
 
+    refreshPrintfulCartSnapshot();
+
     if (status) {
       status.textContent = text(message, "Estimate shipping again before requesting an invoice.");
     }
@@ -4700,6 +4747,47 @@
     return [name, price, delivery].filter(Boolean).join(" | ");
   }
 
+  function printfulShippingEstimateSummaryMarkup() {
+    const rate = printfulSelectedShippingRate();
+
+    if (!rate) {
+      return "";
+    }
+
+    const subtotal = printfulCartTotal();
+    const shipping = printfulShippingAmount(rate);
+    const currency = text(rate.currency, "USD");
+    const shippingLabel = Number.isFinite(shipping) ? printfulMoney(shipping, currency) : "Pending";
+    const totalLabel = Number.isFinite(shipping) ? printfulMoney(printfulEstimatedTotal(), currency) : "Pending";
+
+    return `
+      <dl class="merch-estimate-summary" id="printful-estimate-summary">
+        <div>
+          <dt>Subtotal</dt>
+          <dd>${escapeHtml(subtotal ? printfulMoney(subtotal, currency) : "Price pending")}</dd>
+        </div>
+        <div>
+          <dt>Shipping</dt>
+          <dd>${escapeHtml(shippingLabel)}</dd>
+        </div>
+        <div>
+          <dt>Estimated Total</dt>
+          <dd>${escapeHtml(totalLabel)}</dd>
+        </div>
+      </dl>
+    `;
+  }
+
+  function refreshPrintfulShippingEstimateSummary() {
+    const node = document.getElementById("printful-estimate-summary");
+
+    if (node) {
+      node.outerHTML = printfulShippingEstimateSummaryMarkup();
+    }
+
+    refreshPrintfulCartSnapshot();
+  }
+
   function printfulShippingRatesMarkup() {
     if (!printfulMerchState.shippingRates.length) {
       return "";
@@ -4718,6 +4806,7 @@
         <span>Shipping</span>
         <select id="printful-shipping-select" name="shipping">${options}</select>
       </label>
+      ${printfulShippingEstimateSummaryMarkup()}
     `;
   }
 
@@ -4758,6 +4847,7 @@
         (item, index) => {
           const amount = Number.parseFloat(item.retailPrice);
           const linePrice = Number.isFinite(amount) ? printfulMoney(amount * item.quantity, item.currency) : "Price pending";
+          const productUrl = item.productId ? printfulProductUrl(item.productId) : "";
 
           return `
           <li>
@@ -4765,6 +4855,7 @@
               <strong>${escapeHtml(item.productName)}</strong>
               <span>${escapeHtml(item.variantName)} x ${item.quantity}</span>
               <span>${escapeHtml(linePrice)}</span>
+              ${productUrl ? `<a class="merch-cart__item-link" href="${escapeHtml(productUrl)}" data-printful-product-link="${escapeHtml(item.productId)}">View item</a>` : ""}
               <div class="merch-cart__qty" aria-label="Change quantity for ${escapeHtml(item.productName)}">
                 <button type="button" data-printful-cart-qty="${index}" data-printful-cart-qty-step="-1" aria-label="Decrease ${escapeHtml(item.productName)} quantity">-</button>
                 <strong>${escapeHtml(String(item.quantity))}</strong>
@@ -4784,12 +4875,13 @@
         <span>Subtotal</span>
         <strong>${escapeHtml(totalLabel)}</strong>
       </div>
+      <button class="button button--ghost button--small merch-cart__clear" type="button" data-printful-clear-cart>Clear Request</button>
       <details class="merch-cart__snapshot">
         <summary>Order Snapshot</summary>
         <pre data-printful-cart-summary-text>${escapeHtml(summaryText)}</pre>
         <div class="action-row merch-cart__snapshot-actions">
           <button class="button button--ghost button--small" type="button" data-printful-copy-cart>Copy</button>
-          <a class="button button--ghost button--small" href="${escapeHtml(printfulCartSummaryMailto())}">Email Support</a>
+          <a class="button button--ghost button--small" href="${escapeHtml(printfulCartSummaryMailto())}" data-printful-email-cart>Email Support</a>
         </div>
         <p class="merch-inline-status" id="printful-copy-status"></p>
       </details>
@@ -4807,6 +4899,10 @@
         <label>
           <span>Phone optional</span>
           <input name="phone" type="tel" autocomplete="tel" />
+        </label>
+        <label>
+          <span>Order notes optional</span>
+          <textarea name="notes" maxlength="500" rows="3" placeholder="Size questions, gift timing, or support notes"></textarea>
         </label>
         <label>
           <span>Address</span>
@@ -4923,6 +5019,19 @@
     return true;
   }
 
+  function clearPrintfulCartRequest() {
+    const itemCount = printfulCartQuantity();
+
+    printfulMerchState.cart = [];
+    printfulMerchState.orderNotice = "Order request cleared.";
+    resetPrintfulCheckoutState();
+    persistPrintfulCart();
+    renderPrintfulCart();
+    trackMerchEvent("clear_cart", {
+      item_count: itemCount
+    });
+  }
+
   async function estimatePrintfulShipping(form) {
     const status = document.getElementById("printful-cart-status");
     const ratesNode = document.getElementById("printful-shipping-rates");
@@ -4977,6 +5086,8 @@
           : '<p class="merch-inline-status">No shipping rates came back for that destination.</p>';
       }
 
+      refreshPrintfulCartSnapshot();
+
       if (status) {
         status.textContent = rates.length ? "Shipping rates ready." : "No shipping rates came back for that destination.";
       }
@@ -5019,6 +5130,7 @@
       retail_price: item.retailPrice,
       name: item.productName
     }));
+    const notes = text(formData.get("notes"), "").slice(0, 500);
     const selectedShipping = text(formData.get("shipping"), printfulMerchState.selectedShipping);
     const knownShippingIds = new Set(printfulMerchState.shippingRates.map((rate, index) => printfulShippingRateId(rate, index)));
     const shippingRecipientKey = printfulShippingRecipientKey(recipient);
@@ -5057,7 +5169,8 @@
       trackMerchEvent("begin_checkout", {
         item_count: printfulCartQuantity(),
         subtotal: printfulCartTotal(),
-        shipping: selectedShipping
+        shipping: selectedShipping,
+        note_present: Boolean(notes)
       });
       const response = await merchApiJson("api/merch/draft-order", {
         method: "POST",
@@ -5065,7 +5178,8 @@
           external_id: currentPrintfulOrderRequestId(),
           recipient,
           items,
-          shipping: selectedShipping
+          shipping: selectedShipping,
+          notes
         })
       });
       const orderId = response && response.order && response.order.id ? ` #${response.order.id}` : "";
@@ -5079,7 +5193,8 @@
         status: "created",
         order_id: response && response.order && response.order.id ? String(response.order.id) : "",
         item_count: items.reduce((total, item) => total + item.quantity, 0),
-        shipping: selectedShipping
+        shipping: selectedShipping,
+        note_present: Boolean(notes)
       });
       printfulMerchState.cart = [];
       resetPrintfulCheckoutState();
@@ -5758,6 +5873,7 @@
       const qtyStepButton = event.target.closest("[data-printful-qty-step]");
       const clearFiltersButton = event.target.closest("[data-printful-clear-filters]");
       const copyCartButton = event.target.closest("[data-printful-copy-cart]");
+      const clearCartButton = event.target.closest("[data-printful-clear-cart]");
 
       if (supportLink) {
         trackMerchEvent("support_click", {
@@ -5772,6 +5888,11 @@
 
       if (copyCartButton) {
         copyPrintfulCartSummary();
+        return;
+      }
+
+      if (clearCartButton) {
+        clearPrintfulCartRequest();
         return;
       }
 
@@ -5958,6 +6079,11 @@
 
       if (shippingSelect) {
         printfulMerchState.selectedShipping = text(shippingSelect.value, "");
+        refreshPrintfulShippingEstimateSummary();
+        trackMerchEvent("select_shipping", {
+          shipping: printfulMerchState.selectedShipping,
+          item_count: printfulCartQuantity()
+        });
       }
 
       if (shippingField && printfulMerchState.shippingRates.length) {

@@ -297,6 +297,7 @@ async function fillCheckoutForm(page, overrides = {}) {
     name: "Ada Lovelace",
     email: "ada@example.com",
     phone: "555-0100",
+    notes: "",
     address1: "12 Synth Lane",
     address2: "",
     city: "Kingston",
@@ -309,6 +310,7 @@ async function fillCheckoutForm(page, overrides = {}) {
   await form.locator("[name='name']").fill(values.name);
   await form.locator("[name='email']").fill(values.email);
   await form.locator("[name='phone']").fill(values.phone);
+  await form.locator("[name='notes']").fill(values.notes);
   await form.locator("[name='address1']").fill(values.address1);
   await form.locator("[name='address2']").fill(values.address2);
   await form.locator("[name='city']").fill(values.city);
@@ -471,6 +473,16 @@ test.describe("merch discovery", () => {
     await expect(page.locator("#printful-copy-status")).toContainText(/order snapshot/i);
   });
 
+  test("clears the request cart in one action", async ({ page }) => {
+    await addCuratedProductToCart(page);
+
+    await page.locator("[data-printful-clear-cart]").click();
+
+    await expect(page.locator("#printful-cart-count")).toHaveText("0");
+    await expect(page.locator(".merch-cart__notice")).toContainText("Order request cleared.");
+    await expect(page.locator("#printful-cart-body")).toContainText("Order request is empty.");
+  });
+
   test("shows a missing-options state without adding to the cart", async ({ page }) => {
     page.merchApiScenario = {
       detailVariantsByProduct: {
@@ -518,11 +530,14 @@ test.describe("merch discovery", () => {
 
   test("estimates shipping and creates a manual invoice request", async ({ page }) => {
     await addCuratedProductToCart(page);
-    await fillCheckoutForm(page);
+    await fillCheckoutForm(page, { notes: "Please confirm before printing." });
 
     await page.locator("[data-printful-estimate-shipping]").click();
     await expect(page.locator("#printful-shipping-select")).toBeVisible();
     await expect(page.locator("#printful-shipping-select")).toContainText("Standard");
+    await expect(page.locator("#printful-estimate-summary")).toContainText("Estimated Total");
+    await expect(page.locator("#printful-estimate-summary")).toContainText("$34.95");
+    await expect(page.locator("[data-printful-cart-summary-text]")).toContainText("Shipping estimate: Standard");
 
     await page.locator("#printful-draft-order-form").evaluate((form) => form.requestSubmit());
 
@@ -531,9 +546,26 @@ test.describe("merch discovery", () => {
     expect(page.merchApiRequests.shipping).toHaveLength(1);
     expect(page.merchApiRequests.draftOrders).toHaveLength(1);
     expect(page.merchApiRequests.draftOrders[0].shipping).toBe("STANDARD");
+    expect(page.merchApiRequests.draftOrders[0].notes).toBe("Please confirm before printing.");
     expect(page.merchApiRequests.draftOrders[0].external_id).toMatch(/^pir_/);
     const eventNames = await page.evaluate(() => window.__merchEvents.map((event) => event.name));
     expect(eventNames).toEqual(expect.arrayContaining(["estimate_shipping", "begin_checkout", "submit_order_request"]));
+  });
+
+  test("updates the estimated total when a different shipping service is selected", async ({ page }) => {
+    await addCuratedProductToCart(page);
+    await fillCheckoutForm(page);
+
+    await page.locator("[data-printful-estimate-shipping]").click();
+    await page.locator("#printful-shipping-select").selectOption("EXPRESS");
+
+    await expect(page.locator("#printful-estimate-summary")).toContainText("$42.95");
+    await expect(page.locator("[data-printful-cart-summary-text]")).toContainText("Shipping estimate: Express");
+
+    await page.locator("#printful-draft-order-form").evaluate((form) => form.requestSubmit());
+
+    expect(page.merchApiRequests.draftOrders).toHaveLength(1);
+    expect(page.merchApiRequests.draftOrders[0].shipping).toBe("EXPRESS");
   });
 
   test("keeps the cart available when shipping estimates fail", async ({ page }) => {
