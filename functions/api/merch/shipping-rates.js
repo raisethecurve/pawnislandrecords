@@ -1,10 +1,11 @@
 import {
   apiErrorResponse,
+  assertSameOriginRequest,
   cleanText,
   emptyOptionsResponse,
   jsonResponse,
   printfulFetch,
-  readJson,
+  readJsonObject,
   resultArray,
   sanitizeRecipient,
   sanitizeShippingItems
@@ -16,7 +17,8 @@ export async function onRequestOptions() {
 
 export async function onRequestPost(context) {
   try {
-    const body = await readJson(context.request);
+    assertSameOriginRequest(context);
+    const body = await readJsonObject(context.request);
     const payload = {
       recipient: sanitizeRecipient(body.recipient, { requireFullAddress: false }),
       items: sanitizeShippingItems(body.items),

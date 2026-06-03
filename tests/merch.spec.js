@@ -120,6 +120,11 @@ function withStandalone(routePath) {
 }
 
 async function mockMerchApi(page) {
+  const requests = {
+    shipping: [],
+    draftOrders: []
+  };
+
   await page.route(/\/api\/merch\/products\?status=synced$/, async (route) => {
     await route.fulfill({
       contentType: "application/json",
@@ -165,6 +170,76 @@ async function mockMerchApi(page) {
     });
   });
 
+  await page.route(/\/api\/merch\/shipping-rates$/, async (route) => {
+    const body = route.request().postDataJSON();
+    requests.shipping.push(body);
+
+    if (body && body.recipient && body.recipient.zip === "00000") {
+      await route.fulfill({
+        status: 502,
+        contentType: "application/json",
+        body: JSON.stringify({
+          error: "printful_request_failed",
+          message: "Shipping rates are temporarily unavailable."
+        })
+      });
+      return;
+    }
+
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        rates: [
+          {
+            id: "STANDARD",
+            name: "Standard",
+            rate: "6.95",
+            currency: "USD",
+            minDeliveryDays: 5,
+            maxDeliveryDays: 8
+          },
+          {
+            id: "EXPRESS",
+            name: "Express",
+            rate: "14.95",
+            currency: "USD",
+            minDeliveryDays: 2,
+            maxDeliveryDays: 4
+          }
+        ]
+      })
+    });
+  });
+
+  await page.route(/\/api\/merch\/draft-order$/, async (route) => {
+    const body = route.request().postDataJSON();
+    requests.draftOrders.push(body);
+
+    if (body && body.recipient && body.recipient.email === "disabled@example.com") {
+      await route.fulfill({
+        status: 403,
+        contentType: "application/json",
+        body: JSON.stringify({
+          error: "draft_orders_disabled",
+          message: "Draft Printful orders are disabled for this environment."
+        })
+      });
+      return;
+    }
+
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        order: {
+          id: 9001,
+          externalId: body && body.external_id,
+          status: "draft",
+          dashboardUrl: ""
+        }
+      })
+    });
+  });
+
   await page.route(/\/api\/merch\/products\/[^/?]+$/, async (route) => {
     const productId = route.request().url().split("/").pop();
     const product = mockProducts.find((item) => item.id === productId) || mockProducts[0];
@@ -195,11 +270,47 @@ async function mockMerchApi(page) {
       })
     });
   });
+
+  return requests;
+}
+
+async function fillCheckoutForm(page, overrides = {}) {
+  const form = page.locator("#printful-draft-order-form");
+  const values = {
+    name: "Ada Lovelace",
+    email: "ada@example.com",
+    phone: "555-0100",
+    address1: "12 Synth Lane",
+    address2: "",
+    city: "Kingston",
+    state_code: "NY",
+    country_code: "US",
+    zip: "12401",
+    ...overrides
+  };
+
+  await form.locator("[name='name']").fill(values.name);
+  await form.locator("[name='email']").fill(values.email);
+  await form.locator("[name='phone']").fill(values.phone);
+  await form.locator("[name='address1']").fill(values.address1);
+  await form.locator("[name='address2']").fill(values.address2);
+  await form.locator("[name='city']").fill(values.city);
+  await form.locator("[name='state_code']").fill(values.state_code);
+  await form.locator("[name='country_code']").selectOption(values.country_code);
+  await form.locator("[name='zip']").fill(values.zip);
+  await form.locator("[name='policy']").check();
+}
+
+async function addCuratedProductToCart(page) {
+  await page.goto(withStandalone("merch.html?product=tee-1"), { waitUntil: "domcontentloaded" });
+  await expect(page.locator(".merch-product-detail")).toContainText("Borrowed Brightness Crest Tee");
+  await page.locator(".merch-product-detail [data-printful-add-form]").evaluate((form) => form.requestSubmit());
+  await expect(page.locator("#printful-cart-count")).toHaveText("1");
 }
 
 test.describe("merch discovery", () => {
   test.beforeEach(async ({ page }) => {
-    await mockMerchApi(page);
+    page.merchApiRequests = await mockMerchApi(page);
   });
 
   test("opens on purchase-ready products by default", async ({ page }) => {
@@ -271,6 +382,64 @@ test.describe("merch discovery", () => {
     await oneOptionCard.locator("[data-printful-direct-add-product='tee-5']").click();
     await expect(page.locator("#printful-cart-count")).toHaveText("1");
     await expect(page.locator(".merch-cart__items")).toContainText("Quiet Filter");
+  });
+
+  test("requires a shipping estimate before requesting an invoice", async ({ page }) => {
+    await addCuratedProductToCart(page);
+    await fillCheckoutForm(page);
+
+    await page.locator("#printful-draft-order-form").evaluate((form) => form.requestSubmit());
+
+    await expect(page.locator("#printful-cart-status")).toContainText("Estimate shipping before requesting an invoice.");
+    expect(page.merchApiRequests.shipping).toHaveLength(0);
+    expect(page.merchApiRequests.draftOrders).toHaveLength(0);
+  });
+
+  test("estimates shipping and creates a manual invoice request", async ({ page }) => {
+    await addCuratedProductToCart(page);
+    await fillCheckoutForm(page);
+
+    await page.locator("[data-printful-estimate-shipping]").click();
+    await expect(page.locator("#printful-shipping-select")).toBeVisible();
+    await expect(page.locator("#printful-shipping-select")).toContainText("Standard");
+
+    await page.locator("#printful-draft-order-form").evaluate((form) => form.requestSubmit());
+
+    await expect(page.locator("#printful-cart-count")).toHaveText("0");
+    await expect(page.locator(".merch-cart__notice")).toContainText("Order request received #9001");
+    expect(page.merchApiRequests.shipping).toHaveLength(1);
+    expect(page.merchApiRequests.draftOrders).toHaveLength(1);
+    expect(page.merchApiRequests.draftOrders[0].shipping).toBe("STANDARD");
+    expect(page.merchApiRequests.draftOrders[0].external_id).toMatch(/^pir_/);
+  });
+
+  test("keeps the cart available when shipping estimates fail", async ({ page }) => {
+    await addCuratedProductToCart(page);
+    await fillCheckoutForm(page, { zip: "00000" });
+
+    await page.locator("[data-printful-estimate-shipping]").click();
+    await expect(page.locator("#printful-cart-status")).toContainText("Shipping rates are temporarily unavailable.");
+    await expect(page.locator("#printful-shipping-select")).toHaveCount(0);
+
+    await page.locator("#printful-draft-order-form").evaluate((form) => form.requestSubmit());
+
+    await expect(page.locator("#printful-cart-status")).toContainText("Estimate shipping before requesting an invoice.");
+    await expect(page.locator("#printful-cart-count")).toHaveText("1");
+    expect(page.merchApiRequests.draftOrders).toHaveLength(0);
+  });
+
+  test("surfaces draft-order failures without clearing the request cart", async ({ page }) => {
+    await addCuratedProductToCart(page);
+    await fillCheckoutForm(page, { email: "disabled@example.com" });
+
+    await page.locator("[data-printful-estimate-shipping]").click();
+    await expect(page.locator("#printful-shipping-select")).toBeVisible();
+
+    await page.locator("#printful-draft-order-form").evaluate((form) => form.requestSubmit());
+
+    await expect(page.locator("#printful-cart-status")).toContainText("Draft Printful orders are disabled for this environment.");
+    await expect(page.locator("#printful-cart-count")).toHaveText("1");
+    expect(page.merchApiRequests.draftOrders).toHaveLength(1);
   });
 
   test("keeps artwork assets separate from API product photos", async ({ page }) => {

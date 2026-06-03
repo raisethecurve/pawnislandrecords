@@ -1,10 +1,11 @@
 import {
   apiErrorResponse,
+  assertSameOriginRequest,
   cleanText,
   emptyOptionsResponse,
   jsonResponse,
   printfulFetch,
-  readJson,
+  readJsonObject,
   resultObject,
   sanitizeOrderItems,
   sanitizeRecipient,
@@ -17,7 +18,8 @@ export async function onRequestOptions() {
 
 export async function onRequestPost(context) {
   try {
-    const body = await readJson(context.request);
+    assertSameOriginRequest(context);
+    const body = await readJsonObject(context.request);
 
     if (cleanText(body.website, "", 120)) {
       return jsonResponse({
@@ -46,7 +48,7 @@ export async function onRequestPost(context) {
       recipient: sanitizeRecipient(body.recipient),
       items: sanitizeOrderItems(body.items),
       shipping: cleanText(body.shipping, "STANDARD", 40),
-      notes: "Pawn Island Records merch MVP draft order. Confirm manually after payment is collected."
+      notes: "Pawn Island Records merch desk request. Confirm manually after payment is collected."
     };
     const response = await printfulFetch(context, "/orders?confirm=false", {
       method: "POST",

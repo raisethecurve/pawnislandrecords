@@ -16,6 +16,15 @@ class PrintfulError extends Error {
   }
 }
 
+class MerchRequestError extends Error {
+  constructor(code, message, status = 400) {
+    super(message);
+    this.name = "MerchRequestError";
+    this.code = code;
+    this.status = status;
+  }
+}
+
 export function jsonResponse(body, init = {}) {
   const headers = new Headers(init.headers || {});
   headers.set("Content-Type", "application/json; charset=utf-8");
@@ -45,6 +54,41 @@ export async function readJson(request) {
     return await request.json();
   } catch (error) {
     throw new Error("Invalid JSON body");
+  }
+}
+
+export async function readJsonObject(request) {
+  const body = await readJson(request);
+
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    throw new MerchRequestError("invalid_json_body", "JSON body must be an object.");
+  }
+
+  return body;
+}
+
+export function assertSameOriginRequest(context) {
+  const request = context && context.request;
+  const headers = request && request.headers;
+  const origin = headers && headers.get("Origin") ? headers.get("Origin").trim() : "";
+  const fetchSite = headers && headers.get("Sec-Fetch-Site") ? headers.get("Sec-Fetch-Site").trim().toLowerCase() : "";
+
+  if (fetchSite === "cross-site") {
+    throw new MerchRequestError("forbidden_origin", "Merch requests must come from this site.", 403);
+  }
+
+  if (!origin) {
+    return;
+  }
+
+  let requestOrigin = "";
+
+  try {
+    requestOrigin = new URL(request.url).origin;
+  } catch (error) {}
+
+  if (requestOrigin && origin !== requestOrigin) {
+    throw new MerchRequestError("forbidden_origin", "Merch requests must come from this site.", 403);
   }
 }
 
@@ -108,6 +152,16 @@ export async function printfulFetch(context, pathname, init = {}) {
 }
 
 export function apiErrorResponse(error) {
+  if (error instanceof MerchRequestError) {
+    return jsonResponse(
+      {
+        error: error.code,
+        message: error.message
+      },
+      { status: error.status }
+    );
+  }
+
   if (error instanceof ConfigError) {
     return jsonResponse(
       {

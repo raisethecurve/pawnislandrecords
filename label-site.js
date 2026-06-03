@@ -3324,6 +3324,7 @@
     gallerySelection: new Map(),
     zoomedProductId: "",
     orderNotice: "",
+    orderRequestId: "",
     mode: "shop",
     shippingRates: [],
     selectedShipping: "",
@@ -3338,6 +3339,7 @@
 
   const PRINTFUL_FEATURED_LIMIT = 4;
   const MERCH_CART_STORAGE_KEY = "pawnisland:merch-cart:v1";
+  const MERCH_ORDER_REQUEST_STORAGE_KEY = "pawnisland:merch-order-request:v1";
 
   function merchCatalogModeEnabled() {
     const params = new URLSearchParams(window.location.search);
@@ -4364,6 +4366,64 @@
     } catch (error) {}
   }
 
+  function normalizePrintfulOrderRequestId(value) {
+    return text(value, "")
+      .replace(/[^a-zA-Z0-9_-]/g, "")
+      .slice(0, 32);
+  }
+
+  function printfulRandomHex(length) {
+    const size = Math.ceil(length / 2);
+
+    try {
+      const bytes = new Uint8Array(size);
+      window.crypto.getRandomValues(bytes);
+      return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("").slice(0, length);
+    } catch (error) {
+      return Math.random().toString(16).slice(2).padEnd(length, "0").slice(0, length);
+    }
+  }
+
+  function createPrintfulOrderRequestId() {
+    return normalizePrintfulOrderRequestId(`pir_${Date.now().toString(36)}_${printfulRandomHex(8)}`);
+  }
+
+  function clearPrintfulOrderRequestId() {
+    printfulMerchState.orderRequestId = "";
+
+    try {
+      window.localStorage.removeItem(MERCH_ORDER_REQUEST_STORAGE_KEY);
+    } catch (error) {}
+  }
+
+  function currentPrintfulOrderRequestId() {
+    if (!printfulMerchState.orderRequestId) {
+      try {
+        printfulMerchState.orderRequestId = normalizePrintfulOrderRequestId(window.localStorage.getItem(MERCH_ORDER_REQUEST_STORAGE_KEY));
+      } catch (error) {}
+    }
+
+    if (!printfulMerchState.orderRequestId) {
+      printfulMerchState.orderRequestId = createPrintfulOrderRequestId();
+    }
+
+    try {
+      window.localStorage.setItem(MERCH_ORDER_REQUEST_STORAGE_KEY, printfulMerchState.orderRequestId);
+    } catch (error) {}
+
+    return printfulMerchState.orderRequestId;
+  }
+
+  function resetPrintfulCheckoutState() {
+    printfulMerchState.shippingRates = [];
+    printfulMerchState.selectedShipping = "";
+    clearPrintfulOrderRequestId();
+  }
+
+  function printfulShippingRateId(rate, index) {
+    return text(rate && (rate.id || rate.shipping), `RATE_${index}`);
+  }
+
   function printfulShippingRateLabel(rate) {
     const name = text(rate && (rate.name || rate.shipping || rate.shipping_method_name || rate.id), "Shipping");
     const price = printfulMoney(rate && (rate.rate || rate.price), rate && rate.currency);
@@ -4383,7 +4443,7 @@
 
     const options = printfulMerchState.shippingRates
       .map((rate, index) => {
-        const id = text(rate && (rate.id || rate.shipping), `RATE_${index}`);
+        const id = printfulShippingRateId(rate, index);
         const selected = printfulMerchState.selectedShipping === id || (!printfulMerchState.selectedShipping && index === 0);
         return `<option value="${escapeHtml(id)}" ${selected ? "selected" : ""}>${escapeHtml(printfulShippingRateLabel(rate))}</option>`;
       })
@@ -4544,8 +4604,7 @@
     }
 
     printfulMerchState.orderNotice = "";
-    printfulMerchState.shippingRates = [];
-    printfulMerchState.selectedShipping = "";
+    resetPrintfulCheckoutState();
     persistPrintfulCart();
     renderPrintfulCart();
   }
@@ -4604,6 +4663,13 @@
       return;
     }
 
+    printfulMerchState.shippingRates = [];
+    printfulMerchState.selectedShipping = "";
+
+    if (ratesNode) {
+      ratesNode.innerHTML = "";
+    }
+
     if (status) {
       status.textContent = "Checking shipping rates.";
     }
@@ -4615,7 +4681,7 @@
       });
       const rates = Array.isArray(response.rates) ? response.rates : [];
       printfulMerchState.shippingRates = rates;
-      printfulMerchState.selectedShipping = text(rates[0] && (rates[0].id || rates[0].shipping), "");
+      printfulMerchState.selectedShipping = rates.length ? printfulShippingRateId(rates[0], 0) : "";
 
       if (ratesNode) {
         ratesNode.innerHTML = rates.length
@@ -4627,6 +4693,13 @@
         status.textContent = rates.length ? "Shipping rates ready." : "No shipping rates came back for that destination.";
       }
     } catch (error) {
+      printfulMerchState.shippingRates = [];
+      printfulMerchState.selectedShipping = "";
+
+      if (ratesNode) {
+        ratesNode.innerHTML = `<p class="merch-inline-status">${escapeHtml(error.message)}</p>`;
+      }
+
       if (status) {
         status.textContent = error.message;
       }
@@ -4653,8 +4726,17 @@
       retail_price: item.retailPrice,
       name: item.productName
     }));
+    const selectedShipping = text(formData.get("shipping"), printfulMerchState.selectedShipping);
+    const knownShippingIds = new Set(printfulMerchState.shippingRates.map((rate, index) => printfulShippingRateId(rate, index)));
 
     if (text(formData.get("website"), "")) {
+      return;
+    }
+
+    if (!printfulMerchState.shippingRates.length || !selectedShipping || !knownShippingIds.has(selectedShipping)) {
+      if (status) {
+        status.textContent = "Estimate shipping before requesting an invoice.";
+      }
       return;
     }
 
@@ -4666,9 +4748,10 @@
       const response = await merchApiJson("api/merch/draft-order", {
         method: "POST",
         body: JSON.stringify({
+          external_id: currentPrintfulOrderRequestId(),
           recipient,
           items,
-          shipping: text(formData.get("shipping"), printfulMerchState.selectedShipping || "STANDARD")
+          shipping: selectedShipping
         })
       });
       const orderId = response && response.order && response.order.id ? ` #${response.order.id}` : "";
@@ -4679,6 +4762,7 @@
 
       printfulMerchState.orderNotice = `Order request received${orderId}. ${merchPaymentCopy()}`;
       printfulMerchState.cart = [];
+      resetPrintfulCheckoutState();
       persistPrintfulCart();
       renderPrintfulCart();
     } catch (error) {
@@ -5353,8 +5437,7 @@
       if (removeButton) {
         const index = Number.parseInt(removeButton.dataset.printfulRemoveCart, 10);
         printfulMerchState.cart.splice(index, 1);
-        printfulMerchState.shippingRates = [];
-        printfulMerchState.selectedShipping = "";
+        resetPrintfulCheckoutState();
         persistPrintfulCart();
         renderPrintfulCart();
       }
@@ -5366,8 +5449,7 @@
 
         if (item) {
           item.quantity = Math.min(Math.max((Number.parseInt(item.quantity, 10) || 1) + step, 1), 10);
-          printfulMerchState.shippingRates = [];
-          printfulMerchState.selectedShipping = "";
+          resetPrintfulCheckoutState();
           persistPrintfulCart();
           renderPrintfulCart();
         }
