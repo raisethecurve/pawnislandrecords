@@ -463,6 +463,56 @@ test.describe("merch discovery", () => {
     await expect(page.locator(".merch-product-detail")).toContainText("Borrowed Brightness Dusk Tee");
   });
 
+  test("saves browser-local merch picks for later planning", async ({ page }) => {
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    const savedButton = page.locator("[data-printful-product-card='tee-2'] [data-printful-save-product='tee-2']");
+    await savedButton.click();
+
+    await expect(savedButton).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("#printful-discovery-shelf")).toContainText("Saved Picks");
+    await expect(page.locator("#printful-discovery-shelf [data-printful-memory-product='tee-2']")).toContainText("Borrowed Brightness Dusk Tee");
+
+    const savedIds = await page.evaluate(() => JSON.parse(window.localStorage.getItem("pawnisland:merch-saved:v1")));
+    expect(savedIds).toContain("tee-2");
+
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator("#printful-discovery-shelf")).toContainText("Saved Picks");
+    await expect(page.locator("#printful-discovery-shelf [data-printful-memory-product='tee-2']")).toContainText("Borrowed Brightness Dusk Tee");
+
+    await page.locator("#printful-discovery-shelf [data-printful-memory-product='tee-2'] [data-printful-save-product='tee-2']").click();
+
+    await expect(page.locator("#printful-discovery-shelf")).toBeHidden();
+    const clearedSaved = await page.evaluate(() => window.localStorage.getItem("pawnisland:merch-saved:v1"));
+    expect(clearedSaved).toBeNull();
+  });
+
+  test("tracks recently viewed merch for quick return", async ({ page }) => {
+    await page.goto(withStandalone("merch.html?product=tee-1"), { waitUntil: "domcontentloaded" });
+    await expect(page.locator(".merch-product-detail")).toContainText("Borrowed Brightness Crest Tee");
+
+    await page.goto(withStandalone("merch.html?product=tee-2"), { waitUntil: "domcontentloaded" });
+    await expect(page.locator(".merch-product-detail")).toContainText("Borrowed Brightness Dusk Tee");
+
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    const shelf = page.locator("#printful-discovery-shelf");
+    await expect(shelf).toContainText("Recently Viewed");
+    await expect(shelf.locator("[data-printful-memory-product='tee-2']")).toContainText("Borrowed Brightness Dusk Tee");
+    await expect(shelf.locator("[data-printful-memory-product='tee-1']")).toContainText("Borrowed Brightness Crest Tee");
+
+    await shelf.locator("[data-printful-memory-product='tee-1'] a.button").click();
+    await expect(page.locator(".merch-product-detail")).toContainText("Borrowed Brightness Crest Tee");
+
+    await page.locator("[data-printful-clear-product]").click();
+    await page.locator("[data-printful-clear-recent]").click();
+
+    await expect(shelf).toBeHidden();
+    const clearedRecent = await page.evaluate(() => window.localStorage.getItem("pawnisland:merch-recent:v1"));
+    expect(clearedRecent).toBeNull();
+  });
+
   test("adds one-option products directly without an option picker", async ({ page }) => {
     await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
 

@@ -3322,6 +3322,8 @@
     },
     productDetails: new Map(),
     cart: [],
+    savedProductIds: new Set(),
+    recentProductIds: [],
     selectedProductId: "",
     gallerySelection: new Map(),
     zoomedProductId: "",
@@ -3345,6 +3347,8 @@
   const MERCH_ORDER_REQUEST_STORAGE_KEY = "pawnisland:merch-order-request:v1";
   const MERCH_CHECKOUT_STORAGE_KEY = "pawnisland:merch-checkout:v1";
   const MERCH_CHECKOUT_STORAGE_FIELDS = ["name", "email", "phone", "address1", "address2", "city", "state_code", "country_code", "zip"];
+  const MERCH_SAVED_STORAGE_KEY = "pawnisland:merch-saved:v1";
+  const MERCH_RECENT_STORAGE_KEY = "pawnisland:merch-recent:v1";
 
   function merchCatalogModeEnabled() {
     const params = new URLSearchParams(window.location.search);
@@ -3884,6 +3888,58 @@
     return printfulMerchState.products.find((product) => String(product.id) === String(productId));
   }
 
+  function normalizePrintfulProductIds(value) {
+    const ids = Array.isArray(value) ? value : [];
+    const seen = new Set();
+
+    return ids
+      .map((id) => text(id, "").slice(0, 80))
+      .filter((id) => {
+        if (!id || seen.has(id)) {
+          return false;
+        }
+
+        seen.add(id);
+        return true;
+      });
+  }
+
+  function persistPrintfulProductMemory() {
+    try {
+      if (printfulMerchState.savedProductIds.size) {
+        window.localStorage.setItem(MERCH_SAVED_STORAGE_KEY, JSON.stringify([...printfulMerchState.savedProductIds]));
+      } else {
+        window.localStorage.removeItem(MERCH_SAVED_STORAGE_KEY);
+      }
+
+      if (printfulMerchState.recentProductIds.length) {
+        window.localStorage.setItem(MERCH_RECENT_STORAGE_KEY, JSON.stringify(printfulMerchState.recentProductIds));
+      } else {
+        window.localStorage.removeItem(MERCH_RECENT_STORAGE_KEY);
+      }
+    } catch (error) {}
+  }
+
+  function restorePrintfulProductMemory() {
+    try {
+      printfulMerchState.savedProductIds = new Set(normalizePrintfulProductIds(JSON.parse(window.localStorage.getItem(MERCH_SAVED_STORAGE_KEY) || "[]")).slice(0, 24));
+    } catch (error) {
+      printfulMerchState.savedProductIds = new Set();
+    }
+
+    try {
+      printfulMerchState.recentProductIds = normalizePrintfulProductIds(JSON.parse(window.localStorage.getItem(MERCH_RECENT_STORAGE_KEY) || "[]")).slice(0, 8);
+    } catch (error) {
+      printfulMerchState.recentProductIds = [];
+    }
+  }
+
+  function memoryPrintfulProducts(ids) {
+    return normalizePrintfulProductIds(ids)
+      .map((id) => printfulProductById(id))
+      .filter((product) => product && text(product.merch && product.merch.publicStatus, "public") === "public");
+  }
+
   function printfulTrackingProduct(product) {
     const meta = product && product.merch ? product.merch : {};
 
@@ -3920,6 +3976,52 @@
 
     printfulMerchState.trackedProductViews.add(id);
     trackMerchEvent("view_item", printfulTrackingProduct(product));
+  }
+
+  function rememberPrintfulProductView(product) {
+    const id = text(product && product.id, "");
+
+    if (!id || product.source === "printful-catalog") {
+      return;
+    }
+
+    printfulMerchState.recentProductIds = [id, ...printfulMerchState.recentProductIds.filter((item) => item !== id)].slice(0, 8);
+    persistPrintfulProductMemory();
+  }
+
+  function togglePrintfulSavedProduct(productId) {
+    const id = text(productId, "");
+    const product = printfulProductById(id);
+
+    if (!id || !product || product.source === "printful-catalog") {
+      return;
+    }
+
+    const saved = printfulMerchState.savedProductIds.has(id);
+
+    if (saved) {
+      printfulMerchState.savedProductIds.delete(id);
+    } else {
+      printfulMerchState.savedProductIds.add(id);
+    }
+
+    persistPrintfulProductMemory();
+    renderPrintfulStore();
+    renderPrintfulProductDetail(printfulMerchState.selectedProductId);
+    renderPrintfulDiscoveryShelf();
+    trackMerchEvent("save_merch_pick", {
+      ...printfulTrackingProduct(product),
+      status: saved ? "removed" : "saved"
+    });
+  }
+
+  function clearPrintfulRecentProducts() {
+    printfulMerchState.recentProductIds = [];
+    persistPrintfulProductMemory();
+    renderPrintfulDiscoveryShelf();
+    trackMerchEvent("clear_recent_merch", {
+      status: "cleared"
+    });
   }
 
   function printfulArtworkAsset(product) {
@@ -4334,6 +4436,21 @@
     `;
   }
 
+  function printfulSaveButtonMarkup(productId, compact) {
+    const saved = printfulMerchState.savedProductIds.has(String(productId));
+
+    return `
+      <button
+        class="merch-save-button ${compact ? "merch-save-button--compact" : ""} ${saved ? "is-saved" : ""}"
+        type="button"
+        data-printful-save-product="${escapeHtml(productId)}"
+        aria-pressed="${saved ? "true" : "false"}"
+      >
+        ${saved ? "Saved" : "Save"}
+      </button>
+    `;
+  }
+
   function printfulProductCardMarkup(product, index) {
     const meta = product.merch || parsePrintfulProductName(product.name, product);
     const detail = printfulMerchState.productDetails.get(String(product.id));
@@ -4359,6 +4476,7 @@
       >
         <div class="merch-card__visual">
           ${printfulPrimaryVisualMarkup(product, "card")}
+          ${isCatalogProduct ? "" : printfulSaveButtonMarkup(product.id, true)}
         </div>
         <div class="merch-card__body">
           <div class="merch-card__meta">
@@ -4649,6 +4767,68 @@
         </div>
       </section>
     `;
+  }
+
+  function printfulDiscoveryProductRow(product, kind) {
+    const action =
+      kind === "saved"
+        ? `<button class="merch-memory-remove" type="button" data-printful-save-product="${escapeHtml(product.id)}">Remove</button>`
+        : "";
+
+    return `
+      <article class="merch-memory-card" data-printful-memory-product="${escapeHtml(product.id)}">
+        <a class="merch-memory-card__visual" href="${escapeHtml(printfulProductUrl(product.id))}" data-printful-product-link="${escapeHtml(product.id)}" aria-label="View ${escapeHtml(product.merch.productTitle)}">
+          ${printfulPrimaryVisualMarkup(product, "related")}
+        </a>
+        <div class="merch-memory-card__copy">
+          <strong>${escapeHtml(product.merch.productTitle)}</strong>
+          <span>${escapeHtml(product.merch.project)} / ${escapeHtml(product.merch.album)}</span>
+        </div>
+        <a class="button button--ghost button--small" href="${escapeHtml(printfulProductUrl(product.id))}" data-printful-product-link="${escapeHtml(product.id)}">View</a>
+        ${action}
+      </article>
+    `;
+  }
+
+  function printfulDiscoverySectionMarkup(title, note, products, kind) {
+    if (!products.length) {
+      return "";
+    }
+
+    return `
+      <section class="merch-memory-section merch-memory-section--${escapeHtml(kind)}" aria-label="${escapeHtml(title)}">
+        <div class="merch-memory-section__header">
+          <strong>${escapeHtml(title)}</strong>
+          <p>${escapeHtml(note)}</p>
+        </div>
+        <div class="merch-memory-section__list">
+          ${products.map((product) => printfulDiscoveryProductRow(product, kind)).join("")}
+        </div>
+        ${kind === "recent" ? '<button class="button button--ghost button--small merch-memory-clear" type="button" data-printful-clear-recent>Clear Recent</button>' : ""}
+      </section>
+    `;
+  }
+
+  function renderPrintfulDiscoveryShelf() {
+    const node = document.getElementById("printful-discovery-shelf");
+
+    if (!node) {
+      return;
+    }
+
+    const savedProducts = memoryPrintfulProducts([...printfulMerchState.savedProductIds]).slice(0, 4);
+    const recentProducts = memoryPrintfulProducts(printfulMerchState.recentProductIds)
+      .filter((product) => !printfulMerchState.savedProductIds.has(String(product.id)))
+      .slice(0, 4);
+    const markup = [
+      printfulDiscoverySectionMarkup("Saved Picks", "Shortlist designs before sending an invoice request.", savedProducts, "saved"),
+      printfulDiscoverySectionMarkup("Recently Viewed", "Jump back into the last products you opened.", recentProducts, "recent")
+    ]
+      .filter(Boolean)
+      .join("");
+
+    node.hidden = !markup;
+    node.innerHTML = markup;
   }
 
   function refreshPrintfulCartSnapshot() {
@@ -5816,6 +5996,8 @@
           ${hasActivePrintfulFilters() ? '<button class="button button--ghost button--small" type="button" data-printful-clear-filters>Reset Filters</button>' : ""}
         </article>
       `;
+
+    renderPrintfulDiscoveryShelf();
   }
 
   function relatedPrintfulProducts(product) {
@@ -5898,7 +6080,10 @@
           ${printfulProductGalleryMarkup(product, detail)}
         </div>
         <div class="merch-product-detail__copy">
-          <button class="button button--ghost button--small" type="button" data-printful-clear-product>${escapeHtml(backLabel)}</button>
+          <div class="merch-detail-actions">
+            <button class="button button--ghost button--small" type="button" data-printful-clear-product>${escapeHtml(backLabel)}</button>
+            ${isCatalogProduct ? "" : printfulSaveButtonMarkup(product.id, false)}
+          </div>
           <div class="merch-card__meta">
             <span class="tag">${escapeHtml(meta.project)}</span>
             <span class="tag tag--muted">${escapeHtml(meta.category)}</span>
@@ -6000,11 +6185,13 @@
     }
 
     trackPrintfulProductView(product);
+    rememberPrintfulProductView(product);
 
     const detail = printfulMerchState.productDetails.get(String(productId));
 
     if (detail) {
       node.innerHTML = printfulProductDetailMarkup(product, detail);
+      renderPrintfulDiscoveryShelf();
       setRouteMeta({
         title: `${product.merch.productTitle} | Pawn Island Records Merch`,
         description: product.source === "printful-catalog"
@@ -6033,6 +6220,7 @@
         </div>
       </div>
     `;
+    renderPrintfulDiscoveryShelf();
 
     loadPrintfulProduct(productId)
       .then(() => {
@@ -6139,6 +6327,8 @@
       const clearCartButton = event.target.closest("[data-printful-clear-cart]");
       const forgetCheckoutButton = event.target.closest("[data-printful-forget-checkout]");
       const stickyRequestButton = event.target.closest("[data-printful-sticky-request]");
+      const saveProductButton = event.target.closest("[data-printful-save-product]");
+      const clearRecentButton = event.target.closest("[data-printful-clear-recent]");
 
       if (supportLink) {
         trackMerchEvent("support_click", {
@@ -6163,6 +6353,16 @@
 
       if (forgetCheckoutButton) {
         forgetPrintfulCheckoutDetails();
+        return;
+      }
+
+      if (saveProductButton) {
+        togglePrintfulSavedProduct(saveProductButton.dataset.printfulSaveProduct);
+        return;
+      }
+
+      if (clearRecentButton) {
+        clearPrintfulRecentProducts();
         return;
       }
 
@@ -6453,6 +6653,7 @@
 
     printfulMerchState.initialized = true;
     bindPrintfulMerchEvents(panel);
+    restorePrintfulProductMemory();
     restorePrintfulCart();
     renderPrintfulCart();
 

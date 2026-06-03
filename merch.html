@@ -40,7 +40,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="label-site.css" />
-    <link rel="stylesheet" href="merch-store.css?v=merch-smart-shelf-20260603" />
+    <link rel="stylesheet" href="merch-store.css?v=merch-memory-shelf-20260603" />
     <link rel="stylesheet" href="site-audio.css" />
   </head>
   <body data-page="merch">
@@ -130,6 +130,7 @@
             </div>
 
             <div class="merch-active-filters" id="printful-active-filters" aria-live="polite" hidden></div>
+            <div class="merch-discovery-shelf" id="printful-discovery-shelf" aria-live="polite" hidden></div>
             <p class="merch-results-summary" id="printful-results-summary"></p>
             <section class="merch-product-detail" id="printful-product-detail" aria-live="polite" hidden></section>
 
@@ -152,7 +153,7 @@
     <script src="site-ui.js"></script>
     <script>
       (() => {
-        const version = new URLSearchParams(window.location.search).get("qa") || "merch-smart-shelf-20260603";
+        const version = new URLSearchParams(window.location.search).get("qa") || "merch-memory-shelf-20260603";
         document.write(`<script src="label-site.js?v=${encodeURIComponent(version)}"><\/script>`);
       })();
     </script>

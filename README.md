@@ -75,6 +75,7 @@ Manual order launch brief:
 - Supported ship-to countries in the desk: US, CA, GB, AU, DE, FR, NL, SE, and JP.
 - Repeat checkout convenience is opt-in browser storage for contact and shipping fields only; order notes and policy acknowledgements are not stored.
 - Ecommerce pattern borrow: the order desk now includes same-drop "Complete the Drop" pairings, and product detail pages include a compact sticky request bar for long-page browsing.
+- Ecommerce pattern borrow: fans can save browser-local merch picks and revisit recently viewed products while planning a manual invoice request.
 - Support: `pawnisland@outlook.com`, expected response window 1-2 business days.
 - Payment and cancellation: payment link is emailed before production; requests can be changed or cancelled until that payment link is paid.
 - Returns: printed-on-demand returns are limited to damaged, misprinted, or incorrect items.
