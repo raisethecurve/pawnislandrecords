@@ -149,7 +149,12 @@
 
     <script src="public-data.js"></script>
     <script src="site-ui.js"></script>
-    <script src="label-site.js?v=market-ready-20260603-analytics"></script>
+    <script>
+      (() => {
+        const version = new URLSearchParams(window.location.search).get("qa") || "market-ready-20260603";
+        document.write(`<script src="label-site.js?v=${encodeURIComponent(version)}"><\/script>`);
+      })();
+    </script>
     <script src="site-audio-config.js"></script>
     <script src="site-audio.js"></script>
   </body>
