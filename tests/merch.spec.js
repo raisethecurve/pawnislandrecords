@@ -124,11 +124,24 @@ async function mockMerchApi(page) {
     shipping: [],
     draftOrders: []
   };
+  const scenario = () => page.merchApiScenario || {};
 
   await page.route(/\/api\/merch\/products\?status=synced$/, async (route) => {
+    if (scenario().productsError) {
+      await route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({
+          error: "printful_not_configured",
+          message: "Merch inventory is temporarily unavailable."
+        })
+      });
+      return;
+    }
+
     await route.fulfill({
       contentType: "application/json",
-      body: JSON.stringify({ products: mockProducts })
+      body: JSON.stringify({ products: Array.isArray(scenario().products) ? scenario().products : mockProducts })
     });
   });
 
@@ -243,6 +256,19 @@ async function mockMerchApi(page) {
   await page.route(/\/api\/merch\/products\/[^/?]+$/, async (route) => {
     const productId = route.request().url().split("/").pop();
     const product = mockProducts.find((item) => item.id === productId) || mockProducts[0];
+    const detailVariantsByProduct = scenario().detailVariantsByProduct || {};
+    const variants = Object.prototype.hasOwnProperty.call(detailVariantsByProduct, productId)
+      ? detailVariantsByProduct[productId]
+      : [
+          {
+            name: `${product.name} / M`,
+            syncVariantId: 2001,
+            retailPrice: "28.00",
+            currency: "USD",
+            isSynced: true,
+            catalogVariantId: 1001
+          }
+        ];
 
     await route.fulfill({
       contentType: "application/json",
@@ -257,16 +283,7 @@ async function mockMerchApi(page) {
             type: "image"
           }
         ],
-        variants: [
-          {
-            name: `${product.name} / M`,
-            syncVariantId: 2001,
-            retailPrice: "28.00",
-            currency: "USD",
-            isSynced: true,
-            catalogVariantId: 1001
-          }
-        ]
+        variants
       })
     });
   });
@@ -347,6 +364,25 @@ test.describe("merch discovery", () => {
     await expect(page.locator("#printful-product-category-filters")).not.toContainText("Mousepads");
   });
 
+  test("shows an empty state when no order-ready products are returned", async ({ page }) => {
+    page.merchApiScenario = { products: [] };
+
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator("#printful-store-status")).toContainText("No order-ready products are available yet.");
+    await expect(page.locator("[data-printful-product-card]")).toHaveCount(0);
+    await expect(page.locator("#printful-store-grid")).toContainText("No products match the current filters.");
+  });
+
+  test("shows a useful unavailable state when the merch API fails", async ({ page }) => {
+    page.merchApiScenario = { productsError: true };
+
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator("#printful-store-status")).toContainText("Merch inventory is temporarily unavailable.");
+    await expect(page.locator("#printful-store-grid")).toContainText("Merch inventory is unavailable in this environment.");
+  });
+
   test("keeps Printful catalog discovery behind the internal flag", async ({ page }) => {
     await page.goto(withStandalone("merch.html?internal=catalog&view=catalog"), { waitUntil: "domcontentloaded" });
 
@@ -393,6 +429,20 @@ test.describe("merch discovery", () => {
     await oneOptionCard.locator("[data-printful-direct-add-product='tee-5']").click();
     await expect(page.locator("#printful-cart-count")).toHaveText("1");
     await expect(page.locator(".merch-cart__items")).toContainText("Quiet Filter");
+  });
+
+  test("shows a missing-options state without adding to the cart", async ({ page }) => {
+    page.merchApiScenario = {
+      detailVariantsByProduct: {
+        "tee-1": []
+      }
+    };
+
+    await page.goto(withStandalone("merch.html?product=tee-1"), { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator(".merch-product-detail")).toContainText("Borrowed Brightness Crest Tee");
+    await expect(page.locator(".merch-product-detail")).toContainText("No purchase options are available for this item.");
+    await expect(page.locator("#printful-cart-count")).toHaveText("0");
   });
 
   test("requires a shipping estimate before requesting an invoice", async ({ page }) => {

@@ -5743,8 +5743,10 @@
         ? catalogResponse.products.map((product, index) => enrichPrintfulProduct(product, index))
         : [];
       const products = [...syncProducts, ...catalogProducts];
+      const storeUnavailable = storeResult.status === "rejected" && !syncProducts.length;
+      const catalogUnavailable = catalogResult.status === "rejected" && shouldLoadCatalog && !catalogProducts.length;
 
-      if (!products.length && storeResult.status === "rejected" && catalogResult.status === "rejected") {
+      if (!products.length && (storeUnavailable || catalogUnavailable)) {
         throw storeResult.reason || catalogResult.reason;
       }
 
