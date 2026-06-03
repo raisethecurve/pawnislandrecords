@@ -438,6 +438,31 @@ test.describe("merch discovery", () => {
     expect(eventNames).toContain("add_to_cart");
   });
 
+  test("keeps a sticky request action on product detail pages", async ({ page }) => {
+    await page.goto(withStandalone("merch.html?product=tee-1"), { waitUntil: "domcontentloaded" });
+
+    const stickyRequest = page.locator(".merch-sticky-request");
+    await expect(stickyRequest).toContainText("Borrowed Brightness Crest Tee");
+    await expect(stickyRequest).toContainText("M | $28.00");
+
+    await stickyRequest.locator("[data-printful-sticky-request='tee-1']").click();
+
+    await expect(page.locator("#printful-cart-count")).toHaveText("1");
+    await expect(page.locator(".merch-cart__items")).toContainText("Borrowed Brightness Crest Tee");
+  });
+
+  test("suggests same-drop pairings from the order desk", async ({ page }) => {
+    await addCuratedProductToCart(page);
+
+    const pairings = page.locator(".merch-cart-pairings");
+    await expect(pairings).toContainText("Complete the Drop");
+    await expect(pairings.locator("[data-printful-cart-pairing='tee-2']")).toContainText("Borrowed Brightness Dusk Tee");
+
+    await pairings.locator("a.button[data-printful-product-link='tee-2']").click();
+
+    await expect(page.locator(".merch-product-detail")).toContainText("Borrowed Brightness Dusk Tee");
+  });
+
   test("adds one-option products directly without an option picker", async ({ page }) => {
     await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
 
