@@ -349,6 +349,31 @@ test.describe("merch discovery", () => {
     await expect(page.locator("[data-printful-mode='catalog']")).toHaveCount(0);
   });
 
+  test("presents a clear landing to checkout flow", async ({ page }) => {
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator(".merch-copy .button--primary")).toHaveAttribute("href", "#printful-store-grid");
+    await expect(page.locator(".merch-copy .button[href='#printful-cart']")).toContainText("Request Desk");
+    await expect(page.locator(".merch-flow-panel")).toContainText("Browse to Invoice");
+    await expect(page.locator(".merch-flow-list li")).toHaveCount(4);
+    await expect(page.locator(".merch-shop-rail")).toContainText("Curated Goods");
+    await expect(page.locator(".merch-shop-main #printful-store-grid")).toBeVisible();
+    await expect(page.locator("#printful-cart .section-kicker")).toContainText("Checkout Step");
+    await expect(page.locator("#printful-cart-body")).toContainText("Add item");
+    await expect(page.locator(".merch-cart__empty-flow li")).toHaveCount(3);
+
+    const journeyOrder = await page.locator(".merch-shop-frame").evaluate((frame) =>
+      [...frame.children].map((child) => {
+        if (child.classList.contains("merch-shop-rail")) return "browse";
+        if (child.classList.contains("merch-shop-main")) return "choose";
+        if (child.classList.contains("merch-cart")) return "checkout";
+        return "other";
+      })
+    );
+
+    expect(journeyOrder).toEqual(["browse", "choose", "checkout"]);
+  });
+
   test("presents polished product cards for quick scanning", async ({ page }) => {
     await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
 

@@ -5120,7 +5120,12 @@
       body.innerHTML = `
         ${noticeMarkup}
         <p class="merch-cart__empty">Order request is empty.</p>
-        <p class="merch-cart__note">Choose a product and option, then estimate shipping before requesting an invoice.</p>
+        <p class="merch-cart__note">Add a product to turn this rail into checkout. Then estimate shipping and send the invoice request.</p>
+        <ol class="merch-cart__empty-flow" aria-label="Checkout sequence">
+          <li><strong>1</strong><span>Add item</span></li>
+          <li><strong>2</strong><span>Estimate shipping</span></li>
+          <li><strong>3</strong><span>Request invoice</span></li>
+        </ol>
         <ul class="merch-cart__assurance" aria-label="Checkout assurances">
           <li>Printed on demand after invoice payment.</li>
           <li>Shipping is estimated before the request leaves the site.</li>
@@ -5137,6 +5142,9 @@
     const checkoutDetails = loadPrintfulCheckoutDetails();
     const hasSavedCheckout = hasPrintfulCheckoutDetails(checkoutDetails);
     const recommendationsMarkup = printfulCartRecommendationsMarkup();
+    const hasShippingEstimate = Boolean(printfulMerchState.shippingRates.length);
+    const shippingStepClass = hasShippingEstimate ? "is-complete" : "is-current";
+    const requestStepClass = hasShippingEstimate ? "is-current" : "";
     const itemsMarkup = printfulMerchState.cart
       .map(
         (item, index) => {
@@ -5165,6 +5173,11 @@
       .join("");
 
     body.innerHTML = `
+      <ol class="merch-checkout-steps" aria-label="Checkout progress">
+        <li class="is-complete"><strong>1</strong><span>Items added</span></li>
+        <li class="${shippingStepClass}"><strong>2</strong><span>Shipping estimate</span></li>
+        <li class="${requestStepClass}"><strong>3</strong><span>Invoice request</span></li>
+      </ol>
       <ul class="merch-cart__items">${itemsMarkup}</ul>
       <div class="merch-cart__total">
         <span>Subtotal</span>

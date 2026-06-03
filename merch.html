@@ -40,7 +40,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="label-site.css" />
-    <link rel="stylesheet" href="merch-store.css?v=merch-product-assets-20260603" />
+    <link rel="stylesheet" href="merch-store.css?v=merch-flow-layout-20260603" />
     <link rel="stylesheet" href="site-audio.css" />
   </head>
   <body data-page="merch">
@@ -56,17 +56,33 @@
                 Curated artist tees, desk mats, and carry goods. Pick options, estimate shipping, and request an invoice before anything goes to production.
               </p>
               <div class="action-row">
-                <a class="button button--primary" href="#printful-store-grid">Browse Goods</a>
+                <a class="button button--primary" href="#printful-store-grid">Start Shopping</a>
                 <a class="button button--ghost" href="merch.html?view=featured">Featured</a>
-                <a class="button button--ghost" id="merch-support-link" href="https://tiptopjar.com/pawnisland" target="_blank" rel="noreferrer">
-                  Support the Label
-                </a>
+                <a class="button button--ghost" href="#printful-cart">Request Desk</a>
               </div>
             </article>
 
-            <aside class="merch-status-card" aria-labelledby="merch-status-title">
-              <p class="section-kicker">Current Drop</p>
-              <h2 id="merch-status-title">Order Request</h2>
+            <aside class="merch-status-card merch-flow-panel" aria-labelledby="merch-flow-title">
+              <p class="section-kicker">Order Flow</p>
+              <h2 id="merch-flow-title">Browse to Invoice</h2>
+              <ol class="merch-flow-list">
+                <li>
+                  <strong>Browse</strong>
+                  <span>Start with real product mockups and curated categories.</span>
+                </li>
+                <li>
+                  <strong>Choose</strong>
+                  <span>Open a product, pick the available option, and add it.</span>
+                </li>
+                <li>
+                  <strong>Estimate</strong>
+                  <span>Use the request desk to estimate shipping before sending.</span>
+                </li>
+                <li>
+                  <strong>Request</strong>
+                  <span>Submit for an invoice link before production begins.</span>
+                </li>
+              </ol>
               <div class="merch-stats" id="merch-stats"></div>
             </aside>
 
@@ -81,69 +97,73 @@
           </div>
 
           <section class="merch-store-mvp" aria-labelledby="merch-store-title">
-            <div class="panel-header merch-store-header">
-              <div>
-                <p class="section-kicker">Artist Goods</p>
-                <h2 id="merch-store-title">Curated Goods</h2>
-              </div>
-              <div class="panel-note">
-                <p id="printful-store-status">Checking available products.</p>
-              </div>
-            </div>
-
-            <div class="merch-decision-note">
-              <p>
-                This is a manual merch desk: select product options, estimate shipping, and request an invoice. Payment happens through the follow-up link before production begins.
-              </p>
-            </div>
-
-            <div class="merch-category-rail" id="printful-category-filters" role="group" aria-label="Store view"></div>
-            <div class="merch-taxonomy-map" id="printful-taxonomy-map" role="group" aria-label="Merch category structure"></div>
-
-            <div class="merch-toolbar" role="group" aria-label="Merch filters">
-              <label class="merch-search">
-                <span>Search</span>
-                <input id="printful-product-search" type="search" autocomplete="off" placeholder="Search artist, drop, product, or design" />
-              </label>
-              <div class="merch-filter-stack">
-                <div>
-                  <p class="merch-filter-label">Category</p>
-                  <div class="merch-filter-group" role="group" aria-label="Filter by product type" id="printful-product-category-filters"></div>
+            <div class="merch-shop-frame">
+              <aside class="merch-shop-rail" aria-labelledby="merch-store-title">
+                <div class="panel-header merch-store-header">
+                  <div>
+                    <p class="section-kicker">Artist Goods</p>
+                    <h2 id="merch-store-title">Curated Goods</h2>
+                  </div>
+                  <div class="panel-note">
+                    <p id="printful-store-status">Checking available products.</p>
+                  </div>
                 </div>
-                <div>
-                  <p class="merch-filter-label">Format</p>
-                  <div class="merch-filter-group" role="group" aria-label="Filter by merch format" id="printful-product-family-filters"></div>
-                </div>
-                <div>
-                  <p class="merch-filter-label">Artist</p>
-                  <div class="merch-filter-group" role="group" aria-label="Filter by project" id="printful-project-filters"></div>
-                </div>
-                <div>
-                  <p class="merch-filter-label">Drop</p>
-                  <div class="merch-filter-group" role="group" aria-label="Filter by album" id="printful-album-filters"></div>
-                </div>
-              </div>
-              <label class="merch-sort">
-                <span>Sort</span>
-                <select id="printful-product-sort">
-                  <option value="featured">Featured</option>
-                  <option value="project">Artist</option>
-                  <option value="album">Drop</option>
-                  <option value="name">Name</option>
-                </select>
-              </label>
-            </div>
 
-            <div class="merch-active-filters" id="printful-active-filters" aria-live="polite" hidden></div>
-            <div class="merch-discovery-shelf" id="printful-discovery-shelf" aria-live="polite" hidden></div>
-            <p class="merch-results-summary" id="printful-results-summary"></p>
-            <section class="merch-product-detail" id="printful-product-detail" aria-live="polite" hidden></section>
+                <div class="merch-decision-note">
+                  <p>
+                    This is a manual merch desk: choose product options, estimate shipping, and request an invoice. Payment happens through the follow-up link before production begins.
+                  </p>
+                </div>
 
-            <div class="merch-store-layout">
-              <div class="merch-grid merch-grid--live" id="printful-store-grid"></div>
+                <div class="merch-category-rail" id="printful-category-filters" role="group" aria-label="Store view"></div>
+                <div class="merch-taxonomy-map" id="printful-taxonomy-map" role="group" aria-label="Merch category structure"></div>
+              </aside>
+
+              <section class="merch-shop-main" aria-label="Merch product selection">
+                <div class="merch-toolbar" role="group" aria-label="Merch filters">
+                  <label class="merch-search">
+                    <span>Search</span>
+                    <input id="printful-product-search" type="search" autocomplete="off" placeholder="Search artist, drop, product, or design" />
+                  </label>
+                  <div class="merch-filter-stack">
+                    <div>
+                      <p class="merch-filter-label">Category</p>
+                      <div class="merch-filter-group" role="group" aria-label="Filter by product type" id="printful-product-category-filters"></div>
+                    </div>
+                    <div>
+                      <p class="merch-filter-label">Format</p>
+                      <div class="merch-filter-group" role="group" aria-label="Filter by merch format" id="printful-product-family-filters"></div>
+                    </div>
+                    <div>
+                      <p class="merch-filter-label">Artist</p>
+                      <div class="merch-filter-group" role="group" aria-label="Filter by project" id="printful-project-filters"></div>
+                    </div>
+                    <div>
+                      <p class="merch-filter-label">Drop</p>
+                      <div class="merch-filter-group" role="group" aria-label="Filter by album" id="printful-album-filters"></div>
+                    </div>
+                  </div>
+                  <label class="merch-sort">
+                    <span>Sort</span>
+                    <select id="printful-product-sort">
+                      <option value="featured">Featured</option>
+                      <option value="project">Artist</option>
+                      <option value="album">Drop</option>
+                      <option value="name">Name</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div class="merch-active-filters" id="printful-active-filters" aria-live="polite" hidden></div>
+                <div class="merch-discovery-shelf" id="printful-discovery-shelf" aria-live="polite" hidden></div>
+                <p class="merch-results-summary" id="printful-results-summary"></p>
+                <section class="merch-product-detail" id="printful-product-detail" aria-live="polite" hidden></section>
+                <div class="merch-grid merch-grid--live" id="printful-store-grid"></div>
+              </section>
+
               <aside class="merch-cart" id="printful-cart" aria-labelledby="printful-cart-title" aria-live="polite">
                 <div class="merch-cart__header">
-                  <p class="section-kicker">Invoice Request</p>
+                  <p class="section-kicker">Checkout Step</p>
                   <h3 id="printful-cart-title">Order Desk <span id="printful-cart-count">0</span></h3>
                 </div>
                 <div id="printful-cart-body"></div>
@@ -158,7 +178,7 @@
     <script src="site-ui.js"></script>
     <script>
       (() => {
-        const version = new URLSearchParams(window.location.search).get("qa") || "merch-product-assets-20260603";
+        const version = new URLSearchParams(window.location.search).get("qa") || "merch-flow-layout-20260603";
         document.write(`<script src="label-site.js?v=${encodeURIComponent(version)}"><\/script>`);
       })();
     </script>
