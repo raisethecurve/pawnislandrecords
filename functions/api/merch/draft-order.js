@@ -17,7 +17,21 @@ export async function onRequestOptions() {
 
 export async function onRequestPost(context) {
   try {
-    if (context.env.MERCH_DRAFT_ORDERS_ENABLED !== "true") {
+    const body = await readJson(context.request);
+
+    if (cleanText(body.website, "", 120)) {
+      return jsonResponse({
+        source: "printful-v1-draft-order",
+        order: {
+          id: null,
+          externalId: shortOrderId(),
+          status: "received",
+          dashboardUrl: ""
+        }
+      });
+    }
+
+    if (context.env.MERCH_DRAFT_ORDERS_ENABLED === "false") {
       return jsonResponse(
         {
           error: "draft_orders_disabled",
@@ -27,7 +41,6 @@ export async function onRequestPost(context) {
       );
     }
 
-    const body = await readJson(context.request);
     const payload = {
       external_id: cleanText(body.external_id, shortOrderId(), 32),
       recipient: sanitizeRecipient(body.recipient),

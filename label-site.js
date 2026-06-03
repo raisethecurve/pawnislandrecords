@@ -3366,6 +3366,7 @@
     selectedProductId: "",
     gallerySelection: new Map(),
     zoomedProductId: "",
+    orderNotice: "",
     mode: "guided",
     shippingRates: [],
     selectedShipping: "",
@@ -3700,6 +3701,38 @@
     return `${printfulMoney(min, currency)}-${printfulMoney(max, currency)}`;
   }
 
+  function printfulVariantChoicesMarkup(variants) {
+    return variants
+      .filter((variant) => variant.isSynced !== false)
+      .map((variant, index) => {
+        const price = printfulMoney(variant.retailPrice, variant.currency);
+        const size = printfulVariantSize(variant);
+        const label = [size, price].filter(Boolean).join(" ");
+
+        return `
+          <label class="printful-size-option">
+            <input type="radio" name="variant" value="${index}" ${index === 0 ? "checked" : ""} />
+            <span>${escapeHtml(size || `Option ${index + 1}`)}</span>
+            <em>${escapeHtml(price || "Ready")}</em>
+          </label>
+        `;
+      })
+      .join("");
+  }
+
+  function printfulQuantityControlMarkup() {
+    return `
+      <div class="printful-quantity-control" data-printful-quantity-control>
+        <button type="button" data-printful-qty-step="-1" aria-label="Decrease quantity">-</button>
+        <label>
+          <span>Qty</span>
+          <input name="quantity" type="number" min="1" max="10" value="1" inputmode="numeric" />
+        </label>
+        <button type="button" data-printful-qty-step="1" aria-label="Increase quantity">+</button>
+      </div>
+    `;
+  }
+
   function printfulVariantFormMarkup(productId, detail, mode) {
     const variants = Array.isArray(detail && detail.variants)
       ? detail.variants.filter((variant) => variant.isSynced !== false)
@@ -3711,14 +3744,11 @@
 
     return `
       <form class="printful-variant-form printful-variant-form--${escapeHtml(mode || "card")}" data-printful-add-form="${escapeHtml(productId)}">
-        <label>
-          <span>Size</span>
-          <select name="variant">${printfulVariantOptions(variants)}</select>
-        </label>
-        <label>
-          <span>Qty</span>
-          <input name="quantity" type="number" min="1" max="10" value="1" inputmode="numeric" />
-        </label>
+        <fieldset class="printful-size-picker">
+          <legend>Size</legend>
+          ${printfulVariantChoicesMarkup(variants)}
+        </fieldset>
+        ${printfulQuantityControlMarkup()}
         <button class="button button--primary button--small" type="submit">Add to Cart</button>
         <p class="merch-inline-status" data-printful-add-status></p>
       </form>
@@ -3734,7 +3764,7 @@
     const isGuided = !isPrintfulCatalogMode();
     const productCopy = isGuided
       ? printfulChoiceCopy(meta, index)
-      : `${meta.design} design from the ${meta.album} drop, fulfilled through the secure Printful store.`;
+      : `${meta.design} artwork from the ${meta.album} drop, printed on a synced unisex tee and reviewed before fulfillment.`;
 
     return `
       <article
@@ -3759,11 +3789,11 @@
           </div>
           <div class="merch-card__facts">
             <span data-printful-card-price="${escapeHtml(product.id)}">${escapeHtml(price || "Select size for price")}</span>
-            <span>${variantCount ? `${variantCount} sizes` : "T-shirt"}</span>
+            <span>${variantCount ? `${variantCount} live sizes` : "Printful tee"}</span>
           </div>
           <div class="action-row merch-card__actions">
             <a class="button button--ghost button--small" href="${escapeHtml(printfulProductUrl(product.id))}" data-printful-product-link="${escapeHtml(product.id)}">
-              View Product
+              Details
             </a>
             <button
               class="button button--primary button--small"
@@ -3772,7 +3802,7 @@
               aria-expanded="${detail ? "true" : "false"}"
               ${detail ? "disabled" : ""}
             >
-              ${detail ? "Sizes Loaded" : "Sizes"}
+              ${detail ? "Sizes Ready" : "Pick Size"}
             </button>
           </div>
           <div class="printful-variant-slot" data-printful-variant-slot="${escapeHtml(product.id)}">
@@ -3874,6 +3904,8 @@
   function renderPrintfulCart() {
     const body = document.getElementById("printful-cart-body");
     const count = document.getElementById("printful-cart-count");
+    const orderNotice = text(printfulMerchState.orderNotice, "");
+    const noticeMarkup = orderNotice ? `<p class="merch-cart__notice">${escapeHtml(orderNotice)}</p>` : "";
 
     if (!body) {
       return;
@@ -3885,12 +3917,13 @@
 
     if (!printfulMerchState.cart.length) {
       body.innerHTML = `
+        ${noticeMarkup}
         <p class="merch-cart__empty">Cart is empty.</p>
-        <p class="merch-cart__note">Choose one of the two featured tees or open the full catalog when you want every live design.</p>
+        <p class="merch-cart__note">Choose a tee, pick a visible size, then estimate shipping before sending the order request.</p>
         <ul class="merch-cart__assurance" aria-label="Checkout assurances">
-          <li>Fulfillment is synced through Printful.</li>
-          <li>No payment is collected until the draft order is reviewed.</li>
-          <li>Shipping is estimated before confirmation.</li>
+          <li>Live inventory and sizes are pulled from Printful.</li>
+          <li>Shipping rates are estimated before the order request leaves the site.</li>
+          <li>A reviewed draft order is created for payment follow-up and fulfillment.</li>
         </ul>
       `;
       return;
@@ -3918,8 +3951,9 @@
         <span>Subtotal</span>
         <strong>${escapeHtml(totalLabel)}</strong>
       </div>
-      <p class="merch-cart__note">Shipping and tax are confirmed before payment. The request creates a reviewed draft order, not an instant charge.</p>
+      <p class="merch-cart__note">Shipping is estimated here. Payment and final tax are confirmed after the draft order is reviewed.</p>
       <form class="merch-checkout-form" id="printful-draft-order-form">
+        <input class="merch-honey-field" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <label>
           <span>Name</span>
           <input name="name" autocomplete="name" required />
@@ -3929,8 +3963,16 @@
           <input name="email" type="email" autocomplete="email" required />
         </label>
         <label>
+          <span>Phone optional</span>
+          <input name="phone" type="tel" autocomplete="tel" />
+        </label>
+        <label>
           <span>Address</span>
           <input name="address1" autocomplete="address-line1" required />
+        </label>
+        <label>
+          <span>Address 2 optional</span>
+          <input name="address2" autocomplete="address-line2" />
         </label>
         <div class="merch-checkout-form__row">
           <label>
@@ -3945,7 +3987,17 @@
         <div class="merch-checkout-form__row">
           <label>
             <span>Country</span>
-            <input name="country_code" autocomplete="country" maxlength="4" value="US" required />
+            <select name="country_code" autocomplete="country" required>
+              <option value="US">United States</option>
+              <option value="CA">Canada</option>
+              <option value="GB">United Kingdom</option>
+              <option value="AU">Australia</option>
+              <option value="DE">Germany</option>
+              <option value="FR">France</option>
+              <option value="NL">Netherlands</option>
+              <option value="SE">Sweden</option>
+              <option value="JP">Japan</option>
+            </select>
           </label>
           <label>
             <span>ZIP</span>
@@ -3954,7 +4006,7 @@
         </div>
         <button class="button button--ghost button--small" type="button" data-printful-estimate-shipping>Estimate Shipping</button>
         <div class="merch-shipping-rates" id="printful-shipping-rates">${printfulShippingRatesMarkup()}</div>
-        <button class="button button--primary button--small" type="submit">Request Draft Order</button>
+        <button class="button button--primary button--small" type="submit">Send Order Request</button>
         <p class="merch-inline-status" id="printful-cart-status"></p>
       </form>
     `;
@@ -3987,6 +4039,7 @@
       });
     }
 
+    printfulMerchState.orderNotice = "";
     printfulMerchState.shippingRates = [];
     printfulMerchState.selectedShipping = "";
     renderPrintfulCart();
@@ -4057,7 +4110,9 @@
     const recipient = {
       name: text(formData.get("name"), ""),
       email: text(formData.get("email"), ""),
+      phone: text(formData.get("phone"), ""),
       address1: text(formData.get("address1"), ""),
+      address2: text(formData.get("address2"), ""),
       city: text(formData.get("city"), ""),
       state_code: text(formData.get("state_code"), "").toUpperCase(),
       country_code: text(formData.get("country_code"), "US").toUpperCase(),
@@ -4066,8 +4121,13 @@
     const items = printfulMerchState.cart.map((item) => ({
       sync_variant_id: item.syncVariantId,
       quantity: item.quantity,
-      retail_price: item.retailPrice
+      retail_price: item.retailPrice,
+      name: item.productName
     }));
+
+    if (text(formData.get("website"), "")) {
+      return;
+    }
 
     if (status) {
       status.textContent = "Preparing draft order.";
@@ -4088,6 +4148,7 @@
         status.textContent = `Draft order created${orderId}.`;
       }
 
+      printfulMerchState.orderNotice = `Order request received${orderId}. Watch your email for payment confirmation and fulfillment details.`;
       printfulMerchState.cart = [];
       renderPrintfulCart();
     } catch (error) {
@@ -4541,9 +4602,23 @@
       const shippingButton = event.target.closest("[data-printful-estimate-shipping]");
       const galleryImageButton = event.target.closest("[data-printful-gallery-image]");
       const zoomButton = event.target.closest("[data-printful-toggle-zoom]");
+      const qtyStepButton = event.target.closest("[data-printful-qty-step]");
 
       if (modeButton) {
         setPrintfulMode(modeButton.dataset.printfulMode, true);
+        return;
+      }
+
+      if (qtyStepButton) {
+        const control = qtyStepButton.closest("[data-printful-quantity-control]");
+        const input = control && control.querySelector('input[name="quantity"]');
+        const step = Number.parseInt(qtyStepButton.dataset.printfulQtyStep, 10) || 0;
+
+        if (input) {
+          const current = Number.parseInt(input.value, 10) || 1;
+          input.value = String(Math.min(Math.max(current + step, 1), 10));
+        }
+
         return;
       }
 
@@ -4608,7 +4683,7 @@
         try {
           const detail = await loadPrintfulProduct(productId);
           renderPrintfulVariantPicker(productId, detail);
-          loadButton.textContent = "Sizes Loaded";
+          loadButton.textContent = "Sizes Ready";
           loadButton.setAttribute("aria-expanded", "true");
         } catch (error) {
           if (slot) {
@@ -4745,7 +4820,7 @@
   function setMerchCollectionMeta() {
     setRouteMeta({
       title: "Merch Store | Pawn Island Records",
-      description: "Shop the curated Pawn Island Records merch pair, then open the full Printful catalog when you want every live T-shirt design.",
+      description: "Shop live Pawn Island Records artist tees, choose synced Printful sizes, estimate shipping, and send an order request from the merch desk.",
       canonicalPath: "merch.html",
       image: "assets/brand/pawnisland-1200.jpg",
       robots: "noindex,follow",
@@ -4780,7 +4855,7 @@
     }
 
     if (intro) {
-      intro.textContent = "Start with two live Pawn Island Records T-shirt picks. Each design is synced through Printful, checked before confirmation, and easy to explore in the full catalog when you want every option.";
+      intro.textContent = "Live artist tees, visible sizes, shipping estimates, and reviewed Printful draft orders for fans who want the release art off the screen.";
     }
 
     if (statsNode) {
