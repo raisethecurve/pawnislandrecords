@@ -249,6 +249,21 @@ const routes = [
     expectedJsonLd: "CollectionPage"
   },
   {
+    path: "store.html",
+    label: "Storefront",
+    classification: "hidden-but-shareable",
+    stack: "modern public",
+    dataSource: "public-data.js",
+    robots: "noindex,follow",
+    smoke: true,
+    accessibilitySmoke: true,
+    expectedText: "All Merch",
+    expectedTitle: "Shop | Pawn Island Records",
+    expectedMetaDescription: "Shop official Pawn Island Records artist merch",
+    expectedCanonical: "https://store.pawnislandrecords.com/",
+    expectedJsonLd: "CollectionPage"
+  },
+  {
     path: "campaigns.html",
     label: "Campaign Lab",
     classification: "internal-lab",

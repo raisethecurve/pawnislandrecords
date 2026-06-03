@@ -794,7 +794,42 @@
   }
 
   function siteUrl(pathValue) {
+    if (ui && ui.absoluteSiteUrl) {
+      return ui.absoluteSiteUrl(pathValue);
+    }
+
     return new URL(String(pathValue || "").replace(/^\/+/, ""), "https://www.pawnislandrecords.com/").toString();
+  }
+
+  function isStorefrontRoute() {
+    return page === "store" || text(document.body && document.body.dataset.merchSurface, "") === "shop";
+  }
+
+  function merchPageFile() {
+    return isStorefrontRoute() ? "store.html" : "merch.html";
+  }
+
+  function merchPagePath(params) {
+    return sitePath(merchPageFile(), params || {});
+  }
+
+  function merchCanonicalPath(params) {
+    if (!isStorefrontRoute()) {
+      return merchPagePath(params);
+    }
+
+    const query = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      const resolved = text(value, "");
+
+      if (resolved) {
+        query.set(key, resolved);
+      }
+    });
+
+    const suffix = query.toString();
+    return `https://store.pawnislandrecords.com/${suffix ? `?${suffix}` : ""}`;
   }
 
   function compactDescription(parts, fallback) {
@@ -4083,7 +4118,7 @@
     } else {
       params.delete("view");
     }
-    return `merch.html?${params.toString()}`;
+    return `${merchPageFile()}?${params.toString()}`;
   }
 
   function isPrintfulShopMode() {
@@ -6014,7 +6049,9 @@
     }
 
     if (summary) {
-      if (isCatalog) {
+      if (isStorefrontRoute()) {
+        summary.textContent = `${visibleProducts.length} product${visibleProducts.length === 1 ? "" : "s"}`;
+      } else if (isCatalog) {
         summary.textContent = `Internal design catalog: ${products.length} of ${activeProducts.length} products shown.`;
       } else if (isFeatured) {
         summary.textContent = `Featured rack: ${visibleProducts.length} of ${products.length} matching products shown.`;
@@ -6246,11 +6283,11 @@
       node.innerHTML = printfulProductDetailMarkup(product, detail);
       renderPrintfulDiscoveryShelf();
       setRouteMeta({
-        title: `${product.merch.productTitle} | Pawn Island Records Merch`,
+        title: `${product.merch.productTitle} | Pawn Island Records Store`,
         description: product.source === "printful-catalog"
           ? `Explore ${product.merch.productTitle} as a future Pawn Island Records merch format.`
           : `Request an invoice for the ${product.merch.productTitle} from ${product.merch.project}.`,
-        canonicalPath: sitePath("merch.html", { product: product.id }),
+        canonicalPath: merchCanonicalPath({ product: product.id }),
         image: printfulProductImageUrl(detail.product || product),
         robots: "noindex,follow"
       });
@@ -6792,6 +6829,29 @@
   }
 
   function setMerchCollectionMeta() {
+    if (isStorefrontRoute()) {
+      setRouteMeta({
+        title: "Shop | Pawn Island Records",
+        description: "Shop official Pawn Island Records artist merch, choose Printful-backed product options, estimate shipping, and request an invoice before production.",
+        canonicalPath: merchCanonicalPath(),
+        image: "assets/brand/pawnisland-1200.jpg",
+        robots: "noindex,follow",
+        structuredData: graphStructuredData([
+          {
+            "@type": "CollectionPage",
+            "@id": "https://store.pawnislandrecords.com/#merch",
+            name: "Pawn Island Records Store",
+            url: "https://store.pawnislandrecords.com/",
+            mainEntity: {
+              "@type": "ItemList",
+              itemListElement: []
+            }
+          }
+        ])
+      });
+      return;
+    }
+
     setRouteMeta({
       title: "Merch Desk | Pawn Island Records",
       description: "Browse curated Pawn Island Records artist goods, estimate shipping, and request an invoice before production begins.",
@@ -6829,7 +6889,9 @@
     }
 
     if (intro) {
-      intro.textContent = "Curated artist tees, desk mats, and carry goods. Pick options, estimate shipping, and request an invoice before anything goes to production.";
+      intro.textContent = isStorefrontRoute()
+        ? "Official Pawn Island Records goods, printed on demand through the current store flow. Choose options, estimate shipping, and request an invoice before production."
+        : "Curated artist tees, desk mats, and carry goods. Pick options, estimate shipping, and request an invoice before anything goes to production.";
     }
 
     if (statsNode) {
@@ -6882,7 +6944,7 @@
       renderEpkPage();
     } else if (page === "releases") {
       renderReleases();
-    } else if (page === "merch") {
+    } else if (page === "merch" || page === "store") {
       renderMerch();
     } else if (page === "connect") {
       renderConnect();

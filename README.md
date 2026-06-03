@@ -67,6 +67,8 @@ POST endpoints reject cross-site browser requests, require object-shaped JSON, r
 
 Curated product titles, categories, launch posture, and policy copy live in `data/merch-products.json`. Run `npm run test:merch-metadata` before launch or synced-product changes.
 
+The shop-facing storefront lives at `store.html` and canonicalizes to `https://store.pawnislandrecords.com/`. It reuses the same Printful same-origin API flow as `merch.html`, but presents it as a collection-grid storefront with filters, product detail views, and a cart drawer. It remains `noindex,follow` until the custom subdomain and manual invoice operations are ready for public launch.
+
 Manual order launch brief:
 
 - Route status: hidden-but-shareable, `noindex,follow`; do not add public nav or sitemap priority until payment/email operations are ready.
@@ -82,6 +84,24 @@ Manual order launch brief:
 - Operator process: keep `MERCH_DRAFT_ORDERS_ENABLED=false` until someone is actively monitoring Printful draft orders and the support inbox. When enabled, use the Printful dashboard draft order, optional customer notes, and `external_id` to reconcile the request, then email the payment link manually.
 
 Use `.dev.vars` for local Pages Functions testing and never commit it.
+
+## Cloudflare R2 Media Bucket
+
+Public release and project media can be mirrored from `media/` into Cloudflare R2 and served from `https://media.pawnislandrecords.com`. The repo keeps local media paths in `public-data.js` for tests and localhost, while production pages under `pawnislandrecords.com` resolve `media/...` artwork to the media subdomain.
+
+Recommended bucket/domain:
+
+- Bucket: `pawn-island-records-media`
+- Custom domain: `media.pawnislandrecords.com`
+- Object key convention: `media/public/albums/example.png` uploads as `public/albums/example.png`.
+
+Useful commands:
+
+- `npm run setup:r2:media`: create/verify the bucket, apply CORS, and attach the custom domain when Cloudflare credentials are available.
+- `npm run sync:r2:media`: dry-run the R2 media object list.
+- `npm run sync:r2:media -- --execute`: upload media through Wrangler.
+
+See `R2_MEDIA_SETUP.md` for the one-time Cloudflare dashboard steps and cache notes.
 
 ## Route Inventory
 
@@ -102,6 +122,7 @@ Hidden or gated modern routes:
 - `epks.html`: press/EPK index, currently `noindex,follow`.
 - `epk.html`: dynamic artist press kit, currently `noindex,follow`.
 - `merch.html`: modern merch desk, currently `noindex,follow`; curated live Printful inventory loads through Cloudflare Pages Functions and the full Printful catalog is internal-only.
+- `store.html`: shop-subdomain storefront shell for the same Printful-backed merch flow, currently `noindex,follow`.
 - `process.html`: creative-process story page, currently `noindex,follow`.
 
 Generated public SEO artifacts:
