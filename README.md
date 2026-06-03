@@ -59,6 +59,7 @@ The current MVP routes are:
 
 - `GET /api/merch/products`: v1 `/store/products` proxy for synced pre-designed merch.
 - `GET /api/merch/products/:id`: v1 `/store/products/{id}` proxy for product variants.
+- `GET /api/merch/catalog`: v1 `/categories` + `/products` catalog proxy for non-empty discovery shelves.
 - `POST /api/merch/shipping-rates`: v1 `/shipping/rates`.
 - `POST /api/merch/draft-order`: v1 `/orders?confirm=false`, disabled only when `MERCH_DRAFT_ORDERS_ENABLED=false`.
 

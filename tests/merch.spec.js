@@ -42,6 +42,77 @@ const mockProducts = [
   }
 ];
 
+const mockCatalogProducts = [
+  {
+    id: "catalog-362",
+    catalogProductId: 362,
+    name: "Unisex Organic T-Shirt | Econscious EC1000",
+    type: "T-Shirt",
+    brand: "Econscious",
+    model: "EC1000",
+    thumbnailUrl: testImage("Catalog Tee", "#f7f4ec"),
+    variantCount: 10,
+    variants: 10,
+    techniques: [{ key: "dtg", name: "DTG printing" }],
+    category: {
+      id: 24,
+      parentId: 6,
+      title: "T-Shirts",
+      path: ["Apparel", "T-Shirts"],
+      pathLabel: "Apparel / T-Shirts",
+      topCategoryId: 6,
+      topCategoryTitle: "Apparel"
+    },
+    isPurchasable: false,
+    source: "printful-catalog"
+  },
+  {
+    id: "catalog-901",
+    catalogProductId: 901,
+    name: "Gaming Mouse Pad",
+    type: "Mouse Pad",
+    brand: "",
+    model: "",
+    description: "A smooth desk surface for release art, logo marks, and workstation drops.",
+    thumbnailUrl: testImage("Mouse Pad", "#dbeafe"),
+    variantCount: 1,
+    variants: 1,
+    techniques: [{ key: "sublimation", name: "Sublimation" }],
+    category: {
+      id: 55,
+      parentId: 50,
+      title: "Mousepads",
+      path: ["Accessories", "Desk Gear", "Mousepads"],
+      pathLabel: "Accessories / Desk Gear / Mousepads",
+      topCategoryId: 50,
+      topCategoryTitle: "Accessories"
+    },
+    isPurchasable: false,
+    source: "printful-catalog"
+  },
+  {
+    id: "catalog-777",
+    catalogProductId: 777,
+    name: "Enhanced Matte Paper Poster",
+    type: "Poster",
+    thumbnailUrl: testImage("Poster", "#fff7cf"),
+    variantCount: 5,
+    variants: 5,
+    techniques: [{ key: "digital", name: "Digital printing" }],
+    category: {
+      id: 71,
+      parentId: 70,
+      title: "Posters",
+      path: ["Home & Living", "Wall Art", "Posters"],
+      pathLabel: "Home & Living / Wall Art / Posters",
+      topCategoryId: 70,
+      topCategoryTitle: "Home & Living"
+    },
+    isPurchasable: false,
+    source: "printful-catalog"
+  }
+];
+
 function withStandalone(routePath) {
   const url = new URL(routePath, "http://pawn.local/");
   url.searchParams.set("standalone", "1");
@@ -53,6 +124,44 @@ async function mockMerchApi(page) {
     await route.fulfill({
       contentType: "application/json",
       body: JSON.stringify({ products: mockProducts })
+    });
+  });
+
+  await page.route(/\/api\/merch\/catalog$/, async (route) => {
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        categories: [
+          { id: 6, parentId: null, title: "Apparel" },
+          { id: 24, parentId: 6, title: "T-Shirts" },
+          { id: 50, parentId: null, title: "Accessories" },
+          { id: 55, parentId: 50, title: "Mousepads" },
+          { id: 70, parentId: null, title: "Home & Living" },
+          { id: 71, parentId: 70, title: "Posters" },
+          { id: 99, parentId: null, title: "Jewelry" }
+        ],
+        categoryTree: [
+          {
+            id: 6,
+            title: "Apparel",
+            productCount: 1,
+            children: [{ id: 24, title: "T-Shirts", productCount: 1, children: [] }]
+          },
+          {
+            id: 50,
+            title: "Accessories",
+            productCount: 1,
+            children: [{ id: 55, title: "Mousepads", productCount: 1, children: [] }]
+          },
+          {
+            id: 70,
+            title: "Home & Living",
+            productCount: 1,
+            children: [{ id: 71, title: "Posters", productCount: 1, children: [] }]
+          }
+        ],
+        products: mockCatalogProducts
+      })
     });
   });
 
@@ -92,12 +201,12 @@ test.describe("merch discovery", () => {
     await mockMerchApi(page);
   });
 
-  test("opens on the full catalog by default", async ({ page }) => {
+  test("opens on purchase-ready products by default", async ({ page }) => {
     await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
 
-    await expect(page.locator("[data-printful-mode='catalog']")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("[data-printful-mode='shop']")).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator(".merch-toolbar")).toBeVisible();
-    await expect(page.locator("#printful-results-summary")).toContainText("All designs: 5 of 5 products shown");
+    await expect(page.locator("#printful-results-summary")).toContainText("Ready to buy: 5 of 5 products shown");
     await expect(page.locator("[data-printful-product-card]")).toHaveCount(5);
   });
 
@@ -106,8 +215,26 @@ test.describe("merch discovery", () => {
 
     await expect(page.locator("[data-printful-mode='featured']")).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator(".merch-toolbar")).toBeVisible();
-    await expect(page.locator("#printful-results-summary")).toContainText("Featured rack: 4 of 5 matching designs shown.");
+    await expect(page.locator("#printful-results-summary")).toContainText("Featured rack: 4 of 5 matching products shown.");
     await expect(page.locator("[data-printful-product-card]")).toHaveCount(4);
+  });
+
+  test("discovers non-empty Printful catalog categories including mousepads", async ({ page }) => {
+    await page.goto(withStandalone("merch.html?view=catalog"), { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator("[data-printful-mode='catalog']")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("#printful-results-summary")).toContainText("Printful catalog: 3 of 3 products shown");
+    await expect(page.locator("#printful-product-category-filters")).toContainText("Mousepads");
+    await expect(page.locator("#printful-product-category-filters")).not.toContainText("Jewelry");
+
+    await page.locator("[data-printful-filter='category'][data-printful-filter-value='mousepads']").click();
+    await expect(page.locator("#printful-results-summary")).toContainText("Printful catalog: 1 of 3 products shown");
+    await expect(page.locator("[data-printful-product-card]")).toHaveCount(1);
+    await expect(page.locator("[data-printful-product-card]")).toContainText("Gaming Mouse Pad");
+
+    await page.locator("[data-printful-product-link='catalog-901']").click();
+    await expect(page.locator(".merch-product-detail")).toContainText("Request This Product");
+    await expect(page.locator(".merch-product-detail")).not.toContainText("Add to Cart");
   });
 
   test("keeps artwork assets separate from API product photos", async ({ page }) => {

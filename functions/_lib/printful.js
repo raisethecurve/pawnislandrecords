@@ -175,6 +175,152 @@ export function normalizeStoreProduct(product) {
   };
 }
 
+export function normalizeCatalogCategory(category) {
+  return {
+    id: positiveInt(category && category.id),
+    parentId: positiveInt(category && (category.parent_id || category.parentId)),
+    title: cleanText(category && (category.title || category.name), "Catalog category", 120),
+    imageUrl: cleanText(category && (category.image_url || category.imageUrl), "", 800)
+  };
+}
+
+function normalizeTechnique(technique) {
+  if (typeof technique === "string") {
+    return {
+      key: cleanText(technique, "", 80),
+      name: cleanText(technique, "", 80)
+    };
+  }
+
+  return {
+    key: cleanText(technique && (technique.key || technique.name), "", 80),
+    name: cleanText(technique && (technique.display_name || technique.displayName || technique.name || technique.key), "", 120)
+  };
+}
+
+function normalizeColor(color) {
+  if (typeof color === "string") {
+    return {
+      name: cleanText(color, "", 80),
+      value: ""
+    };
+  }
+
+  return {
+    name: cleanText(color && (color.name || color.label), "", 80),
+    value: cleanText(color && (color.value || color.hex || color.color_code || color.colorCode), "", 32)
+  };
+}
+
+export function normalizeCatalogProduct(product) {
+  const catalogProductId = positiveInt(product && product.id);
+  const mainCategoryId = positiveInt(product && (product.main_category_id || product.mainCategoryId));
+  const variantCount = positiveInt(product && (product.variant_count || product.variantCount), 0);
+  const techniques = Array.isArray(product && product.techniques)
+    ? product.techniques.map(normalizeTechnique).filter((technique) => technique.key || technique.name)
+    : [];
+  const colors = Array.isArray(product && product.colors)
+    ? product.colors.map(normalizeColor).filter((color) => color.name || color.value)
+    : [];
+  const sizes = Array.isArray(product && product.sizes)
+    ? product.sizes.map((size) => cleanText(size, "", 40)).filter(Boolean)
+    : [];
+
+  return {
+    id: catalogProductId ? `catalog-${catalogProductId}` : "",
+    catalogProductId,
+    mainCategoryId,
+    name: cleanText(product && (product.title || product.name), "Printful catalog product", 160),
+    type: cleanText(product && (product.type_name || product.type), "", 120),
+    typeKey: cleanText(product && product.type, "", 80),
+    brand: cleanText(product && product.brand, "", 120),
+    model: cleanText(product && product.model, "", 120),
+    description: cleanText(product && product.description, "", 520),
+    thumbnailUrl: cleanText(product && product.image, "", 800),
+    currency: cleanText(product && product.currency, "USD", 8),
+    variantCount,
+    variants: variantCount,
+    sizes,
+    colors,
+    techniques,
+    placements: Array.isArray(product && product.placements)
+      ? product.placements
+          .map((placement) => cleanText(placement && (placement.placement || placement.name), "", 80))
+          .filter(Boolean)
+      : [],
+    isDiscontinued: Boolean(product && (product.is_discontinued || product.isDiscontinued)),
+    isPurchasable: false,
+    source: "printful-catalog"
+  };
+}
+
+function categoryAncestors(category, categoryMap) {
+  const trail = [];
+  const visited = new Set();
+  let current = category;
+
+  while (current && current.id && !visited.has(current.id)) {
+    trail.unshift(current);
+    visited.add(current.id);
+    current = current.parentId ? categoryMap.get(current.parentId) : null;
+  }
+
+  return trail;
+}
+
+export function attachCatalogCategories(products, categories) {
+  const categoryMap = new Map(categories.map((category) => [category.id, category]));
+
+  return products.map((product) => {
+    const category = product.mainCategoryId ? categoryMap.get(product.mainCategoryId) : null;
+    const trail = category ? categoryAncestors(category, categoryMap) : [];
+    const top = trail[0] || category || null;
+    const titles = trail.map((item) => item.title).filter(Boolean);
+
+    return {
+      ...product,
+      category: category
+        ? {
+            ...category,
+            path: titles,
+            pathLabel: titles.join(" / "),
+            topCategoryId: top ? top.id : category.id,
+            topCategoryTitle: top ? top.title : category.title
+          }
+        : null
+    };
+  });
+}
+
+export function buildActiveCatalogTree(categories, products) {
+  const productCounts = new Map();
+  const categoryMap = new Map(categories.map((category) => [category.id, category]));
+
+  products.forEach((product) => {
+    if (!product.mainCategoryId) {
+      return;
+    }
+
+    categoryAncestors(categoryMap.get(product.mainCategoryId), categoryMap).forEach((category) => {
+      productCounts.set(category.id, (productCounts.get(category.id) || 0) + 1);
+    });
+  });
+
+  function childrenFor(parentId) {
+    return categories
+      .filter((category) => (category.parentId || null) === (parentId || null))
+      .map((category) => ({
+        ...category,
+        productCount: productCounts.get(category.id) || 0,
+        children: childrenFor(category.id)
+      }))
+      .filter((category) => category.productCount > 0)
+      .sort((a, b) => a.title.localeCompare(b.title));
+  }
+
+  return childrenFor(null);
+}
+
 export function normalizeImageCandidate(input, fallbackLabel = "Product image") {
   if (!input) {
     return null;

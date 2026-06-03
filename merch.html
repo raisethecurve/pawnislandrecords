@@ -11,7 +11,7 @@
     <title>Merch Store | Pawn Island Records</title>
     <meta
       name="description"
-      content="Shop Pawn Island Records artist tees, choose sizes, estimate shipping, and send an order request from the merch desk."
+      content="Shop Pawn Island Records artist merch, browse future Printful product families, estimate shipping, and send an order request from the merch desk."
     />
     <link rel="canonical" href="https://www.pawnislandrecords.com/merch.html" />
     <meta name="robots" content="noindex,follow" />
@@ -20,7 +20,7 @@
     <meta property="og:title" content="Pawn Island Records Merch Store" />
     <meta
       property="og:description"
-      content="Shop Pawn Island Records artist tees, choose sizes, estimate shipping, and send an order request from the merch desk."
+      content="Shop Pawn Island Records artist merch, browse future Printful product families, estimate shipping, and send an order request from the merch desk."
     />
     <meta property="og:url" content="https://www.pawnislandrecords.com/merch.html" />
     <meta property="og:image" content="https://www.pawnislandrecords.com/assets/brand/pawnisland-1200.jpg" />
@@ -29,7 +29,7 @@
     <meta name="twitter:title" content="Pawn Island Records Merch Store" />
     <meta
       name="twitter:description"
-      content="Shop Pawn Island Records artist tees, choose sizes, estimate shipping, and send an order request from the merch desk."
+      content="Shop Pawn Island Records artist merch, browse future Printful product families, estimate shipping, and send an order request from the merch desk."
     />
     <meta name="twitter:image" content="https://www.pawnislandrecords.com/assets/brand/pawnisland-1200.jpg" />
     <script src="site-shell-bootstrap.js"></script>
@@ -51,9 +51,9 @@
           <header class="merch-hero">
             <article class="merch-copy">
               <p class="section-kicker">Pawn Island Records Store</p>
-              <h1 id="merch-title">Merch Desk</h1>
+              <h1 id="merch-title">Merch Store</h1>
               <p id="merch-intro">
-                Artist tees, release artwork, current product photos, size choices, and shipping estimates for fans who want the art off the screen.
+                Artist apparel, desk gear, wall art, current product photos, option choices, and shipping estimates for fans who want the art off the screen.
               </p>
               <div class="action-row">
                 <a class="button button--primary" href="#printful-store-grid">Browse All Designs</a>
@@ -66,7 +66,7 @@
 
             <aside class="merch-status-card" aria-labelledby="merch-status-title">
               <p class="section-kicker">Current Drop</p>
-              <h2 id="merch-status-title">Ready to Wear</h2>
+              <h2 id="merch-status-title">Ready to Ship</h2>
               <div class="merch-stats" id="merch-stats"></div>
             </aside>
 
@@ -76,35 +76,39 @@
           <div class="merch-trust-bar" role="list" aria-label="Store details">
             <span role="listitem">Release artwork</span>
             <span role="listitem">Product photos</span>
-            <span role="listitem">Size choices</span>
+            <span role="listitem">Option choices</span>
             <span role="listitem">Shipping estimates</span>
           </div>
 
           <section class="merch-store-mvp" aria-labelledby="merch-store-title">
             <div class="panel-header merch-store-header">
               <div>
-                <p class="section-kicker">Artist Tees</p>
-                <h2 id="merch-store-title">All Tees</h2>
+                <p class="section-kicker">Artist Goods</p>
+                <h2 id="merch-store-title">All Products</h2>
               </div>
               <div class="panel-note">
-                <p id="printful-store-status">Checking available tees.</p>
+                <p id="printful-store-status">Checking available products.</p>
               </div>
             </div>
 
             <div class="merch-decision-note">
               <p>
-                Every available design appears first, with featured picks kept as a short rack for quick starts. Artwork and product photos stay separate in the detail view.
+                Live products stay closest to checkout, while new Printful families sit ready for the next label design.
               </p>
             </div>
 
-            <div class="merch-category-rail" id="printful-category-filters" role="group" aria-label="Shop mode"></div>
+            <div class="merch-category-rail" id="printful-category-filters" role="group" aria-label="Store view"></div>
 
             <div class="merch-toolbar" role="group" aria-label="Merch filters">
               <label class="merch-search">
                 <span>Search</span>
-                <input id="printful-product-search" type="search" autocomplete="off" placeholder="Search artist, drop, or design" />
+                <input id="printful-product-search" type="search" autocomplete="off" placeholder="Search artist, drop, product, or design" />
               </label>
               <div class="merch-filter-stack">
+                <div>
+                  <p class="merch-filter-label">Product Type</p>
+                  <div class="merch-filter-group" role="group" aria-label="Filter by product type" id="printful-product-category-filters"></div>
+                </div>
                 <div>
                   <p class="merch-filter-label">Project</p>
                   <div class="merch-filter-group" role="group" aria-label="Filter by project" id="printful-project-filters"></div>

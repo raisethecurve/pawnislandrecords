@@ -290,7 +290,7 @@
 
 .merch-category-rail {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   gap: 0.65rem;
 }
 
@@ -411,7 +411,7 @@
 
 .merch-filter-stack {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.7rem;
 }
 
@@ -475,6 +475,13 @@
   background:
     linear-gradient(180deg, rgba(255, 209, 42, 0.06), rgba(255, 109, 77, 0.04)),
     rgba(0, 0, 0, 0.38);
+}
+
+.merch-card--catalog {
+  border-color: rgba(110, 168, 255, 0.24);
+  background:
+    linear-gradient(180deg, rgba(110, 168, 255, 0.055), rgba(139, 226, 139, 0.035)),
+    rgba(0, 0, 0, 0.34);
 }
 
 .merch-card:hover,
