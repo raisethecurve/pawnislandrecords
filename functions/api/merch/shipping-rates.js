@@ -1,5 +1,6 @@
 import {
   apiErrorResponse,
+  assertMerchRequestLimit,
   assertSameOriginRequest,
   cleanText,
   emptyOptionsResponse,
@@ -18,6 +19,7 @@ export async function onRequestOptions() {
 export async function onRequestPost(context) {
   try {
     assertSameOriginRequest(context);
+    assertMerchRequestLimit(context, { limit: 30, windowMs: 60 * 1000 });
     const body = await readJsonObject(context.request);
     const payload = {
       recipient: sanitizeRecipient(body.recipient, { requireFullAddress: false }),

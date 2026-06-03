@@ -1,4 +1,5 @@
 const PRINTFUL_API_BASE = "https://api.printful.com";
+const merchRequestBuckets = new Map();
 
 class ConfigError extends Error {
   constructor(message) {
@@ -89,6 +90,42 @@ export function assertSameOriginRequest(context) {
 
   if (requestOrigin && origin !== requestOrigin) {
     throw new MerchRequestError("forbidden_origin", "Merch requests must come from this site.", 403);
+  }
+}
+
+export function assertMerchRequestLimit(context, { limit = 20, windowMs = 60_000 } = {}) {
+  const request = context && context.request;
+  const headers = request && request.headers;
+  const now = Date.now();
+  const clientIp = (
+    (headers && headers.get("CF-Connecting-IP")) ||
+    (headers && headers.get("X-Forwarded-For") && headers.get("X-Forwarded-For").split(",")[0]) ||
+    "unknown"
+  ).trim();
+  let pathname = "merch";
+
+  try {
+    pathname = new URL(request.url).pathname;
+  } catch (error) {}
+
+  const key = `${pathname}:${clientIp}`;
+  const bucket = merchRequestBuckets.get(key) || [];
+  const fresh = bucket.filter((timestamp) => now - timestamp < windowMs);
+
+  if (fresh.length >= limit) {
+    merchRequestBuckets.set(key, fresh);
+    throw new MerchRequestError("rate_limited", "Too many merch requests. Please wait a moment and try again.", 429);
+  }
+
+  fresh.push(now);
+  merchRequestBuckets.set(key, fresh);
+
+  if (merchRequestBuckets.size > 500) {
+    for (const [bucketKey, timestamps] of merchRequestBuckets.entries()) {
+      if (!timestamps.some((timestamp) => now - timestamp < windowMs)) {
+        merchRequestBuckets.delete(bucketKey);
+      }
+    }
   }
 }
 

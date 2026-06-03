@@ -63,6 +63,8 @@ The current MVP routes are:
 - `POST /api/merch/shipping-rates`: v1 `/shipping/rates`.
 - `POST /api/merch/draft-order`: v1 `/orders?confirm=false`, disabled only when `MERCH_DRAFT_ORDERS_ENABLED=false`.
 
+POST endpoints reject cross-site browser requests, require object-shaped JSON, return structured JSON errors, and include a lightweight per-IP in-memory throttle to reduce repeated shipping/order spam before the request reaches Printful.
+
 Curated product titles, categories, launch posture, and policy copy live in `data/merch-products.json`. Run `npm run test:merch-metadata` before launch or synced-product changes.
 
 Use `.dev.vars` for local Pages Functions testing and never commit it.
