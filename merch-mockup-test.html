@@ -234,24 +234,16 @@
   <body>
     <main>
       <header>
-        <p>Internal Cloudflare test page</p>
+        <p>Temporary Cloudflare test page</p>
         <h1>Printful Mockup Generator Test</h1>
         <p>
           Create one Ghost front mockup or one front/back mockup, poll the async task, then store returned images in R2 when a bucket binding is available.
+          This endpoint is temporarily open for live testing.
         </p>
       </header>
 
       <div class="layout">
         <section class="stack" aria-label="Mockup test controls">
-          <div class="panel stack">
-            <h2>Auth</h2>
-            <label>
-              Test key
-              <input id="test-key" type="password" autocomplete="off" placeholder="MERCH_MOCKUP_TEST_KEY" />
-            </label>
-            <p class="note">The key is sent as <code>X-Merch-Test-Key</code>. The Printful token stays in Cloudflare env secrets.</p>
-          </div>
-
           <div class="panel stack">
             <h2>Ghost Defaults</h2>
             <div class="grid">
@@ -317,6 +309,7 @@
 
           <div class="panel stack">
             <h2>Run</h2>
+            <p class="note">Temporary open endpoint. Use this only long enough to prove Printful generation, polling, and R2 storage.</p>
             <label>
               Task key
               <input id="task-key" placeholder="Filled after create" />
@@ -364,7 +357,6 @@
       (() => {
         const endpoint = "/api/merch/mockups/test";
         const fields = {
-          testKey: document.getElementById("test-key"),
           productId: document.getElementById("product-id"),
           variantIds: document.getElementById("variant-ids"),
           format: document.getElementById("format"),
@@ -388,7 +380,6 @@
         let activeScenario = "ghost-front";
         let storedTaskKey = "";
 
-        fields.testKey.value = sessionStorage.getItem("mockupTestKey") || "";
         fields.taskKey.value = sessionStorage.getItem("mockupTaskKey") || "";
 
         document.addEventListener("click", (event) => {
@@ -412,10 +403,6 @@
             stopPolling();
             setStatus("Polling stopped.");
           }
-        });
-
-        fields.testKey.addEventListener("input", () => {
-          sessionStorage.setItem("mockupTestKey", fields.testKey.value);
         });
 
         fields.taskKey.addEventListener("input", () => {
@@ -526,18 +513,10 @@
         }
 
         async function apiPost(body) {
-          const key = fields.testKey.value.trim();
-
-          if (!key) {
-            throw new Error("Enter MERCH_MOCKUP_TEST_KEY first.");
-          }
-
-          sessionStorage.setItem("mockupTestKey", key);
           const response = await fetch(endpoint, {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
-              "X-Merch-Test-Key": key
+              "Content-Type": "application/json"
             },
             body: JSON.stringify(body)
           });

@@ -44,7 +44,6 @@ export async function onRequestPost(context) {
   try {
     assertSameOriginRequest(context);
     assertMerchRequestLimit(context, { limit: 10, windowMs: 10 * 60 * 1000 });
-    assertTestKey(context);
 
     const body = await readJsonObject(context.request);
     const action = cleanText(body.action, "create", 40);
@@ -74,24 +73,6 @@ export async function onRequestPost(context) {
     }
 
     return apiErrorResponse(error);
-  }
-}
-
-function assertTestKey(context) {
-  const configured = cleanText(context.env.MERCH_MOCKUP_TEST_KEY, "", 240);
-
-  if (!configured) {
-    throw new MockupTestError(
-      "mockup_test_not_configured",
-      "MERCH_MOCKUP_TEST_KEY must be configured before this test endpoint can run.",
-      503
-    );
-  }
-
-  const supplied = cleanText(context.request.headers.get("X-Merch-Test-Key"), "", 240);
-
-  if (!supplied || supplied !== configured) {
-    throw new MockupTestError("mockup_test_forbidden", "A valid mockup test key is required.", 403);
   }
 }
 
