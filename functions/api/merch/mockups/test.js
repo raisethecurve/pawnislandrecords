@@ -11,6 +11,12 @@ import {
   readJsonObject,
   resultObject
 } from "../../../_lib/printful.js";
+import {
+  buildMockupStorageContext,
+  mockupStorageStatus,
+  readMockupManifest,
+  storeMockupImages
+} from "../../../_lib/mockup-storage.js";
 
 const DEFAULT_GHOST_DESIGN_URL = "https://files.cdn.printful.com/files/196/196b0b0ee595c3f631e8f7a90a5442e0_preview.png";
 const DEFAULT_PRODUCT_ID = 438;
@@ -26,8 +32,7 @@ const DEFAULT_POSITION = {
   left: 0
 };
 const SCENARIOS = new Set(["ghost-front"]);
-const ACTIONS = new Set(["create", "poll", "store", "printfiles", "templates"]);
-const STORAGE_BINDINGS = ["MERCH_MOCKUP_BUCKET", "MOCKUP_BUCKET", "R2_BUCKET"];
+const ACTIONS = new Set(["create", "poll", "store", "manifest", "printfiles", "templates"]);
 
 class MockupTestError extends Error {
   constructor(code, message, status = 400) {
@@ -51,11 +56,15 @@ export async function onRequestPost(context) {
     const action = cleanText(body.action, "create", 40);
 
     if (!ACTIONS.has(action)) {
-      throw new MockupTestError("invalid_mockup_action", "Choose create, poll, store, printfiles, or templates.");
+      throw new MockupTestError("invalid_mockup_action", "Choose create, poll, store, manifest, printfiles, or templates.");
     }
 
     if (action === "poll" || action === "store") {
       return pollTask(context, body, { storeImages: action === "store" || Boolean(body.storeImages) });
+    }
+
+    if (action === "manifest") {
+      return fetchStoredManifest(context, body);
     }
 
     if (action === "printfiles" || action === "templates") {
@@ -89,11 +98,17 @@ async function createTask(context, body) {
   const images = normalizeMockupTaskImages(task);
   const shouldStore = Boolean(body.storeImages) && cleanText(task.status, "", 40) === "completed";
   const storage = shouldStore
-    ? await storeGeneratedImages(context, images, {
-        scenario: cleanText(body.scenario, "manual", 80),
-        taskKey: task.task_key || body.taskKey
-      })
-    : storageStatus(context);
+    ? await storeMockupImages(
+        context,
+        images,
+        buildMockupStorageContext(body, {
+          productId,
+          payload,
+          taskKey: task.task_key || body.taskKey,
+          task
+        })
+      )
+    : mockupStorageStatus(context);
 
   return jsonResponse({
     source: "printful-v1-mockup-generator",
@@ -118,11 +133,16 @@ async function pollTask(context, body, { storeImages = false } = {}) {
   const images = normalizeMockupTaskImages(task);
   const completed = cleanText(task.status, "", 40) === "completed";
   const storage = storeImages && completed
-    ? await storeGeneratedImages(context, images, {
-        scenario: cleanText(body.scenario, "manual", 80),
-        taskKey
-      })
-    : storageStatus(context);
+    ? await storeMockupImages(
+        context,
+        images,
+        buildMockupStorageContext(body, {
+          productId: positiveInt(body.productId || body.product_id, DEFAULT_PRODUCT_ID),
+          taskKey,
+          task
+        })
+      )
+    : mockupStorageStatus(context);
 
   return jsonResponse({
     source: "printful-v1-mockup-generator",
@@ -130,6 +150,16 @@ async function pollTask(context, body, { storeImages = false } = {}) {
     task,
     images,
     storage
+  });
+}
+
+async function fetchStoredManifest(context, body) {
+  const manifest = await readMockupManifest(context, body);
+
+  return jsonResponse({
+    source: "printful-v1-mockup-generator",
+    action: "manifest",
+    ...manifest
   });
 }
 
@@ -292,140 +322,4 @@ function publicUrl(input, fallback) {
   } catch (error) {
     return "";
   }
-}
-
-function storageStatus(context) {
-  const binding = findStorageBinding(context);
-  const publicBaseUrl = cleanText(
-    context.env.MERCH_MOCKUP_PUBLIC_BASE_URL || context.env.MOCKUP_PUBLIC_BASE_URL,
-    "",
-    500
-  );
-
-  return {
-    enabled: Boolean(binding.bucket),
-    binding: binding.name || "",
-    publicBaseUrl,
-    stored: [],
-    failed: [],
-    message: binding.bucket
-      ? "Storage is available. Use the store action after a completed task."
-      : "No R2 bucket binding found. Add MERCH_MOCKUP_BUCKET, MOCKUP_BUCKET, or R2_BUCKET to test storage."
-  };
-}
-
-function findStorageBinding(context) {
-  for (const name of STORAGE_BINDINGS) {
-    const bucket = context.env[name];
-
-    if (bucket && typeof bucket.put === "function") {
-      return { name, bucket };
-    }
-  }
-
-  return { name: "", bucket: null };
-}
-
-async function storeGeneratedImages(context, images, { scenario, taskKey }) {
-  const binding = findStorageBinding(context);
-  const status = storageStatus(context);
-
-  if (!binding.bucket) {
-    return status;
-  }
-
-  if (!images.length) {
-    return {
-      ...status,
-      message: "The completed task did not include mockup URLs to store."
-    };
-  }
-
-  const stored = [];
-  const failed = [];
-  const publicBaseUrl = status.publicBaseUrl.replace(/\/+$/, "");
-
-  for (const [index, image] of images.entries()) {
-    const sourceUrl = publicUrl(image.url, "");
-
-    if (!sourceUrl) {
-      continue;
-    }
-
-    try {
-      const response = await fetch(sourceUrl);
-
-      if (!response.ok) {
-        failed.push({ url: sourceUrl, status: response.status });
-        continue;
-      }
-
-      const contentType = cleanText(response.headers.get("Content-Type"), "image/jpeg", 120);
-      const extension = extensionFor(sourceUrl, contentType);
-      const key = [
-        "mockups",
-        "printful-test",
-        slugPart(scenario || "manual"),
-        slugPart(taskKey || "no-task"),
-        `${String(index + 1).padStart(2, "0")}-${slugPart(image.type || image.label || "mockup")}.${extension}`
-      ].join("/");
-
-      await binding.bucket.put(key, response.body, {
-        httpMetadata: {
-          contentType
-        },
-        customMetadata: {
-          taskKey: cleanText(taskKey, "", 180),
-          sourceUrl,
-          label: cleanText(image.label, "", 120),
-          generatedAt: new Date().toISOString()
-        }
-      });
-
-      stored.push({
-        key,
-        publicUrl: publicBaseUrl ? `${publicBaseUrl}/${key}` : "",
-        sourceUrl,
-        contentType
-      });
-    } catch (error) {
-      failed.push({
-        url: sourceUrl,
-        message: error && error.message ? error.message : "Storage failed"
-      });
-    }
-  }
-
-  return {
-    ...status,
-    stored,
-    failed,
-    message: stored.length ? "Stored generated mockups in R2." : "No generated mockups were stored."
-  };
-}
-
-function extensionFor(url, contentType) {
-  const pathExtension = cleanText(new URL(url).pathname.split(".").pop(), "", 8).toLowerCase();
-
-  if (["jpg", "jpeg", "png", "webp"].includes(pathExtension)) {
-    return pathExtension === "jpeg" ? "jpg" : pathExtension;
-  }
-
-  if (contentType.includes("png")) {
-    return "png";
-  }
-
-  if (contentType.includes("webp")) {
-    return "webp";
-  }
-
-  return "jpg";
-}
-
-function slugPart(input) {
-  return cleanText(input, "mockup", 120)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80) || "mockup";
 }

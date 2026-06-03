@@ -248,12 +248,20 @@
             <h2>Ghost Defaults</h2>
             <div class="grid">
               <label>
-                Product ID
+                Catalog product ID
                 <input id="product-id" type="number" min="1" value="438" />
+              </label>
+              <label>
+                Sync product ID
+                <input id="sync-product-id" value="436342403" />
               </label>
               <label>
                 Variant IDs
                 <input id="variant-ids" value="11546" />
+              </label>
+              <label>
+                Variant scope
+                <input id="variant-scope" value="black" />
               </label>
               <label>
                 Format
@@ -265,6 +273,28 @@
               <label>
                 Result width
                 <input id="result-width" type="number" min="50" max="2000" value="1200" />
+              </label>
+            </div>
+            <div class="grid">
+              <label>
+                Product title
+                <input id="product-title" value="Ghost Tee" />
+              </label>
+              <label>
+                Artist
+                <input id="artist" value="Velvet Orchard" />
+              </label>
+              <label>
+                Drop
+                <input id="drop" value="Borrowed Brightness" />
+              </label>
+              <label>
+                Design name
+                <input id="design-name" value="Ghost" />
+              </label>
+              <label>
+                Design slug
+                <input id="design-slug" value="ghost" />
               </label>
             </div>
             <label>
@@ -331,6 +361,7 @@
               <button class="primary" data-action="ghost-front">Create Flat Front</button>
               <button data-action="poll">Poll Task</button>
               <button data-action="store">Store Completed Task</button>
+              <button data-action="manifest">Read Stored Assets</button>
               <button data-action="printfiles">Printfiles</button>
               <button data-action="templates">Templates</button>
               <button data-action="stop">Stop Polling</button>
@@ -362,9 +393,16 @@
         const endpoint = "/api/merch/mockups/test";
         const fields = {
           productId: document.getElementById("product-id"),
+          syncProductId: document.getElementById("sync-product-id"),
           variantIds: document.getElementById("variant-ids"),
+          variantScope: document.getElementById("variant-scope"),
           format: document.getElementById("format"),
           resultWidth: document.getElementById("result-width"),
+          productTitle: document.getElementById("product-title"),
+          artist: document.getElementById("artist"),
+          drop: document.getElementById("drop"),
+          designName: document.getElementById("design-name"),
+          designSlug: document.getElementById("design-slug"),
           frontUrl: document.getElementById("front-url"),
           mockupOptions: document.getElementById("mockup-options"),
           mockupOptionGroups: document.getElementById("mockup-option-groups"),
@@ -402,6 +440,8 @@
             runPoll(false);
           } else if (action === "store") {
             runPoll(true);
+          } else if (action === "manifest") {
+            runManifest();
           } else if (action === "printfiles" || action === "templates") {
             runInfo(action);
           } else if (action === "stop") {
@@ -458,6 +498,7 @@
 
           try {
             const data = await apiPost({
+              ...readForm(),
               action: storeImages ? "store" : "poll",
               scenario: activeScenario,
               taskKey,
@@ -465,6 +506,23 @@
             });
             render(data);
             maybeContinuePolling(data);
+          } catch (error) {
+            renderError(error);
+          } finally {
+            setBusy(false);
+          }
+        }
+
+        async function runManifest() {
+          setBusy(true);
+          setStatus("Reading stored mockup manifest.");
+
+          try {
+            const data = await apiPost({
+              ...readForm(),
+              action: "manifest"
+            });
+            render(data);
           } catch (error) {
             renderError(error);
           } finally {
@@ -545,9 +603,16 @@
         function readForm() {
           return {
             productId: numberValue(fields.productId),
+            syncProductId: fields.syncProductId.value.trim(),
             variantIds: fields.variantIds.value.split(",").map((value) => value.trim()).filter(Boolean),
+            variantScope: fields.variantScope.value.trim(),
             format: fields.format.value,
             width: numberValue(fields.resultWidth),
+            productTitle: fields.productTitle.value.trim(),
+            artist: fields.artist.value.trim(),
+            drop: fields.drop.value.trim(),
+            designName: fields.designName.value.trim(),
+            designSlug: fields.designSlug.value.trim(),
             frontImageUrl: fields.frontUrl.value.trim(),
             options: listValue(fields.mockupOptions),
             option_groups: listValue(fields.mockupOptionGroups),
@@ -567,6 +632,7 @@
           const storage = data && data.storage;
           const stored = storage && Array.isArray(storage.stored) ? storage.stored : [];
           const failed = storage && Array.isArray(storage.failed) ? storage.failed : [];
+          const manifestAssets = data && data.manifest && Array.isArray(data.manifest.assets) ? data.manifest.assets : [];
 
           responseNode.textContent = JSON.stringify(data, null, 2);
           renderGallery(data);
@@ -576,7 +642,7 @@
               `Task ${task.task_key || fields.taskKey.value}: ${task.status}. ${stored.length} stored, ${failed.length} storage failures.`
             );
           } else if (data && data.action) {
-            setStatus(`${data.action} complete.`);
+            setStatus(data.action === "manifest" ? `Manifest loaded. ${manifestAssets.length} assets.` : `${data.action} complete.`);
           } else {
             setStatus("Request complete.");
           }
@@ -585,8 +651,13 @@
         function renderGallery(data) {
           const images = Array.isArray(data && data.images) ? data.images : [];
           const stored = data && data.storage && Array.isArray(data.storage.stored) ? data.storage.stored : [];
+          const manifestAssets = data && data.manifest && Array.isArray(data.manifest.assets) ? data.manifest.assets : [];
           const cards = images.map((image) => mockupCard(image.url, image.label || image.type || "Generated mockup", image.url));
-          const storedCards = stored.map((item) => mockupCard(item.publicUrl || item.sourceUrl, item.key, item.publicUrl || item.sourceUrl));
+          const storedCards = [...stored, ...manifestAssets].map((item) => {
+            const imageUrl = item.url || item.publicUrl || item.sourceMockupUrl || item.sourceUrl;
+            const label = item.r2Key || item.key || item.label || "Stored mockup";
+            return mockupCard(imageUrl, label, imageUrl);
+          });
 
           gallery.innerHTML = [...cards, ...storedCards].join("") || "<p>No mockup images returned yet.</p>";
         }
