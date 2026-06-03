@@ -4461,6 +4461,9 @@
     const isCatalogProduct = product && product.source === "printful-catalog";
     const isPurchasable = product && product.isPurchasable !== false && !isCatalogProduct;
     const hasSingleOption = isPurchasable && variantCount === 1;
+    const priceLabel = isCatalogProduct ? "Design next" : price || "Select option for price";
+    const optionLabel = variantCount ? `${variantCount} option${variantCount === 1 ? "" : "s"}` : meta.productType;
+    const statusLabel = isCatalogProduct ? "Design brief" : hasSingleOption ? "Fast add" : detail ? "Options loaded" : "Options needed";
     const productCopy = isFeatured
       ? printfulFeaturedCopy(meta, index)
       : isCatalogProduct
@@ -4469,29 +4472,39 @@
 
     return `
       <article
-        class="merch-card merch-card--printful ${isFeatured ? "merch-card--featured" : ""} ${isCatalogProduct ? "merch-card--catalog" : ""} ${isSelected ? "is-selected" : ""}"
+        class="merch-card merch-card--printful ${isFeatured ? "merch-card--featured" : ""} ${isCatalogProduct ? "merch-card--catalog" : ""} ${hasSingleOption ? "merch-card--quick" : ""} ${isSelected ? "is-selected" : ""}"
         data-printful-product-card="${escapeHtml(product.id)}"
         data-merch-project="${escapeHtml(meta.projectKey)}"
         data-merch-album="${escapeHtml(meta.albumKey)}"
       >
         <div class="merch-card__visual">
-          ${printfulPrimaryVisualMarkup(product, "card")}
+          <a class="merch-card__visual-link" href="${escapeHtml(printfulProductUrl(product.id))}" data-printful-product-link="${escapeHtml(product.id)}" aria-label="View ${escapeHtml(meta.productTitle)}">
+            ${printfulPrimaryVisualMarkup(product, "card")}
+          </a>
+          <div class="merch-card__badge-row" aria-hidden="true">
+            ${isFeatured ? '<span class="merch-card__badge">Featured</span>' : ""}
+            ${hasSingleOption ? '<span class="merch-card__badge merch-card__badge--quick">Fast add</span>' : ""}
+          </div>
           ${isCatalogProduct ? "" : printfulSaveButtonMarkup(product.id, true)}
         </div>
         <div class="merch-card__body">
-          <div class="merch-card__meta">
-            ${isFeatured ? '<span class="tag tag--ready">Featured</span>' : ""}
-            <span class="tag">${escapeHtml(meta.project)}</span>
-            <span class="tag tag--muted">${escapeHtml(meta.category)}</span>
-            <span class="tag tag--muted">${escapeHtml(meta.productFamily)}</span>
+          <div class="merch-card__topline">
+            <span>${escapeHtml(meta.project)}</span>
+            <strong>${escapeHtml(meta.album || meta.category)}</strong>
           </div>
           <div class="merch-card__copy">
             <h3>${escapeHtml(meta.productTitle)}</h3>
             <p>${escapeHtml(productCopy)}</p>
           </div>
+          <div class="merch-card__meta">
+            <span class="tag">${escapeHtml(meta.category)}</span>
+            <span class="tag tag--muted">${escapeHtml(meta.productFamily)}</span>
+            <span class="tag tag--muted">${escapeHtml(meta.design)}</span>
+          </div>
           <div class="merch-card__facts">
-            <span data-printful-card-price="${escapeHtml(product.id)}">${escapeHtml(isCatalogProduct ? "Design next" : price || "Select option for price")}</span>
-            <span>${escapeHtml(variantCount ? `${variantCount} option${variantCount === 1 ? "" : "s"}` : meta.productType)}</span>
+            <span data-printful-card-price="${escapeHtml(product.id)}">${escapeHtml(priceLabel)}</span>
+            <span>${escapeHtml(optionLabel)}</span>
+            <em>${escapeHtml(statusLabel)}</em>
           </div>
           <div class="action-row merch-card__actions">
             <a class="button button--ghost button--small" href="${escapeHtml(printfulProductUrl(product.id))}" data-printful-product-link="${escapeHtml(product.id)}">

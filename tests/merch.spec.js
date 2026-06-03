@@ -349,6 +349,20 @@ test.describe("merch discovery", () => {
     await expect(page.locator("[data-printful-mode='catalog']")).toHaveCount(0);
   });
 
+  test("presents polished product cards for quick scanning", async ({ page }) => {
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    const firstCard = page.locator("[data-printful-product-card='tee-1']");
+    await expect(firstCard.locator(".merch-card__visual-link")).toHaveAttribute("data-printful-product-link", "tee-1");
+    await expect(firstCard.locator(".merch-card__topline")).toContainText("Velvet Orchard");
+    await expect(firstCard.locator(".merch-card__facts")).toContainText("Select option for price");
+    await expect(firstCard.locator(".merch-card__facts")).toContainText("Options needed");
+
+    const quickCard = page.locator("[data-printful-product-card='tee-5']");
+    await expect(quickCard.locator(".merch-card__badge--quick")).toContainText("Fast add");
+    await expect(quickCard.locator(".merch-card__facts")).toContainText("Fast add");
+  });
+
   test("shows active filters and resets them from the merch toolbar", async ({ page }) => {
     await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
 
@@ -414,7 +428,7 @@ test.describe("merch discovery", () => {
     await expect(page.locator("[data-printful-product-card]")).toHaveCount(1);
     await expect(page.locator("[data-printful-product-card]")).toContainText("Gaming Mouse Pad");
 
-    await page.locator("[data-printful-product-link='catalog-901']").click();
+    await page.locator("[data-printful-product-card='catalog-901'] a.button[data-printful-product-link='catalog-901']").click();
     await expect(page.locator(".merch-product-detail")).toContainText("Request This Product");
     await expect(page.locator(".merch-product-detail")).not.toContainText("Add to Cart");
   });
