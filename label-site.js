@@ -3629,10 +3629,57 @@
     return "product";
   }
 
+  function catalogBuyerGroup(product, category) {
+    const haystack = [
+      category && category.topCategoryTitle,
+      category && category.title,
+      category && category.pathLabel,
+      product && product.type,
+      product && product.name
+    ]
+      .map((value) => text(value, "").toLowerCase())
+      .filter(Boolean)
+      .join(" ");
+
+    if (/mouse\s*pad|desk\s*mat|desk|laptop|notebook|sticker/.test(haystack)) {
+      return "Desk Gear";
+    }
+
+    if (/tote|bag|backpack|duffle|pouch|fanny|luggage/.test(haystack)) {
+      return "Bags";
+    }
+
+    if (/hat|cap|beanie|visor/.test(haystack)) {
+      return "Headwear";
+    }
+
+    if (/shirt|tee|hoodie|sweatshirt|sweater|jacket|polo|tank|legging|shorts|pants|dress|apron|clothing|apparel/.test(haystack)) {
+      return "Apparel";
+    }
+
+    if (/poster|canvas|print|frame|wall\s*art/.test(haystack)) {
+      return "Wall Art";
+    }
+
+    if (/mug|tumbler|bottle|drink/.test(haystack)) {
+      return "Drinkware";
+    }
+
+    if (/pillow|blanket|towel|home|living|decor/.test(haystack)) {
+      return "Home Goods";
+    }
+
+    if (/phone|case|airpod|tech/.test(haystack)) {
+      return "Tech Accessories";
+    }
+
+    return text(category && category.topCategoryTitle, text(category && category.title, text(product && product.type, "Design Blanks")));
+  }
+
   function parseCatalogProductMeta(product) {
     const category = product && product.category ? product.category : null;
     const topCategory = text(category && category.topCategoryTitle, text(product && product.type, "Printful Catalog"));
-    const categoryTitle = text(category && category.title, text(product && product.type, "Catalog Product"));
+    const categoryTitle = catalogBuyerGroup(product, category);
     const categoryPath = text(category && category.pathLabel, categoryTitle);
     const title = text(product && product.name, "Printful catalog product");
     const techniqueLabels = Array.isArray(product && product.techniques)

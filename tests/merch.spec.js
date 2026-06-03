@@ -346,10 +346,10 @@ test.describe("merch discovery", () => {
 
     await expect(page.locator("[data-printful-mode='catalog']")).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator("#printful-results-summary")).toContainText("Internal design catalog: 3 of 3 products shown");
-    await expect(page.locator("#printful-product-category-filters")).toContainText("Mousepads");
+    await expect(page.locator("#printful-product-category-filters")).toContainText("Desk Gear");
     await expect(page.locator("#printful-product-category-filters")).not.toContainText("Jewelry");
 
-    await page.locator("#printful-product-category-filters [data-printful-filter='category'][data-printful-filter-value='mousepads']").click();
+    await page.locator("#printful-product-category-filters [data-printful-filter='category'][data-printful-filter-value='desk-gear']").click();
     await expect(page.locator("#printful-results-summary")).toContainText("Internal design catalog: 1 of 3 products shown");
     await expect(page.locator("[data-printful-product-card]")).toHaveCount(1);
     await expect(page.locator("[data-printful-product-card]")).toContainText("Gaming Mouse Pad");
