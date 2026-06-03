@@ -38,7 +38,7 @@ const mockProducts = [
     id: "tee-5",
     name: "Quiet Filter - Ember Mire - Wall Tee",
     thumbnailUrl: testImage("Product 5", "#d7e1ed"),
-    variants: 6
+    variants: 1
   }
 ];
 
@@ -259,6 +259,18 @@ test.describe("merch discovery", () => {
     await expect(page.locator(".merch-cart__items")).toContainText("Borrowed Brightness Crest Tee");
     await expect(page.locator(".merch-cart__items")).toContainText("$28.00");
     await expect(page.locator(".merch-policy-check")).toContainText("not a completed payment");
+  });
+
+  test("adds one-option products directly without an option picker", async ({ page }) => {
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    const oneOptionCard = page.locator("[data-printful-product-card='tee-5']");
+    await expect(oneOptionCard).toContainText("Add to Request");
+    await expect(oneOptionCard).not.toContainText("Choose Options");
+
+    await oneOptionCard.locator("[data-printful-direct-add-product='tee-5']").click();
+    await expect(page.locator("#printful-cart-count")).toHaveText("1");
+    await expect(page.locator(".merch-cart__items")).toContainText("Quiet Filter");
   });
 
   test("keeps artwork assets separate from API product photos", async ({ page }) => {

@@ -4173,6 +4173,7 @@
     const isFeatured = isPrintfulFeaturedMode();
     const isCatalogProduct = product && product.source === "printful-catalog";
     const isPurchasable = product && product.isPurchasable !== false && !isCatalogProduct;
+    const hasSingleOption = isPurchasable && variantCount === 1;
     const productCopy = isFeatured
       ? printfulFeaturedCopy(meta, index)
       : isCatalogProduct
@@ -4209,7 +4210,17 @@
               View
             </a>
             ${
-              isPurchasable
+              hasSingleOption
+                ? `
+                  <button
+                    class="button button--primary button--small"
+                    type="button"
+                    data-printful-direct-add-product="${escapeHtml(product.id)}"
+                  >
+                    Add to Request
+                  </button>
+                `
+                : isPurchasable
                 ? `
                   <button
                     class="button button--primary button--small"
@@ -4225,7 +4236,7 @@
             }
           </div>
           <div class="printful-variant-slot" data-printful-variant-slot="${escapeHtml(product.id)}">
-            ${detail && isPurchasable ? printfulVariantFormMarkup(product.id, detail, "card") : ""}
+            ${detail && isPurchasable && !hasSingleOption ? printfulVariantFormMarkup(product.id, detail, "card") : ""}
           </div>
         </div>
       </article>
@@ -4513,26 +4524,18 @@
     `;
   }
 
-  function addPrintfulCartItem(productId, form) {
-    const detail = printfulMerchState.productDetails.get(productId);
-    const variants = detail && Array.isArray(detail.variants) ? detail.variants.filter((variant) => variant.isSynced !== false) : [];
-    const variant = variants[Number.parseInt(form.variant.value, 10)];
-    const quantity = Math.min(Math.max(Number.parseInt(form.quantity.value, 10) || 1, 1), 10);
-
-    if (!detail || !variant) {
-      return;
-    }
-
+  function addPrintfulCartVariant(detail, variant, quantity) {
     const productName = text(detail.product && detail.product.merch && detail.product.merch.productTitle, detail.product && detail.product.name) || "Pawn Island Records merch";
     const existing = printfulMerchState.cart.find((item) => item.syncVariantId === variant.syncVariantId);
+    const safeQuantity = Math.min(Math.max(Number.parseInt(quantity, 10) || 1, 1), 10);
 
     if (existing) {
-      existing.quantity = Math.min(existing.quantity + quantity, 10);
+      existing.quantity = Math.min(existing.quantity + safeQuantity, 10);
     } else {
       printfulMerchState.cart.push({
         productName,
         variantName: text(variant.name, "Variant"),
-        quantity,
+        quantity: safeQuantity,
         syncVariantId: variant.syncVariantId,
         catalogVariantId: variant.catalogVariantId,
         retailPrice: variant.retailPrice,
@@ -4545,12 +4548,36 @@
     printfulMerchState.selectedShipping = "";
     persistPrintfulCart();
     renderPrintfulCart();
+  }
+
+  function addPrintfulCartItem(productId, form) {
+    const detail = printfulMerchState.productDetails.get(productId);
+    const variants = detail && Array.isArray(detail.variants) ? detail.variants.filter((variant) => variant.isSynced !== false) : [];
+    const variant = variants[Number.parseInt(form.variant.value, 10)];
+    const quantity = Math.min(Math.max(Number.parseInt(form.quantity.value, 10) || 1, 1), 10);
+
+    if (!detail || !variant) {
+      return;
+    }
+
+    addPrintfulCartVariant(detail, variant, quantity);
 
     const status = form.querySelector("[data-printful-add-status]");
 
     if (status) {
-      status.textContent = "Added to cart.";
+      status.textContent = "Added to request.";
     }
+  }
+
+  function addPrintfulSingleOptionProduct(productId, detail) {
+    const variants = detail && Array.isArray(detail.variants) ? detail.variants.filter((variant) => variant.isSynced !== false) : [];
+
+    if (variants.length !== 1) {
+      return false;
+    }
+
+    addPrintfulCartVariant(detail, variants[0], 1);
+    return true;
   }
 
   async function estimatePrintfulShipping(form) {
@@ -5185,6 +5212,7 @@
       const productLink = event.target.closest("[data-printful-product-link]");
       const clearProduct = event.target.closest("[data-printful-clear-product]");
       const loadButton = event.target.closest("[data-printful-load-product]");
+      const directAddButton = event.target.closest("[data-printful-direct-add-product]");
       const removeButton = event.target.closest("[data-printful-remove-cart]");
       const cartQtyButton = event.target.closest("[data-printful-cart-qty]");
       const shippingButton = event.target.closest("[data-printful-estimate-shipping]");
@@ -5291,6 +5319,26 @@
           }
           loadButton.disabled = false;
           loadButton.textContent = "Try Again";
+        }
+      }
+
+      if (directAddButton) {
+        const productId = directAddButton.dataset.printfulDirectAddProduct;
+        directAddButton.disabled = true;
+        directAddButton.textContent = "Adding";
+
+        try {
+          const detail = await loadPrintfulProduct(productId);
+          const added = addPrintfulSingleOptionProduct(productId, detail);
+          directAddButton.disabled = false;
+          directAddButton.textContent = added ? "Add Another" : "Choose Options";
+
+          if (!added) {
+            renderPrintfulVariantPicker(productId, detail);
+          }
+        } catch (error) {
+          directAddButton.disabled = false;
+          directAddButton.textContent = "Try Again";
         }
       }
 
