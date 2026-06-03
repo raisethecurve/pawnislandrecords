@@ -3330,6 +3330,7 @@
     mode: "shop",
     shippingRates: [],
     selectedShipping: "",
+    shippingEstimateKey: "",
     filters: {
       query: "",
       category: "all",
@@ -4275,6 +4276,17 @@
       .join("");
   }
 
+  function printfulSingleVariantMarkup(variant) {
+    const size = printfulVariantSize(variant);
+    const price = printfulMoney(variant && variant.retailPrice, variant && variant.currency);
+    const label = [size || "Ready option", price].filter(Boolean).join(" | ");
+
+    return `
+      <input type="hidden" name="variant" value="0" />
+      <p class="printful-single-option">Only option: ${escapeHtml(label || "ready to request")}</p>
+    `;
+  }
+
   function printfulQuantityControlMarkup() {
     return `
       <div class="printful-quantity-control" data-printful-quantity-control>
@@ -4299,10 +4311,16 @@
 
     return `
       <form class="printful-variant-form printful-variant-form--${escapeHtml(mode || "card")}" data-printful-add-form="${escapeHtml(productId)}">
-        <fieldset class="printful-size-picker">
-          <legend>Option</legend>
-          ${printfulVariantChoicesMarkup(variants)}
-        </fieldset>
+        ${
+          variants.length === 1
+            ? printfulSingleVariantMarkup(variants[0])
+            : `
+              <fieldset class="printful-size-picker">
+                <legend>Option</legend>
+                ${printfulVariantChoicesMarkup(variants)}
+              </fieldset>
+            `
+        }
         ${printfulQuantityControlMarkup()}
         <button class="button button--primary button--small" type="submit">Add to Request</button>
         <p class="merch-inline-status" data-printful-add-status></p>
@@ -4467,6 +4485,71 @@
     }, 0);
   }
 
+  function printfulCartQuantity() {
+    return printfulMerchState.cart.reduce((total, item) => total + item.quantity, 0);
+  }
+
+  function printfulCartSummaryText() {
+    const lines = ["Pawn Island Records merch request", ""];
+
+    printfulMerchState.cart.forEach((item) => {
+      const amount = Number.parseFloat(item.retailPrice);
+      const linePrice = Number.isFinite(amount) ? printfulMoney(amount * item.quantity, item.currency) : "Price pending";
+      lines.push(`- ${item.productName} | ${item.variantName} | Qty ${item.quantity} | ${linePrice}`);
+    });
+
+    lines.push("");
+    lines.push(`Subtotal: ${printfulCartTotal() ? printfulMoney(printfulCartTotal(), "USD") : "Price pending"}`);
+    lines.push(merchPaymentCopy());
+    lines.push(`Support: ${merchSupportEmail()} (${merchSupportResponseCopy()})`);
+
+    return lines.join("\n");
+  }
+
+  function printfulCartSummaryMailto() {
+    const subject = encodeURIComponent("Pawn Island Records merch request");
+    const body = encodeURIComponent(printfulCartSummaryText());
+    return `mailto:${merchSupportEmail()}?subject=${subject}&body=${body}`;
+  }
+
+  async function copyPrintfulCartSummary() {
+    const status = document.getElementById("printful-copy-status");
+    const summary = printfulCartSummaryText();
+    let copied = false;
+
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(summary);
+        copied = true;
+      }
+    } catch (error) {
+      copied = false;
+    }
+
+    if (!copied) {
+      try {
+        const node = document.querySelector("[data-printful-cart-summary-text]");
+        const selection = window.getSelection();
+        const range = document.createRange();
+
+        if (node && selection) {
+          range.selectNodeContents(node);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+      } catch (error) {}
+    }
+
+    if (status) {
+      status.textContent = copied ? "Copied order snapshot." : "Order snapshot selected for copying.";
+    }
+
+    trackMerchEvent("copy_cart_summary", {
+      status: copied ? "copied" : "selected",
+      item_count: printfulCartQuantity()
+    });
+  }
+
   function normalizeStoredCartItem(item) {
     const syncVariantId = Number.parseInt(item && item.syncVariantId, 10);
     const quantity = Math.min(Math.max(Number.parseInt(item && item.quantity, 10) || 1, 1), 10);
@@ -4562,7 +4645,43 @@
   function resetPrintfulCheckoutState() {
     printfulMerchState.shippingRates = [];
     printfulMerchState.selectedShipping = "";
+    printfulMerchState.shippingEstimateKey = "";
     clearPrintfulOrderRequestId();
+  }
+
+  function printfulShippingRecipientFromForm(form) {
+    const formData = new FormData(form);
+
+    return {
+      country_code: text(formData.get("country_code"), "US").toUpperCase(),
+      state_code: text(formData.get("state_code"), "").toUpperCase(),
+      zip: text(formData.get("zip"), "")
+    };
+  }
+
+  function printfulShippingRecipientKey(recipient) {
+    return [
+      text(recipient && recipient.country_code, "US").toUpperCase(),
+      text(recipient && recipient.state_code, "").toUpperCase(),
+      text(recipient && recipient.zip, "")
+    ].join("|");
+  }
+
+  function invalidatePrintfulShippingEstimate(message) {
+    const status = document.getElementById("printful-cart-status");
+    const ratesNode = document.getElementById("printful-shipping-rates");
+
+    printfulMerchState.shippingRates = [];
+    printfulMerchState.selectedShipping = "";
+    printfulMerchState.shippingEstimateKey = "";
+
+    if (ratesNode) {
+      ratesNode.innerHTML = "";
+    }
+
+    if (status) {
+      status.textContent = text(message, "Estimate shipping again before requesting an invoice.");
+    }
   }
 
   function printfulShippingRateId(rate, index) {
@@ -4613,7 +4732,7 @@
     }
 
     if (count) {
-      count.textContent = String(printfulMerchState.cart.reduce((total, item) => total + item.quantity, 0));
+      count.textContent = String(printfulCartQuantity());
     }
 
     if (!printfulMerchState.cart.length) {
@@ -4633,6 +4752,7 @@
 
     const total = printfulCartTotal();
     const totalLabel = total ? printfulMoney(total, "USD") : "Price pending";
+    const summaryText = printfulCartSummaryText();
     const itemsMarkup = printfulMerchState.cart
       .map(
         (item, index) => {
@@ -4664,6 +4784,15 @@
         <span>Subtotal</span>
         <strong>${escapeHtml(totalLabel)}</strong>
       </div>
+      <details class="merch-cart__snapshot">
+        <summary>Order Snapshot</summary>
+        <pre data-printful-cart-summary-text>${escapeHtml(summaryText)}</pre>
+        <div class="action-row merch-cart__snapshot-actions">
+          <button class="button button--ghost button--small" type="button" data-printful-copy-cart>Copy</button>
+          <a class="button button--ghost button--small" href="${escapeHtml(printfulCartSummaryMailto())}">Email Support</a>
+        </div>
+        <p class="merch-inline-status" id="printful-copy-status"></p>
+      </details>
       <p class="merch-cart__note">Shipping is estimated here. Final tax and payment are handled in the invoice link sent by email.</p>
       <form class="merch-checkout-form" id="printful-draft-order-form">
         <input class="merch-honey-field" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -4694,13 +4823,13 @@
           </label>
           <label>
             <span>State</span>
-            <input name="state_code" autocomplete="address-level1" maxlength="12" />
+            <input name="state_code" autocomplete="address-level1" maxlength="12" data-printful-shipping-field />
           </label>
         </div>
         <div class="merch-checkout-form__row">
           <label>
             <span>Country</span>
-            <select name="country_code" autocomplete="country" required>
+            <select name="country_code" autocomplete="country" required data-printful-shipping-field>
               <option value="US">United States</option>
               <option value="CA">Canada</option>
               <option value="GB">United Kingdom</option>
@@ -4714,7 +4843,7 @@
           </label>
           <label>
             <span>ZIP</span>
-            <input name="zip" autocomplete="postal-code" required />
+            <input name="zip" autocomplete="postal-code" required data-printful-shipping-field />
           </label>
         </div>
         <button class="button button--ghost button--small" type="button" data-printful-estimate-shipping>Estimate Shipping</button>
@@ -4760,7 +4889,7 @@
       product_title: productName,
       variant_id: variant.syncVariantId ? String(variant.syncVariantId) : "",
       quantity: safeQuantity,
-      cart_quantity: printfulMerchState.cart.reduce((total, item) => total + item.quantity, 0)
+      cart_quantity: printfulCartQuantity()
     });
   }
 
@@ -4797,12 +4926,8 @@
   async function estimatePrintfulShipping(form) {
     const status = document.getElementById("printful-cart-status");
     const ratesNode = document.getElementById("printful-shipping-rates");
-    const formData = new FormData(form);
-    const recipient = {
-      country_code: text(formData.get("country_code"), "US").toUpperCase(),
-      state_code: text(formData.get("state_code"), "").toUpperCase(),
-      zip: text(formData.get("zip"), "")
-    };
+    const recipient = printfulShippingRecipientFromForm(form);
+    const recipientKey = printfulShippingRecipientKey(recipient);
     const items = printfulMerchState.cart
       .filter((item) => item.catalogVariantId)
       .map((item) => ({
@@ -4820,6 +4945,7 @@
 
     printfulMerchState.shippingRates = [];
     printfulMerchState.selectedShipping = "";
+    printfulMerchState.shippingEstimateKey = "";
 
     if (ratesNode) {
       ratesNode.innerHTML = "";
@@ -4837,10 +4963,11 @@
       const rates = Array.isArray(response.rates) ? response.rates : [];
       printfulMerchState.shippingRates = rates;
       printfulMerchState.selectedShipping = rates.length ? printfulShippingRateId(rates[0], 0) : "";
+      printfulMerchState.shippingEstimateKey = rates.length ? recipientKey : "";
       trackMerchEvent("estimate_shipping", {
         status: rates.length ? "ready" : "empty",
         rate_count: rates.length,
-        item_count: printfulMerchState.cart.reduce((total, item) => total + item.quantity, 0),
+        item_count: printfulCartQuantity(),
         country: recipient.country_code
       });
 
@@ -4856,6 +4983,7 @@
     } catch (error) {
       printfulMerchState.shippingRates = [];
       printfulMerchState.selectedShipping = "";
+      printfulMerchState.shippingEstimateKey = "";
       trackMerchEvent("checkout_error", {
         step: "estimate_shipping",
         message: error.message
@@ -4893,8 +5021,20 @@
     }));
     const selectedShipping = text(formData.get("shipping"), printfulMerchState.selectedShipping);
     const knownShippingIds = new Set(printfulMerchState.shippingRates.map((rate, index) => printfulShippingRateId(rate, index)));
+    const shippingRecipientKey = printfulShippingRecipientKey(recipient);
 
     if (text(formData.get("website"), "")) {
+      return;
+    }
+
+    if (printfulMerchState.shippingRates.length && printfulMerchState.shippingEstimateKey !== shippingRecipientKey) {
+      if (status) {
+        status.textContent = "Shipping destination changed. Estimate shipping again before requesting an invoice.";
+      }
+      trackMerchEvent("checkout_error", {
+        step: "submit_order_request",
+        message: "shipping_estimate_stale"
+      });
       return;
     }
 
@@ -4915,7 +5055,7 @@
 
     try {
       trackMerchEvent("begin_checkout", {
-        item_count: printfulMerchState.cart.reduce((total, item) => total + item.quantity, 0),
+        item_count: printfulCartQuantity(),
         subtotal: printfulCartTotal(),
         shipping: selectedShipping
       });
@@ -4971,6 +5111,124 @@
     });
 
     return [...map.values()].sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  function printfulFilterFallbackLabel(value) {
+    return text(value, "")
+      .split("-")
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  }
+
+  function printfulFilterLabel(kind, value) {
+    if (value === "all") {
+      return "All";
+    }
+
+    const field = {
+      category: "category",
+      project: "project",
+      album: "album"
+    }[kind];
+    const key = `${kind}Key`;
+    const product = activePrintfulProducts().find((item) => item.merch && item.merch[key] === value);
+
+    return text(product && product.merch && product.merch[field], printfulFilterFallbackLabel(value));
+  }
+
+  function printfulSortLabel(value) {
+    return (
+      {
+        featured: "Featured",
+        project: "Artist",
+        album: "Drop",
+        name: "Name"
+      }[value] || printfulFilterFallbackLabel(value)
+    );
+  }
+
+  function hasActivePrintfulFilters() {
+    const filters = printfulMerchState.filters;
+    return Boolean(
+      filters.query ||
+        filters.category !== "all" ||
+        filters.project !== "all" ||
+        filters.album !== "all" ||
+        filters.sort !== "featured"
+    );
+  }
+
+  function syncPrintfulFilterInputs() {
+    const search = document.getElementById("printful-product-search");
+    const sort = document.getElementById("printful-product-sort");
+
+    if (search && search.value !== printfulMerchState.filters.query) {
+      search.value = printfulMerchState.filters.query;
+    }
+
+    if (sort && sort.value !== printfulMerchState.filters.sort) {
+      sort.value = printfulMerchState.filters.sort;
+    }
+  }
+
+  function resetPrintfulFilters() {
+    printfulMerchState.filters.query = "";
+    printfulMerchState.filters.category = "all";
+    printfulMerchState.filters.project = "all";
+    printfulMerchState.filters.album = "all";
+    printfulMerchState.filters.sort = "featured";
+    syncPrintfulFilterInputs();
+    renderPrintfulStore();
+    trackMerchEvent("clear_filters", {
+      mode: printfulMerchState.mode
+    });
+  }
+
+  function renderPrintfulActiveFilters(visibleCount, activeCount) {
+    const node = document.getElementById("printful-active-filters");
+
+    if (!node) {
+      return;
+    }
+
+    if (!hasActivePrintfulFilters()) {
+      node.hidden = true;
+      node.innerHTML = "";
+      return;
+    }
+
+    const filters = printfulMerchState.filters;
+    const chips = [];
+
+    if (filters.query) {
+      chips.push(`Search: "${filters.query}"`);
+    }
+
+    if (filters.category !== "all") {
+      chips.push(`Category: ${printfulFilterLabel("category", filters.category)}`);
+    }
+
+    if (filters.project !== "all") {
+      chips.push(`Artist: ${printfulFilterLabel("project", filters.project)}`);
+    }
+
+    if (filters.album !== "all") {
+      chips.push(`Drop: ${printfulFilterLabel("album", filters.album)}`);
+    }
+
+    if (filters.sort !== "featured") {
+      chips.push(`Sort: ${printfulSortLabel(filters.sort)}`);
+    }
+
+    node.hidden = false;
+    node.innerHTML = `
+      <div class="merch-active-filters__chips" role="list" aria-label="Active merch filters">
+        ${chips.map((chip) => `<span role="listitem">${escapeHtml(chip)}</span>`).join("")}
+      </div>
+      <p>${escapeHtml(String(visibleCount))} shown from ${escapeHtml(String(activeCount))} available.</p>
+      <button class="button button--ghost button--small" type="button" data-printful-clear-filters>Reset Filters</button>
+    `;
   }
 
   function merchFilterButtonMarkup(kind, value, label, count, className) {
@@ -5178,6 +5436,8 @@
     const visibleProducts = isFeatured ? featuredPrintfulProducts(products) : products;
 
     renderPrintfulFilterControls();
+    syncPrintfulFilterInputs();
+    renderPrintfulActiveFilters(visibleProducts.length, activeProducts.length);
 
     if (toolbar) {
       toolbar.hidden = false;
@@ -5213,7 +5473,12 @@
 
     grid.innerHTML = visibleProducts.length
       ? visibleProducts.map((product, index) => printfulProductCardMarkup(product, index)).join("")
-      : '<article class="empty-card"><p>No products match the current filters.</p></article>';
+      : `
+        <article class="empty-card">
+          <p>No products match the current filters.</p>
+          ${hasActivePrintfulFilters() ? '<button class="button button--ghost button--small" type="button" data-printful-clear-filters>Reset Filters</button>' : ""}
+        </article>
+      `;
   }
 
   function relatedPrintfulProducts(product) {
@@ -5491,11 +5756,23 @@
       const galleryImageButton = event.target.closest("[data-printful-gallery-image]");
       const zoomButton = event.target.closest("[data-printful-toggle-zoom]");
       const qtyStepButton = event.target.closest("[data-printful-qty-step]");
+      const clearFiltersButton = event.target.closest("[data-printful-clear-filters]");
+      const copyCartButton = event.target.closest("[data-printful-copy-cart]");
 
       if (supportLink) {
         trackMerchEvent("support_click", {
           href: text(supportLink.getAttribute("href"), "").replace(/^mailto:.*/, "mailto")
         });
+      }
+
+      if (clearFiltersButton) {
+        resetPrintfulFilters();
+        return;
+      }
+
+      if (copyCartButton) {
+        copyPrintfulCartSummary();
+        return;
       }
 
       if (modeButton) {
@@ -5677,9 +5954,32 @@
 
     panel.addEventListener("change", (event) => {
       const shippingSelect = event.target.closest("#printful-shipping-select");
+      const shippingField = event.target.closest("[data-printful-shipping-field]");
 
       if (shippingSelect) {
         printfulMerchState.selectedShipping = text(shippingSelect.value, "");
+      }
+
+      if (shippingField && printfulMerchState.shippingRates.length) {
+        const form = shippingField.closest("#printful-draft-order-form");
+        const recipient = form ? printfulShippingRecipientFromForm(form) : null;
+
+        if (printfulShippingRecipientKey(recipient) !== printfulMerchState.shippingEstimateKey) {
+          invalidatePrintfulShippingEstimate("Shipping destination changed. Estimate shipping again.");
+        }
+      }
+    });
+
+    panel.addEventListener("input", (event) => {
+      const shippingField = event.target.closest("[data-printful-shipping-field]");
+
+      if (shippingField && printfulMerchState.shippingRates.length) {
+        const form = shippingField.closest("#printful-draft-order-form");
+        const recipient = form ? printfulShippingRecipientFromForm(form) : null;
+
+        if (printfulShippingRecipientKey(recipient) !== printfulMerchState.shippingEstimateKey) {
+          invalidatePrintfulShippingEstimate("Shipping destination changed. Estimate shipping again.");
+        }
       }
     });
 

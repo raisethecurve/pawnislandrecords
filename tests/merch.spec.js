@@ -347,6 +347,22 @@ test.describe("merch discovery", () => {
     await expect(page.locator("[data-printful-mode='catalog']")).toHaveCount(0);
   });
 
+  test("shows active filters and resets them from the merch toolbar", async ({ page }) => {
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    await page.locator("#printful-project-filters [data-printful-filter='project'][data-printful-filter-value='resunant']").click();
+
+    await expect(page.locator("#printful-results-summary")).toContainText("Order-ready goods: 2 of 5 products shown");
+    await expect(page.locator("#printful-active-filters")).toContainText("Artist: Resunant");
+    await expect(page.locator("[data-printful-product-card]")).toHaveCount(2);
+
+    await page.locator("#printful-active-filters [data-printful-clear-filters]").click();
+
+    await expect(page.locator("#printful-results-summary")).toContainText("Order-ready goods: 5 of 5 products shown");
+    await expect(page.locator("#printful-active-filters")).toBeHidden();
+    await expect(page.locator("[data-printful-product-card]")).toHaveCount(5);
+  });
+
   test("keeps featured rack as a shorter alternate view", async ({ page }) => {
     await page.goto(withStandalone("merch.html?view=featured"), { waitUntil: "domcontentloaded" });
 
@@ -432,6 +448,29 @@ test.describe("merch discovery", () => {
     await expect(page.locator(".merch-cart__items")).toContainText("Quiet Filter");
   });
 
+  test("skips the option picker on one-option product detail pages", async ({ page }) => {
+    await page.goto(withStandalone("merch.html?product=tee-5"), { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator(".merch-product-detail")).toContainText("Only option");
+    await expect(page.locator(".merch-product-detail .printful-size-picker")).toHaveCount(0);
+
+    await page.locator(".merch-product-detail [data-printful-add-form]").evaluate((form) => form.requestSubmit());
+    await expect(page.locator("#printful-cart-count")).toHaveText("1");
+    await expect(page.locator(".merch-cart__items")).toContainText("Quiet Filter");
+  });
+
+  test("surfaces a copyable order snapshot in the request cart", async ({ page }) => {
+    await addCuratedProductToCart(page);
+
+    await expect(page.locator(".merch-cart__snapshot")).toContainText("Order Snapshot");
+    await page.locator(".merch-cart__snapshot summary").click();
+    await expect(page.locator("[data-printful-cart-summary-text]")).toContainText("Borrowed Brightness Crest Tee");
+    await expect(page.locator("[data-printful-cart-summary-text]")).toContainText("Subtotal: $28.00");
+
+    await page.locator("[data-printful-copy-cart]").click();
+    await expect(page.locator("#printful-copy-status")).toContainText(/order snapshot/i);
+  });
+
   test("shows a missing-options state without adding to the cart", async ({ page }) => {
     page.merchApiScenario = {
       detailVariantsByProduct: {
@@ -456,6 +495,24 @@ test.describe("merch discovery", () => {
     const eventNames = await page.evaluate(() => window.__merchEvents.map((event) => event.name));
     expect(eventNames).toContain("checkout_error");
     expect(page.merchApiRequests.shipping).toHaveLength(0);
+    expect(page.merchApiRequests.draftOrders).toHaveLength(0);
+  });
+
+  test("invalidates shipping estimates when the destination changes", async ({ page }) => {
+    await addCuratedProductToCart(page);
+    await fillCheckoutForm(page);
+
+    await page.locator("[data-printful-estimate-shipping]").click();
+    await expect(page.locator("#printful-shipping-select")).toBeVisible();
+
+    await page.locator("#printful-draft-order-form [name='zip']").fill("90210");
+
+    await expect(page.locator("#printful-cart-status")).toContainText("Shipping destination changed. Estimate shipping again.");
+    await expect(page.locator("#printful-shipping-select")).toHaveCount(0);
+
+    await page.locator("#printful-draft-order-form").evaluate((form) => form.requestSubmit());
+
+    await expect(page.locator("#printful-cart-status")).toContainText("Estimate shipping before requesting an invoice.");
     expect(page.merchApiRequests.draftOrders).toHaveLength(0);
   });
 
