@@ -379,6 +379,32 @@ test.describe("merch discovery", () => {
     await expect(page.locator("[data-printful-product-card]")).toHaveCount(5);
   });
 
+  test("keeps categories, formats, artists, and drops in a cascading structure", async ({ page }) => {
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    const taxonomyMap = page.locator("#printful-taxonomy-map");
+    const apparelCard = taxonomyMap.locator("[data-printful-filter='category'][data-printful-filter-value='apparel']");
+
+    await expect(taxonomyMap).toContainText("Apparel");
+    await expect(apparelCard).toContainText("T-Shirts");
+
+    await apparelCard.click();
+    await expect(page.locator("#printful-results-summary")).toContainText("Order-ready goods: 4 of 5 products shown");
+    await expect(page.locator("#printful-active-filters")).toContainText("Category: Apparel");
+    await expect(page.locator("#printful-product-family-filters")).toContainText("T-Shirts");
+    await expect(page.locator("[data-printful-product-card]")).toHaveCount(4);
+
+    await page.locator("#printful-product-family-filters [data-printful-filter='family'][data-printful-filter-value='t-shirts']").click();
+    await expect(page.locator("#printful-active-filters")).toContainText("Format: T-Shirts");
+    await expect(page.locator("[data-printful-product-card]")).toHaveCount(4);
+
+    await page.locator("#printful-product-category-filters [data-printful-filter='category'][data-printful-filter-value='t-shirts']").click();
+    await expect(page.locator("#printful-results-summary")).toContainText("Order-ready goods: 1 of 5 products shown");
+    await expect(page.locator("#printful-active-filters")).toContainText("Category: T-Shirts");
+    await expect(page.locator("#printful-active-filters")).not.toContainText("Format:");
+    await expect(page.locator("[data-printful-product-card]")).toHaveCount(1);
+  });
+
   test("keeps featured rack as a shorter alternate view", async ({ page }) => {
     await page.goto(withStandalone("merch.html?view=featured"), { waitUntil: "domcontentloaded" });
 

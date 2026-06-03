@@ -40,7 +40,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="label-site.css" />
-    <link rel="stylesheet" href="merch-store.css?v=merch-card-polish-20260603" />
+    <link rel="stylesheet" href="merch-store.css?v=merch-taxonomy-polish-20260603" />
     <link rel="stylesheet" href="site-audio.css" />
   </head>
   <body data-page="merch">
@@ -98,6 +98,7 @@
             </div>
 
             <div class="merch-category-rail" id="printful-category-filters" role="group" aria-label="Store view"></div>
+            <div class="merch-taxonomy-map" id="printful-taxonomy-map" role="group" aria-label="Merch category structure"></div>
 
             <div class="merch-toolbar" role="group" aria-label="Merch filters">
               <label class="merch-search">
@@ -108,6 +109,10 @@
                 <div>
                   <p class="merch-filter-label">Category</p>
                   <div class="merch-filter-group" role="group" aria-label="Filter by product type" id="printful-product-category-filters"></div>
+                </div>
+                <div>
+                  <p class="merch-filter-label">Format</p>
+                  <div class="merch-filter-group" role="group" aria-label="Filter by merch format" id="printful-product-family-filters"></div>
                 </div>
                 <div>
                   <p class="merch-filter-label">Artist</p>
@@ -153,7 +158,7 @@
     <script src="site-ui.js"></script>
     <script>
       (() => {
-        const version = new URLSearchParams(window.location.search).get("qa") || "merch-card-polish-20260603";
+        const version = new URLSearchParams(window.location.search).get("qa") || "merch-taxonomy-polish-20260603";
         document.write(`<script src="label-site.js?v=${encodeURIComponent(version)}"><\/script>`);
       })();
     </script>

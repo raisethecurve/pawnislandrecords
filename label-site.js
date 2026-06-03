@@ -3336,6 +3336,7 @@
     filters: {
       query: "",
       category: "all",
+      family: "all",
       project: "all",
       album: "all",
       sort: "featured"
@@ -5658,10 +5659,11 @@
 
     const field = {
       category: "category",
+      family: "productFamily",
       project: "project",
       album: "album"
     }[kind];
-    const key = `${kind}Key`;
+    const key = kind === "family" ? "productFamilyKey" : `${kind}Key`;
     const product = activePrintfulProducts().find((item) => item.merch && item.merch[key] === value);
 
     return text(product && product.merch && product.merch[field], printfulFilterFallbackLabel(value));
@@ -5683,6 +5685,7 @@
     return Boolean(
       filters.query ||
         filters.category !== "all" ||
+        filters.family !== "all" ||
         filters.project !== "all" ||
         filters.album !== "all" ||
         filters.sort !== "featured"
@@ -5705,6 +5708,7 @@
   function resetPrintfulFilters() {
     printfulMerchState.filters.query = "";
     printfulMerchState.filters.category = "all";
+    printfulMerchState.filters.family = "all";
     printfulMerchState.filters.project = "all";
     printfulMerchState.filters.album = "all";
     printfulMerchState.filters.sort = "featured";
@@ -5737,6 +5741,10 @@
 
     if (filters.category !== "all") {
       chips.push(`Category: ${printfulFilterLabel("category", filters.category)}`);
+    }
+
+    if (filters.family !== "all") {
+      chips.push(`Format: ${printfulFilterLabel("family", filters.family)}`);
     }
 
     if (filters.project !== "all") {
@@ -5796,6 +5804,118 @@
     `;
   }
 
+  function merchCountLabel(count, singular, plural) {
+    return `${count} ${count === 1 ? singular : plural}`;
+  }
+
+  function printfulCategoryDescription(category) {
+    return (
+      {
+        apparel: "Artist tees grouped by release world.",
+        "desk-gear": "Work-surface pieces built around label artwork.",
+        bags: "Carry goods for records, books, and daily errands.",
+        "wall-art": "Flat visual pieces for walls and rooms.",
+        drinkware: "Daily-use goods built around release marks.",
+        headwear: "Caps and soft goods for the top shelf."
+      }[category.key] || `${category.label} grouped by format, artist, and drop.`
+    );
+  }
+
+  function printfulTaxonomySummary(products) {
+    const categories = new Map();
+
+    products.forEach((product, index) => {
+      const meta = product.merch || {};
+      const key = text(meta.categoryKey, "uncategorized");
+
+      if (!categories.has(key)) {
+        categories.set(key, {
+          key,
+          label: text(meta.category, printfulFilterFallbackLabel(key)),
+          count: 0,
+          firstSort: Number.POSITIVE_INFINITY,
+          families: new Map(),
+          projects: new Set(),
+          albums: new Set()
+        });
+      }
+
+      const category = categories.get(key);
+      const sortValue = Number.isFinite(Number(product.merchIndex)) ? Number(product.merchIndex) : index;
+      const familyKey = text(meta.productFamilyKey, "");
+      const familyLabel = text(meta.productFamily, printfulFilterFallbackLabel(familyKey));
+
+      category.count += 1;
+      category.firstSort = Math.min(category.firstSort, sortValue);
+
+      if (familyKey) {
+        if (!category.families.has(familyKey)) {
+          category.families.set(familyKey, { key: familyKey, label: familyLabel, count: 0 });
+        }
+
+        category.families.get(familyKey).count += 1;
+      }
+
+      if (meta.projectKey) {
+        category.projects.add(meta.projectKey);
+      }
+
+      if (meta.albumKey) {
+        category.albums.add(meta.albumKey);
+      }
+    });
+
+    return [...categories.values()].sort((a, b) => a.firstSort - b.firstSort || a.label.localeCompare(b.label));
+  }
+
+  function printfulTaxonomyCardMarkup(category) {
+    const active = printfulMerchState.filters.category === category.key;
+    const families = [...category.families.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+    const familyChips = families.slice(0, 3).map((family) => `<span>${escapeHtml(family.label)} <strong>${escapeHtml(String(family.count))}</strong></span>`);
+    const extraFamilies = families.length > 3 ? families.length - 3 : 0;
+    const stats = [
+      merchCountLabel(category.count, "item", "items"),
+      merchCountLabel(category.projects.size, "artist", "artists"),
+      merchCountLabel(category.albums.size, "drop", "drops")
+    ];
+
+    if (extraFamilies) {
+      familyChips.push(`<span>+${escapeHtml(String(extraFamilies))} more</span>`);
+    }
+
+    return `
+      <button class="merch-taxonomy-card ${active ? "is-active" : ""}" type="button" data-printful-filter="category" data-printful-filter-value="${escapeHtml(category.key)}" aria-pressed="${active ? "true" : "false"}">
+        <span class="merch-taxonomy-card__eyebrow">Category</span>
+        <span class="merch-taxonomy-card__title">
+          <span>${escapeHtml(category.label)}</span>
+          <strong>${escapeHtml(String(category.count))}</strong>
+        </span>
+        <span class="merch-taxonomy-card__copy">${escapeHtml(printfulCategoryDescription(category))}</span>
+        <span class="merch-taxonomy-card__families">${familyChips.join("")}</span>
+        <span class="merch-taxonomy-card__stats">${stats.map(escapeHtml).join(" / ")}</span>
+      </button>
+    `;
+  }
+
+  function renderPrintfulTaxonomyMap() {
+    const node = document.getElementById("printful-taxonomy-map");
+
+    if (!node) {
+      return;
+    }
+
+    const categories = printfulTaxonomySummary(activePrintfulProducts());
+
+    if (!categories.length) {
+      node.hidden = true;
+      node.innerHTML = "";
+      return;
+    }
+
+    node.hidden = false;
+    node.innerHTML = categories.map(printfulTaxonomyCardMarkup).join("");
+  }
+
   function printfulMatchesFilters(product) {
     const meta = product.merch || parsePrintfulProductName(product.name, product);
     const filters = printfulMerchState.filters;
@@ -5803,6 +5923,7 @@
 
     return (
       (filters.category === "all" || meta.categoryKey === filters.category) &&
+      (filters.family === "all" || meta.productFamilyKey === filters.family) &&
       (filters.project === "all" || meta.projectKey === filters.project) &&
       (filters.album === "all" || meta.albumKey === filters.album) &&
       (!query || meta.searchText.includes(query))
@@ -5837,13 +5958,17 @@
   function renderPrintfulFilterControls() {
     const categoryNode = document.getElementById("printful-category-filters");
     const productCategoryNode = document.getElementById("printful-product-category-filters");
+    const productFamilyNode = document.getElementById("printful-product-family-filters");
     const projectNode = document.getElementById("printful-project-filters");
     const albumNode = document.getElementById("printful-album-filters");
     const activeProducts = activePrintfulProducts();
     const categoryScoped = activeProducts.filter((product) => {
       return printfulMerchState.filters.category === "all" || product.merch.categoryKey === printfulMerchState.filters.category;
     });
-    const projectScoped = categoryScoped.filter((product) => {
+    const familyScoped = categoryScoped.filter((product) => {
+      return printfulMerchState.filters.family === "all" || product.merch.productFamilyKey === printfulMerchState.filters.family;
+    });
+    const projectScoped = familyScoped.filter((product) => {
       return printfulMerchState.filters.project === "all" || product.merch.projectKey === printfulMerchState.filters.project;
     });
 
@@ -5873,15 +5998,23 @@
     if (productCategoryNode) {
       const categories = countBy(activeProducts, (product) => product.merch.categoryKey, (product) => product.merch.category);
       productCategoryNode.innerHTML = [
-        merchFilterButtonMarkup("category", "all", "All Product Types", activeProducts.length),
+        merchFilterButtonMarkup("category", "all", "All Categories", activeProducts.length),
         ...categories.map((category) => merchFilterButtonMarkup("category", category.key, category.label, category.count))
       ].join("");
     }
 
+    if (productFamilyNode) {
+      const families = countBy(categoryScoped, (product) => product.merch.productFamilyKey, (product) => product.merch.productFamily);
+      productFamilyNode.innerHTML = [
+        merchFilterButtonMarkup("family", "all", isPrintfulCatalogMode() ? "All Formats" : "All Formats", categoryScoped.length),
+        ...families.map((family) => merchFilterButtonMarkup("family", family.key, family.label, family.count))
+      ].join("");
+    }
+
     if (projectNode) {
-      const projects = countBy(categoryScoped, (product) => product.merch.projectKey, (product) => product.merch.project);
+      const projects = countBy(familyScoped, (product) => product.merch.projectKey, (product) => product.merch.project);
       projectNode.innerHTML = [
-        merchFilterButtonMarkup("project", "all", isPrintfulCatalogMode() ? "All Families" : "All Projects", categoryScoped.length),
+        merchFilterButtonMarkup("project", "all", isPrintfulCatalogMode() ? "All Families" : "All Artists", familyScoped.length),
         ...projects.map((project) => merchFilterButtonMarkup("project", project.key, project.label, project.count))
       ].join("");
     }
@@ -5893,6 +6026,8 @@
         ...albums.map((album) => merchFilterButtonMarkup("album", album.key, album.label, album.count))
       ].join("");
     }
+
+    renderPrintfulTaxonomyMap();
   }
 
   function renderPrintfulStats(products) {
@@ -6272,6 +6407,7 @@
 
     if (nextMode !== printfulMerchState.mode) {
       printfulMerchState.filters.category = "all";
+      printfulMerchState.filters.family = "all";
       printfulMerchState.filters.project = "all";
       printfulMerchState.filters.album = "all";
       printfulMerchState.selectedProductId = "";
@@ -6449,6 +6585,12 @@
           }
 
           if (kind === "category") {
+            printfulMerchState.filters.family = "all";
+            printfulMerchState.filters.project = "all";
+            printfulMerchState.filters.album = "all";
+          }
+
+          if (kind === "family") {
             printfulMerchState.filters.project = "all";
             printfulMerchState.filters.album = "all";
           }
