@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Printful Mockup Test | Pawn Island Records</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #101211;
+        --panel: #181c1a;
+        --panel-2: #202522;
+        --line: #3d4641;
+        --text: #f5f0e7;
+        --muted: #b7beb7;
+        --accent: #e2bf74;
+        --accent-2: #8ac7b3;
+        --danger: #ff8d8d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.5;
+      }
+
+      main {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+
+      header {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        line-height: 1.1;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 4rem);
+      }
+
+      h2 {
+        font-size: 1rem;
+        text-transform: uppercase;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      a {
+        color: var(--accent-2);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+        gap: 16px;
+        align-items: start;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 16px;
+      }
+
+      .panel + .panel {
+        margin-top: 16px;
+      }
+
+      .stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      label {
+        display: grid;
+        gap: 5px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #0c0f0d;
+        color: var(--text);
+        font: inherit;
+        padding: 10px;
+      }
+
+      textarea {
+        min-height: 132px;
+        resize: vertical;
+        font-family: Consolas, "Courier New", monospace;
+      }
+
+      .check {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        color: var(--text);
+        text-transform: none;
+      }
+
+      .check input {
+        width: auto;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      button {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--panel-2);
+        color: var(--text);
+        cursor: pointer;
+        font: inherit;
+        font-weight: 700;
+        padding: 10px 12px;
+      }
+
+      button.primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #17130a;
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.6;
+      }
+
+      .status {
+        min-height: 44px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #0c0f0d;
+        padding: 10px;
+      }
+
+      .status strong {
+        color: var(--accent);
+      }
+
+      .status.error strong {
+        color: var(--danger);
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+
+      .mockup-card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #0c0f0d;
+      }
+
+      .mockup-card img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+        background: #f4f1ea;
+      }
+
+      .mockup-card div {
+        display: grid;
+        gap: 4px;
+        padding: 10px;
+        font-size: 0.86rem;
+      }
+
+      pre {
+        max-height: 520px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #080a09;
+        color: #dfe8dc;
+        padding: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .note {
+        border-left: 3px solid var(--accent);
+        padding-left: 10px;
+      }
+
+      @media (max-width: 860px) {
+        .layout,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p>Internal Cloudflare test page</p>
+        <h1>Printful Mockup Generator Test</h1>
+        <p>
+          Create one Ghost front mockup or one front/back mockup, poll the async task, then store returned images in R2 when a bucket binding is available.
+        </p>
+      </header>
+
+      <div class="layout">
+        <section class="stack" aria-label="Mockup test controls">
+          <div class="panel stack">
+            <h2>Auth</h2>
+            <label>
+              Test key
+              <input id="test-key" type="password" autocomplete="off" placeholder="MERCH_MOCKUP_TEST_KEY" />
+            </label>
+            <p class="note">The key is sent as <code>X-Merch-Test-Key</code>. The Printful token stays in Cloudflare env secrets.</p>
+          </div>
+
+          <div class="panel stack">
+            <h2>Ghost Defaults</h2>
+            <div class="grid">
+              <label>
+                Product ID
+                <input id="product-id" type="number" min="1" value="438" />
+              </label>
+              <label>
+                Variant IDs
+                <input id="variant-ids" value="11546" />
+              </label>
+              <label>
+                Format
+                <select id="format">
+                  <option value="jpg">jpg</option>
+                  <option value="png">png</option>
+                </select>
+              </label>
+              <label>
+                Result width
+                <input id="result-width" type="number" min="50" max="2000" value="1200" />
+              </label>
+            </div>
+            <label>
+              Front design URL
+              <input id="front-url" value="https://files.cdn.printful.com/files/196/196b0b0ee595c3f631e8f7a90a5442e0_preview.png" />
+            </label>
+            <label>
+              Back design URL
+              <input id="back-url" value="https://files.cdn.printful.com/files/196/196b0b0ee595c3f631e8f7a90a5442e0_preview.png" />
+            </label>
+          </div>
+
+          <div class="panel stack">
+            <h2>Position</h2>
+            <div class="grid">
+              <label>
+                Area width
+                <input id="area-width" type="number" min="1" value="1800" />
+              </label>
+              <label>
+                Area height
+                <input id="area-height" type="number" min="1" value="2400" />
+              </label>
+              <label>
+                Image width
+                <input id="image-width" type="number" min="1" value="1800" />
+              </label>
+              <label>
+                Image height
+                <input id="image-height" type="number" min="1" value="1800" />
+              </label>
+              <label>
+                Top
+                <input id="top" type="number" min="0" value="300" />
+              </label>
+              <label>
+                Left
+                <input id="left" type="number" min="0" value="0" />
+              </label>
+            </div>
+          </div>
+
+          <div class="panel stack">
+            <h2>Run</h2>
+            <label>
+              Task key
+              <input id="task-key" placeholder="Filled after create" />
+            </label>
+            <label class="check">
+              <input id="auto-poll" type="checkbox" checked />
+              Auto-poll after create
+            </label>
+            <label class="check">
+              <input id="store-completed" type="checkbox" checked />
+              Store completed mockups in R2
+            </label>
+            <div class="actions">
+              <button class="primary" data-action="ghost-front">Create Ghost Front</button>
+              <button class="primary" data-action="ghost-front-back">Create Front/Back</button>
+              <button data-action="poll">Poll Task</button>
+              <button data-action="store">Store Completed Task</button>
+              <button data-action="printfiles">Printfiles</button>
+              <button data-action="templates">Templates</button>
+              <button data-action="stop">Stop Polling</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="stack" aria-label="Mockup test results">
+          <div class="panel stack">
+            <h2>Status</h2>
+            <div id="status" class="status" aria-live="polite">Idle.</div>
+          </div>
+
+          <div class="panel stack">
+            <h2>Mockups</h2>
+            <div id="gallery" class="gallery"></div>
+          </div>
+
+          <div class="panel stack">
+            <h2>Response</h2>
+            <pre id="response">{}</pre>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      (() => {
+        const endpoint = "/api/merch/mockups/test";
+        const fields = {
+          testKey: document.getElementById("test-key"),
+          productId: document.getElementById("product-id"),
+          variantIds: document.getElementById("variant-ids"),
+          format: document.getElementById("format"),
+          resultWidth: document.getElementById("result-width"),
+          frontUrl: document.getElementById("front-url"),
+          backUrl: document.getElementById("back-url"),
+          areaWidth: document.getElementById("area-width"),
+          areaHeight: document.getElementById("area-height"),
+          imageWidth: document.getElementById("image-width"),
+          imageHeight: document.getElementById("image-height"),
+          top: document.getElementById("top"),
+          left: document.getElementById("left"),
+          taskKey: document.getElementById("task-key"),
+          autoPoll: document.getElementById("auto-poll"),
+          storeCompleted: document.getElementById("store-completed")
+        };
+        const status = document.getElementById("status");
+        const responseNode = document.getElementById("response");
+        const gallery = document.getElementById("gallery");
+        let pollTimer = 0;
+        let activeScenario = "ghost-front";
+        let storedTaskKey = "";
+
+        fields.testKey.value = sessionStorage.getItem("mockupTestKey") || "";
+        fields.taskKey.value = sessionStorage.getItem("mockupTaskKey") || "";
+
+        document.addEventListener("click", (event) => {
+          const button = event.target.closest("button[data-action]");
+
+          if (!button) {
+            return;
+          }
+
+          const action = button.dataset.action;
+
+          if (action === "ghost-front" || action === "ghost-front-back") {
+            runCreate(action);
+          } else if (action === "poll") {
+            runPoll(false);
+          } else if (action === "store") {
+            runPoll(true);
+          } else if (action === "printfiles" || action === "templates") {
+            runInfo(action);
+          } else if (action === "stop") {
+            stopPolling();
+            setStatus("Polling stopped.");
+          }
+        });
+
+        fields.testKey.addEventListener("input", () => {
+          sessionStorage.setItem("mockupTestKey", fields.testKey.value);
+        });
+
+        fields.taskKey.addEventListener("input", () => {
+          sessionStorage.setItem("mockupTaskKey", fields.taskKey.value);
+        });
+
+        async function runCreate(scenario) {
+          activeScenario = scenario;
+          storedTaskKey = "";
+          stopPolling();
+          setBusy(true);
+          setStatus(`Creating ${scenario} task.`);
+
+          try {
+            const data = await apiPost({
+              ...readForm(),
+              action: "create",
+              scenario
+            });
+            render(data);
+            const taskKey = data && data.task && data.task.task_key;
+
+            if (taskKey) {
+              fields.taskKey.value = taskKey;
+              sessionStorage.setItem("mockupTaskKey", taskKey);
+            }
+
+            if (fields.autoPoll.checked && taskKey) {
+              schedulePoll();
+            }
+          } catch (error) {
+            renderError(error);
+          } finally {
+            setBusy(false);
+          }
+        }
+
+        async function runPoll(storeImages) {
+          const taskKey = fields.taskKey.value.trim();
+
+          if (!taskKey) {
+            setStatus("Enter or create a task key first.", true);
+            return;
+          }
+
+          setBusy(true);
+          setStatus(storeImages ? "Polling and storing completed task." : "Polling task.");
+
+          try {
+            const data = await apiPost({
+              action: storeImages ? "store" : "poll",
+              scenario: activeScenario,
+              taskKey,
+              storeImages
+            });
+            render(data);
+            maybeContinuePolling(data);
+          } catch (error) {
+            renderError(error);
+          } finally {
+            setBusy(false);
+          }
+        }
+
+        async function runInfo(action) {
+          setBusy(true);
+          setStatus(`Fetching ${action}.`);
+
+          try {
+            const data = await apiPost({
+              action,
+              productId: numberValue(fields.productId)
+            });
+            render(data);
+          } catch (error) {
+            renderError(error);
+          } finally {
+            setBusy(false);
+          }
+        }
+
+        function schedulePoll() {
+          stopPolling();
+          pollTimer = window.setInterval(() => runPoll(false), 4000);
+          window.setTimeout(() => runPoll(false), 900);
+        }
+
+        function maybeContinuePolling(data) {
+          const task = data && data.task;
+          const taskKey = task && task.task_key || fields.taskKey.value.trim();
+
+          if (!task) {
+            return;
+          }
+
+          if (task.status === "completed") {
+            stopPolling();
+
+            if (fields.storeCompleted.checked && taskKey && storedTaskKey !== taskKey) {
+              storedTaskKey = taskKey;
+              runPoll(true);
+            }
+          }
+
+          if (task.status === "failed") {
+            stopPolling();
+          }
+        }
+
+        async function apiPost(body) {
+          const key = fields.testKey.value.trim();
+
+          if (!key) {
+            throw new Error("Enter MERCH_MOCKUP_TEST_KEY first.");
+          }
+
+          sessionStorage.setItem("mockupTestKey", key);
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Merch-Test-Key": key
+            },
+            body: JSON.stringify(body)
+          });
+          const text = await response.text();
+          let data = {};
+
+          try {
+            data = text ? JSON.parse(text) : {};
+          } catch (error) {
+            data = { raw: text };
+          }
+
+          if (!response.ok) {
+            const message = data.message || data.error || `Request failed with ${response.status}`;
+            throw Object.assign(new Error(message), { data });
+          }
+
+          return data;
+        }
+
+        function readForm() {
+          return {
+            productId: numberValue(fields.productId),
+            variantIds: fields.variantIds.value.split(",").map((value) => value.trim()).filter(Boolean),
+            format: fields.format.value,
+            width: numberValue(fields.resultWidth),
+            frontImageUrl: fields.frontUrl.value.trim(),
+            backImageUrl: fields.backUrl.value.trim(),
+            position: {
+              area_width: numberValue(fields.areaWidth),
+              area_height: numberValue(fields.areaHeight),
+              width: numberValue(fields.imageWidth),
+              height: numberValue(fields.imageHeight),
+              top: numberValue(fields.top, true),
+              left: numberValue(fields.left, true)
+            }
+          };
+        }
+
+        function render(data) {
+          const task = data && data.task;
+          const storage = data && data.storage;
+          const stored = storage && Array.isArray(storage.stored) ? storage.stored : [];
+          const failed = storage && Array.isArray(storage.failed) ? storage.failed : [];
+
+          responseNode.textContent = JSON.stringify(data, null, 2);
+          renderGallery(data);
+
+          if (task && task.status) {
+            setStatus(
+              `Task ${task.task_key || fields.taskKey.value}: ${task.status}. ${stored.length} stored, ${failed.length} storage failures.`
+            );
+          } else if (data && data.action) {
+            setStatus(`${data.action} complete.`);
+          } else {
+            setStatus("Request complete.");
+          }
+        }
+
+        function renderGallery(data) {
+          const images = Array.isArray(data && data.images) ? data.images : [];
+          const stored = data && data.storage && Array.isArray(data.storage.stored) ? data.storage.stored : [];
+          const cards = images.map((image) => mockupCard(image.url, image.label || image.type || "Generated mockup", image.url));
+          const storedCards = stored.map((item) => mockupCard(item.publicUrl || item.sourceUrl, item.key, item.publicUrl || item.sourceUrl));
+
+          gallery.innerHTML = [...cards, ...storedCards].join("") || "<p>No mockup images returned yet.</p>";
+        }
+
+        function mockupCard(imageUrl, label, link) {
+          const safeUrl = escapeHtml(imageUrl || "");
+          const safeLabel = escapeHtml(label || "Mockup");
+          const safeLink = escapeHtml(link || imageUrl || "");
+
+          if (!safeUrl) {
+            return "";
+          }
+
+          return `
+            <article class="mockup-card">
+              <a href="${safeLink}" target="_blank" rel="noreferrer">
+                <img src="${safeUrl}" alt="${safeLabel}" loading="lazy" />
+              </a>
+              <div>
+                <strong>${safeLabel}</strong>
+                <a href="${safeLink}" target="_blank" rel="noreferrer">Open image</a>
+              </div>
+            </article>
+          `;
+        }
+
+        function renderError(error) {
+          responseNode.textContent = JSON.stringify(error.data || { error: error.message }, null, 2);
+          setStatus(error.message, true);
+          stopPolling();
+        }
+
+        function setStatus(message, isError = false) {
+          status.classList.toggle("error", Boolean(isError));
+          status.innerHTML = `<strong>${isError ? "Error" : "Status"}</strong><br />${escapeHtml(message)}`;
+        }
+
+        function setBusy(isBusy) {
+          document.querySelectorAll("button").forEach((button) => {
+            button.disabled = isBusy;
+          });
+        }
+
+        function stopPolling() {
+          if (pollTimer) {
+            window.clearInterval(pollTimer);
+            pollTimer = 0;
+          }
+        }
+
+        function numberValue(input, allowZero = false) {
+          const value = Number.parseInt(input.value, 10);
+          return Number.isFinite(value) && (allowZero ? value >= 0 : value > 0) ? value : "";
+        }
+
+        function escapeHtml(value) {
+          return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+      })();
+    </script>
+  </body>
+</html>
