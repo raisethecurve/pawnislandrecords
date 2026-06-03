@@ -1125,11 +1125,7 @@
 }
 
 .merch-honey-field {
-  position: absolute;
-  left: -100vw;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
+  display: none !important;
 }
 
 @media (max-width: 1120px) {
