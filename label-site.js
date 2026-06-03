@@ -3583,8 +3583,7 @@
       sortPriority,
       featuredPriority,
       publicStatus,
-      thumbnailStrategy: text(entry.thumbnailStrategy, "artwork"),
-      artworkKey: merchMetadataNameKey(entry.artworkKey),
+      thumbnailStrategy: text(entry.thumbnailStrategy, "product"),
       heroEligible: entry.heroEligible === true,
       imageAlt: text(entry.imageAlt, `${productTitle} product image`),
       productCopy: text(entry.productCopy, ""),
@@ -3832,59 +3831,6 @@
     };
   }
 
-  const MERCH_ARTWORK_ASSETS = {
-    "velvet orchard - borrowed brightness 2 tee": {
-      src: "media/public/merch/velvet-brightness.webp",
-      ground: "light",
-      label: "Borrowed Brightness crest"
-    },
-    "velvet orchard - borrowed brightness tee": {
-      src: "media/public/merch/velvet-borrowed.webp",
-      ground: "light",
-      label: "Borrowed Brightness dusk"
-    },
-    "velvet orchard - borrowed brightness - ghost tee": {
-      src: "media/public/merch/velvet-ghost.webp",
-      ground: "dark",
-      label: "Ghost"
-    },
-    "velvet orchard - borrowed brightness - lamplight tee": {
-      src: "media/public/merch/velvet-lamp.webp",
-      ground: "dark",
-      label: "Lamplight"
-    },
-    "velvet orchard - borrowed brightness - reaching out tee": {
-      src: "media/public/merch/velvet-hands.webp",
-      ground: "dark",
-      label: "Reaching Out"
-    },
-    "resunant - midnight revival 2 tee": {
-      src: "media/public/merch/resunant-revival-03.webp",
-      ground: "dark",
-      label: "Midnight Revival sigil"
-    },
-    "resunant - midnight revival tee": {
-      src: "media/public/merch/resunant-revival-05.webp",
-      ground: "dark",
-      label: "Midnight Revival crest"
-    },
-    "resunant - midnight revival - summoning tee": {
-      src: "media/public/merch/resunant-confessional.webp",
-      ground: "dark",
-      label: "Summoning"
-    },
-    "resunant - midnight revival - cheap gospel honey tee": {
-      src: "media/public/merch/resunant-honey.webp",
-      ground: "light",
-      label: "Cheap Gospel Honey"
-    },
-    "resunant - midnight revival - neon communion tee": {
-      src: "media/public/merch/resunant-neon-communion.webp",
-      ground: "light",
-      label: "Neon Communion"
-    }
-  };
-
   function printfulProductById(productId) {
     return printfulMerchState.products.find((product) => String(product.id) === String(productId));
   }
@@ -4025,39 +3971,8 @@
     });
   }
 
-  function printfulArtworkAsset(product) {
-    const key = text(product && product.merch && product.merch.artworkKey, "");
-    const title = merchMetadataNameKey(product && product.name);
-    return (key && MERCH_ARTWORK_ASSETS[key]) || MERCH_ARTWORK_ASSETS[title] || null;
-  }
-
-  function printfulArtworkGround(product) {
-    const asset = printfulArtworkAsset(product);
-    if (!asset) {
-      return "image";
-    }
-
-    return asset.ground === "dark" ? "dark" : "light";
-  }
-
-  function printfulArtworkMarkup(product, size) {
-    const asset = printfulArtworkAsset(product);
-    const meta = (product && product.merch) || parsePrintfulProductName(product && product.name, product);
-
-    if (!asset) {
-      return "";
-    }
-
-    return `
-      <div class="merch-design-plate merch-design-plate--${escapeHtml(asset.ground === "dark" ? "dark" : "light")} merch-design-plate--${escapeHtml(size || "card")}">
-        <img src="${escapeHtml(asset.src)}" alt="${escapeHtml(`${asset.label || meta.design} artwork`)}" loading="${size === "hero" ? "eager" : "lazy"}" decoding="async" />
-      </div>
-    `;
-  }
-
-  function printfulArtworkImageUrl(product) {
-    const asset = printfulArtworkAsset(product);
-    return text(asset && asset.src, "");
+  function printfulVisualGround(product) {
+    return printfulProductImageUrl(product) ? "image" : "unavailable";
   }
 
   function printfulProductImageUrl(product) {
@@ -4072,7 +3987,7 @@
   function printfulImageUnavailableMarkup(size) {
     return `
       <span class="merch-image-unavailable merch-image-unavailable--${escapeHtml(size || "card")}">
-        Image unavailable
+        No product image yet
       </span>
     `;
   }
@@ -4097,13 +4012,11 @@
   }
 
   function printfulPrimaryVisualMarkup(product, size, loading) {
-    const strategy = text(product && product.merch && product.merch.thumbnailStrategy, "artwork");
-
-    if (strategy === "product" && printfulProductImageUrl(product)) {
+    if (printfulProductImageUrl(product)) {
       return printfulProductImageMarkup(product, size, loading);
     }
 
-    return printfulArtworkMarkup(product, size) || printfulProductImageMarkup(product, size, loading);
+    return printfulImageUnavailableMarkup(size);
   }
 
   function addPrintfulGalleryImage(images, candidate) {
@@ -4133,19 +4046,6 @@
     const images = [];
     const detailProduct = detail && detail.product ? detail.product : null;
     const productImage = printfulProductImageUrl(detailProduct) || printfulProductImageUrl(product);
-    const artwork = printfulArtworkAsset(product);
-    const productFirst = text(product && product.merch && product.merch.thumbnailStrategy, "artwork") === "product";
-
-    const artworkCandidate = artwork
-      ? {
-          id: "artwork",
-          url: artwork.src,
-          thumbnailUrl: artwork.src,
-          label: `${artwork.label || ((product && product.merch && product.merch.design) || "Design")} artwork`,
-          type: "artwork",
-          ground: artwork.ground
-        }
-      : null;
     const productCandidate = {
       id: "product-thumbnail",
       url: productImage,
@@ -4155,9 +4055,7 @@
       ground: "image"
     };
 
-    [productFirst ? productCandidate : artworkCandidate, productFirst ? artworkCandidate : productCandidate]
-      .filter(Boolean)
-      .forEach((candidate) => addPrintfulGalleryImage(images, candidate));
+    addPrintfulGalleryImage(images, productCandidate);
 
     [detail && detail.images, detail && detail.product && detail.product.images]
       .filter(Array.isArray)
@@ -4264,10 +4162,6 @@
       return printfulImageUnavailableMarkup("gallery");
     }
 
-    if (image.type === "artwork") {
-      return printfulArtworkMarkup(product, "gallery") || printfulImageUnavailableMarkup("gallery");
-    }
-
     return `
       <span class="merch-gallery-image-shell">
         <img class="merch-gallery-image" src="${escapeHtml(image.url)}" alt="${escapeHtml(image.label)}" loading="eager" decoding="async" />
@@ -4278,9 +4172,7 @@
   function printfulGalleryThumbMarkup(product, image, selected) {
     const ground = image.ground === "light" ? "light" : image.ground === "dark" ? "dark" : "image";
     const isActive = selected && image.id === selected.id;
-    const thumb = image.type === "artwork"
-      ? printfulArtworkMarkup(product, "thumb")
-      : `<img src="${escapeHtml(image.thumbnailUrl || image.url)}" alt="" loading="lazy" decoding="async" />`;
+    const thumb = `<img src="${escapeHtml(image.thumbnailUrl || image.url)}" alt="" loading="lazy" decoding="async" />`;
 
     return `
       <button
@@ -6079,7 +5971,7 @@
       ? featured
           .map(
             (product) => `
-              <a class="merch-showcase-tile merch-showcase-tile--${escapeHtml(printfulArtworkGround(product))}" role="listitem" href="${escapeHtml(printfulProductUrl(product.id))}" data-printful-product-link="${escapeHtml(product.id)}">
+              <a class="merch-showcase-tile merch-showcase-tile--${escapeHtml(printfulVisualGround(product))}" role="listitem" href="${escapeHtml(printfulProductUrl(product.id))}" data-printful-product-link="${escapeHtml(product.id)}">
                 ${printfulPrimaryVisualMarkup(product, "hero", "eager")}
                 <span>${escapeHtml(product.merch.design)}</span>
               </a>
@@ -6215,7 +6107,7 @@
       : [];
     const detailCopy = isCatalogProduct
       ? text(product.description, `${meta.categoryPath || meta.category} is available in Printful's blank catalog for a future label design.`)
-      : text(meta.detailCopy, `${meta.design} artwork is shown with current product photos from the store listing. Choose an option to send an order request.`);
+      : text(meta.detailCopy, `Current product mockups are shown from the store listing. Choose an option to send an order request for ${meta.design}.`);
     const fitNotes = merchFamilyNote(product, "fitNotes", "Variant details load from the current Printful option set.");
     const materialCare = merchFamilyNote(product, "materialCare", "Care information follows the selected Printful product.");
     const productionNote = merchFamilyNote(product, "productionNote", "Printed on demand after invoice payment.");
@@ -6295,7 +6187,7 @@
                 ${related
                   .map(
                     (item) => `
-                      <a class="merch-related-card merch-related-card--${escapeHtml(printfulArtworkGround(item))}" href="${escapeHtml(printfulProductUrl(item.id))}" data-printful-product-link="${escapeHtml(item.id)}">
+                      <a class="merch-related-card merch-related-card--${escapeHtml(printfulVisualGround(item))}" href="${escapeHtml(printfulProductUrl(item.id))}" data-printful-product-link="${escapeHtml(item.id)}">
                         ${printfulPrimaryVisualMarkup(item, "related")}
                         <span>${escapeHtml(item.merch.design)}</span>
                       </a>
@@ -6346,7 +6238,7 @@
           ? `Explore ${product.merch.productTitle} as a future Pawn Island Records merch format.`
           : `Request an invoice for the ${product.merch.productTitle} from ${product.merch.project}.`,
         canonicalPath: sitePath("merch.html", { product: product.id }),
-        image: printfulArtworkImageUrl(product) || printfulProductImageUrl(detail.product || product),
+        image: printfulProductImageUrl(detail.product || product),
         robots: "noindex,follow"
       });
       return;

@@ -43,8 +43,8 @@ for (const product of products) {
     }
   }
 
-  if (product.publicStatus === "public" && product.thumbnailStrategy === "artwork" && !product.artworkKey) {
-    errors.push(`${label} uses artwork thumbnails but has no artworkKey.`);
+  if (product.publicStatus === "public" && product.thumbnailStrategy !== "product") {
+    errors.push(`${label} must use product thumbnails for public merch visuals.`);
   }
 
   if (!Array.isArray(product.matchNames) || product.matchNames.length === 0) {

@@ -790,16 +790,16 @@ test.describe("merch discovery", () => {
     expect(page.merchApiRequests.draftOrders).toHaveLength(1);
   });
 
-  test("keeps artwork assets separate from API product photos", async ({ page }) => {
+  test("uses API product photos as public product visuals", async ({ page }) => {
     await page.goto(withStandalone("merch.html?product=tee-1"), { waitUntil: "domcontentloaded" });
 
-    await expect(page.locator([".merch-card", "__mockup"].join(""))).toHaveCount(0);
-    await expect(page.locator(".merch-product-detail .merch-gallery-thumb[data-printful-gallery-image-id='artwork']")).toBeVisible();
-    await expect(page.locator(".merch-product-detail .merch-gallery-thumb[data-printful-gallery-image-id='product-thumbnail']")).toBeVisible();
-
-    await page.locator(".merch-product-detail .merch-gallery-thumb[data-printful-gallery-image-id='product-thumbnail']").click();
+    await expect(page.locator("[data-printful-product-card] .merch-api-image")).toHaveCount(5);
+    await expect(page.locator("[data-printful-product-card] .merch-design-plate")).toHaveCount(0);
+    await expect(page.locator("#merch-hero-showcase .merch-api-image")).toHaveCount(4);
+    await expect(page.locator("#merch-hero-showcase .merch-design-plate")).toHaveCount(0);
+    await expect(page.locator("[data-printful-product-card='tee-1'] .merch-api-image img")).toHaveAttribute("src", mockProducts[0].thumbnailUrl);
     await expect(page.locator(".merch-product-detail .merch-gallery-image")).toHaveAttribute("src", mockProducts[0].thumbnailUrl);
-    await expect(page.locator(".merch-product-gallery .merch-gallery-stage .merch-design-plate")).toHaveCount(0);
-    await expect(page.locator(".merch-product-gallery .merch-gallery-thumb[data-printful-gallery-image-id='artwork'] .merch-design-plate")).toHaveCount(1);
+    await expect(page.locator(".merch-product-detail .merch-design-plate")).toHaveCount(0);
+    await expect(page.locator(".merch-product-detail .merch-gallery-thumb[data-printful-gallery-image-id='artwork']")).toHaveCount(0);
   });
 });
