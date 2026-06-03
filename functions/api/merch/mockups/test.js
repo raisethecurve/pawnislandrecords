@@ -15,6 +15,8 @@ import {
 const DEFAULT_GHOST_DESIGN_URL = "https://files.cdn.printful.com/files/196/196b0b0ee595c3f631e8f7a90a5442e0_preview.png";
 const DEFAULT_PRODUCT_ID = 438;
 const DEFAULT_VARIANT_ID = 11546;
+const DEFAULT_MOCKUP_OPTIONS = ["Front"];
+const DEFAULT_MOCKUP_OPTION_GROUPS = ["Flat"];
 const DEFAULT_POSITION = {
   area_width: 1800,
   area_height: 2400,
@@ -23,7 +25,7 @@ const DEFAULT_POSITION = {
   top: 300,
   left: 0
 };
-const SCENARIOS = new Set(["ghost-front", "ghost-front-back"]);
+const SCENARIOS = new Set(["ghost-front"]);
 const ACTIONS = new Set(["create", "poll", "store", "printfiles", "templates"]);
 const STORAGE_BINDINGS = ["MERCH_MOCKUP_BUCKET", "MOCKUP_BUCKET", "R2_BUCKET"];
 
@@ -152,21 +154,13 @@ function buildTaskPayload(body) {
   const payload = {
     variant_ids: variantIds,
     format,
-    files: buildTaskFiles(body, scenario)
+    files: buildTaskFiles(body, scenario),
+    options: textList(body.options || body.mockupOptions, DEFAULT_MOCKUP_OPTIONS),
+    option_groups: textList(body.option_groups || body.optionGroups || body.mockupOptionGroups, DEFAULT_MOCKUP_OPTION_GROUPS)
   };
 
   if (width) {
     payload.width = Math.min(Math.max(width, 50), 2000);
-  }
-
-  if (Array.isArray(body.options)) {
-    payload.options = body.options.map((option) => cleanText(option, "", 120)).filter(Boolean);
-  }
-
-  if (Array.isArray(body.option_groups || body.optionGroups)) {
-    payload.option_groups = (body.option_groups || body.optionGroups)
-      .map((group) => cleanText(group, "", 120))
-      .filter(Boolean);
   }
 
   if (body.product_options && typeof body.product_options === "object" && !Array.isArray(body.product_options)) {
@@ -184,42 +178,34 @@ function buildTaskFiles(body, scenario) {
       throw new MockupTestError("missing_mockup_files", "At least one valid placement file is required.");
     }
 
+    if (!Boolean(body.allowBackPlacement) && files.some((file) => file.placement === "back")) {
+      throw new MockupTestError(
+        "back_placement_not_allowed",
+        "Back placement is disabled for this temporary front-only test. Set allowBackPlacement only if a back print is intentional."
+      );
+    }
+
     return files;
   }
 
   if (!SCENARIOS.has(scenario)) {
-    throw new MockupTestError("invalid_mockup_scenario", "Use ghost-front or ghost-front-back for the default test.");
+    throw new MockupTestError("invalid_mockup_scenario", "Use ghost-front for the default front-only test.");
   }
 
   const frontImageUrl = publicUrl(body.frontImageUrl || body.front_image_url, DEFAULT_GHOST_DESIGN_URL);
-  const backImageUrl = publicUrl(body.backImageUrl || body.back_image_url, frontImageUrl);
   const position = normalizePosition(body.position);
 
   if (!frontImageUrl) {
     throw new MockupTestError("invalid_front_image_url", "A valid public front design URL is required.");
   }
 
-  const files = [
+  return [
     {
       placement: "front",
       image_url: frontImageUrl,
       position
     }
   ];
-
-  if (scenario === "ghost-front-back") {
-    if (!backImageUrl) {
-      throw new MockupTestError("invalid_back_image_url", "A valid public back design URL is required.");
-    }
-
-    files.push({
-      placement: "back",
-      image_url: backImageUrl,
-      position
-    });
-  }
-
-  return files;
 }
 
 function normalizeTaskFile(file) {
@@ -268,6 +254,20 @@ function intList(input, fallback) {
       : [];
   const parsed = values
     .map((value) => positiveInt(value, null))
+    .filter(Boolean)
+    .slice(0, 20);
+
+  return parsed.length ? parsed : fallback;
+}
+
+function textList(input, fallback) {
+  const values = Array.isArray(input)
+    ? input
+    : typeof input === "string"
+      ? input.split(",")
+      : [];
+  const parsed = values
+    .map((value) => cleanText(value, "", 120))
     .filter(Boolean)
     .slice(0, 20);
 

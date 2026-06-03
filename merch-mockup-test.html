@@ -272,9 +272,14 @@
               <input id="front-url" value="https://files.cdn.printful.com/files/196/196b0b0ee595c3f631e8f7a90a5442e0_preview.png" />
             </label>
             <label>
-              Back design URL
-              <input id="back-url" value="https://files.cdn.printful.com/files/196/196b0b0ee595c3f631e8f7a90a5442e0_preview.png" />
+              Mockup options
+              <input id="mockup-options" value="Front" />
             </label>
+            <label>
+              Mockup option groups
+              <input id="mockup-option-groups" value="Flat" />
+            </label>
+            <p class="note">Printful uses placement for where the design prints. Use options for the displayed view, such as Front, and option groups for mockup style, such as Flat.</p>
           </div>
 
           <div class="panel stack">
@@ -323,8 +328,7 @@
               Store completed mockups in R2
             </label>
             <div class="actions">
-              <button class="primary" data-action="ghost-front">Create Ghost Front</button>
-              <button class="primary" data-action="ghost-front-back">Create Front/Back</button>
+              <button class="primary" data-action="ghost-front">Create Flat Front</button>
               <button data-action="poll">Poll Task</button>
               <button data-action="store">Store Completed Task</button>
               <button data-action="printfiles">Printfiles</button>
@@ -362,7 +366,8 @@
           format: document.getElementById("format"),
           resultWidth: document.getElementById("result-width"),
           frontUrl: document.getElementById("front-url"),
-          backUrl: document.getElementById("back-url"),
+          mockupOptions: document.getElementById("mockup-options"),
+          mockupOptionGroups: document.getElementById("mockup-option-groups"),
           areaWidth: document.getElementById("area-width"),
           areaHeight: document.getElementById("area-height"),
           imageWidth: document.getElementById("image-width"),
@@ -391,7 +396,7 @@
 
           const action = button.dataset.action;
 
-          if (action === "ghost-front" || action === "ghost-front-back") {
+          if (action === "ghost-front") {
             runCreate(action);
           } else if (action === "poll") {
             runPoll(false);
@@ -544,7 +549,8 @@
             format: fields.format.value,
             width: numberValue(fields.resultWidth),
             frontImageUrl: fields.frontUrl.value.trim(),
-            backImageUrl: fields.backUrl.value.trim(),
+            options: listValue(fields.mockupOptions),
+            option_groups: listValue(fields.mockupOptionGroups),
             position: {
               area_width: numberValue(fields.areaWidth),
               area_height: numberValue(fields.areaHeight),
@@ -634,6 +640,10 @@
         function numberValue(input, allowZero = false) {
           const value = Number.parseInt(input.value, 10);
           return Number.isFinite(value) && (allowZero ? value >= 0 : value > 0) ? value : "";
+        }
+
+        function listValue(input) {
+          return input.value.split(",").map((value) => value.trim()).filter(Boolean);
         }
 
         function escapeHtml(value) {
