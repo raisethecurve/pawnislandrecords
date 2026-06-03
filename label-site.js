@@ -3312,6 +3312,8 @@
     catalogProducts: [],
     categories: [],
     categoryTree: [],
+    storeViewTracked: false,
+    trackedProductViews: new Set(),
     metadata: {
       launchPosture: {},
       familyNotes: {},
@@ -3386,6 +3388,44 @@
 
   function apiPath(path) {
     return path.replace(/^\/+/, "");
+  }
+
+  function trackMerchEvent(name, properties = {}) {
+    const eventName = text(name, "");
+
+    if (!eventName || typeof window === "undefined") {
+      return;
+    }
+
+    const payload = {
+      name: eventName,
+      properties: {
+        route: "merch",
+        checkoutModel: "manual-order-request",
+        ...properties
+      }
+    };
+
+    try {
+      window.dispatchEvent(new CustomEvent("pawnisland:merch-event", { detail: payload }));
+    } catch (error) {}
+
+    try {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: eventName, ...payload.properties });
+    } catch (error) {}
+
+    try {
+      if (typeof window.gtag === "function") {
+        window.gtag("event", eventName, payload.properties);
+      }
+    } catch (error) {}
+
+    try {
+      if (typeof window.plausible === "function") {
+        window.plausible(eventName, { props: payload.properties });
+      }
+    } catch (error) {}
   }
 
   async function merchApiJson(path, options) {
@@ -3828,6 +3868,44 @@
 
   function printfulProductById(productId) {
     return printfulMerchState.products.find((product) => String(product.id) === String(productId));
+  }
+
+  function printfulTrackingProduct(product) {
+    const meta = product && product.merch ? product.merch : {};
+
+    return {
+      product_id: text(product && product.id, ""),
+      product_title: text(meta.productTitle, text(product && product.name, "")),
+      project: text(meta.project, ""),
+      drop: text(meta.album, ""),
+      category: text(meta.category, ""),
+      source: text(product && product.source, "printful")
+    };
+  }
+
+  function trackPrintfulStoreView() {
+    if (printfulMerchState.storeViewTracked) {
+      return;
+    }
+
+    printfulMerchState.storeViewTracked = true;
+    trackMerchEvent("view_store", {
+      mode: printfulMerchState.mode,
+      product_count: activePrintfulProducts().length,
+      public_product_count: printfulMerchState.syncProducts.filter((product) => text(product && product.merch && product.merch.publicStatus, "public") === "public").length,
+      catalog_enabled: merchCatalogModeEnabled()
+    });
+  }
+
+  function trackPrintfulProductView(product) {
+    const id = text(product && product.id, "");
+
+    if (!id || printfulMerchState.trackedProductViews.has(id)) {
+      return;
+    }
+
+    printfulMerchState.trackedProductViews.add(id);
+    trackMerchEvent("view_item", printfulTrackingProduct(product));
   }
 
   function printfulArtworkAsset(product) {
@@ -4395,7 +4473,8 @@
       syncVariantId,
       catalogVariantId: Number.parseInt(item && item.catalogVariantId, 10) || null,
       retailPrice: text(item && item.retailPrice, "").slice(0, 20),
-      currency: text(item && item.currency, "USD").slice(0, 8)
+      currency: text(item && item.currency, "USD").slice(0, 8),
+      productId: text(item && item.productId, "").slice(0, 80)
     };
   }
 
@@ -4641,6 +4720,7 @@
 
   function addPrintfulCartVariant(detail, variant, quantity) {
     const productName = text(detail.product && detail.product.merch && detail.product.merch.productTitle, detail.product && detail.product.name) || "Pawn Island Records merch";
+    const productId = text(detail.product && detail.product.id, "");
     const existing = printfulMerchState.cart.find((item) => item.syncVariantId === variant.syncVariantId);
     const safeQuantity = Math.min(Math.max(Number.parseInt(quantity, 10) || 1, 1), 10);
 
@@ -4651,6 +4731,7 @@
         productName,
         variantName: text(variant.name, "Variant"),
         quantity: safeQuantity,
+        productId,
         syncVariantId: variant.syncVariantId,
         catalogVariantId: variant.catalogVariantId,
         retailPrice: variant.retailPrice,
@@ -4662,6 +4743,13 @@
     resetPrintfulCheckoutState();
     persistPrintfulCart();
     renderPrintfulCart();
+    trackMerchEvent("add_to_cart", {
+      product_id: productId,
+      product_title: productName,
+      variant_id: variant.syncVariantId ? String(variant.syncVariantId) : "",
+      quantity: safeQuantity,
+      cart_quantity: printfulMerchState.cart.reduce((total, item) => total + item.quantity, 0)
+    });
   }
 
   function addPrintfulCartItem(productId, form) {
@@ -4737,6 +4825,12 @@
       const rates = Array.isArray(response.rates) ? response.rates : [];
       printfulMerchState.shippingRates = rates;
       printfulMerchState.selectedShipping = rates.length ? printfulShippingRateId(rates[0], 0) : "";
+      trackMerchEvent("estimate_shipping", {
+        status: rates.length ? "ready" : "empty",
+        rate_count: rates.length,
+        item_count: printfulMerchState.cart.reduce((total, item) => total + item.quantity, 0),
+        country: recipient.country_code
+      });
 
       if (ratesNode) {
         ratesNode.innerHTML = rates.length
@@ -4750,6 +4844,10 @@
     } catch (error) {
       printfulMerchState.shippingRates = [];
       printfulMerchState.selectedShipping = "";
+      trackMerchEvent("checkout_error", {
+        step: "estimate_shipping",
+        message: error.message
+      });
 
       if (ratesNode) {
         ratesNode.innerHTML = `<p class="merch-inline-status">${escapeHtml(error.message)}</p>`;
@@ -4792,6 +4890,10 @@
       if (status) {
         status.textContent = "Estimate shipping before requesting an invoice.";
       }
+      trackMerchEvent("checkout_error", {
+        step: "submit_order_request",
+        message: "shipping_estimate_required"
+      });
       return;
     }
 
@@ -4800,6 +4902,11 @@
     }
 
     try {
+      trackMerchEvent("begin_checkout", {
+        item_count: printfulMerchState.cart.reduce((total, item) => total + item.quantity, 0),
+        subtotal: printfulCartTotal(),
+        shipping: selectedShipping
+      });
       const response = await merchApiJson("api/merch/draft-order", {
         method: "POST",
         body: JSON.stringify({
@@ -4816,11 +4923,21 @@
       }
 
       printfulMerchState.orderNotice = `Order request received${orderId}. ${merchPaymentCopy()}`;
+      trackMerchEvent("submit_order_request", {
+        status: "created",
+        order_id: response && response.order && response.order.id ? String(response.order.id) : "",
+        item_count: items.reduce((total, item) => total + item.quantity, 0),
+        shipping: selectedShipping
+      });
       printfulMerchState.cart = [];
       resetPrintfulCheckoutState();
       persistPrintfulCart();
       renderPrintfulCart();
     } catch (error) {
+      trackMerchEvent("checkout_error", {
+        step: "submit_order_request",
+        message: error.message
+      });
       if (status) {
         status.textContent = error.message;
       }
@@ -5226,6 +5343,8 @@
       return;
     }
 
+    trackPrintfulProductView(product);
+
     const detail = printfulMerchState.productDetails.get(String(productId));
 
     if (detail) {
@@ -5355,9 +5474,16 @@
       const removeButton = event.target.closest("[data-printful-remove-cart]");
       const cartQtyButton = event.target.closest("[data-printful-cart-qty]");
       const shippingButton = event.target.closest("[data-printful-estimate-shipping]");
+      const supportLink = event.target.closest("#merch-support-link, a[href^='mailto:']");
       const galleryImageButton = event.target.closest("[data-printful-gallery-image]");
       const zoomButton = event.target.closest("[data-printful-toggle-zoom]");
       const qtyStepButton = event.target.closest("[data-printful-qty-step]");
+
+      if (supportLink) {
+        trackMerchEvent("support_click", {
+          href: text(supportLink.getAttribute("href"), "").replace(/^mailto:.*/, "mailto")
+        });
+      }
 
       if (modeButton) {
         setPrintfulMode(modeButton.dataset.printfulMode, true);
@@ -5410,6 +5536,12 @@
           }
 
           printfulMerchState.filters[kind] = value;
+          if (kind === "category") {
+            trackMerchEvent("select_category", {
+              value,
+              mode: printfulMerchState.mode
+            });
+          }
 
           if (kind === "category") {
             printfulMerchState.filters.project = "all";
@@ -5450,6 +5582,10 @@
         try {
           const detail = await loadPrintfulProduct(productId);
           renderPrintfulVariantPicker(productId, detail);
+          trackMerchEvent("choose_option", {
+            ...printfulTrackingProduct(printfulProductById(productId)),
+            option_count: Array.isArray(detail && detail.variants) ? detail.variants.length : 0
+          });
           loadButton.textContent = "Options Ready";
           loadButton.setAttribute("aria-expanded", "true");
         } catch (error) {
@@ -5637,6 +5773,7 @@
       renderPrintfulHeroShowcase(products);
       renderPrintfulStore();
       renderPrintfulProductDetail(printfulMerchState.selectedProductId);
+      trackPrintfulStoreView();
       Promise.all(featuredPrintfulProducts(syncProducts).map((product) => loadPrintfulProduct(String(product.id))))
         .then(() => {
           if (isPrintfulFeaturedMode()) {

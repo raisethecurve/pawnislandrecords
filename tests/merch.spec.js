@@ -310,6 +310,12 @@ async function addCuratedProductToCart(page) {
 
 test.describe("merch discovery", () => {
   test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      window.__merchEvents = [];
+      window.addEventListener("pawnisland:merch-event", (event) => {
+        window.__merchEvents.push(event.detail);
+      });
+    });
     page.merchApiRequests = await mockMerchApi(page);
   });
 
@@ -370,6 +376,11 @@ test.describe("merch discovery", () => {
     await expect(page.locator(".merch-cart__items")).toContainText("Borrowed Brightness Crest Tee");
     await expect(page.locator(".merch-cart__items")).toContainText("$28.00");
     await expect(page.locator(".merch-policy-check")).toContainText("not a completed payment");
+
+    const eventNames = await page.evaluate(() => window.__merchEvents.map((event) => event.name));
+    expect(eventNames).toContain("view_store");
+    expect(eventNames).toContain("view_item");
+    expect(eventNames).toContain("add_to_cart");
   });
 
   test("adds one-option products directly without an option picker", async ({ page }) => {
@@ -391,6 +402,8 @@ test.describe("merch discovery", () => {
     await page.locator("#printful-draft-order-form").evaluate((form) => form.requestSubmit());
 
     await expect(page.locator("#printful-cart-status")).toContainText("Estimate shipping before requesting an invoice.");
+    const eventNames = await page.evaluate(() => window.__merchEvents.map((event) => event.name));
+    expect(eventNames).toContain("checkout_error");
     expect(page.merchApiRequests.shipping).toHaveLength(0);
     expect(page.merchApiRequests.draftOrders).toHaveLength(0);
   });
@@ -411,6 +424,8 @@ test.describe("merch discovery", () => {
     expect(page.merchApiRequests.draftOrders).toHaveLength(1);
     expect(page.merchApiRequests.draftOrders[0].shipping).toBe("STANDARD");
     expect(page.merchApiRequests.draftOrders[0].external_id).toMatch(/^pir_/);
+    const eventNames = await page.evaluate(() => window.__merchEvents.map((event) => event.name));
+    expect(eventNames).toEqual(expect.arrayContaining(["estimate_shipping", "begin_checkout", "submit_order_request"]));
   });
 
   test("keeps the cart available when shipping estimates fail", async ({ page }) => {
