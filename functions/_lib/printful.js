@@ -112,7 +112,7 @@ export function apiErrorResponse(error) {
     return jsonResponse(
       {
         error: "printful_not_configured",
-        message: "Printful API access is not configured for this environment."
+        message: "Merch service access is not configured for this environment."
       },
       { status: 503 }
     );
@@ -123,7 +123,7 @@ export function apiErrorResponse(error) {
       {
         error: "printful_request_failed",
         status: error.status,
-        message: "Printful could not complete this request."
+        message: "The merch service could not complete this request."
       },
       { status: 502 }
     );
@@ -166,7 +166,7 @@ export function normalizeStoreProduct(product) {
   return {
     id: String(product.id || product.external_id || ""),
     externalId: cleanText(product.external_id, "", 80),
-    name: cleanText(product.name, "Printful product", 120),
+    name: cleanText(product.name, "Merch product", 120),
     thumbnailUrl: cleanText(product.thumbnail_url || product.thumbnail, "", 500),
     variants: positiveInt(product.variants, 0),
     synced: positiveInt(product.synced, 0),
@@ -319,8 +319,8 @@ export function normalizeDetailedProduct(data) {
 
   collectImageCandidates(images, syncProduct, cleanText(syncProduct.name, "Product image", 120));
   variants.forEach((variant) => {
-    collectImageCandidates(images, variant, cleanText(variant.name, "Product mockup", 120));
-    collectImageCandidates(images, variant.product, cleanText(variant.name, "Product mockup", 120));
+    collectImageCandidates(images, variant, cleanText(variant.name, "Product image", 120));
+    collectImageCandidates(images, variant.product, cleanText(variant.name, "Product image", 120));
   });
 
   return {
@@ -343,7 +343,7 @@ export function normalizeMockupTaskImages(task) {
       images,
       normalizeImageCandidate(
         mockup && (mockup.mockup_url || mockup.url || mockup.image_url),
-        cleanText(mockup && (mockup.display_name || mockup.placement), "Generated mockup", 120)
+        cleanText(mockup && (mockup.display_name || mockup.placement), "Generated product image", 120)
       )
     );
 
@@ -351,7 +351,7 @@ export function normalizeMockupTaskImages(task) {
     extras.forEach((extra) => {
       addImageCandidate(
         images,
-        normalizeImageCandidate(extra, cleanText(extra && (extra.title || extra.option), "Generated mockup", 120))
+        normalizeImageCandidate(extra, cleanText(extra && (extra.title || extra.option), "Generated product image", 120))
       );
     });
   });
@@ -413,7 +413,7 @@ export function sanitizeShippingItems(items) {
     } else if (externalVariantId) {
       sanitized.external_variant_id = externalVariantId;
     } else {
-      throw new Error("Each shipping item needs a Printful catalog variant.");
+      throw new Error("Each shipping item needs a catalog variant.");
     }
 
     if (value) {
@@ -446,7 +446,7 @@ export function sanitizeOrderItems(items) {
     } else if (externalVariantId) {
       sanitized.external_variant_id = externalVariantId;
     } else {
-      throw new Error("Each order item needs a synced Printful variant.");
+      throw new Error("Each order item needs an order-ready variant.");
     }
 
     if (retailPrice) {
