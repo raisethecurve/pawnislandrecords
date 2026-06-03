@@ -7,7 +7,8 @@ import {
   normalizeCatalogCategory,
   normalizeCatalogProduct,
   printfulFetch,
-  resultArray
+  resultArray,
+  resultNamedArray
 } from "../../_lib/printful.js";
 
 export async function onRequestOptions() {
@@ -23,7 +24,7 @@ export async function onRequestGet(context) {
       printfulFetch(context, "/categories"),
       printfulFetch(context, `/products${productQuery}`)
     ]);
-    const rawCategories = resultArray(categoryResponse.data);
+    const rawCategories = resultNamedArray(categoryResponse.data, "categories");
     const rawProducts = resultArray(productResponse.data);
     const categories = rawCategories
       .map(normalizeCatalogCategory)

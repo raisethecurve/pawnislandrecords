@@ -204,6 +204,22 @@ export function resultArray(data) {
   return [];
 }
 
+export function resultNamedArray(data, key) {
+  if (!key) {
+    return resultArray(data);
+  }
+
+  if (Array.isArray(data && data.result && data.result[key])) {
+    return data.result[key];
+  }
+
+  if (Array.isArray(data && data[key])) {
+    return data[key];
+  }
+
+  return resultArray(data);
+}
+
 export function resultObject(data) {
   if (data && data.result && typeof data.result === "object") {
     return data.result;
