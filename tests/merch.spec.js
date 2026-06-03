@@ -405,6 +405,31 @@ test.describe("merch discovery", () => {
     await expect(page.locator("[data-printful-product-card]")).toHaveCount(1);
   });
 
+  test("keeps structural filters clickable at narrow desktop widths", async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 900 });
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    const apparelFilter = page.locator("#printful-product-category-filters [data-printful-filter='category'][data-printful-filter-value='apparel']");
+    await apparelFilter.scrollIntoViewIfNeeded();
+
+    const hitTarget = await apparelFilter.evaluate((button) => {
+      const rect = button.getBoundingClientRect();
+      const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      const filter = hit && hit.closest("[data-printful-filter]");
+
+      return filter && filter.getAttribute("data-printful-filter-value");
+    });
+
+    expect(hitTarget).toBe("apparel");
+
+    await apparelFilter.click();
+    await expect(page.locator("#printful-results-summary")).toContainText("Order-ready goods: 4 of 5 products shown");
+    await expect(page.locator("#printful-active-filters")).toContainText("Category: Apparel");
+
+    await page.locator("#printful-product-family-filters [data-printful-filter='family'][data-printful-filter-value='t-shirts']").click();
+    await expect(page.locator("#printful-active-filters")).toContainText("Format: T-Shirts");
+  });
+
   test("keeps featured rack as a shorter alternate view", async ({ page }) => {
     await page.goto(withStandalone("merch.html?view=featured"), { waitUntil: "domcontentloaded" });
 

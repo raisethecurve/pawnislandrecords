@@ -2003,6 +2003,14 @@ body[data-page="merch"].has-site-audio:not(.shell-body) .merch-storefront {
   .merch-cart {
     position: static;
   }
+
+  .merch-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .merch-filter-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 860px) {
