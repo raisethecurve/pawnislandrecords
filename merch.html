@@ -8,28 +8,28 @@
     <link rel="icon" type="image/jpeg" sizes="96x96" href="assets/brand/pawnisland-096.jpg" />
     <link rel="icon" type="image/jpeg" sizes="256x256" href="assets/brand/pawnisland-256.jpg" />
     <link rel="apple-touch-icon" sizes="512x512" href="assets/brand/pawnisland-512.jpg" />
-    <title>Merch Store | Pawn Island Records</title>
+    <title>Merch Desk | Pawn Island Records</title>
     <meta
       name="description"
-      content="Shop Pawn Island Records artist merch, browse future Printful product families, estimate shipping, and send an order request from the merch desk."
+      content="Browse curated Pawn Island Records artist goods, estimate shipping, and request an invoice before production begins."
     />
     <link rel="canonical" href="https://www.pawnislandrecords.com/merch.html" />
     <meta name="robots" content="noindex,follow" />
     <meta property="og:site_name" content="Pawn Island Records" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Pawn Island Records Merch Store" />
+    <meta property="og:title" content="Pawn Island Records Merch Desk" />
     <meta
       property="og:description"
-      content="Shop Pawn Island Records artist merch, browse future Printful product families, estimate shipping, and send an order request from the merch desk."
+      content="Browse curated Pawn Island Records artist goods, estimate shipping, and request an invoice before production begins."
     />
     <meta property="og:url" content="https://www.pawnislandrecords.com/merch.html" />
     <meta property="og:image" content="https://www.pawnislandrecords.com/assets/brand/pawnisland-1200.jpg" />
     <meta property="og:image:alt" content="Pawn Island Records logo artwork" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Pawn Island Records Merch Store" />
+    <meta name="twitter:title" content="Pawn Island Records Merch Desk" />
     <meta
       name="twitter:description"
-      content="Shop Pawn Island Records artist merch, browse future Printful product families, estimate shipping, and send an order request from the merch desk."
+      content="Browse curated Pawn Island Records artist goods, estimate shipping, and request an invoice before production begins."
     />
     <meta name="twitter:image" content="https://www.pawnislandrecords.com/assets/brand/pawnisland-1200.jpg" />
     <script src="site-shell-bootstrap.js"></script>
@@ -51,13 +51,13 @@
           <header class="merch-hero">
             <article class="merch-copy">
               <p class="section-kicker">Pawn Island Records Store</p>
-              <h1 id="merch-title">Merch Store</h1>
+              <h1 id="merch-title">Merch Desk</h1>
               <p id="merch-intro">
-                Artist apparel, desk gear, wall art, current product photos, option choices, and shipping estimates for fans who want the art off the screen.
+                Curated artist tees, desk mats, and carry goods. Pick options, estimate shipping, and request an invoice before anything goes to production.
               </p>
               <div class="action-row">
-                <a class="button button--primary" href="#printful-store-grid">Browse All Designs</a>
-                <a class="button button--ghost" href="merch.html?view=featured">Featured Rack</a>
+                <a class="button button--primary" href="#printful-store-grid">Browse Goods</a>
+                <a class="button button--ghost" href="merch.html?view=featured">Featured</a>
                 <a class="button button--ghost" id="merch-support-link" href="https://tiptopjar.com/pawnisland" target="_blank" rel="noreferrer">
                   Support the Label
                 </a>
@@ -66,7 +66,7 @@
 
             <aside class="merch-status-card" aria-labelledby="merch-status-title">
               <p class="section-kicker">Current Drop</p>
-              <h2 id="merch-status-title">Ready to Ship</h2>
+              <h2 id="merch-status-title">Order Request</h2>
               <div class="merch-stats" id="merch-stats"></div>
             </aside>
 
@@ -74,17 +74,17 @@
           </header>
 
           <div class="merch-trust-bar" role="list" aria-label="Store details">
-            <span role="listitem">Release artwork</span>
-            <span role="listitem">Product photos</span>
-            <span role="listitem">Option choices</span>
-            <span role="listitem">Shipping estimates</span>
+            <span role="listitem">Printed on demand</span>
+            <span role="listitem">Shipping estimate first</span>
+            <span role="listitem">Invoice before production</span>
+            <span role="listitem">Label support included</span>
           </div>
 
           <section class="merch-store-mvp" aria-labelledby="merch-store-title">
             <div class="panel-header merch-store-header">
               <div>
                 <p class="section-kicker">Artist Goods</p>
-                <h2 id="merch-store-title">All Products</h2>
+                <h2 id="merch-store-title">Curated Goods</h2>
               </div>
               <div class="panel-note">
                 <p id="printful-store-status">Checking available products.</p>
@@ -93,7 +93,7 @@
 
             <div class="merch-decision-note">
               <p>
-                Live products stay closest to checkout, while new Printful families sit ready for the next label design.
+                This is a manual merch desk: select product options, estimate shipping, and request an invoice. Payment happens through the follow-up link before production begins.
               </p>
             </div>
 
@@ -106,15 +106,15 @@
               </label>
               <div class="merch-filter-stack">
                 <div>
-                  <p class="merch-filter-label">Product Type</p>
+                  <p class="merch-filter-label">Category</p>
                   <div class="merch-filter-group" role="group" aria-label="Filter by product type" id="printful-product-category-filters"></div>
                 </div>
                 <div>
-                  <p class="merch-filter-label">Project</p>
+                  <p class="merch-filter-label">Artist</p>
                   <div class="merch-filter-group" role="group" aria-label="Filter by project" id="printful-project-filters"></div>
                 </div>
                 <div>
-                  <p class="merch-filter-label">Album</p>
+                  <p class="merch-filter-label">Drop</p>
                   <div class="merch-filter-group" role="group" aria-label="Filter by album" id="printful-album-filters"></div>
                 </div>
               </div>
@@ -122,8 +122,8 @@
                 <span>Sort</span>
                 <select id="printful-product-sort">
                   <option value="featured">Featured</option>
-                  <option value="project">Project</option>
-                  <option value="album">Album</option>
+                  <option value="project">Artist</option>
+                  <option value="album">Drop</option>
                   <option value="name">Name</option>
                 </select>
               </label>
@@ -136,7 +136,7 @@
               <div class="merch-grid merch-grid--live" id="printful-store-grid"></div>
               <aside class="merch-cart" id="printful-cart" aria-labelledby="printful-cart-title" aria-live="polite">
                 <div class="merch-cart__header">
-                  <p class="section-kicker">Checkout</p>
+                  <p class="section-kicker">Invoice Request</p>
                   <h3 id="printful-cart-title">Order Desk <span id="printful-cart-count">0</span></h3>
                 </div>
                 <div id="printful-cart-body"></div>

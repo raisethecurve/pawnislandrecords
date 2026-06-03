@@ -55,7 +55,7 @@ Known gaps:
 - Full public SEO still needs external profile corroboration, Search Console/Bing submission, and remaining Spotify seed completion.
 - No automated visual regression baseline is present; Playwright screenshots are manual review artifacts under ignored `test-results/`.
 - Campaign, brand-kit, and Release Deck pages are quarantined as internal, but campaigns and brand-kit still use the older lab stack.
-- Merch is modern and hidden-but-shareable, but store item URLs are still empty.
+- Merch is modern and hidden-but-shareable as a curated manual order desk backed by synced Printful products and metadata overrides.
 - Some downloadable fan files are placeholders.
 - Release action rendering is normalized, and source-backed data validation now checks release action readiness before launch.
 - Spotify seeds are still incomplete: 9 artist seeds and 30 release seeds are missing before the full launch gate.
@@ -232,8 +232,8 @@ Key outcomes:
 
 Completed outcomes:
 
-- `merch.html` is hidden-but-shareable, uses `public-data.js`, and renders on the modern public stack.
-- Empty merch URLs render as checkout-pending states; only real store URLs can create active store buttons.
+- `merch.html` is hidden-but-shareable, uses `public-data.js` plus `data/merch-products.json`, and renders on the modern public stack.
+- Synced Printful products render as curated order-request items; the full Printful catalog is internal-only behind `?internal=catalog`.
 - TipTopJar remains the active support conversion on the merch page and connect page.
 - `process.html` stays hidden-but-shareable story content outside primary nav.
 - `campaigns.html`, `brand-kit.html`, and `release-deck.html` stay internal, `noindex,nofollow`, blocked in `robots.txt`, and absent from public navigation.
@@ -243,7 +243,7 @@ Acceptance criteria:
 
 - No public route depends on the legacy lab design stack unless that dependency is documented and temporary.
 - No internal route is reachable from public navigation.
-- Merch/support copy never implies a live purchase path when the URL is empty.
+- Merch/support copy must distinguish invoice requests from completed payment until hosted checkout is live.
 - Campaign and brand assets are credible enough for their chosen audience.
 
 ### Milestone 3: UX, Accessibility, And Performance Polish
@@ -384,8 +384,8 @@ Later:
 Near-term:
 
 - Keep `merch.html` hidden-but-shareable until checkout URLs or launch criteria justify public navigation.
-- Add real store URLs only when checkout is ready; empty merch URLs must stay checkout-pending.
-- Keep TipTopJar as the support-first conversion while merch is concept-stage.
+- Keep the merch desk in manual-order posture until hosted payment, production policies, and operator workflow are ready.
+- Keep TipTopJar as an adjacent support conversion while merch uses invoice requests.
 
 Later:
 
@@ -485,7 +485,7 @@ Decided for now:
 - Keep static files and avoid introducing a build system until there is a concrete need.
 - Keep `admin.html` local/admin-only.
 - Keep `WORKFLOW.md` as sprint closeout history and this file as strategic roadmap.
-- Keep `merch.html` hidden-but-shareable and support-first until real checkout URLs or full-launch criteria justify public nav.
+- Keep `merch.html` hidden-but-shareable until hosted checkout or approved manual-order launch criteria justify public nav.
 - Keep `campaigns.html`, `brand-kit.html`, and `release-deck.html` internal, `noindex,nofollow`, and blocked in `robots.txt`.
 - Keep `process.html` hidden-but-shareable story content outside primary nav for now.
 - Keep Playwright screenshots as ignored manual review artifacts for now; do not add automated visual diffs until baseline upkeep is clearly worth it.

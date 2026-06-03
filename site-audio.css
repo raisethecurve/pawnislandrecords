@@ -269,6 +269,10 @@ body.has-site-audio:not(.shell-body) .label-page {
   .site-audio-tab {
     min-width: 44px;
   }
+
+  body[data-page="merch"]:has(.merch-checkout-form :focus) .site-audio {
+    transform: translateX(-50%) translateY(calc(100% - 18px));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

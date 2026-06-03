@@ -253,7 +253,7 @@ Sprint 2 outcome:
 - Classified `process.html` as hidden-but-shareable story content outside primary nav.
 - Kept `campaigns.html`, `brand-kit.html`, and `release-deck.html` as internal lab/product surfaces with `noindex,nofollow` and `robots.txt` disallow rules.
 - Rebuilt `merch.html` against `public-data.js`, `site-ui.js`, `label-site.js`, and `label-site.css`.
-- Rendered empty merch URLs as checkout-pending states; only real item URLs produce store buttons.
+- Moved merch into a curated manual order-desk posture with synced Printful products, invoice-request copy, and metadata overrides.
 - Added support-first merch CTA wiring from the published TipTopJar support link.
 - Added route publication validation for explicit route robots policy, page robots meta, sitemap membership, and `robots.txt` blocking.
 - Expanded smoke coverage for merch, process, campaigns, brand kit, and Release Deck.
@@ -267,7 +267,7 @@ Sprint 2 validation:
 Sprint 2 deferred scope and risks:
 
 - `public-data.js` remains in `essentials`; merch stays hidden from primary navigation until later launch criteria pass.
-- Merch items still have no live checkout URLs, so the route remains concept/support-first.
+- Merch remains hidden-but-shareable while the manual invoice workflow, policies, and operator process mature.
 - Campaign and brand-kit labs remain on the older design/data stack because they are intentionally internal for now.
 - Accessibility automation remains planned for Sprint 3.
 

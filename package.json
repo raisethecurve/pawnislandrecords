@@ -10,13 +10,14 @@
     "generate:seo": "node tools/generate-seo-artifacts.js",
     "sync:spotify": "node tools/sync-spotify.js",
     "test:data": "node tools/check-data.js",
+    "test:merch-metadata": "node tools/check-merch-metadata.js",
     "test:links": "node tools/check-links.js",
     "test:perf": "node tools/check-performance.js",
     "test:merch": "playwright test tests/merch.spec.js",
     "test:smoke": "playwright test tests/smoke.spec.js",
     "test:a11y": "playwright test tests/accessibility.spec.js",
     "test:media": "playwright test tests/media.spec.js",
-    "test": "npm run test:data && npm run test:links && npm run test:perf && npm run test:merch && npm run test:a11y && npm run test:media && npm run test:smoke"
+    "test": "npm run test:data && npm run test:merch-metadata && npm run test:links && npm run test:perf && npm run test:merch && npm run test:a11y && npm run test:media && npm run test:smoke"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",

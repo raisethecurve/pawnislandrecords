@@ -234,7 +234,7 @@ const routes = [
   },
   {
     path: "merch.html",
-    label: "Merch Store",
+    label: "Merch Desk",
     classification: "hidden-but-shareable",
     stack: "modern public",
     dataSource: "public-data.js",
@@ -242,9 +242,9 @@ const routes = [
     smoke: true,
     shellSmoke: true,
     accessibilitySmoke: true,
-    expectedText: "Artist apparel, desk gear, wall art",
-    expectedTitle: "Merch Store | Pawn Island Records",
-    expectedMetaDescription: "Shop Pawn Island Records artist merch",
+    expectedText: "Curated artist tees, desk mats, and carry goods",
+    expectedTitle: "Merch Desk | Pawn Island Records",
+    expectedMetaDescription: "Browse curated Pawn Island Records artist goods",
     expectedCanonical: "https://www.pawnislandrecords.com/merch.html",
     expectedJsonLd: "CollectionPage"
   },

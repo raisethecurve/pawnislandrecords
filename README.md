@@ -42,9 +42,9 @@ To preview hidden modern routes as if launch mode were `full` without changing `
 
 Playwright screenshots are written under ignored `test-results/` output and are treated as manual review artifacts, not visual-regression baselines. If a fresh machine reports a missing browser executable, run `npx playwright install chromium` once and rerun the smoke tests.
 
-## Cloudflare Pages Merch MVP
+## Cloudflare Pages Merch Desk
 
-The merch MVP uses Cloudflare Pages Functions as a same-origin API layer for Printful v1. The browser never receives the Printful token.
+The merch desk uses Cloudflare Pages Functions as a same-origin API layer for Printful v1. The browser never receives the Printful token. The current public posture is a hidden-but-shareable manual order request flow: fans can browse curated products, estimate shipping, and request an invoice before production begins.
 
 Required Cloudflare secret:
 
@@ -59,9 +59,11 @@ The current MVP routes are:
 
 - `GET /api/merch/products`: v1 `/store/products` proxy for synced pre-designed merch.
 - `GET /api/merch/products/:id`: v1 `/store/products/{id}` proxy for product variants.
-- `GET /api/merch/catalog`: v1 `/categories` + `/products` catalog proxy for non-empty discovery shelves.
+- `GET /api/merch/catalog`: v1 `/categories` + `/products` catalog proxy for internal `?internal=catalog` design exploration.
 - `POST /api/merch/shipping-rates`: v1 `/shipping/rates`.
 - `POST /api/merch/draft-order`: v1 `/orders?confirm=false`, disabled only when `MERCH_DRAFT_ORDERS_ENABLED=false`.
+
+Curated product titles, categories, launch posture, and policy copy live in `data/merch-products.json`. Run `npm run test:merch-metadata` before launch or synced-product changes.
 
 Use `.dev.vars` for local Pages Functions testing and never commit it.
 
@@ -83,7 +85,7 @@ Hidden or gated modern routes:
 - `release.html`: dynamic release detail page, currently `noindex,follow`.
 - `epks.html`: press/EPK index, currently `noindex,follow`.
 - `epk.html`: dynamic artist press kit, currently `noindex,follow`.
-- `merch.html`: modern T-shirt MVP page, currently `noindex,follow`; live Printful inventory loads through Cloudflare Pages Functions.
+- `merch.html`: modern merch desk, currently `noindex,follow`; curated live Printful inventory loads through Cloudflare Pages Functions and the full Printful catalog is internal-only.
 - `process.html`: creative-process story page, currently `noindex,follow`.
 
 Generated public SEO artifacts:
@@ -105,6 +107,7 @@ Internal, shell, and legacy surfaces:
 - `data/source-catalog.json`: maintainer-owned source overlay for verified Spotify seeds, Too.fm links, YouTube IDs, press readiness, and approved asset metadata.
 - `data/spotify-cache.json`: local/build-time Spotify API cache generated from seeded URLs. Do not put Spotify secrets in public files.
 - `public-data.js`: generated public artist, release, playlist, merch, and label data consumed by the static site.
+- `data/merch-products.json`: curated Printful merch metadata and manual-order launch posture.
 - `site-ui.js`: shared data helpers, release-state helpers, artwork fallbacks, metadata helpers, and reveal behavior.
 - `label-site.js`: modern public rendering for home, roster, connect, about, catalog, project, merch, and press routes.
 - `label-site.css`: modern public design system.

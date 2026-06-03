@@ -3312,6 +3312,12 @@
     catalogProducts: [],
     categories: [],
     categoryTree: [],
+    metadata: {
+      launchPosture: {},
+      familyNotes: {},
+      productsById: new Map(),
+      productsByName: new Map()
+    },
     productDetails: new Map(),
     cart: [],
     selectedProductId: "",
@@ -3331,6 +3337,37 @@
   };
 
   const PRINTFUL_FEATURED_LIMIT = 4;
+  const MERCH_CART_STORAGE_KEY = "pawnisland:merch-cart:v1";
+
+  function merchCatalogModeEnabled() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("internal") === "catalog" || params.get("designNext") === "1";
+  }
+
+  function merchSupportEmail() {
+    return text(printfulMerchState.metadata.launchPosture.supportEmail, "pawnisland@outlook.com");
+  }
+
+  function merchPaymentCopy() {
+    return text(
+      printfulMerchState.metadata.launchPosture.paymentCopy,
+      "We will email a payment link before production begins."
+    );
+  }
+
+  function merchPolicyCopy() {
+    return text(
+      printfulMerchState.metadata.launchPosture.returnPolicy,
+      "Because items are printed on demand, returns are handled for damaged, misprinted, or incorrect items."
+    );
+  }
+
+  function merchFamilyNote(product, key, fallback) {
+    const meta = product && product.merch ? product.merch : {};
+    const family = text(meta.productFamily, "");
+    const notes = family ? printfulMerchState.metadata.familyNotes[family] : null;
+    return text(meta[key], text(notes && notes[key], fallback));
+  }
 
   function normalizePrintfulMode(mode) {
     const value = text(mode, "").toLowerCase();
@@ -3338,7 +3375,7 @@
       return "featured";
     }
 
-    if (value === "catalog" || value === "discover" || value === "printful") {
+    if ((value === "catalog" || value === "discover" || value === "printful") && merchCatalogModeEnabled()) {
       return "catalog";
     }
 
@@ -3387,6 +3424,133 @@
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "") || "all";
+  }
+
+  function merchMetadataNameKey(value) {
+    return text(value, "")
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  async function loadMerchMetadata() {
+    if (printfulMerchState.metadata.loaded) {
+      return;
+    }
+
+    printfulMerchState.metadata.loaded = true;
+
+    try {
+      const response = await fetch("data/merch-products.json", { cache: "no-store" });
+      const body = response.ok ? await response.json() : {};
+      const products = Array.isArray(body.products) ? body.products : [];
+      const productsById = new Map();
+      const productsByName = new Map();
+
+      products.forEach((entry) => {
+        const id = text(entry && entry.id, "");
+
+        if (id) {
+          productsById.set(id, entry);
+        }
+
+        [entry && entry.rawName, ...(Array.isArray(entry && entry.matchNames) ? entry.matchNames : [])]
+          .map(merchMetadataNameKey)
+          .filter(Boolean)
+          .forEach((nameKey) => {
+            if (!productsByName.has(nameKey)) {
+              productsByName.set(nameKey, entry);
+            }
+          });
+      });
+
+      printfulMerchState.metadata.launchPosture = body.launchPosture || {};
+      printfulMerchState.metadata.familyNotes = body.familyNotes || {};
+      printfulMerchState.metadata.productsById = productsById;
+      printfulMerchState.metadata.productsByName = productsByName;
+    } catch (error) {
+      printfulMerchState.metadata.launchPosture = {};
+      printfulMerchState.metadata.familyNotes = {};
+      printfulMerchState.metadata.productsById = new Map();
+      printfulMerchState.metadata.productsByName = new Map();
+    }
+  }
+
+  function merchMetadataForProduct(product) {
+    const id = text(product && product.id, "");
+    const nameKey = merchMetadataNameKey(product && (product.name || product.title));
+
+    return (
+      (id && printfulMerchState.metadata.productsById.get(id)) ||
+      (nameKey && printfulMerchState.metadata.productsByName.get(nameKey)) ||
+      null
+    );
+  }
+
+  function mergeMerchMetadata(product, parsedMeta, metadata) {
+    const entry = metadata || {};
+    const project = text(entry.artist, parsedMeta.project);
+    const album = text(entry.drop, parsedMeta.album);
+    const design = text(entry.designName, parsedMeta.design);
+    const category = text(entry.category, parsedMeta.category);
+    const productFamily = text(entry.productFamily, category);
+    const productType = text(entry.productType, parsedMeta.itemNoun);
+    const productTitle = text(entry.publicTitle, parsedMeta.productTitle);
+    const sortPriority = Number.isFinite(Number(entry.sortPriority)) ? Number(entry.sortPriority) : parsedMeta.sortPriority || 1000;
+    const featuredPriority = Number.isFinite(Number(entry.featuredPriority)) ? Number(entry.featuredPriority) : 0;
+    const publicStatus = text(entry.publicStatus, product && product.source === "printful-catalog" ? "internal" : "public");
+    const supportCopy = text(entry.supportCopy, `Questions before ordering? Email ${merchSupportEmail()}.`);
+    const relatedGroup = text(entry.relatedGroup, `${project} ${album}`);
+
+    return {
+      ...parsedMeta,
+      rawTitle: parsedMeta.title,
+      project,
+      projectKey: merchSlug(project),
+      album,
+      albumKey: merchSlug(album),
+      design,
+      designKey: merchSlug(design),
+      productTitle,
+      category,
+      categoryKey: merchSlug(category),
+      productFamily,
+      productFamilyKey: merchSlug(productFamily),
+      productType,
+      itemNoun: text(entry.itemNoun, productType.toLowerCase()),
+      categoryPath: text(entry.categoryPath, category),
+      sortPriority,
+      featuredPriority,
+      publicStatus,
+      thumbnailStrategy: text(entry.thumbnailStrategy, "artwork"),
+      artworkKey: merchMetadataNameKey(entry.artworkKey),
+      heroEligible: entry.heroEligible === true,
+      imageAlt: text(entry.imageAlt, `${productTitle} product image`),
+      productCopy: text(entry.productCopy, ""),
+      detailCopy: text(entry.detailCopy, ""),
+      fitNotes: text(entry.fitNotes, ""),
+      materialCare: text(entry.materialCare, ""),
+      productionNote: text(entry.productionNote, ""),
+      shippingNote: text(entry.shippingNote, ""),
+      returnPolicy: text(entry.returnPolicy, ""),
+      supportCopy,
+      relatedGroup,
+      relatedGroupKey: merchSlug(relatedGroup),
+      searchText: [
+        product && product.name,
+        productTitle,
+        project,
+        album,
+        design,
+        category,
+        productFamily,
+        productType,
+        text(entry.tags, "")
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+    };
   }
 
   function inferPrintfulProductCategory(titleValue, product) {
@@ -3540,12 +3704,15 @@
 
   function enrichPrintfulProduct(product, index) {
     const isCatalog = product && product.source === "printful-catalog";
+    const parsedMeta = parsePrintfulProductName(product && (product.name || product.title), product);
+    const metadata = merchMetadataForProduct(product);
+    const merch = mergeMerchMetadata(product, parsedMeta, metadata);
 
     return {
       ...product,
-      merchIndex: index,
+      merchIndex: Number.isFinite(merch.sortPriority) ? merch.sortPriority : index,
       isPurchasable: isCatalog ? false : product && product.isPurchasable !== false,
-      merch: parsePrintfulProductName(product && (product.name || product.title), product)
+      merch
     };
   }
 
@@ -3607,13 +3774,18 @@
   }
 
   function printfulArtworkAsset(product) {
-    const title = text(product && product.merch && product.merch.title, product && product.name).toLowerCase();
-    return MERCH_ARTWORK_ASSETS[title] || null;
+    const key = text(product && product.merch && product.merch.artworkKey, "");
+    const title = merchMetadataNameKey(product && product.name);
+    return (key && MERCH_ARTWORK_ASSETS[key]) || MERCH_ARTWORK_ASSETS[title] || null;
   }
 
   function printfulArtworkGround(product) {
     const asset = printfulArtworkAsset(product);
-    return asset && asset.ground === "dark" ? "dark" : "light";
+    if (!asset) {
+      return "image";
+    }
+
+    return asset.ground === "dark" ? "dark" : "light";
   }
 
   function printfulArtworkMarkup(product, size) {
@@ -3642,7 +3814,7 @@
 
   function printfulProductImageLabel(product, fallback) {
     const meta = (product && product.merch) || parsePrintfulProductName(product && product.name, product);
-    return text(fallback || (product && product.name), `${meta.productTitle} product image`);
+    return text(fallback || meta.imageAlt || (product && product.name), `${meta.productTitle} product image`);
   }
 
   function printfulImageUnavailableMarkup(size) {
@@ -3670,6 +3842,16 @@
         />
       </span>
     `;
+  }
+
+  function printfulPrimaryVisualMarkup(product, size, loading) {
+    const strategy = text(product && product.merch && product.merch.thumbnailStrategy, "artwork");
+
+    if (strategy === "product" && printfulProductImageUrl(product)) {
+      return printfulProductImageMarkup(product, size, loading);
+    }
+
+    return printfulArtworkMarkup(product, size) || printfulProductImageMarkup(product, size, loading);
   }
 
   function addPrintfulGalleryImage(images, candidate) {
@@ -3700,26 +3882,30 @@
     const detailProduct = detail && detail.product ? detail.product : null;
     const productImage = printfulProductImageUrl(detailProduct) || printfulProductImageUrl(product);
     const artwork = printfulArtworkAsset(product);
+    const productFirst = text(product && product.merch && product.merch.thumbnailStrategy, "artwork") === "product";
 
-    if (artwork) {
-      addPrintfulGalleryImage(images, {
-        id: "artwork",
-        url: artwork.src,
-        thumbnailUrl: artwork.src,
-        label: `${artwork.label || ((product && product.merch && product.merch.design) || "Design")} artwork`,
-        type: "artwork",
-        ground: artwork.ground
-      });
-    }
-
-    addPrintfulGalleryImage(images, {
+    const artworkCandidate = artwork
+      ? {
+          id: "artwork",
+          url: artwork.src,
+          thumbnailUrl: artwork.src,
+          label: `${artwork.label || ((product && product.merch && product.merch.design) || "Design")} artwork`,
+          type: "artwork",
+          ground: artwork.ground
+        }
+      : null;
+    const productCandidate = {
       id: "product-thumbnail",
       url: productImage,
       thumbnailUrl: productImage,
       label: printfulProductImageLabel(detailProduct || product),
       type: "image",
       ground: "image"
-    });
+    };
+
+    [productFirst ? productCandidate : artworkCandidate, productFirst ? artworkCandidate : productCandidate]
+      .filter(Boolean)
+      .forEach((candidate) => addPrintfulGalleryImage(images, candidate));
 
     [detail && detail.images, detail && detail.product && detail.product.images]
       .filter(Array.isArray)
@@ -3755,7 +3941,7 @@
   }
 
   function isPrintfulCatalogMode() {
-    return printfulMerchState.mode === "catalog";
+    return printfulMerchState.mode === "catalog" && merchCatalogModeEnabled();
   }
 
   function isPrintfulFeaturedMode() {
@@ -3763,7 +3949,19 @@
   }
 
   function featuredPrintfulProducts(products) {
-    return products.slice(0, PRINTFUL_FEATURED_LIMIT);
+    const publicProducts = products.filter((product) => text(product && product.merch && product.merch.publicStatus, "public") === "public");
+    const featured = publicProducts
+      .filter((product) => Number(product.merch.featuredPriority) > 0 || product.merch.heroEligible)
+      .sort((a, b) => {
+        const aPriority = Number(a.merch.featuredPriority) || 999;
+        const bPriority = Number(b.merch.featuredPriority) || 999;
+        return aPriority - bPriority || a.merch.sortPriority - b.merch.sortPriority;
+      });
+    const fill = publicProducts
+      .filter((product) => !featured.includes(product))
+      .sort((a, b) => a.merch.sortPriority - b.merch.sortPriority);
+
+    return [...featured, ...fill].slice(0, PRINTFUL_FEATURED_LIMIT);
   }
 
   function activePrintfulProducts() {
@@ -3771,10 +3969,14 @@
       return printfulMerchState.catalogProducts;
     }
 
-    return printfulMerchState.syncProducts;
+    return printfulMerchState.syncProducts.filter((product) => text(product && product.merch && product.merch.publicStatus, "public") === "public");
   }
 
   function printfulFeaturedCopy(meta, index) {
+    if (meta.productCopy) {
+      return meta.productCopy;
+    }
+
     const fallback = [
       "A clean entry point into the current drop.",
       "A bolder alternate lane from the same store.",
@@ -3956,7 +4158,7 @@
           ${printfulVariantChoicesMarkup(variants)}
         </fieldset>
         ${printfulQuantityControlMarkup()}
-        <button class="button button--primary button--small" type="submit">Add to Cart</button>
+        <button class="button button--primary button--small" type="submit">Add to Request</button>
         <p class="merch-inline-status" data-printful-add-status></p>
       </form>
     `;
@@ -3975,7 +4177,7 @@
       ? printfulFeaturedCopy(meta, index)
       : isCatalogProduct
         ? `${meta.categoryPath || meta.category} blank from Printful, ready to become a future Pawn Island drop.`
-        : `${meta.design} ${meta.itemNoun} from the ${meta.album} drop, ready for option selection and an order request.`;
+        : text(meta.productCopy, `${meta.design} ${meta.productType} from the ${meta.album} drop, ready for option selection and an order request.`);
 
     return `
       <article
@@ -3985,13 +4187,14 @@
         data-merch-album="${escapeHtml(meta.albumKey)}"
       >
         <div class="merch-card__visual">
-          ${printfulArtworkMarkup(product, "card") || printfulProductImageMarkup(product, "card")}
+          ${printfulPrimaryVisualMarkup(product, "card")}
         </div>
         <div class="merch-card__body">
           <div class="merch-card__meta">
             ${isFeatured ? '<span class="tag tag--ready">Featured</span>' : ""}
             <span class="tag">${escapeHtml(meta.project)}</span>
             <span class="tag tag--muted">${escapeHtml(meta.category)}</span>
+            <span class="tag tag--muted">${escapeHtml(meta.productFamily)}</span>
           </div>
           <div class="merch-card__copy">
             <h3>${escapeHtml(meta.productTitle)}</h3>
@@ -3999,11 +4202,11 @@
           </div>
           <div class="merch-card__facts">
             <span data-printful-card-price="${escapeHtml(product.id)}">${escapeHtml(isCatalogProduct ? "Design next" : price || "Select option for price")}</span>
-            <span>${variantCount ? `${variantCount} option${variantCount === 1 ? "" : "s"}` : escapeHtml(meta.category)}</span>
+            <span>${escapeHtml(variantCount ? `${variantCount} option${variantCount === 1 ? "" : "s"}` : meta.productType)}</span>
           </div>
           <div class="action-row merch-card__actions">
             <a class="button button--ghost button--small" href="${escapeHtml(printfulProductUrl(product.id))}" data-printful-product-link="${escapeHtml(product.id)}">
-              Details
+              View
             </a>
             ${
               isPurchasable
@@ -4015,7 +4218,7 @@
                     aria-expanded="${detail ? "true" : "false"}"
                     ${detail ? "disabled" : ""}
                   >
-                    ${detail ? "Options Ready" : "Pick Option"}
+                    ${detail ? "Options Ready" : "Choose Options"}
                   </button>
                 `
                 : `<a class="button button--primary button--small" href="connect.html">Design Brief</a>`
@@ -4107,6 +4310,49 @@
     }, 0);
   }
 
+  function normalizeStoredCartItem(item) {
+    const syncVariantId = Number.parseInt(item && item.syncVariantId, 10);
+    const quantity = Math.min(Math.max(Number.parseInt(item && item.quantity, 10) || 1, 1), 10);
+    const productName = text(item && item.productName, "").slice(0, 160);
+    const variantName = text(item && item.variantName, "").slice(0, 160);
+
+    if (!syncVariantId || !productName || !variantName) {
+      return null;
+    }
+
+    return {
+      productName,
+      variantName,
+      quantity,
+      syncVariantId,
+      catalogVariantId: Number.parseInt(item && item.catalogVariantId, 10) || null,
+      retailPrice: text(item && item.retailPrice, "").slice(0, 20),
+      currency: text(item && item.currency, "USD").slice(0, 8)
+    };
+  }
+
+  function restorePrintfulCart() {
+    try {
+      const raw = window.localStorage.getItem(MERCH_CART_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      printfulMerchState.cart = Array.isArray(parsed)
+        ? parsed.map(normalizeStoredCartItem).filter(Boolean).slice(0, 20)
+        : [];
+    } catch (error) {
+      printfulMerchState.cart = [];
+    }
+  }
+
+  function persistPrintfulCart() {
+    try {
+      if (printfulMerchState.cart.length) {
+        window.localStorage.setItem(MERCH_CART_STORAGE_KEY, JSON.stringify(printfulMerchState.cart));
+      } else {
+        window.localStorage.removeItem(MERCH_CART_STORAGE_KEY);
+      }
+    } catch (error) {}
+  }
+
   function printfulShippingRateLabel(rate) {
     const name = text(rate && (rate.name || rate.shipping || rate.shipping_method_name || rate.id), "Shipping");
     const price = printfulMoney(rate && (rate.rate || rate.price), rate && rate.currency);
@@ -4157,12 +4403,12 @@
     if (!printfulMerchState.cart.length) {
       body.innerHTML = `
         ${noticeMarkup}
-        <p class="merch-cart__empty">Cart is empty.</p>
-        <p class="merch-cart__note">Choose a product, pick an option, then estimate shipping before sending the order request.</p>
+        <p class="merch-cart__empty">Order request is empty.</p>
+        <p class="merch-cart__note">Choose a product and option, then estimate shipping before requesting an invoice.</p>
         <ul class="merch-cart__assurance" aria-label="Checkout assurances">
-          <li>Available product options are shown before checkout.</li>
-          <li>Shipping rates are estimated before the order request leaves the site.</li>
-          <li>Payment details follow by email after the request is received.</li>
+          <li>Printed on demand after invoice payment.</li>
+          <li>Shipping is estimated before the request leaves the site.</li>
+          <li>${escapeHtml(merchPaymentCopy())}</li>
         </ul>
       `;
       return;
@@ -4172,15 +4418,26 @@
     const totalLabel = total ? printfulMoney(total, "USD") : "Price pending";
     const itemsMarkup = printfulMerchState.cart
       .map(
-        (item, index) => `
+        (item, index) => {
+          const amount = Number.parseFloat(item.retailPrice);
+          const linePrice = Number.isFinite(amount) ? printfulMoney(amount * item.quantity, item.currency) : "Price pending";
+
+          return `
           <li>
             <div>
               <strong>${escapeHtml(item.productName)}</strong>
               <span>${escapeHtml(item.variantName)} x ${item.quantity}</span>
+              <span>${escapeHtml(linePrice)}</span>
+              <div class="merch-cart__qty" aria-label="Change quantity for ${escapeHtml(item.productName)}">
+                <button type="button" data-printful-cart-qty="${index}" data-printful-cart-qty-step="-1" aria-label="Decrease ${escapeHtml(item.productName)} quantity">-</button>
+                <strong>${escapeHtml(String(item.quantity))}</strong>
+                <button type="button" data-printful-cart-qty="${index}" data-printful-cart-qty-step="1" aria-label="Increase ${escapeHtml(item.productName)} quantity">+</button>
+              </div>
             </div>
             <button type="button" class="merch-cart__remove" data-printful-remove-cart="${index}" aria-label="Remove ${escapeHtml(item.productName)}">Remove</button>
           </li>
-        `
+        `;
+        }
       )
       .join("");
 
@@ -4190,7 +4447,7 @@
         <span>Subtotal</span>
         <strong>${escapeHtml(totalLabel)}</strong>
       </div>
-      <p class="merch-cart__note">Shipping is estimated here. Payment and final tax are confirmed by email after the request is received.</p>
+      <p class="merch-cart__note">Shipping is estimated here. Final tax and payment are handled in the invoice link sent by email.</p>
       <form class="merch-checkout-form" id="printful-draft-order-form">
         <input class="merch-honey-field" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <label>
@@ -4245,7 +4502,12 @@
         </div>
         <button class="button button--ghost button--small" type="button" data-printful-estimate-shipping>Estimate Shipping</button>
         <div class="merch-shipping-rates" id="printful-shipping-rates">${printfulShippingRatesMarkup()}</div>
-        <button class="button button--primary button--small" type="submit">Send Order Request</button>
+        <label class="merch-policy-check">
+          <input name="policy" type="checkbox" required />
+          <span>I understand this sends an order request, not a completed payment. ${escapeHtml(merchPaymentCopy())}</span>
+        </label>
+        <p class="merch-cart__note">Your address is used to estimate shipping and prepare the invoice. Support: <a href="mailto:${escapeHtml(merchSupportEmail())}">${escapeHtml(merchSupportEmail())}</a>.</p>
+        <button class="button button--primary button--small" type="submit">Request Invoice</button>
         <p class="merch-inline-status" id="printful-cart-status"></p>
       </form>
     `;
@@ -4261,7 +4523,7 @@
       return;
     }
 
-    const productName = text(detail.product && detail.product.name, "Pawn Island Records merch");
+    const productName = text(detail.product && detail.product.merch && detail.product.merch.productTitle, detail.product && detail.product.name) || "Pawn Island Records merch";
     const existing = printfulMerchState.cart.find((item) => item.syncVariantId === variant.syncVariantId);
 
     if (existing) {
@@ -4281,6 +4543,7 @@
     printfulMerchState.orderNotice = "";
     printfulMerchState.shippingRates = [];
     printfulMerchState.selectedShipping = "";
+    persistPrintfulCart();
     renderPrintfulCart();
 
     const status = form.querySelector("[data-printful-add-status]");
@@ -4387,8 +4650,9 @@
         status.textContent = `Order request created${orderId}.`;
       }
 
-      printfulMerchState.orderNotice = `Order request received${orderId}. Watch your email for payment details.`;
+      printfulMerchState.orderNotice = `Order request received${orderId}. ${merchPaymentCopy()}`;
       printfulMerchState.cart = [];
+      persistPrintfulCart();
       renderPrintfulCart();
     } catch (error) {
       if (status) {
@@ -4430,6 +4694,18 @@
 
     return `
       <button class="merch-category-tab merch-mode-tab ${active ? "is-active" : ""}" type="button" data-printful-mode="${escapeHtml(value)}" aria-pressed="${active ? "true" : "false"}">
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(String(count))}</strong>
+        <em>${escapeHtml(description)}</em>
+      </button>
+    `;
+  }
+
+  function printfulCategoryTabMarkup(value, label, count, description) {
+    const active = isPrintfulShopMode() && printfulMerchState.filters.category === value;
+
+    return `
+      <button class="merch-category-tab ${active ? "is-active" : ""}" type="button" data-printful-filter="category" data-printful-filter-value="${escapeHtml(value)}" aria-pressed="${active ? "true" : "false"}">
         <span>${escapeHtml(label)}</span>
         <strong>${escapeHtml(String(count))}</strong>
         <em>${escapeHtml(description)}</em>
@@ -4489,11 +4765,26 @@
     });
 
     if (categoryNode) {
-      categoryNode.innerHTML = [
-        printfulModeButtonMarkup("shop", "Ready to Buy", printfulMerchState.syncProducts.length, "Live checkout"),
-        printfulModeButtonMarkup("featured", "Featured Rack", featuredPrintfulProducts(printfulMerchState.syncProducts).length, "Strong starts"),
-        printfulModeButtonMarkup("catalog", "Printful Catalog", printfulMerchState.catalogProducts.length, "Blank products")
-      ].join("");
+      const publicProducts = activePrintfulProducts();
+      const categories = countBy(publicProducts, (product) => product.merch.categoryKey, (product) => product.merch.category);
+      const tabs = [
+        printfulCategoryTabMarkup("all", "All", publicProducts.length, "Curated order-ready goods"),
+        ...categories.map((category) => {
+          const descriptions = {
+            apparel: "Artist tees",
+            "desk-gear": "Mats and work surfaces",
+            bags: "Carry goods"
+          };
+          return printfulCategoryTabMarkup(category.key, category.label, category.count, descriptions[category.key] || "Order-ready items");
+        }),
+        printfulModeButtonMarkup("featured", "Featured", featuredPrintfulProducts(publicProducts).length, "Strong starts")
+      ];
+
+      if (merchCatalogModeEnabled()) {
+        tabs.push(printfulModeButtonMarkup("catalog", "Design Next", printfulMerchState.catalogProducts.length, "Internal catalog"));
+      }
+
+      categoryNode.innerHTML = tabs.join("");
     }
 
     if (productCategoryNode) {
@@ -4528,8 +4819,8 @@
       return;
     }
 
-    const readyProducts = printfulMerchState.syncProducts.length ? printfulMerchState.syncProducts : products;
-    const categories = new Set(printfulMerchState.catalogProducts.map((product) => product.merch.categoryKey)).size;
+    const readyProducts = activePrintfulProducts().length ? activePrintfulProducts() : products;
+    const categories = new Set(readyProducts.map((product) => product.merch.categoryKey)).size;
     const projects = new Set(readyProducts.map((product) => product.merch.projectKey)).size;
     const options = readyProducts.reduce((total, product) => total + (Number(product.variants) || Number(product.variantCount) || 0), 0);
 
@@ -4544,7 +4835,7 @@
           <dd>${escapeHtml(String(projects))}</dd>
         </div>
         <div>
-          <dt>Catalog</dt>
+          <dt>Types</dt>
           <dd>${escapeHtml(String(categories))}</dd>
         </div>
         <div>
@@ -4564,12 +4855,14 @@
 
     const featured = featuredPrintfulProducts(printfulMerchState.syncProducts.length ? printfulMerchState.syncProducts : products);
 
+    node.hidden = featured.length === 0;
+
     node.innerHTML = featured.length
       ? featured
           .map(
             (product) => `
               <a class="merch-showcase-tile merch-showcase-tile--${escapeHtml(printfulArtworkGround(product))}" role="listitem" href="${escapeHtml(printfulProductUrl(product.id))}" data-printful-product-link="${escapeHtml(product.id)}">
-                ${printfulArtworkMarkup(product, "hero") || printfulProductImageMarkup(product, "hero")}
+                ${printfulPrimaryVisualMarkup(product, "hero", "eager")}
                 <span>${escapeHtml(product.merch.design)}</span>
               </a>
             `
@@ -4597,22 +4890,23 @@
 
     if (summary) {
       if (isCatalog) {
-        summary.textContent = `Printful catalog: ${products.length} of ${activeProducts.length} products shown`;
+        summary.textContent = `Internal design catalog: ${products.length} of ${activeProducts.length} products shown.`;
       } else if (isFeatured) {
         summary.textContent = `Featured rack: ${visibleProducts.length} of ${products.length} matching products shown.`;
       } else {
-        summary.textContent = `Ready to buy: ${products.length} of ${activeProducts.length} products shown`;
+        summary.textContent = `Order-ready goods: ${products.length} of ${activeProducts.length} products shown.`;
       }
     }
 
     if (status) {
-      const projects = new Set(printfulMerchState.syncProducts.map((product) => product.merch.projectKey)).size;
+      const publicProducts = activePrintfulProducts();
+      const projects = new Set(publicProducts.map((product) => product.merch.projectKey)).size;
       const catalogCategories = new Set(printfulMerchState.catalogProducts.map((product) => product.merch.categoryKey)).size;
       status.textContent = isCatalog
-        ? `${printfulMerchState.catalogProducts.length} Printful products across ${catalogCategories} active categor${catalogCategories === 1 ? "y" : "ies"}.`
-        : printfulMerchState.syncProducts.length
-          ? `${printfulMerchState.syncProducts.length} ready-to-buy product${printfulMerchState.syncProducts.length === 1 ? "" : "s"} across ${projects} project${projects === 1 ? "" : "s"}.`
-          : "No ready-to-buy products are available yet.";
+        ? `${printfulMerchState.catalogProducts.length} internal Printful products across ${catalogCategories} active categor${catalogCategories === 1 ? "y" : "ies"}.`
+        : publicProducts.length
+          ? `${publicProducts.length} order-ready product${publicProducts.length === 1 ? "" : "s"} across ${projects} project${projects === 1 ? "" : "s"}.`
+          : "No order-ready products are available yet.";
     }
 
     if (!grid) {
@@ -4648,10 +4942,18 @@
     const price = printfulPriceRange(detail.variants);
     const related = relatedPrintfulProducts(product);
     const isCatalogProduct = product && product.source === "printful-catalog";
-    const backLabel = isPrintfulCatalogMode() ? "Back to Printful Catalog" : isPrintfulFeaturedMode() ? "Back to Featured Rack" : "Back to Store";
+    const backLabel = isPrintfulCatalogMode() ? "Back to Design Next" : isPrintfulFeaturedMode() ? "Back to Featured" : "Back to Store";
     const techniqueLabels = Array.isArray(product && product.techniques)
       ? product.techniques.map((technique) => text(technique.name || technique.key, "")).filter(Boolean).slice(0, 3)
       : [];
+    const detailCopy = isCatalogProduct
+      ? text(product.description, `${meta.categoryPath || meta.category} is available in Printful's blank catalog for a future label design.`)
+      : text(meta.detailCopy, `${meta.design} artwork is shown with current product photos from the store listing. Choose an option to send an order request.`);
+    const fitNotes = merchFamilyNote(product, "fitNotes", "Variant details load from the current Printful option set.");
+    const materialCare = merchFamilyNote(product, "materialCare", "Care information follows the selected Printful product.");
+    const productionNote = merchFamilyNote(product, "productionNote", "Printed on demand after invoice payment.");
+    const shippingNote = merchFamilyNote(product, "shippingNote", "Shipping is estimated in the order desk before the request is sent.");
+    const returnPolicy = text(meta.returnPolicy, merchPolicyCopy());
 
     return `
       <div class="merch-product-detail__grid">
@@ -4665,7 +4967,7 @@
             <span class="tag tag--muted">${escapeHtml(meta.category)}</span>
           </div>
           <h3>${escapeHtml(meta.productTitle)}</h3>
-          <p>${escapeHtml(isCatalogProduct ? text(product.description, `${meta.categoryPath || meta.category} is available in Printful's blank catalog for a future label design.`) : `${meta.design} artwork is shown with current product photos from the store listing. Choose an option to send an order request.`)}</p>
+          <p>${escapeHtml(detailCopy)}</p>
           <div class="merch-product-price">${escapeHtml(isCatalogProduct ? "Design next" : price || "Price loads with options")}</div>
           ${isCatalogProduct ? '<a class="button button--primary button--small" href="connect.html">Request This Product</a>' : printfulVariantFormMarkup(product.id, detail, "detail")}
           <dl class="merch-product-specs">
@@ -4683,9 +4985,33 @@
             </div>
             <div>
               <dt>${escapeHtml(isCatalogProduct ? "Options" : "Order")}</dt>
-              <dd>${escapeHtml(isCatalogProduct ? `${Number(product.variantCount || product.variants || 0)} blank option${Number(product.variantCount || product.variants || 0) === 1 ? "" : "s"}` : "Payment follow-up by email")}</dd>
+              <dd>${escapeHtml(isCatalogProduct ? `${Number(product.variantCount || product.variants || 0)} blank option${Number(product.variantCount || product.variants || 0) === 1 ? "" : "s"}` : "Invoice follow-up by email")}</dd>
             </div>
           </dl>
+          ${
+            isCatalogProduct
+              ? ""
+              : `
+                <div class="merch-product-policies">
+                  <section>
+                    <h4>Fit & Care</h4>
+                    <p>${escapeHtml(fitNotes)}</p>
+                    <p>${escapeHtml(materialCare)}</p>
+                  </section>
+                  <section>
+                    <h4>Production & Shipping</h4>
+                    <p>${escapeHtml(productionNote)}</p>
+                    <p>${escapeHtml(shippingNote)}</p>
+                    <p>${escapeHtml(merchPaymentCopy())}</p>
+                  </section>
+                  <section>
+                    <h4>Returns & Support</h4>
+                    <p>${escapeHtml(returnPolicy)}</p>
+                    <p>${escapeHtml(meta.supportCopy)} <a href="mailto:${escapeHtml(merchSupportEmail())}">${escapeHtml(merchSupportEmail())}</a></p>
+                  </section>
+                </div>
+              `
+          }
         </div>
       </div>
       ${
@@ -4698,7 +5024,7 @@
                   .map(
                     (item) => `
                       <a class="merch-related-card merch-related-card--${escapeHtml(printfulArtworkGround(item))}" href="${escapeHtml(printfulProductUrl(item.id))}" data-printful-product-link="${escapeHtml(item.id)}">
-                        ${printfulArtworkMarkup(item, "related") || printfulProductImageMarkup(item, "related")}
+                        ${printfulPrimaryVisualMarkup(item, "related")}
                         <span>${escapeHtml(item.merch.design)}</span>
                       </a>
                     `
@@ -4742,7 +5068,7 @@
         title: `${product.merch.productTitle} | Pawn Island Records Merch`,
         description: product.source === "printful-catalog"
           ? `Explore ${product.merch.productTitle} as a future Pawn Island Records merch format.`
-          : `Shop the ${product.merch.productTitle} from ${product.merch.project}.`,
+          : `Request an invoice for the ${product.merch.productTitle} from ${product.merch.project}.`,
         canonicalPath: sitePath("merch.html", { product: product.id }),
         image: printfulArtworkImageUrl(product) || printfulProductImageUrl(detail.product || product),
         robots: "noindex,follow"
@@ -4756,7 +5082,7 @@
           ${printfulProductGalleryMarkup(product)}
         </div>
         <div class="merch-product-detail__copy">
-          <button class="button button--ghost button--small" type="button" data-printful-clear-product>${escapeHtml(isPrintfulCatalogMode() ? "Back to Printful Catalog" : isPrintfulFeaturedMode() ? "Back to Featured Rack" : "Back to Store")}</button>
+          <button class="button button--ghost button--small" type="button" data-printful-clear-product>${escapeHtml(isPrintfulCatalogMode() ? "Back to Design Next" : isPrintfulFeaturedMode() ? "Back to Featured" : "Back to Store")}</button>
           <div class="merch-card__meta">
             <span class="tag">${escapeHtml(product.merch.project)}</span>
             <span class="tag tag--muted">${escapeHtml(product.merch.category)}</span>
@@ -4860,6 +5186,7 @@
       const clearProduct = event.target.closest("[data-printful-clear-product]");
       const loadButton = event.target.closest("[data-printful-load-product]");
       const removeButton = event.target.closest("[data-printful-remove-cart]");
+      const cartQtyButton = event.target.closest("[data-printful-cart-qty]");
       const shippingButton = event.target.closest("[data-printful-estimate-shipping]");
       const galleryImageButton = event.target.closest("[data-printful-gallery-image]");
       const zoomButton = event.target.closest("[data-printful-toggle-zoom]");
@@ -4908,6 +5235,13 @@
         const value = filterButton.dataset.printfulFilterValue || "all";
 
         if (kind && Object.prototype.hasOwnProperty.call(printfulMerchState.filters, kind)) {
+          if (kind === "category" && isPrintfulFeaturedMode()) {
+            printfulMerchState.mode = "shop";
+            printfulMerchState.selectedProductId = "";
+            printfulMerchState.zoomedProductId = "";
+            syncPrintfulProductUrl("");
+          }
+
           printfulMerchState.filters[kind] = value;
 
           if (kind === "category") {
@@ -4973,7 +5307,22 @@
         printfulMerchState.cart.splice(index, 1);
         printfulMerchState.shippingRates = [];
         printfulMerchState.selectedShipping = "";
+        persistPrintfulCart();
         renderPrintfulCart();
+      }
+
+      if (cartQtyButton) {
+        const index = Number.parseInt(cartQtyButton.dataset.printfulCartQty, 10);
+        const step = Number.parseInt(cartQtyButton.dataset.printfulCartQtyStep, 10) || 0;
+        const item = printfulMerchState.cart[index];
+
+        if (item) {
+          item.quantity = Math.min(Math.max((Number.parseInt(item.quantity, 10) || 1) + step, 1), 10);
+          printfulMerchState.shippingRates = [];
+          printfulMerchState.selectedShipping = "";
+          persistPrintfulCart();
+          renderPrintfulCart();
+        }
       }
     });
 
@@ -5030,7 +5379,7 @@
         if (printfulMerchState.selectedProductId) {
           const selected = printfulProductById(printfulMerchState.selectedProductId);
 
-          if (selected && selected.source === "printful-catalog") {
+          if (merchCatalogModeEnabled() && selected && selected.source === "printful-catalog") {
             printfulMerchState.mode = "catalog";
           }
         }
@@ -5053,12 +5402,16 @@
 
     printfulMerchState.initialized = true;
     bindPrintfulMerchEvents(panel);
+    restorePrintfulCart();
     renderPrintfulCart();
 
     try {
+      await loadMerchMetadata();
+      renderPrintfulCart();
+      const shouldLoadCatalog = merchCatalogModeEnabled();
       const [storeResult, catalogResult] = await Promise.allSettled([
         merchApiJson("api/merch/products?status=synced"),
-        merchApiJson("api/merch/catalog")
+        shouldLoadCatalog ? merchApiJson("api/merch/catalog") : Promise.resolve({ products: [], categories: [], categoryTree: [] })
       ]);
       const storeResponse = storeResult.status === "fulfilled" ? storeResult.value : {};
       const catalogResponse = catalogResult.status === "fulfilled" ? catalogResult.value : {};
@@ -5083,14 +5436,14 @@
       printfulMerchState.selectedProductId = text(params.get("product"), "");
       printfulMerchState.mode = normalizePrintfulMode(params.get("view"));
 
-      if (printfulMerchState.mode !== "catalog" && !syncProducts.length && catalogProducts.length) {
+      if (shouldLoadCatalog && printfulMerchState.mode !== "catalog" && !syncProducts.length && catalogProducts.length) {
         printfulMerchState.mode = "catalog";
       }
 
       if (printfulMerchState.selectedProductId) {
         const selected = printfulProductById(printfulMerchState.selectedProductId);
 
-        if (selected && selected.source === "printful-catalog") {
+        if (shouldLoadCatalog && selected && selected.source === "printful-catalog") {
           printfulMerchState.mode = "catalog";
         }
       }
@@ -5125,8 +5478,8 @@
 
   function setMerchCollectionMeta() {
     setRouteMeta({
-      title: "Merch Store | Pawn Island Records",
-      description: "Shop Pawn Island Records artist merch, browse future Printful product families, estimate shipping, and send an order request from the merch desk.",
+      title: "Merch Desk | Pawn Island Records",
+      description: "Browse curated Pawn Island Records artist goods, estimate shipping, and request an invoice before production begins.",
       canonicalPath: "merch.html",
       image: "assets/brand/pawnisland-1200.jpg",
       robots: "noindex,follow",
@@ -5134,7 +5487,7 @@
         {
           "@type": "CollectionPage",
           "@id": siteUrl("merch.html#merch"),
-          name: "Pawn Island Records Merch Store",
+          name: "Pawn Island Records Merch Desk",
           url: siteUrl("merch.html"),
           mainEntity: {
             "@type": "ItemList",
@@ -5161,14 +5514,14 @@
     }
 
     if (intro) {
-      intro.textContent = "Artist apparel, desk gear, wall art, current product photos, option choices, and shipping estimates for fans who want the art off the screen.";
+      intro.textContent = "Curated artist tees, desk mats, and carry goods. Pick options, estimate shipping, and request an invoice before anything goes to production.";
     }
 
     if (statsNode) {
       statsNode.innerHTML = `
         <dl>
           <div>
-            <dt>Store</dt>
+            <dt>Desk</dt>
             <dd>Loading</dd>
           </div>
           <div>

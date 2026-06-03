@@ -185,6 +185,7 @@ async function mockMerchApi(page) {
         variants: [
           {
             name: `${product.name} / M`,
+            syncVariantId: 2001,
             retailPrice: "28.00",
             currency: "USD",
             isSynced: true,
@@ -204,10 +205,12 @@ test.describe("merch discovery", () => {
   test("opens on purchase-ready products by default", async ({ page }) => {
     await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
 
-    await expect(page.locator("[data-printful-mode='shop']")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("#printful-category-filters [data-printful-filter='category'][data-printful-filter-value='all']")).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator(".merch-toolbar")).toBeVisible();
-    await expect(page.locator("#printful-results-summary")).toContainText("Ready to buy: 5 of 5 products shown");
+    await expect(page.locator("#printful-results-summary")).toContainText("Order-ready goods: 5 of 5 products shown");
     await expect(page.locator("[data-printful-product-card]")).toHaveCount(5);
+    await expect(page.locator("[data-printful-product-card]").first()).toContainText("Borrowed Brightness Crest Tee");
+    await expect(page.locator("[data-printful-mode='catalog']")).toHaveCount(0);
   });
 
   test("keeps featured rack as a shorter alternate view", async ({ page }) => {
@@ -219,22 +222,43 @@ test.describe("merch discovery", () => {
     await expect(page.locator("[data-printful-product-card]")).toHaveCount(4);
   });
 
-  test("discovers non-empty Printful catalog categories including mousepads", async ({ page }) => {
+  test("does not expose catalog mode without the internal flag", async ({ page }) => {
     await page.goto(withStandalone("merch.html?view=catalog"), { waitUntil: "domcontentloaded" });
 
+    await expect(page.locator("[data-printful-mode='catalog']")).toHaveCount(0);
+    await expect(page.locator("#printful-results-summary")).toContainText("Order-ready goods: 5 of 5 products shown");
+    await expect(page.locator("#printful-product-category-filters")).not.toContainText("Mousepads");
+  });
+
+  test("keeps Printful catalog discovery behind the internal flag", async ({ page }) => {
+    await page.goto(withStandalone("merch.html?internal=catalog&view=catalog"), { waitUntil: "domcontentloaded" });
+
     await expect(page.locator("[data-printful-mode='catalog']")).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator("#printful-results-summary")).toContainText("Printful catalog: 3 of 3 products shown");
+    await expect(page.locator("#printful-results-summary")).toContainText("Internal design catalog: 3 of 3 products shown");
     await expect(page.locator("#printful-product-category-filters")).toContainText("Mousepads");
     await expect(page.locator("#printful-product-category-filters")).not.toContainText("Jewelry");
 
-    await page.locator("[data-printful-filter='category'][data-printful-filter-value='mousepads']").click();
-    await expect(page.locator("#printful-results-summary")).toContainText("Printful catalog: 1 of 3 products shown");
+    await page.locator("#printful-product-category-filters [data-printful-filter='category'][data-printful-filter-value='mousepads']").click();
+    await expect(page.locator("#printful-results-summary")).toContainText("Internal design catalog: 1 of 3 products shown");
     await expect(page.locator("[data-printful-product-card]")).toHaveCount(1);
     await expect(page.locator("[data-printful-product-card]")).toContainText("Gaming Mouse Pad");
 
     await page.locator("[data-printful-product-link='catalog-901']").click();
     await expect(page.locator(".merch-product-detail")).toContainText("Request This Product");
     await expect(page.locator(".merch-product-detail")).not.toContainText("Add to Cart");
+  });
+
+  test("adds a curated product to the manual invoice request cart", async ({ page }) => {
+    await page.goto(withStandalone("merch.html?product=tee-1"), { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator(".merch-product-detail")).toContainText("Borrowed Brightness Crest Tee");
+    await expect(page.locator(".merch-product-detail")).toContainText("Add to Request");
+
+    await page.locator(".merch-product-detail [data-printful-add-form]").evaluate((form) => form.requestSubmit());
+    await expect(page.locator("#printful-cart-count")).toHaveText("1");
+    await expect(page.locator(".merch-cart__items")).toContainText("Borrowed Brightness Crest Tee");
+    await expect(page.locator(".merch-cart__items")).toContainText("$28.00");
+    await expect(page.locator(".merch-policy-check")).toContainText("not a completed payment");
   });
 
   test("keeps artwork assets separate from API product photos", async ({ page }) => {
