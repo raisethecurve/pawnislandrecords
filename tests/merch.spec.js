@@ -473,6 +473,59 @@ test.describe("merch discovery", () => {
     await expect(page.locator("#printful-copy-status")).toContainText(/order snapshot/i);
   });
 
+  test("remembers and forgets checkout details on this device", async ({ page }) => {
+    await addCuratedProductToCart(page);
+    await fillCheckoutForm(page, {
+      email: "repeat@example.com",
+      phone: "555-2323",
+      notes: "Do not save this note.",
+      address1: "44 Return Road",
+      address2: "Apt 7",
+      city: "Toronto",
+      state_code: "ON",
+      country_code: "CA",
+      zip: "M5V 2T6"
+    });
+
+    await page.locator("[name='remember_checkout']").check();
+    await page.locator("[data-printful-estimate-shipping]").click();
+
+    await expect(page.locator("#printful-checkout-memory-status")).toContainText("Checkout details saved on this device.");
+    const savedDetails = await page.evaluate(() => JSON.parse(window.localStorage.getItem("pawnisland:merch-checkout:v1")));
+    expect(savedDetails).toMatchObject({
+      email: "repeat@example.com",
+      phone: "555-2323",
+      address1: "44 Return Road",
+      address2: "Apt 7",
+      city: "Toronto",
+      state_code: "ON",
+      country_code: "CA",
+      zip: "M5V 2T6"
+    });
+    expect(savedDetails.notes).toBeUndefined();
+
+    await page.goto(withStandalone("merch.html"), { waitUntil: "domcontentloaded" });
+
+    const form = page.locator("#printful-draft-order-form");
+    await expect(form.locator("[name='email']")).toHaveValue("repeat@example.com");
+    await expect(form.locator("[name='phone']")).toHaveValue("555-2323");
+    await expect(form.locator("[name='address1']")).toHaveValue("44 Return Road");
+    await expect(form.locator("[name='address2']")).toHaveValue("Apt 7");
+    await expect(form.locator("[name='city']")).toHaveValue("Toronto");
+    await expect(form.locator("[name='state_code']")).toHaveValue("ON");
+    await expect(form.locator("[name='country_code']")).toHaveValue("CA");
+    await expect(form.locator("[name='zip']")).toHaveValue("M5V 2T6");
+    await expect(form.locator("[name='notes']")).toHaveValue("");
+    await expect(form.locator("[name='remember_checkout']")).toBeChecked();
+
+    await page.locator("[data-printful-forget-checkout]").click();
+
+    await expect(page.locator("#printful-checkout-memory-status")).toContainText("Saved checkout details removed.");
+    await expect(form.locator("[name='remember_checkout']")).not.toBeChecked();
+    const forgotten = await page.evaluate(() => window.localStorage.getItem("pawnisland:merch-checkout:v1"));
+    expect(forgotten).toBeNull();
+  });
+
   test("clears the request cart in one action", async ({ page }) => {
     await addCuratedProductToCart(page);
 
@@ -564,7 +617,7 @@ test.describe("merch discovery", () => {
 
     await page.locator("#printful-draft-order-form").evaluate((form) => form.requestSubmit());
 
-    expect(page.merchApiRequests.draftOrders).toHaveLength(1);
+    await expect.poll(() => page.merchApiRequests.draftOrders.length).toBe(1);
     expect(page.merchApiRequests.draftOrders[0].shipping).toBe("EXPRESS");
   });
 

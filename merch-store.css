@@ -1373,6 +1373,41 @@
   resize: vertical;
 }
 
+.merch-checkout-memory {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.65rem;
+  border: 1px solid rgba(247, 244, 236, 0.1);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.merch-memory-check {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: start;
+}
+
+.merch-memory-check input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.08rem;
+  accent-color: var(--merch-yellow);
+}
+
+.merch-checkout-form .merch-memory-check span {
+  color: var(--merch-muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.merch-checkout-memory .button {
+  justify-self: start;
+}
+
 .merch-policy-check {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);

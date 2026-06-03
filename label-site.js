@@ -3343,6 +3343,8 @@
   const PRINTFUL_FEATURED_LIMIT = 4;
   const MERCH_CART_STORAGE_KEY = "pawnisland:merch-cart:v1";
   const MERCH_ORDER_REQUEST_STORAGE_KEY = "pawnisland:merch-order-request:v1";
+  const MERCH_CHECKOUT_STORAGE_KEY = "pawnisland:merch-checkout:v1";
+  const MERCH_CHECKOUT_STORAGE_FIELDS = ["name", "email", "phone", "address1", "address2", "city", "state_code", "country_code", "zip"];
 
   function merchCatalogModeEnabled() {
     const params = new URLSearchParams(window.location.search);
@@ -4639,6 +4641,105 @@
     } catch (error) {}
   }
 
+  function normalizePrintfulCheckoutDetails(input) {
+    const details = {};
+
+    MERCH_CHECKOUT_STORAGE_FIELDS.forEach((key) => {
+      const fallback = key === "country_code" ? "US" : "";
+      const limit = key === "email" ? 160 : key === "phone" || key === "zip" || key === "state_code" || key === "country_code" ? 40 : 180;
+      details[key] = text(input && input[key], fallback).slice(0, limit);
+    });
+
+    details.country_code = text(details.country_code, "US").toUpperCase().slice(0, 4);
+    details.state_code = text(details.state_code, "").toUpperCase().slice(0, 12);
+    return details;
+  }
+
+  function hasPrintfulCheckoutDetails(details) {
+    return MERCH_CHECKOUT_STORAGE_FIELDS.some((key) => key !== "country_code" && text(details && details[key], ""));
+  }
+
+  function loadPrintfulCheckoutDetails() {
+    try {
+      const raw = window.localStorage.getItem(MERCH_CHECKOUT_STORAGE_KEY);
+      return raw ? normalizePrintfulCheckoutDetails(JSON.parse(raw)) : normalizePrintfulCheckoutDetails({});
+    } catch (error) {
+      return normalizePrintfulCheckoutDetails({});
+    }
+  }
+
+  function collectPrintfulCheckoutDetails(form) {
+    const formData = new FormData(form);
+    const details = {};
+
+    MERCH_CHECKOUT_STORAGE_FIELDS.forEach((key) => {
+      details[key] = text(formData.get(key), "");
+    });
+
+    return normalizePrintfulCheckoutDetails(details);
+  }
+
+  function checkoutDetailValue(details, key) {
+    return escapeHtml(text(details && details[key], ""));
+  }
+
+  function checkoutCountryOption(value, label, details) {
+    const current = text(details && details.country_code, "US").toUpperCase();
+    return `<option value="${escapeHtml(value)}" ${current === value ? "selected" : ""}>${escapeHtml(label)}</option>`;
+  }
+
+  function updatePrintfulCheckoutMemory(form) {
+    const status = document.getElementById("printful-checkout-memory-status");
+    const remember = Boolean(form && form.querySelector('input[name="remember_checkout"]:checked'));
+    const hadSaved = hasPrintfulCheckoutDetails(loadPrintfulCheckoutDetails());
+
+    try {
+      if (remember) {
+        window.localStorage.setItem(MERCH_CHECKOUT_STORAGE_KEY, JSON.stringify(collectPrintfulCheckoutDetails(form)));
+        if (status) {
+          status.textContent = "Checkout details saved on this device.";
+        }
+        trackMerchEvent("save_checkout_details", {
+          status: "saved"
+        });
+      } else if (hadSaved) {
+        window.localStorage.removeItem(MERCH_CHECKOUT_STORAGE_KEY);
+        if (status) {
+          status.textContent = "Saved checkout details removed.";
+        }
+        trackMerchEvent("save_checkout_details", {
+          status: "cleared"
+        });
+      }
+    } catch (error) {
+      if (status) {
+        status.textContent = "Checkout details could not be saved in this browser.";
+      }
+    }
+  }
+
+  function forgetPrintfulCheckoutDetails() {
+    const form = document.getElementById("printful-draft-order-form");
+    const status = document.getElementById("printful-checkout-memory-status");
+    const checkbox = form && form.querySelector('input[name="remember_checkout"]');
+
+    try {
+      window.localStorage.removeItem(MERCH_CHECKOUT_STORAGE_KEY);
+    } catch (error) {}
+
+    if (checkbox) {
+      checkbox.checked = false;
+    }
+
+    if (status) {
+      status.textContent = "Saved checkout details removed.";
+    }
+
+    trackMerchEvent("save_checkout_details", {
+      status: "forgotten"
+    });
+  }
+
   function normalizePrintfulOrderRequestId(value) {
     return text(value, "")
       .replace(/[^a-zA-Z0-9_-]/g, "")
@@ -4842,6 +4943,8 @@
     const total = printfulCartTotal();
     const totalLabel = total ? printfulMoney(total, "USD") : "Price pending";
     const summaryText = printfulCartSummaryText();
+    const checkoutDetails = loadPrintfulCheckoutDetails();
+    const hasSavedCheckout = hasPrintfulCheckoutDetails(checkoutDetails);
     const itemsMarkup = printfulMerchState.cart
       .map(
         (item, index) => {
@@ -4890,15 +4993,15 @@
         <input class="merch-honey-field" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <label>
           <span>Name</span>
-          <input name="name" autocomplete="name" required />
+          <input name="name" autocomplete="name" value="${checkoutDetailValue(checkoutDetails, "name")}" required />
         </label>
         <label>
           <span>Email</span>
-          <input name="email" type="email" autocomplete="email" required />
+          <input name="email" type="email" autocomplete="email" value="${checkoutDetailValue(checkoutDetails, "email")}" required />
         </label>
         <label>
           <span>Phone optional</span>
-          <input name="phone" type="tel" autocomplete="tel" />
+          <input name="phone" type="tel" autocomplete="tel" value="${checkoutDetailValue(checkoutDetails, "phone")}" />
         </label>
         <label>
           <span>Order notes optional</span>
@@ -4906,41 +5009,49 @@
         </label>
         <label>
           <span>Address</span>
-          <input name="address1" autocomplete="address-line1" required />
+          <input name="address1" autocomplete="address-line1" value="${checkoutDetailValue(checkoutDetails, "address1")}" required />
         </label>
         <label>
           <span>Address 2 optional</span>
-          <input name="address2" autocomplete="address-line2" />
+          <input name="address2" autocomplete="address-line2" value="${checkoutDetailValue(checkoutDetails, "address2")}" />
         </label>
         <div class="merch-checkout-form__row">
           <label>
             <span>City</span>
-            <input name="city" autocomplete="address-level2" required />
+            <input name="city" autocomplete="address-level2" value="${checkoutDetailValue(checkoutDetails, "city")}" required />
           </label>
           <label>
             <span>State</span>
-            <input name="state_code" autocomplete="address-level1" maxlength="12" data-printful-shipping-field />
+            <input name="state_code" autocomplete="address-level1" maxlength="12" value="${checkoutDetailValue(checkoutDetails, "state_code")}" data-printful-shipping-field />
           </label>
         </div>
         <div class="merch-checkout-form__row">
           <label>
             <span>Country</span>
             <select name="country_code" autocomplete="country" required data-printful-shipping-field>
-              <option value="US">United States</option>
-              <option value="CA">Canada</option>
-              <option value="GB">United Kingdom</option>
-              <option value="AU">Australia</option>
-              <option value="DE">Germany</option>
-              <option value="FR">France</option>
-              <option value="NL">Netherlands</option>
-              <option value="SE">Sweden</option>
-              <option value="JP">Japan</option>
+              ${checkoutCountryOption("US", "United States", checkoutDetails)}
+              ${checkoutCountryOption("CA", "Canada", checkoutDetails)}
+              ${checkoutCountryOption("GB", "United Kingdom", checkoutDetails)}
+              ${checkoutCountryOption("AU", "Australia", checkoutDetails)}
+              ${checkoutCountryOption("DE", "Germany", checkoutDetails)}
+              ${checkoutCountryOption("FR", "France", checkoutDetails)}
+              ${checkoutCountryOption("NL", "Netherlands", checkoutDetails)}
+              ${checkoutCountryOption("SE", "Sweden", checkoutDetails)}
+              ${checkoutCountryOption("JP", "Japan", checkoutDetails)}
             </select>
           </label>
           <label>
             <span>ZIP</span>
-            <input name="zip" autocomplete="postal-code" required data-printful-shipping-field />
+            <input name="zip" autocomplete="postal-code" value="${checkoutDetailValue(checkoutDetails, "zip")}" required data-printful-shipping-field />
           </label>
+        </div>
+        <div class="merch-checkout-memory">
+          <label class="merch-memory-check">
+            <input name="remember_checkout" type="checkbox" ${hasSavedCheckout ? "checked" : ""} />
+            <span>Remember checkout details on this device</span>
+          </label>
+          ${hasSavedCheckout ? '<button class="button button--ghost button--small" type="button" data-printful-forget-checkout>Forget Saved Details</button>' : ""}
+          <p class="merch-inline-status" id="printful-checkout-memory-status">${hasSavedCheckout ? "Saved checkout details loaded." : ""}</p>
         </div>
         <button class="button button--ghost button--small" type="button" data-printful-estimate-shipping>Estimate Shipping</button>
         <div class="merch-shipping-rates" id="printful-shipping-rates">${printfulShippingRatesMarkup()}</div>
@@ -5064,6 +5175,8 @@
       status.textContent = "Checking shipping rates.";
     }
 
+    updatePrintfulCheckoutMemory(form);
+
     try {
       const response = await merchApiJson("api/merch/shipping-rates", {
         method: "POST",
@@ -5164,6 +5277,8 @@
     if (status) {
       status.textContent = "Preparing order request.";
     }
+
+    updatePrintfulCheckoutMemory(form);
 
     try {
       trackMerchEvent("begin_checkout", {
@@ -5874,6 +5989,7 @@
       const clearFiltersButton = event.target.closest("[data-printful-clear-filters]");
       const copyCartButton = event.target.closest("[data-printful-copy-cart]");
       const clearCartButton = event.target.closest("[data-printful-clear-cart]");
+      const forgetCheckoutButton = event.target.closest("[data-printful-forget-checkout]");
 
       if (supportLink) {
         trackMerchEvent("support_click", {
@@ -5893,6 +6009,11 @@
 
       if (clearCartButton) {
         clearPrintfulCartRequest();
+        return;
+      }
+
+      if (forgetCheckoutButton) {
+        forgetPrintfulCheckoutDetails();
         return;
       }
 

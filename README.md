@@ -73,6 +73,7 @@ Manual order launch brief:
 - Checkout model: manual order request. Fans add curated Printful sync products, estimate shipping, acknowledge the policy, and request an invoice before production.
 - Public collection: the 14 synced products listed in `data/merch-products.json`; the full Printful catalog remains internal behind `?internal=catalog`.
 - Supported ship-to countries in the desk: US, CA, GB, AU, DE, FR, NL, SE, and JP.
+- Repeat checkout convenience is opt-in browser storage for contact and shipping fields only; order notes and policy acknowledgements are not stored.
 - Support: `pawnisland@outlook.com`, expected response window 1-2 business days.
 - Payment and cancellation: payment link is emailed before production; requests can be changed or cancelled until that payment link is paid.
 - Returns: printed-on-demand returns are limited to damaged, misprinted, or incorrect items.
