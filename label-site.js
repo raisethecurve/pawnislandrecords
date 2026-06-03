@@ -3641,7 +3641,7 @@
       .filter(Boolean)
       .join(" ");
 
-    if (/mouse\s*pad|desk\s*mat|desk|laptop|notebook|sticker/.test(haystack)) {
+    if (/mouse\s*pad|desk\s*mat|desk|laptop|journal|notebook|sticker/.test(haystack)) {
       return "Desk Gear";
     }
 
@@ -3669,11 +3669,19 @@
       return "Home Goods";
     }
 
+    if (/calendar|card|postcard|stationery|invitation|flyer|brochure/.test(haystack)) {
+      return "Stationery";
+    }
+
     if (/phone|case|airpod|tech/.test(haystack)) {
       return "Tech Accessories";
     }
 
-    return text(category && category.topCategoryTitle, text(category && category.title, text(product && product.type, "Design Blanks")));
+    if (/button|pin|patch|magnet|keychain|ornament|coaster|candle|tag|accessor/.test(haystack)) {
+      return "Accessories";
+    }
+
+    return "Other Blanks";
   }
 
   function parseCatalogProductMeta(product) {
