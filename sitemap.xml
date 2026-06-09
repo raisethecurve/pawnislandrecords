@@ -334,6 +334,15 @@
     </image:image>
   </url>
   <url>
+    <loc>https://www.pawnislandrecords.com/releases/quiet-filter-worn-away/</loc>
+    <lastmod>2026-05-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.72</priority>
+    <image:image>
+      <image:loc>https://media.pawnislandrecords.com/public/albums/quiet_worn_away.png</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.pawnislandrecords.com/releases/resunant-ash-as-evidence/</loc>
     <lastmod>2026-05-27</lastmod>
     <changefreq>weekly</changefreq>

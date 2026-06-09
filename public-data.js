@@ -1688,6 +1688,35 @@ window.PAWN_PUBLIC_DATA = {
       "primaryEmbedLabel": ""
     },
     {
+      "slug": "quiet-filter-worn-away",
+      "artist": "quiet-filter",
+      "title": "Worn Away",
+      "type": "Album",
+      "vibe": "eroded, moonlit, slow-burn",
+      "year": "2026",
+      "accent": "#9a7146",
+      "cover": "media/public/albums/quiet_worn_away.png",
+      "description": "A slow-burn Quiet Filter album built around erosion, isolation, and heavy textures that move like weather.",
+      "status": "upcoming",
+      "releaseDate": "2026-08-03",
+      "tooFmUrl": "",
+      "platforms": [],
+      "tracks": [],
+      "youtubeId": "",
+      "spotify": {
+        "id": "",
+        "type": "",
+        "url": "",
+        "embedUrl": "",
+        "fetchedAt": ""
+      },
+      "identifiers": {
+        "upc": ""
+      },
+      "primaryEmbedUrl": "",
+      "primaryEmbedLabel": ""
+    },
+    {
       "slug": "resunant-ash-as-evidence",
       "artist": "resunant",
       "title": "Ash as Evidence",
