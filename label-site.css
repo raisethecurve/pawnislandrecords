@@ -4271,9 +4271,12 @@ button:focus-visible {
 
 .artist-page-visual {
   min-height: 0;
+  width: 100%;
+  max-width: clamp(17rem, 30vw, 24rem);
   display: grid;
   gap: 0.9rem;
   align-content: center;
+  justify-self: end;
 }
 
 .artist-page-visual__cover {
@@ -4543,6 +4546,20 @@ button:focus-visible {
   display: grid;
   gap: 0.7rem;
   margin: 0;
+}
+
+.seo-artist-visual,
+.seo-feature-release__art {
+  width: 100%;
+  max-width: clamp(17rem, 30vw, 24rem);
+}
+
+.seo-artist-visual {
+  justify-self: end;
+}
+
+.seo-feature-release__art {
+  justify-self: center;
 }
 
 .seo-artist-visual img,
@@ -4887,6 +4904,12 @@ button:focus-visible {
   .seo-release-hero__copy h1,
   .seo-roster-hero h1 {
     max-width: 100%;
+  }
+
+  .artist-page-visual,
+  .seo-artist-visual,
+  .seo-feature-release__art {
+    justify-self: start;
   }
 
   .artists-grid {
