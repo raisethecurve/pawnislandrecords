@@ -3,27 +3,27 @@
 Official site: https://www.pawnislandrecords.com/
 Founder and writer: Matthew H. Freeman
 Also referenced as: Matthew Freeman, Matt Freeman
-Description: Pawn Island Records is an independent label and multi-project release world for music written and built by Matthew H. Freeman.
+Description: Pawn Island Records is an independent creative music imprint founded by Matt Freeman. The label develops genre-fluid project identities across electronic pop, hip-hop, singer-songwriter material, country blues, metal, stoner doom, pop-punk, and reflective spiritual writing.
 Contact: pawnisland@outlook.com
 
 Canonical public pages:
 - Home: https://www.pawnislandrecords.com/
 - About: https://www.pawnislandrecords.com/about.html
 - Roster: https://www.pawnislandrecords.com/roster.html
-- Artists: https://www.pawnislandrecords.com/artists/
+- Projects: https://www.pawnislandrecords.com/artists/
 - Releases: https://www.pawnislandrecords.com/releases/
 - Connect: https://www.pawnislandrecords.com/connect.html
 
 Official project pages:
-- Rhea Mauro: https://www.pawnislandrecords.com/artists/rhea-mauro/ - Soulful belting / adult contemporary / country
-- High Ground: https://www.pawnislandrecords.com/artists/high-ground/ - Urban hip hop / New England identity
-- Velvet Orchard: https://www.pawnislandrecords.com/artists/velvet-orchard/ - Bass-forward EDM / dance pop
-- Quiet Filter: https://www.pawnislandrecords.com/artists/quiet-filter/ - Stoner doom / heavy ritual
-- Resunant: https://www.pawnislandrecords.com/artists/resunant/ - Alternative rock / glam rock
-- Matt Freeman: https://www.pawnislandrecords.com/artists/matt-freeman/ - Pop culture / uncategorized songs
-- Blackout State: https://www.pawnislandrecords.com/artists/blackout-state/ - Pop punk / shutdown energy
-- Crick Kinnard: https://www.pawnislandrecords.com/artists/crick-kinnard/ - Bluesy southern country / soul
-- second watch: https://www.pawnislandrecords.com/artists/second-watch/ - Contemporary gospel / modern church music
+- Rhea Mauro: https://www.pawnislandrecords.com/artists/rhea-mauro/ - Rhea Mauro is Pawn Island Records' soul-rooted singer-songwriter project.
+- High Ground: https://www.pawnislandrecords.com/artists/high-ground/ - High Ground is Pawn Island Records' hip-hop, rap, and boom-bap project.
+- Velvet Orchard: https://www.pawnislandrecords.com/artists/velvet-orchard/ - Velvet Orchard is Pawn Island Records' experimental electronic-pop project.
+- Quiet Filter: https://www.pawnislandrecords.com/artists/quiet-filter/ - Quiet Filter is Pawn Island Records' bluesy, gritty, reverb-soaked grunge-groove stoner doom project.
+- Resunant: https://www.pawnislandrecords.com/artists/resunant/ - Resunant is Pawn Island Records' alternative power metal and narrative-driven glam rock project.
+- Matt Freeman: https://www.pawnislandrecords.com/artists/matt-freeman/ - Matt Freeman is the writer, founder, and creative director behind Pawn Island Records' lyric-first catalog.
+- Blackout State: https://www.pawnislandrecords.com/artists/blackout-state/ - Blackout State is Pawn Island Records' pop-punk project, led by the album No Manual, No Master.
+- Crick Kinnard: https://www.pawnislandrecords.com/artists/crick-kinnard/ - Crick Kinnard is Pawn Island Records' Appalachian blues and country project.
+- second watch: https://www.pawnislandrecords.com/artists/second-watch/ - second watch is Pawn Island Records' reflective, devotional-adjacent project.
 
 Official release pages:
 - Hearthblood: https://www.pawnislandrecords.com/releases/rhea-mauro-hearthblood/
@@ -50,6 +50,7 @@ Official release pages:
 - Worn Away: https://www.pawnislandrecords.com/releases/quiet-filter-worn-away/
 - Ash as Evidence: https://www.pawnislandrecords.com/releases/resunant-ash-as-evidence/
 - Midnight Revival: https://www.pawnislandrecords.com/releases/resunant-midnight-revival/
+- Memories: https://www.pawnislandrecords.com/releases/resunant-memories/
 - Time Out (Zack Morris is Trash!): https://www.pawnislandrecords.com/releases/matt-freeman-time-out-zack-morris-is-trash/
 - No Manual, No Master: https://www.pawnislandrecords.com/releases/blackout-state-no-manual-no-master/
 - High Time: https://www.pawnislandrecords.com/releases/blackout-state-high-time/
@@ -61,5 +62,13 @@ Official release pages:
 
 Approved press pages:
 - Rhea Mauro Press Kit: https://www.pawnislandrecords.com/press/rhea-mauro/
+- High Ground Press Kit: https://www.pawnislandrecords.com/press/high-ground/
+- Velvet Orchard Press Kit: https://www.pawnislandrecords.com/press/velvet-orchard/
+- Quiet Filter Press Kit: https://www.pawnislandrecords.com/press/quiet-filter/
+- Resunant Press Kit: https://www.pawnislandrecords.com/press/resunant/
+- Matt Freeman Press Kit: https://www.pawnislandrecords.com/press/matt-freeman/
+- Blackout State Press Kit: https://www.pawnislandrecords.com/press/blackout-state/
+- Crick Kinnard Press Kit: https://www.pawnislandrecords.com/press/crick-kinnard/
+- second watch Press Kit: https://www.pawnislandrecords.com/press/second-watch/
 
-Last updated: 2026-05-27
+Last updated: 2026-06-10

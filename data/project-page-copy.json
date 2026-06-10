@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "sourceNote": "Structured production copy distilled from press/marketing_copy.md. The generator reads this resource, not the Markdown brief.",
+  "label": {
+    "mission": "Pawn Island Records is an independent creative music imprint built around original lyrics, atmosphere, story, and human-directed project worlds.",
+    "bio": [
+      "Pawn Island Records is an independent creative music imprint founded by Matt Freeman. The label develops genre-fluid project identities across electronic pop, hip-hop, singer-songwriter material, country blues, metal, stoner doom, pop-punk, and reflective spiritual writing.",
+      "The catalog is built around original lyrics, emotional clarity, atmosphere, and intentional worldbuilding. Rather than treating genre as a boundary, Pawn Island Records uses each project as a distinct container for songs with its own voice, mood, and purpose."
+    ],
+    "founderStory": [
+      "Pawn Island Records began as a way to give original writing a larger world to live in. Founded by poet, songwriter, and independent creator Matt Freeman, the label grows from language first: a title, a line, a memory, a spiritual pressure, a character, or a feeling that needs its own atmosphere.",
+      "The catalog is genre-fluid, but not random. Each project exists because a certain kind of song needs a specific world around it."
+    ],
+    "process": "Pawn Island Records is built around original lyrics, human creative direction, and intentional catalog design. Modern production tools are part of the workflow, but the creative center remains the writing, selection, arrangement, revision, and final decisions that shape each release."
+  },
+  "projects": {
+    "high-ground": {
+      "identity": "High Ground is Pawn Island Records' hip-hop, rap, and boom-bap project.",
+      "lane": "Hip-hop / rap / boom-bap",
+      "summary": "Hip-hop, rap, and boom-bap fundamentals: rhythm, verbal presence, grit, memory, cadence, and direct expression.",
+      "bio": [
+        "High Ground is the hip-hop, rap, and boom-bap project within Pawn Island Records. The project gives the catalog a grounded lane for rhythm-forward, voice-forward material built around lyrical presence, beat feel, and the direct force of rap as a form.",
+        "Unlike the label's more atmospheric rock, pop, metal, and singer-songwriter projects, High Ground is built around verbal movement and musical foundation. The name suggests perspective, but the sound stays connected to hip-hop's earthier values: drums, cadence, repetition, memory, attitude, and the authority of a line delivered cleanly.",
+        "High Ground is the Pawn Island space for rap writing, boom-bap texture, and hip-hop identity: direct, rhythmic, and grounded."
+      ],
+      "pressBio": "High Ground is Pawn Island Records' hip-hop, rap, and boom-bap project. Built around rhythm, verbal presence, beat feel, cadence, and direct expression, it gives the catalog a grounded lane for rap-centered writing and production.",
+      "storyAngles": [
+        "Pawn Island's dedicated hip-hop, rap, and boom-bap lane.",
+        "A project built around cadence, drums, and verbal presence.",
+        "Lyric-forward rap writing without invented biography or false mythology."
+      ],
+      "emotionalLane": [
+        "Grounded confidence, memory, pressure, direct speech, and perspective earned through rhythm and language."
+      ],
+      "playlistDescription": "Hip-hop, rap, boom-bap, cadence, drums, and verbal presence from High Ground."
+    },
+    "velvet-orchard": {
+      "identity": "Velvet Orchard is Pawn Island Records' experimental electronic-pop project.",
+      "lane": "Experimental electronic pop / EDM / bass",
+      "summary": "Experimental electronic pop that moves from bubblegum Y2K color into EDM, house, dubstep, bass, club, and festival-inspired electronica.",
+      "bio": [
+        "Velvet Orchard is one of Pawn Island Records' most experimental pop-facing projects. It began in a bright bubblegum Y2K-pop lane, then expanded into a broader electronic world shaped by EDM, house, dubstep, bass music, club energy, and festival-inspired electronica.",
+        "That evolution is central to the project. Velvet Orchard should not be described as a static synth-pop identity. Its defining quality is restless experimentation: a willingness to move from candy-colored pop surfaces into heavier drops, club structures, dance-floor release, and large-scale electronic atmosphere.",
+        "Velvet Orchard is best framed as electronic pop through experimentation: melodic, dance-driven, emotionally charged, and increasingly shaped by the scale and force of modern EDM and festival culture."
+      ],
+      "pressBio": "Velvet Orchard is Pawn Island Records' experimental electronic-pop project. Beginning in bubblegum Y2K pop, it has evolved through EDM, house, dubstep, bass, club, and festival-inspired electronica with a restless, high-gloss sense of experimentation.",
+      "storyAngles": [
+        "Evolution from bubblegum Y2K pop into broader EDM and bass-facing electronica.",
+        "Club and festival inspiration filtered through emotional pop songwriting.",
+        "Bright surfaces, heavy drops, dance-floor release, and emotional excess."
+      ],
+      "emotionalLane": [
+        "Glossy experimentation, release, desire, artificial light, heartbreak, motion, and excess."
+      ],
+      "playlistDescription": "Bubblegum Y2K pop origins, EDM evolution, house, dubstep, bass, club, and festival-inspired electronica from Velvet Orchard."
+    },
+    "quiet-filter": {
+      "identity": "Quiet Filter is Pawn Island Records' bluesy, gritty, reverb-soaked grunge-groove stoner doom project.",
+      "lane": "Bluesy stoner doom / grunge groove",
+      "summary": "Hypnotic, blues-stained stoner doom with grunge weight, dirty groove, heavy repetition, and weathered spiritual unease.",
+      "bio": [
+        "Quiet Filter is the heavy, slow-burning stoner doom project in the Pawn Island Records catalog. Its sound is bluesy, hypnotic, gritty, and saturated with reverb: a grunge-groove atmosphere built from repetition, weight, and the feeling of something worn down to its final surface.",
+        "The project's world is not polished metal fantasy. It is dust, smoke, cheap rooms, bad light, dirty tables, and souls trying to keep moving under pressure.",
+        "Quiet Filter's songs are meant to feel physical and circular, with riffs and refrains that settle in like a vise. The emotional center is the slow recognition of decay, temptation, endurance, and spiritual fatigue."
+      ],
+      "pressBio": "Quiet Filter is Pawn Island Records' stoner doom and grunge-groove project. Blues-stained, hypnotic, gritty, and heavy with reverb, the project lives in a world of worn surfaces, dirty light, circular riffs, and spiritual unease.",
+      "storyAngles": [
+        "Stoner doom filtered through blues phrasing and grunge atmosphere.",
+        "Heavy repetition used as mood, not just riff worship.",
+        "A visual and sonic world of worn surfaces, smoke, grime, and revelation."
+      ],
+      "emotionalLane": [
+        "Decay, temptation, dirt, endurance, revelation, and spiritual exhaustion."
+      ],
+      "playlistDescription": "Bluesy, gritty, hypnotic stoner doom and grunge-groove heaviness from Quiet Filter."
+    },
+    "resunant": {
+      "identity": "Resunant is Pawn Island Records' alternative power metal and narrative-driven glam rock project.",
+      "lane": "Alternative power metal / narrative glam rock",
+      "summary": "Alternative power metal and narrative-driven glam rock: theatrical, heavy, neon-lit, and built for concept-album scale.",
+      "bio": [
+        "Resunant is Pawn Island Records' alternative power metal and narrative-driven glam rock project. It should be framed less as traditional fantasy metal and more as a theatrical, story-heavy, high-voltage rock world.",
+        "The project lives where metal force meets glam-rock drama and sci-fi or comic-book scale: heavy guitars, big choruses, neon atmosphere, character, spectacle, and concept-album energy.",
+        "It is heavy, but not grim. The project should feel electric, visual, and mythic in a modern rock sense: a midnight stage, a revival show, a neon sermon, a poster from another timeline."
+      ],
+      "pressBio": "Resunant is Pawn Island Records' alternative power metal and narrative-driven glam rock project. Theatrical, heavy, neon-lit, and story-forward, it channels concept-album spectacle, big choruses, and high-voltage rock worldbuilding.",
+      "storyAngles": [
+        "Alternative power metal fused with narrative-driven glam rock.",
+        "Midnight Revival as a theatrical, concept-scale rock world.",
+        "Heavy music with glam drama, neon atmosphere, and story-forward presentation."
+      ],
+      "emotionalLane": [
+        "Spectacle, revival, neon mythology, stage drama, heavy uplift, and larger-than-life identity."
+      ],
+      "playlistDescription": "Alternative power metal and narrative-driven glam rock with neon spectacle, big choruses, and concept-album energy."
+    },
+    "matt-freeman": {
+      "identity": "Matt Freeman is the writer, founder, and creative director behind Pawn Island Records' lyric-first catalog.",
+      "lane": "Lyric-first songwriter / creative director",
+      "summary": "Poet, songwriter, founder, and independent creator building Pawn Island Records around original lyrics, story, atmosphere, and genre-fluid project identities.",
+      "bio": [
+        "Matt Freeman is a poet, songwriter, and independent creator whose work anchors Pawn Island Records. His role in the catalog begins with language: lyrics, titles, emotional premises, story worlds, project identities, and the final creative decisions that shape each release.",
+        "The Matt Freeman project identity functions as the most direct public lane for material that should not be housed under a more genre-specific project.",
+        "As founder of Pawn Island Records, Freeman's public story is about building a controlled, independent catalog where poetry, atmosphere, modern production tools, and emotional clarity meet under one imprint."
+      ],
+      "pressBio": "Matt Freeman is a poet, songwriter, and independent creator behind Pawn Island Records. His work centers original lyrics, story, atmosphere, and final creative direction across a genre-fluid catalog of project identities and releases.",
+      "storyAngles": [
+        "Poet and songwriter building an independent label ecosystem.",
+        "Music as an extension of written work.",
+        "Human authorship, curation, arrangement, and final creative control as the center of the process."
+      ],
+      "emotionalLane": [
+        "Authorship, inheritance, faith, damage, resolve, and emotional clarity."
+      ]
+    },
+    "blackout-state": {
+      "identity": "Blackout State is Pawn Island Records' pop-punk project, led by the album No Manual, No Master.",
+      "lane": "Pop-punk / melodic rebellion",
+      "summary": "Pop-punk urgency, frustration, and melodic rebellion turned toward pressure, independence, and refusing someone else's script.",
+      "bio": [
+        "Blackout State is the Pawn Island Records project for pop-punk energy, melodic defiance, and the feeling of pushing back against a system that never handed you instructions.",
+        "Its central known release, No Manual, No Master, gives the project its clearest public frame: restless, hook-driven songs about pressure, refusal, independence, and self-definition.",
+        "Blackout State is best described as pop-punk with a hard personal edge: catchy, charged, and built around the refusal to be managed by someone else's rules."
+      ],
+      "pressBio": "Blackout State is Pawn Island Records' pop-punk project. Centered around No Manual, No Master, the project turns urgency, frustration, and melodic rebellion into songs about pressure, independence, and refusing someone else's script.",
+      "storyAngles": [
+        "Pop-punk framed around self-definition and refusal.",
+        "No Manual, No Master as a strong album-title statement.",
+        "Melodic rebellion tied to Pawn Island's lyric-first catalog identity."
+      ],
+      "emotionalLane": [
+        "Pressure, frustration, autonomy, refusal, and self-definition."
+      ],
+      "playlistDescription": "Pop-punk urgency, melodic rebellion, pressure, independence, and refusal."
+    },
+    "crick-kinnard": {
+      "identity": "Crick Kinnard is Pawn Island Records' Appalachian blues and country project.",
+      "lane": "Appalachian blues / country grit",
+      "summary": "Appalachian blues, country grit, battered-heart storytelling, and rough-edged songcraft with a weathered soul.",
+      "bio": [
+        "Crick Kinnard is the Appalachian blues and country project within Pawn Island Records. The project's world is rough-edged, plainspoken, and emotionally worn-in: songs about beaten hearts, complicated love, humor, damage, appetite, and survival.",
+        "The project should not be over-sanded into clean Nashville language. Its value is in the grit: a lived-in, barroom, front-porch, backroad sensibility that can be funny, bruised, and sincere at the same time.",
+        "Crick Kinnard belongs in the lane where country storytelling meets blues wear, where rough phrasing and plain speech carry real emotional force."
+      ],
+      "pressBio": "Crick Kinnard is Pawn Island Records' Appalachian blues and country project, built around battered-heart storytelling, rough-edged songcraft, and plainspoken music with a weathered soul.",
+      "storyAngles": [
+        "Appalachian blues and country grit inside Pawn Island Records.",
+        "Plainspoken songs with battered-heart storytelling.",
+        "Country-blues character that favors rough truth over polish."
+      ],
+      "emotionalLane": [
+        "Damage, humor, appetite, survival, weathered love, and rough sincerity."
+      ],
+      "playlistDescription": "Appalachian blues, country grit, battered-heart storytelling, and rough-edged roots songs."
+    },
+    "second-watch": {
+      "identity": "second watch is Pawn Island Records' reflective, devotional-adjacent project.",
+      "lane": "Reflective songwriter / devotional-adjacent",
+      "summary": "Reflective, lyric-forward songs shaped by vigil, prayer, confession, solitude, and late-night self-examination.",
+      "bio": [
+        "second watch carries the reflective and devotional-adjacent lane inside Pawn Island Records. Its songs are shaped by quiet attention, spiritual pressure, private questions, and lyric-forward reflection.",
+        "The project should be framed carefully. It can touch faith language and devotional imagery without being overstated as simple worship unless a release supports that frame directly.",
+        "The strongest public image is the vigil: staying awake with a question, a wound, a conviction, or a prayer while the rest of the world goes quiet."
+      ],
+      "pressBio": "second watch is Pawn Island Records' reflective, devotional-adjacent project, built for lyric-forward songs shaped by vigil, prayer, confession, solitude, and self-examination.",
+      "storyAngles": [
+        "Reflective, devotional-adjacent writing without overstated worship claims.",
+        "Psalm of Myself as the clearest public anchor.",
+        "Late-night solitude, confession, and self-examination."
+      ],
+      "emotionalLane": [
+        "Vigil, solitude, prayer, confession, self-examination, and quiet conviction."
+      ],
+      "playlistDescription": "Reflective, lyric-forward, devotional-adjacent songs for late-night thought, prayer, confession, and solitude."
+    },
+    "rhea-mauro": {
+      "identity": "Rhea Mauro is Pawn Island Records' soul-rooted singer-songwriter project.",
+      "lane": "Soul-rooted singer-songwriter",
+      "summary": "Warm, emotionally grounded songs about home, memory, tenderness, identity, and direct human detail.",
+      "bio": [
+        "Rhea Mauro is Pawn Island Records' soul-rooted singer-songwriter project. The project began in a soul lane and gradually moved toward intimate singer-songwriter material, where voice, feeling, memory, and plainspoken emotional detail became the center.",
+        "Rhea Mauro should not be primarily framed as a country project. The country single was an experiment, and any country language should be used narrowly when discussing that specific release.",
+        "The broader project belongs closer to soul-influenced singer-songwriter music: warm, human, reflective, and emotionally direct. Aura Farming can be described through home, identity, tenderness, and domestic memory without making modern country the core identity."
+      ],
+      "pressBio": "Rhea Mauro is Pawn Island Records' soul-rooted singer-songwriter project. Beginning in soul and moving into intimate songwriter material, Rhea Mauro centers warmth, memory, tenderness, home, and emotionally direct storytelling.",
+      "storyAngles": [
+        "A soul-rooted project that evolved into singer-songwriter material.",
+        "Warm, intimate songs built around memory, home, tenderness, and emotional clarity.",
+        "Country appears as a release-specific experiment, not the whole project identity."
+      ],
+      "emotionalLane": [
+        "Warmth, memory, tenderness, home, identity, and personal clarity."
+      ],
+      "playlistDescription": "Soul-rooted singer-songwriter material about home, memory, tenderness, identity, and emotional clarity."
+    }
+  },
+  "releases": {
+    "quiet-filter-worn-away": {
+      "description": "A bluesy, hypnotic, gritty stoner doom release built on grunge groove, reverb, repetition, and spiritual fatigue.",
+      "inside": [
+        "Worn Away is the clearest current statement of Quiet Filter's identity: slow, heavy, blues-stained music with a circular pull.",
+        "The release belongs to worn-down places: casino glow over dirty tables, smoke, cheap shine, tired souls, old temptation, and the sense that revelation does not arrive clean."
+      ],
+      "cta": "Pre-save or listen to Worn Away."
+    },
+    "rhea-mauro-aura-farming": {
+      "description": "A warm, soul-rooted singer-songwriter album about home, identity, tenderness, memory, and the ordinary details that shape a life.",
+      "inside": [
+        "Aura Farming is Rhea Mauro's singer-songwriter statement, reflecting the project's movement from soul into more intimate, story-centered material.",
+        "The release should not be framed primarily as a country album. It belongs more naturally to a soul-rooted singer-songwriter lane."
+      ],
+      "cta": "Listen to Aura Farming."
+    },
+    "rhea-mauro-save-a-horse-buy-a-jet": {
+      "description": "A country-facing detour within Rhea Mauro's broader soul-rooted songwriter world, trading domestic warmth for open-road scale and playful distance.",
+      "inside": [
+        "The single gives Rhea Mauro room to test more overtly country-facing language without redefining the whole project.",
+        "Use country language only where the experiment is directly relevant."
+      ],
+      "cta": "Listen to the single."
+    },
+    "velvet-orchard-youre-empty": {
+      "description": "A darker electronic-pop release where emotional absence, nightlife glow, and fractured intimacy become sleek, unstable songs.",
+      "inside": [
+        "You're Empty is a compact Velvet Orchard world: glossy, wounded, and emotionally charged.",
+        "The hook still shines, but the room feels colder."
+      ],
+      "cta": "Listen to the EP."
+    },
+    "velvet-orchard-lights-on": {
+      "description": "A polished Velvet Orchard single for the bright edge of electronic pop: luminous, direct, dance-facing, and newly visible.",
+      "inside": [
+        "The title carries immediate visual force and fits Velvet Orchard's evolution from bubblegum Y2K pop into EDM, house, bass, club, and festival-inspired electronica."
+      ],
+      "cta": "Listen now."
+    },
+    "velvet-orchard-like-magic": {
+      "description": "A bright Velvet Orchard release about wonder, transformation, and the charge of something feeling impossible until it happens.",
+      "inside": [
+        "This release family should be positioned as Velvet Orchard at its most luminous.",
+        "The strongest safe frame is transformation: the moment when feeling changes shape."
+      ],
+      "cta": "Step into the brighter Velvet Orchard world."
+    },
+    "resunant-midnight-revival": {
+      "description": "A theatrical alternative power metal and narrative-driven glam rock release: neon-lit, heavy, dramatic, and built with concept-album scale.",
+      "inside": [
+        "Midnight Revival is Resunant's core statement: a theatrical rock world where alternative power metal meets narrative-driven glam rock.",
+        "The stronger frame is spectacle, story, electricity, neon, revival language, and stage-sized hooks."
+      ],
+      "cta": "Step into the show."
+    },
+    "resunant-memories": {
+      "description": "A cathedral-scale Resunant single where memory becomes spectacle: blue-black atmosphere, gold light, and heavy, theatrical uplift.",
+      "inside": [
+        "Memories keeps Resunant in its theatrical rock lane, but the center of gravity is more elegiac: light cutting through shadow, memory treated as a stage event.",
+        "The visual world belongs to the same neon-mythic scale as Midnight Revival while leaning into cathedral glow, distance, and remembrance."
+      ],
+      "cta": "Follow the August 31 release."
+    },
+    "blackout-state-no-manual-no-master": {
+      "description": "A pop-punk release about pressure, refusal, and self-definition, driven by restless hooks and the need to live without someone else's script.",
+      "inside": [
+        "No Manual, No Master gives Blackout State its public posture immediately: no guide, no permission, no ownership.",
+        "The sound lane is pop-punk, but the messaging should avoid empty nostalgia."
+      ],
+      "cta": "Turn it up."
+    },
+    "crick-kinnard-thats-fair": {
+      "description": "A plainspoken Crick Kinnard release in the Appalachian blues and country lane: rough-edged, bruised, dry, and human.",
+      "inside": [
+        "The phrase can be resigned, funny, bitter, generous, or defeated depending on the line around it.",
+        "Crick Kinnard's strength is the feeling of a song that has dirt under its nails and enough humor to survive the bruise."
+      ],
+      "cta": "Step into Crick Kinnard's rough-edged country-blues world."
+    },
+    "second-watch-psalm-of-myself": {
+      "description": "A reflective, lyric-forward release from second watch, shaped by prayer, confession, solitude, and self-examination.",
+      "inside": [
+        "The title carries spiritual weight, but it also suggests self-interrogation rather than simple praise.",
+        "A better frame is vigil: staying awake with a question, a wound, a conviction, or a prayer."
+      ],
+      "cta": "Enter the vigil."
+    }
+  }
+}

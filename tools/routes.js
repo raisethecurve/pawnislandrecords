@@ -55,7 +55,7 @@ const routes = [
     dataSource: "public-data.js",
     robots: "noindex,follow",
     smoke: true,
-    expectedText: "The full catalog page is tucked away for launch."
+    expectedText: "The full catalog is still being prepared."
   },
   {
     path: "catalog.html?preview=full",
@@ -81,7 +81,7 @@ const routes = [
     stack: "modern public",
     dataSource: "public-data.js",
     robots: "noindex,follow",
-    expectedText: "The full catalog page is tucked away for launch."
+    expectedText: "The full catalog is still being prepared."
   },
   {
     path: "catalog.html?artist=rhea-mauro&preview=full",
@@ -106,7 +106,7 @@ const routes = [
     dataSource: "public-data.js",
     robots: "noindex,follow",
     smoke: true,
-    expectedText: "Project pages are staying private for launch."
+    expectedText: "Project pages are still being prepared."
   },
   {
     path: "artist.html?artist=rhea-mauro&preview=full",
@@ -133,7 +133,7 @@ const routes = [
     dataSource: "public-data.js",
     robots: "noindex,follow",
     smoke: true,
-    expectedText: "Release pages are staying private for launch."
+    expectedText: "Release pages are still being prepared."
   },
   {
     path: "release.html?release=rhea-mauro-hearthblood&preview=full",
@@ -153,6 +153,36 @@ const routes = [
     expectedJsonLd: "MusicAlbum"
   },
   {
+    path: "releases/rhea-mauro-hearthblood/index.html",
+    label: "Canonical Release",
+    classification: "public",
+    stack: "generated rich release",
+    dataSource: "public-data.js",
+    robots: "index,follow",
+    smoke: true,
+    accessibilitySmoke: true,
+    expectedText: "Official Audio",
+    expectedTitle: "Hearthblood | Rhea Mauro | Pawn Island Records",
+    expectedMetaDescription: "Hearthblood by Rhea Mauro",
+    expectedCanonical: "https://www.pawnislandrecords.com/releases/rhea-mauro-hearthblood/",
+    expectedJsonLd: "MusicAlbum"
+  },
+  {
+    path: "releases/index.html",
+    label: "Release Index",
+    classification: "public",
+    stack: "generated release index",
+    dataSource: "public-data.js",
+    robots: "index,follow",
+    smoke: true,
+    accessibilitySmoke: true,
+    expectedText: "Pawn Island Records Releases",
+    expectedTitle: "Releases | Pawn Island Records",
+    expectedMetaDescription: "Official Pawn Island Records release catalog",
+    expectedCanonical: "https://www.pawnislandrecords.com/releases/",
+    expectedJsonLd: "CollectionPage"
+  },
+  {
     path: "epks.html",
     label: "Press Index",
     classification: "hidden-but-shareable",
@@ -160,7 +190,7 @@ const routes = [
     dataSource: "public-data.js",
     robots: "noindex,follow",
     smoke: true,
-    expectedText: "Press pages are staying private for launch."
+    expectedText: "Press pages are still being prepared."
   },
   {
     path: "epks.html?preview=full",
@@ -172,12 +202,42 @@ const routes = [
     smoke: true,
     shellSmoke: true,
     accessibilitySmoke: true,
-    expectedText: "Open Press Kit",
+    expectedText: "Approved Kits, Ready to Send",
     absentText: ["Launch Mode", "tucked away", "staying private"],
     expectedTitle: "Press | Pawn Island Records",
-    expectedMetaDescription: "Browse source-approved Pawn Island Records project press kits",
+    expectedMetaDescription: "Browse Pawn Island Records press kits",
     expectedCanonical: "https://www.pawnislandrecords.com/epks.html",
     expectedJsonLd: "CollectionPage"
+  },
+  {
+    path: "press/index.html",
+    label: "Canonical Press Index",
+    classification: "public",
+    stack: "generated press index",
+    dataSource: "public-data.js",
+    robots: "index,follow",
+    smoke: true,
+    accessibilitySmoke: true,
+    expectedText: "Public Press Kits",
+    expectedTitle: "Press | Pawn Island Records",
+    expectedMetaDescription: "Approved public press kit pages for Pawn Island Records projects.",
+    expectedCanonical: "https://www.pawnislandrecords.com/press/",
+    expectedJsonLd: "CollectionPage"
+  },
+  {
+    path: "press/high-ground/index.html",
+    label: "Canonical Press Kit High Ground",
+    classification: "public",
+    stack: "generated press kit",
+    dataSource: "public-data.js",
+    robots: "index,follow",
+    smoke: true,
+    accessibilitySmoke: true,
+    expectedText: "Public Kit Files",
+    expectedTitle: "High Ground Press Kit | Pawn Island Records",
+    expectedMetaDescription: "High Ground press kit",
+    expectedCanonical: "https://www.pawnislandrecords.com/press/high-ground/",
+    expectedJsonLd: "ProfilePage"
   },
   {
     path: "epk.html?artist=rhea-mauro",
@@ -187,7 +247,7 @@ const routes = [
     dataSource: "public-data.js",
     robots: "noindex,follow",
     smoke: true,
-    expectedText: "Press kits are staying private for launch."
+    expectedText: "Press kits are still being prepared."
   },
   {
     path: "epk.html?artist=rhea-mauro&preview=full",
@@ -208,18 +268,19 @@ const routes = [
   },
   {
     path: "epk.html?artist=high-ground&preview=full",
-    label: "Press Kit Hold Preview",
+    label: "Press Kit High Ground Preview",
     classification: "hidden-but-shareable",
     stack: "modern public",
     dataSource: "public-data.js",
     robots: "noindex,follow",
     smoke: true,
     accessibilitySmoke: true,
-    expectedText: "Press kit is available by request.",
-    absentText: ["Kit Views", "Open Press Kit"],
-    expectedTitle: "High Ground Press Kit By Request | Pawn Island Records",
-    expectedMetaDescription: "High Ground press materials are available by request",
-    expectedCanonical: "https://www.pawnislandrecords.com/epk.html?artist=high-ground"
+    expectedText: "Press-Ready Details",
+    absentText: ["Press kit is available by request.", "not marked public-ready"],
+    expectedTitle: "High Ground Press Kit | Pawn Island Records",
+    expectedMetaDescription: "High Ground press kit",
+    expectedCanonical: "https://www.pawnislandrecords.com/epk.html?artist=high-ground",
+    expectedJsonLd: "ProfilePage"
   },
   {
     path: "process.html",

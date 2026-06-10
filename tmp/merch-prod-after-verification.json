@@ -1,0 +1,38 @@
+{
+  "guided": {
+    "url": "https://pawnislandrecords.pages.dev/merch",
+    "h1": "Artist Tees",
+    "intro": "Start with two live Pawn Island Records T-shirt picks. Each design is synced through Printful, checked before confirmation, and easy to explore in the full catalog when you want every option.",
+    "summary": "Two picks on deck. Full catalog holds all 10 synced designs.",
+    "status": "The two-pick rack is ready. The full catalog holds 10 designs across 2 projects.",
+    "cards": 2,
+    "heroTiles": 2,
+    "modeButtons": [
+      "Two Picks 2 Best first look",
+      "Full Catalog 10 Every live tee"
+    ],
+    "toolbarHidden": true,
+    "lightHeroLabelColor": "rgb(0, 0, 0)"
+  },
+  "catalog": {
+    "summary": "Full catalog: 10 of 10 products shown",
+    "cards": 10,
+    "toolbarHidden": false
+  },
+  "beforeZoom": {
+    "url": "https://pawnislandrecords.pages.dev/merch?view=catalog&product=436342663",
+    "title": "Borrowed Brightness: Edition 2",
+    "thumbs": 12,
+    "activeThumbs": 1,
+    "stageClasses": "merch-gallery-stage merch-gallery-stage--light",
+    "relatedCards": 2,
+    "relatedLightLabelColor": "rgb(0, 0, 0)",
+    "thumbLightLabelColor": "rgb(0, 0, 0)",
+    "variantOptions": 24,
+    "zoomed": false
+  },
+  "afterZoom": {
+    "zoomed": true
+  },
+  "consoleErrors": []
+}

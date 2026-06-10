@@ -1,6 +1,6 @@
 # Pawn Island Records
 
-Static, data-driven website for Pawn Island Records. The current public launch mode is `essentials`, so the primary interactive flow is Home, Roster, Connect, and About while deeper catalog, release, project, press, merch, and process routes stay hidden-but-shareable. Generated static SEO pages under `artists/`, `releases/`, and `press/` provide crawlable canonical entity pages while the richer interactive routes remain gated.
+Static, data-driven website for Pawn Island Records. The current public launch mode is `essentials`, so the primary interactive flow is Home, Roster, Connect, and About while deeper catalog, project, press, merch, and process routes stay hidden-but-shareable. Generated static pages under `artists/`, `releases/`, and `press/` provide crawlable canonical entity pages; release detail pages under `releases/<slug>/` now render the rich release experience directly.
 
 ## Quick Start
 
@@ -25,6 +25,7 @@ To preview hidden modern routes as if launch mode were `full` without changing `
 - `http://127.0.0.1:4173/catalog.html?preview=full&standalone=1`
 - `http://127.0.0.1:4173/artist.html?artist=rhea-mauro&preview=full&standalone=1`
 - `http://127.0.0.1:4173/release.html?release=rhea-mauro-hearthblood&preview=full&standalone=1`
+- `http://127.0.0.1:4173/releases/rhea-mauro-hearthblood/index.html?standalone=1`
 
 ## Validation
 
@@ -33,6 +34,7 @@ To preview hidden modern routes as if launch mode were `full` without changing `
 - `npm run generate:seo` regenerates static SEO entity pages, `sitemap.xml`, and `llms.txt` from `public-data.js`.
 - `npm run sync:spotify` fetches seeded Spotify artist/release/track facts into the local cache. It requires `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`.
 - `npm run test:data` validates source coverage, seeded Spotify URL parsing, strict-ready EPK requirements, and release action readiness.
+- `npm run test:data -- --launch-gate` runs the production readiness gate. Missing Spotify seeds remain warnings when official release actions exist; use `node tools/check-data.js --launch-gate --strict-spotify` when verified Spotify seeding must be mandatory.
 - `npm run test:links` checks route inventory files, local HTML links, local assets, `public-data.js` image references, slug uniqueness, release artist references, the configured site-audio file, and route publication policy across page robots tags, `robots.txt`, and `sitemap.xml`.
 - `npm run test:perf` checks the public image asset budget and verifies media iframes keep explicit loading and embed hydration hooks.
 - `npm run test:a11y` runs axe-backed Playwright accessibility smoke checks across key public and hidden-preview routes on desktop and mobile. It also checks primary tap target sizing, visible initial focus, landmarks/navigation, and page-level horizontal overflow.
@@ -118,7 +120,7 @@ Hidden or gated modern routes:
 
 - `catalog.html`: release catalog, currently `noindex,follow`.
 - `artist.html`: dynamic project page, currently `noindex,follow`.
-- `release.html`: dynamic release detail page, currently `noindex,follow`.
+- `release.html`: dynamic release preview/legacy renderer, currently `noindex,follow`.
 - `epks.html`: press/EPK index, currently `noindex,follow`.
 - `epk.html`: dynamic artist press kit, currently `noindex,follow`.
 - `merch.html`: modern merch desk, currently `noindex,follow`; curated live Printful inventory loads through Cloudflare Pages Functions and the full Printful catalog is internal-only.
@@ -128,8 +130,8 @@ Hidden or gated modern routes:
 Generated public SEO artifacts:
 
 - `artists/index.html` and `artists/<slug>/index.html`: crawlable artist/project entity pages.
-- `releases/index.html` and `releases/<slug>/index.html`: crawlable release entity pages.
-- `press/index.html` and ready `press/<slug>/index.html`: crawlable public press-kit snapshots.
+- `releases/index.html` and `releases/<slug>/index.html`: crawlable release index and rich canonical release pages.
+- `press/index.html` and ready `press/<slug>/index.html`: crawlable public press-kit snapshots for all strict-ready EPKs.
 - `sitemap.xml` and `llms.txt`: generated discovery manifests.
 
 Internal, shell, and legacy surfaces:
@@ -177,7 +179,7 @@ Source-backed fields such as Spotify metadata, identifiers, EPK status, approval
 ## Publishing Notes
 
 - Keep `public-data.js` `label.launchMode` set to `essentials` until the Sprint 4 launch criteria pass.
-- Do not flip release, artist, or EPK routes public until `npm run test:data -- --launch-gate` passes or the remaining missing Spotify seeds are intentionally waived in the launch PR.
+- Do not flip gated catalog, artist, or EPK routes public until `npm run test:data -- --launch-gate` passes. Treat `--strict-spotify` failures as enrichment debt unless a launch specifically requires verified Spotify artist/release seeds.
 - Public pages should render from `public-data.js` unless they are intentionally local/admin-only.
 - Update `WORKFLOW.md` at sprint closeout with completed work, validation, risks, and the next recommended sprint.
 - Follow `GITHUB_PRACTICES.md` for branch naming, stacked branches, staged draft PRs, validation notes, review readiness, and merge hygiene.

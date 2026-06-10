@@ -39,7 +39,7 @@ test.describe("media embed resilience", () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       await route.abort();
     });
-    await page.goto(withStandalone("release.html?release=rhea-mauro-hearthblood&preview=full"), {
+    await page.goto(withStandalone("releases/rhea-mauro-hearthblood/index.html"), {
       waitUntil: "domcontentloaded"
     });
 

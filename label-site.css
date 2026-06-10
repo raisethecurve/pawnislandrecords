@@ -1610,7 +1610,8 @@ button:focus-visible {
 .release-card,
 .timeline-item,
 .embed-card,
-.epk-panel-card {
+.epk-panel-card,
+.epk-asset-card {
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -1761,6 +1762,8 @@ button:focus-visible {
 .embed-card:focus-within,
 .epk-panel-card:hover,
 .epk-panel-card:focus-within,
+.epk-asset-card:hover,
+.epk-asset-card:focus-within,
 .timeline-item:hover,
 .timeline-item:focus-within {
   transform: translateY(-2px);
@@ -1962,6 +1965,94 @@ button:focus-visible {
   overflow: visible;
 }
 
+.press-command-center {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(270px, 0.85fr);
+  gap: clamp(0.95rem, 2vw, 1.3rem);
+  align-items: stretch;
+  padding: clamp(0.9rem, 2vw, 1.25rem);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    rgba(255, 255, 255, 0.025);
+}
+
+.press-command-center__copy {
+  display: grid;
+  gap: 0.75rem;
+  align-content: center;
+}
+
+.press-command-center__copy h2,
+.press-hold-summary h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.2vw, 2.7rem);
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.press-command-center__copy p,
+.press-hold-summary p,
+.press-card__asset-line {
+  margin: 0;
+  color: var(--white-soft);
+  line-height: 1.5;
+}
+
+.press-command-center__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.press-feature-strip,
+.press-hold-summary {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.press-feature-strip span,
+.press-feature-strip em,
+.press-card__asset-line {
+  font-size: 0.78rem;
+}
+
+.press-feature-strip span {
+  color: var(--yellow);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.press-feature-strip strong {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2vw, 1.55rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.press-feature-strip em {
+  color: var(--white-soft);
+  font-style: normal;
+}
+
+.press-stack__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  gap: 0.95rem;
+}
+
 .press-card {
   grid-template-columns: minmax(170px, 220px) minmax(0, 1fr);
   gap: 1rem;
@@ -1969,6 +2060,10 @@ button:focus-visible {
   border: 1px solid var(--white-faint);
   border-radius: 28px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+}
+
+.press-card--production {
+  grid-template-columns: minmax(130px, 180px) minmax(0, 1fr);
 }
 
 .press-card__cover {
@@ -3158,6 +3253,10 @@ button:focus-visible {
   text-transform: uppercase;
 }
 
+.press-card__asset-line {
+  font-weight: 700;
+}
+
 .merch-design-plate {
   position: relative;
   display: grid;
@@ -4037,6 +4136,80 @@ button:focus-visible {
   line-height: 1.45;
 }
 
+.epk-panel-card--lead {
+  align-content: start;
+}
+
+.epk-assets-layout {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 0.85rem;
+}
+
+.epk-asset-grid {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 0.8rem;
+}
+
+.epk-asset-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: stretch;
+  padding: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.epk-asset-card__thumb {
+  display: block;
+  overflow: clip;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #101010;
+}
+
+.epk-asset-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.epk-asset-card__body {
+  min-width: 0;
+  display: grid;
+  gap: 0.4rem;
+  align-content: center;
+}
+
+.epk-asset-card__body span {
+  color: var(--yellow);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.epk-asset-card__body strong {
+  color: var(--white);
+  line-height: 1.1;
+}
+
+.epk-asset-card__body em,
+.epk-asset-card__body p {
+  margin: 0;
+  color: var(--white-soft);
+  font-size: 0.78rem;
+  font-style: normal;
+  line-height: 1.4;
+}
+
 .artist-page-shell {
   display: grid;
   grid-template-rows: auto auto;
@@ -4299,6 +4472,392 @@ button:focus-visible {
   margin-top: clamp(0.5rem, 0.9vw, 0.85rem);
 }
 
+.seo-page-shell {
+  gap: clamp(1.1rem, 2.6vw, 2rem);
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+.seo-artist-page,
+.seo-roster-page,
+.seo-release-page {
+  display: grid;
+  gap: clamp(1.1rem, 2.6vw, 2rem);
+}
+
+.seo-artist-hero,
+.seo-release-hero,
+.seo-feature-release {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+  align-items: center;
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
+
+.seo-artist-copy,
+.seo-release-hero__copy,
+.seo-feature-release__copy,
+.seo-roster-hero {
+  display: grid;
+  gap: 0.85rem;
+  align-content: center;
+}
+
+.seo-artist-copy h1,
+.seo-release-hero__copy h1,
+.seo-roster-hero h1 {
+  max-width: 12ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.65rem, 7vw, 5.8rem);
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+.seo-artist-identity {
+  max-width: 52rem;
+  margin: 0;
+  color: var(--white);
+  font-size: clamp(1.05rem, 2.1vw, 1.4rem);
+  line-height: 1.38;
+}
+
+.seo-artist-summary,
+.seo-roster-hero p,
+.seo-release-hero__copy p,
+.seo-feature-release__copy p,
+.seo-copy-columns p,
+.seo-press-module p,
+.seo-release-card__body p,
+.seo-platform-card em {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--white-soft);
+  line-height: 1.55;
+}
+
+.seo-artist-visual,
+.seo-release-hero__art,
+.seo-feature-release__art {
+  min-width: 0;
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.seo-artist-visual img,
+.seo-release-hero__art img,
+.seo-feature-release__art img,
+.seo-roster-card__media img,
+.seo-release-card__cover img {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  display: block;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015)),
+    #101010;
+}
+
+.seo-artist-visual figcaption,
+.seo-release-hero__art figcaption {
+  color: var(--white-soft);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.seo-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.seo-tag-list span {
+  min-height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--project-accent, var(--yellow)) 16%, transparent);
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.seo-section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.seo-section-nav a {
+  min-height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.48rem 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: var(--white);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1.15;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.seo-section-nav a:hover,
+.seo-section-nav a:focus-visible {
+  border-color: color-mix(in srgb, var(--project-accent, var(--yellow)) 70%, white 12%);
+  color: var(--yellow);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.seo-feature-release,
+.seo-press-module,
+.seo-context-list,
+.seo-platform-card,
+.seo-release-card,
+.seo-roster-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
+    color-mix(in srgb, var(--project-accent, var(--blue)) 8%, transparent);
+}
+
+.seo-feature-release,
+.seo-press-module {
+  padding: clamp(0.9rem, 2vw, 1.25rem);
+}
+
+.seo-artist-section {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.seo-feature-release,
+.seo-artist-section,
+.seo-press-module {
+  scroll-margin-top: clamp(1rem, 5vw, 3rem);
+}
+
+.seo-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem 1.2rem;
+  align-items: end;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.seo-section-heading h2,
+.seo-feature-release__copy h2,
+.seo-context-list h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 3vw, 2.35rem);
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.seo-copy-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  gap: clamp(1rem, 2.4vw, 1.6rem);
+}
+
+.seo-copy-columns > div {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.seo-context-list {
+  align-self: start;
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.seo-context-list ul {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--white-soft);
+  line-height: 1.45;
+}
+
+.seo-release-grid,
+.seo-roster-grid,
+.seo-platform-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.seo-release-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+}
+
+.seo-release-grid--index {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+}
+
+.seo-roster-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+}
+
+.seo-platform-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+.seo-release-card,
+.seo-roster-card {
+  min-width: 0;
+  max-width: 100%;
+  display: grid;
+  gap: 0.8rem;
+  padding: 0.8rem;
+}
+
+.seo-roster-card {
+  grid-template-columns: 128px minmax(0, 1fr);
+}
+
+.seo-roster-card__media,
+.seo-release-card__cover {
+  min-width: 0;
+  max-width: 100%;
+  display: block;
+  overflow: clip;
+  border-radius: 8px;
+}
+
+.seo-release-card__body,
+.seo-roster-card__copy {
+  min-width: 0;
+  display: grid;
+  gap: 0.58rem;
+  align-content: start;
+}
+
+.seo-card-kicker {
+  margin: 0;
+  color: var(--yellow);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.seo-release-card h3,
+.seo-roster-card h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.1vw, 1.7rem);
+  line-height: 0.94;
+  text-transform: uppercase;
+}
+
+.seo-release-card h3 a,
+.seo-roster-card h3 a {
+  color: var(--white);
+  text-decoration: none;
+}
+
+.seo-release-card h3 a:hover,
+.seo-release-card h3 a:focus-visible,
+.seo-roster-card h3 a:hover,
+.seo-roster-card h3 a:focus-visible {
+  color: var(--yellow);
+  outline: none;
+}
+
+.seo-release-card__meta,
+.seo-roster-card__lane {
+  margin: 0;
+  color: var(--yellow);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.seo-platform-card {
+  min-height: 10rem;
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+  padding: 0.95rem;
+  color: var(--white);
+  text-decoration: none;
+}
+
+.seo-platform-card:hover,
+.seo-platform-card:focus-visible,
+.seo-release-card:hover,
+.seo-release-card:focus-within,
+.seo-roster-card:hover,
+.seo-roster-card:focus-within {
+  border-color: color-mix(in srgb, var(--project-accent, var(--yellow)) 72%, white 12%);
+  outline: none;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+  transform: translateY(-1px);
+}
+
+.seo-platform-card span {
+  color: var(--yellow);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.seo-platform-card strong {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  line-height: 0.96;
+  text-transform: uppercase;
+}
+
+.seo-platform-card em {
+  font-style: normal;
+  font-size: 0.86rem;
+}
+
+.seo-press-module {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.seo-press-module > div {
+  max-width: 48rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
 .a11y-hidden {
   position: absolute;
   width: 1px;
@@ -4312,6 +4871,24 @@ button:focus-visible {
 }
 
 @media (max-width: 1080px) {
+  .press-command-center,
+  .epk-assets-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-artist-hero,
+  .seo-release-hero,
+  .seo-feature-release,
+  .seo-copy-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-artist-copy h1,
+  .seo-release-hero__copy h1,
+  .seo-roster-hero h1 {
+    max-width: 100%;
+  }
+
   .artists-grid {
     --artist-columns: 3;
     --artist-card-min: 13.5rem;
@@ -4383,6 +4960,28 @@ button:focus-visible {
 }
 
 @media (max-width: 860px) {
+  .press-command-center__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .press-feature-strip,
+  .press-hold-summary {
+    display: grid;
+    justify-content: stretch;
+  }
+
+  .epk-asset-card {
+    grid-template-columns: 1fr;
+  }
+
+  .epk-asset-card__thumb {
+    max-width: 12rem;
+  }
+
+  .seo-roster-card {
+    grid-template-columns: 112px minmax(0, 1fr);
+  }
+
   .merch-toolbar {
     grid-template-columns: 1fr;
     align-items: stretch;
@@ -4475,6 +5074,27 @@ button:focus-visible {
   .label-page {
     --label-page-pad: 0.8rem;
     padding: 0.8rem;
+  }
+
+  .seo-artist-hero,
+  .seo-release-hero,
+  .seo-feature-release,
+  .seo-roster-card {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-roster-card__media img {
+    max-height: 18rem;
+  }
+
+  .seo-section-heading {
+    display: grid;
+    align-items: start;
+  }
+
+  .seo-press-module {
+    display: grid;
+    align-items: start;
   }
 
   .pending-carousel__header,

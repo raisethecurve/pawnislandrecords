@@ -1,17 +1,17 @@
 # Pawn Island Records Website Completion Workflow
 
-Status date: 2026-05-27
+Status date: 2026-06-10
 
 ## Current State
 
-Pawn Island Records is a static, data-driven website. The public experience is controlled by HTML entry points, shared CSS/JS, and the published dataset in `public-data.js`. Sprint 0 added a lightweight npm toolchain for local serving, link/data validation, and Playwright route smoke coverage. Sprint 1 added a `preview=full` local route mode so hidden modern routes can be reviewed as complete pages while `public-data.js` stays in `essentials`. Sprint 2 classified the remaining lab/story routes, moved merch/support into the modern stack, and added route publication checks for robots and sitemap drift. Sprint 3 added accessibility automation, responsive polish, reduced-motion coverage, media fallback states, media fallback tests, and a public image budget check. The SEO artifact pass added crawlable static entity pages under `artists/`, `releases/`, and `press/`, plus generated `sitemap.xml` and `llms.txt` outputs.
+Pawn Island Records is a static, data-driven website. The public experience is controlled by HTML entry points, shared CSS/JS, and the published dataset in `public-data.js`. Sprint 0 added a lightweight npm toolchain for local serving, link/data validation, and Playwright route smoke coverage. Sprint 1 added a `preview=full` local route mode so hidden modern routes can be reviewed as complete pages while `public-data.js` stays in `essentials`. Sprint 2 classified the remaining lab/story routes, moved merch/support into the modern stack, and added route publication checks for robots and sitemap drift. Sprint 3 added accessibility automation, responsive polish, reduced-motion coverage, media fallback states, media fallback tests, and a public image budget check. The SEO artifact pass added crawlable static entity pages under `artists/`, `releases/`, and `press/`, plus generated `sitemap.xml` and `llms.txt` outputs. The release-page production pass made `releases/<slug>/` the canonical rich release experience while keeping `release.html?release=...` as the noindex preview/legacy renderer.
 
 The active public launch mode is `essentials`:
 
 - `public-data.js` sets `label.launchMode` to `essentials`.
 - `label-site.js` uses that flag to hide catalog, artist, release, press, and merch surfaces from the primary nav.
 - `site-ui.js`, `label-site.js`, and `release.js` allow `preview=full` to render hidden modern routes locally as if launch mode were `full`.
-- The published dataset currently includes 9 artists, 31 releases, 9 merch records, 14 live releases, 17 upcoming releases, 1 strict-ready EPK, and 8 held EPKs.
+- The published dataset currently includes 9 artists, 32 releases, 9 merch records, 14 live releases, 18 upcoming releases, 9 strict-ready EPKs, and 0 held EPKs.
 
 Primary public pages:
 
@@ -23,7 +23,7 @@ Primary public pages:
 Generated public SEO pages:
 
 - `artists/` and `artists/<slug>/`: static canonical project pages.
-- `releases/` and `releases/<slug>/`: static canonical release pages.
+- `releases/` and `releases/<slug>/`: static canonical release index and rich release pages.
 - `press/` and ready `press/<slug>/`: static press-kit snapshots.
 - `llms.txt`: AI-readable official site summary generated from public data.
 
@@ -31,7 +31,7 @@ Hidden or gated pages:
 
 - `catalog.html`: release catalog, currently `noindex,follow`.
 - `artist.html`: dynamic project page, currently `noindex,follow`.
-- `release.html`: dynamic release detail page, currently `noindex,follow`.
+- `release.html`: dynamic release preview/legacy page, currently `noindex,follow`.
 - `epks.html`: press/EPK index, currently `noindex,follow`.
 - `epk.html`: dynamic artist press kit, currently `noindex,follow`.
 - `merch.html`: merch concept/support page on the modern public stack, currently `noindex,follow`.
@@ -218,7 +218,7 @@ Sprint 1 validation:
 Sprint 1 deferred scope and risks:
 
 - `public-data.js` remains in `essentials`; hidden routes are still `noindex,follow` until Sprint 4 launch criteria pass.
-- Query-string artist/release URLs remain the canonical strategy for now; generated static pages are still an open SEO decision.
+- Static artist/release URLs are now the canonical public strategy; query-string artist/release routes remain noindex preview and legacy review paths.
 - EPK asset lists are credible text/status entries, but real downloadable press kits and one-sheets remain future work.
 - Accessibility coverage is still smoke/manual only; automated axe-style checks remain planned for Sprint 3.
 
@@ -334,7 +334,7 @@ Sprint 3 deferred scope and risks:
 
 ### Sprint 4A-4D: Real Data Gate
 
-Status: completed initial implementation 2026-05-27; remaining Spotify/EPK content fill stays in the next sprint backlog.
+Status: completed initial implementation 2026-05-27; EPK source completion upgraded 2026-06-10; remaining Spotify seed fill stays in the next sprint backlog.
 
 Goal: make release, artist, and EPK pages source-backed before any public launch-mode flip.
 
@@ -344,21 +344,22 @@ Completed outcomes:
 - Added `data/spotify-cache.json` as the local/build-time Spotify cache target.
 - Added `npm run audit:data`, `npm run sync:spotify`, `npm run generate:data`, and `npm run test:data`.
 - Added generator support for non-breaking `artist.spotify`, `release.spotify`, `release.identifiers`, `track.identifiers`, `artist.epkStatus`, `artist.pressApproval`, and `artist.pressAssetRecords` fields in `public-data.js`.
-- Updated EPK rendering so the press index lists only strict-ready kits and held kits render a request-by-email state.
+- Updated EPK rendering so the press index lists strict-ready kits, held kits render a request-by-email state, and ready kits expose production press facts, asset cards, static press-page links, and direct press contact actions.
 - Kept genre handling source-separated: Spotify genres are stored under `artist.spotify.genres`; label lane/positioning copy is not emitted as JSON-LD genre.
 - Updated the admin import/export path so source-backed metadata fields are preserved when editing existing artists and releases.
-- Added a held EPK route fixture to smoke/accessibility coverage.
+- Replaced the held EPK route fixture with a ready non-Rhea EPK fixture after all 9 kits became strict-ready.
 
 Sprint 4A-4D validation:
 
-- `npm run test:data` passed on 2026-05-27 with warnings for 9 missing artist Spotify seeds and 30 missing release Spotify seeds.
-- `npm run test:links` passed on 2026-05-27.
+- `npm run test:data -- --launch-gate` passed on 2026-06-10 with enrichment warnings for 9 missing artist Spotify seeds and 31 missing release Spotify seeds.
+- `npm run test:links` passed on 2026-06-10.
+- EPK production pass validation on 2026-06-10: `npm run test:perf`, `npx playwright test tests/smoke.spec.js --reporter=line`, `npx playwright test tests/accessibility.spec.js --reporter=line`, `npx playwright test tests/media.spec.js --reporter=line`, `npx playwright test tests/generated-artists.spec.js --reporter=line`, `npm run test:merch-metadata`, and `npx playwright test tests/merch.spec.js --reporter=line` all passed. In-app browser QA covered the press index, High Ground visual kit asset view, High Ground static press page, and mobile viewport width.
 
 Sprint 4A-4D deferred scope and risks:
 
 - Spotify sync was not run because credentials are not present in the environment.
-- Only Rhea Mauro is currently strict-ready for public EPK display; the other 8 kits remain held.
-- Full launch remains blocked until Spotify seed completion or an explicit launch waiver is documented.
+- All 9 EPKs are strict-ready for public EPK display and have generated static `/press/<slug>/` snapshots.
+- Verified Spotify seed completion remains enrichment debt; run `node tools/check-data.js --launch-gate --strict-spotify` when Spotify seeding must be mandatory.
 
 ### Sprint 4: Launch Mode And Publishing
 
@@ -381,7 +382,7 @@ Tasks:
 Acceptance criteria:
 
 - Direct load and shell load both work for every public route.
-- `npm run test:data -- --launch-gate` passes or remaining Spotify seed gaps are explicitly waived in the launch PR.
+- `npm run test:data -- --launch-gate` passes. Missing Spotify seeds may remain warnings when official release actions exist; use `--strict-spotify` for a Spotify-mandatory launch.
 - Final PR includes validation screenshots or links to generated QA output.
 - The site can be published without manual hidden-page toggles outside `public-data.js` and route metadata.
 
@@ -441,5 +442,5 @@ Recommended first slice:
 
 1. Fill verified Spotify artist and release seeds in `data/source-catalog.json`.
 2. Run `npm run sync:spotify`, then `npm run generate:data`, then review the generated public data diff.
-3. Promote held EPKs only when approved bio, approved asset, release context, media/listen path, and contact path are present.
-4. After the data gate passes, audit route/nav/SEO and prepare the launch-mode branch.
+3. Audit route/nav/SEO and prepare the launch-mode branch.
+4. Keep EPK readiness strict when adding or replacing approved press assets.

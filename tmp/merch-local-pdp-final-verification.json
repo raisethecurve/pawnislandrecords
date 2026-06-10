@@ -1,0 +1,26 @@
+{
+  "guided": {
+    "cards": 2,
+    "heroTiles": 2,
+    "toolbarHidden": true,
+    "lightLabelColors": [
+      "rgb(0, 0, 0)",
+      "rgb(0, 0, 0)"
+    ]
+  },
+  "pdp": {
+    "thumbs": 11,
+    "activeThumbs": 1,
+    "zoomed": true,
+    "relatedLightColors": [
+      "rgb(0, 0, 0)",
+      "rgb(0, 0, 0)"
+    ]
+  },
+  "mobile": {
+    "thumbs": 11,
+    "stageHeight": 386,
+    "overflowX": 0
+  },
+  "consoleErrors": []
+}

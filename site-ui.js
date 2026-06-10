@@ -8,6 +8,43 @@
     };
   }
 
+  let edgePublicDataPromise = null;
+
+  function shouldLoadEdgePublicData() {
+    if (typeof window.fetch !== "function" || window.location.protocol === "file:") {
+      return false;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    return params.get("edgeData") !== "0";
+  }
+
+  async function refreshPublicDataFromEdge() {
+    if (!shouldLoadEdgePublicData()) {
+      return currentData();
+    }
+
+    if (!edgePublicDataPromise) {
+      edgePublicDataPromise = fetch("/api/public-data", {
+        cache: "no-store",
+        headers: {
+          Accept: "application/json"
+        }
+      })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((body) => {
+          if (body && body.data && Array.isArray(body.data.releases)) {
+            window.PAWN_PUBLIC_DATA = body.data;
+          }
+
+          return currentData();
+        })
+        .catch(() => currentData());
+    }
+
+    return edgePublicDataPromise;
+  }
+
   const PLATFORM_DEFINITIONS = [
     {
       key: "spotify",
@@ -490,21 +527,18 @@
     const releaseDate = String((release && release.releaseDate) || "").trim();
     const parsedReleaseDate = parseReleaseDate(releaseDate);
     const switchedLive = parsedReleaseDate ? releaseIsLiveInNewYork(releaseDate, now, release) : false;
+    const dateGovernedStatuses = ["", "live", "upcoming", "scheduled", "announced"];
 
-    if (status === "live") {
-      return "live";
+    if (parsedReleaseDate && dateGovernedStatuses.includes(status)) {
+      return switchedLive ? "live" : "upcoming";
     }
 
     if (status === "upcoming" || status === "scheduled" || status === "announced") {
-      if (switchedLive) {
-        return "live";
-      }
-
       return "upcoming";
     }
 
-    if (parsedReleaseDate && !switchedLive) {
-      return "upcoming";
+    if (status === "live") {
+      return "live";
     }
 
     if (getLivePlatforms(release).length || String((release && release.tooFmUrl) || "").trim()) {
@@ -1088,7 +1122,7 @@
 
   function resolveArtwork(source, options) {
     const src = String(source || "").trim();
-    return src || placeholderArtworkUrl(options);
+    return src ? mediaResourceUrl(src) : placeholderArtworkUrl(options);
   }
 
   function bindArtworkFallback(image) {
@@ -1464,9 +1498,14 @@
   function absoluteSiteUrl(value) {
     const raw = String(value || "").trim();
     const siteOrigin = "https://www.pawnislandrecords.com";
+    const mediaUrl = mediaResourceUrl(raw);
 
     if (!raw) {
       return `${siteOrigin}/`;
+    }
+
+    if (mediaUrl && mediaUrl !== raw && /^https?:\/\//i.test(mediaUrl)) {
+      return mediaUrl;
     }
 
     if (/^https?:\/\//i.test(raw)) {
@@ -1474,6 +1513,69 @@
     }
 
     return new URL(raw.replace(/^\/+/, ""), `${siteOrigin}/`).toString();
+  }
+
+  function configuredMediaOrigin() {
+    const explicit = String(window.PAWN_MEDIA_ORIGIN || "").trim();
+
+    if (/^(?:local|same-origin|off)$/i.test(explicit)) {
+      return "";
+    }
+
+    if (explicit) {
+      return explicit.replace(/\/+$/g, "");
+    }
+
+    const hostname = String(window.location && window.location.hostname || "").toLowerCase();
+    return /(?:^|\.)pawnislandrecords\.com$/i.test(hostname) ? "https://media.pawnislandrecords.com" : "";
+  }
+
+  function mediaObjectKey(value) {
+    const raw = String(value || "").trim();
+
+    if (!raw || /^(?:data:|blob:|mailto:|tel:|javascript:)/i.test(raw)) {
+      return "";
+    }
+
+    let pathname = raw;
+    const mediaOrigin = configuredMediaOrigin();
+
+    if (/^https?:\/\//i.test(raw)) {
+      try {
+        const url = new URL(raw);
+
+        if (mediaOrigin && url.origin.replace(/\/+$/g, "") === mediaOrigin) {
+          return url.pathname.replace(/^\/+/, "");
+        }
+
+        pathname = url.pathname;
+      } catch (error) {
+        return "";
+      }
+    }
+
+    const cleanPath = pathname.split(/[?#]/)[0].replace(/^\/+/, "");
+    return cleanPath.startsWith("media/") ? cleanPath.slice("media/".length) : "";
+  }
+
+  function mediaResourceUrl(value) {
+    const raw = String(value || "").trim();
+    const key = mediaObjectKey(raw);
+    const mediaOrigin = configuredMediaOrigin();
+
+    if (!raw || !key) {
+      return raw;
+    }
+
+    if (!mediaOrigin && !/^https?:\/\//i.test(raw)) {
+      return `/${raw.replace(/^\/+/, "")}`;
+    }
+
+    if (!mediaOrigin) {
+      return raw;
+    }
+
+    return new URL(key, `${mediaOrigin}/`).toString();
   }
 
   function setCanonicalUrl(value) {
@@ -1603,6 +1705,7 @@
     releaseCtaLabel,
     sortReleases,
     splitReleases,
+    refreshPublicDataFromEdge,
     preferredYoutubeId,
     primaryEmbed,
     trackCount,
@@ -1618,12 +1721,15 @@
     hexToRgba,
     placeholderArtworkUrl,
     resolveArtwork,
+    mediaObjectKey,
+    mediaResourceUrl,
     hydrateArtwork,
     hydrateMediaEmbeds,
     artworkImageMarkup,
     mediaEmbedFrameMarkup,
     assignArtworkImage,
     applyExperienceTheme,
+    absoluteSiteUrl,
     setMetaDescription,
     setPageMeta,
     setStructuredData,

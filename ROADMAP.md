@@ -1,6 +1,6 @@
 # Pawn Island Records Project Roadmap
 
-Status date: 2026-05-27
+Status date: 2026-06-10
 
 This roadmap is the strategic plan for the Pawn Island Records website. Use it to decide what to build next, what is launch-critical, what can wait, and how to measure whether the site is ready to move from `essentials` launch mode to `full` launch mode.
 
@@ -19,11 +19,11 @@ Current launch mode:
 Current data shape:
 
 - 9 artists.
-- 31 releases.
+- 32 releases.
 - 14 live releases.
-- 17 upcoming releases.
-- 1 strict-ready EPK.
-- 8 held EPKs.
+- 18 upcoming releases.
+- 9 strict-ready EPKs.
+- 0 held EPKs.
 - 9 merch records.
 - 18 discovery playlists.
 - 10 social/contact/support links.
@@ -58,8 +58,8 @@ Known gaps:
 - Merch is modern and hidden-but-shareable as a curated manual order desk backed by synced Printful products and metadata overrides.
 - Some downloadable fan files are placeholders.
 - Release action rendering is normalized, and source-backed data validation now checks release action readiness before launch.
-- Spotify seeds are still incomplete: 9 artist seeds and 30 release seeds are missing before the full launch gate.
-- Press pages now use strict EPK readiness: held kits render request-by-email states instead of partial public kits.
+- Spotify seeds are still incomplete: 9 artist seeds and 31 release seeds remain enrichment debt before a strict Spotify launch gate.
+- Press pages now use strict EPK readiness across all 9 projects, with approved bios, story angles, source-backed release context, approved assets, contact paths, and generated public snapshots.
 - The tracked `tmp/` folder contains legacy QA screenshots and browser-profile artifacts that should be cleaned up in a dedicated maintenance pass.
 
 ## Product North Star
@@ -369,9 +369,9 @@ Later:
 Near-term:
 
 - Keep brand-kit assets internal for now; promote specific assets into EPK pages only when they are press-ready.
-- Keep EPK pages strict: only `epkStatus: "ready"` artists with approved bio, approved structured asset, source-backed release context, media/listen path, and contact path appear in the press index.
-- Replace held EPKs with approved source entries in `data/source-catalog.json` instead of filling page fallbacks.
-- Replace text-only asset lists with downloadable press kits when real files are ready.
+- Keep EPK pages strict: only `epkStatus: "ready"` artists with approved bio, approved story angles, approved structured asset, source-backed release context, media/listen path, and contact path appear in the press index.
+- Maintain all 9 current ready EPKs through `data/source-catalog.json`, `npm run generate:data`, and `npm run generate:seo` rather than hand-editing page markup.
+- Expand current single-file public assets into fuller downloadable press packs and one-sheets as real files are approved.
 
 Later:
 
@@ -451,9 +451,9 @@ Recommended scope:
 Suggested Sprint 4 slices:
 
 1. Fill and sync Spotify seeds without flipping `launchMode`.
-2. Promote held EPKs only when approved source data exists.
-3. Route/nav/SEO launch audit.
-4. Launch-mode implementation branch and release-day checklist.
+2. Route/nav/SEO launch audit.
+3. Launch-mode implementation branch and release-day checklist.
+4. Spotify enrichment or explicit launch waiver.
 
 Sprint 3 closeout:
 

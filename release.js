@@ -9,7 +9,16 @@
   };
   const data = (ui && ui.data) || fallbackData;
   const search = new URLSearchParams(window.location.search);
-  const releaseSlug = search.get("release");
+
+  function releaseSlugFromPathname() {
+    const match = String(window.location.pathname || "").match(/\/releases\/([^/?#]+)\/?$/i);
+    return match ? decodeURIComponent(match[1]) : "";
+  }
+
+  const bodyReleaseSlug = document.body ? String(document.body.getAttribute("data-release-slug") || "").trim() : "";
+  const pathReleaseSlug = releaseSlugFromPathname();
+  const releaseSlug = search.get("release") || bodyReleaseSlug || pathReleaseSlug;
+  const isCanonicalReleasePage = Boolean(bodyReleaseSlug || pathReleaseSlug);
   const release = ui && ui.getRelease
     ? ui.getRelease(releaseSlug)
     : (data.releases || []).find((entry) => entry.slug === releaseSlug) || null;
@@ -66,6 +75,20 @@
     return url;
   }
 
+  function rootPath(pathValue) {
+    const raw = text(pathValue, "");
+
+    if (!raw || raw === "#") {
+      return raw;
+    }
+
+    if (/^(?:https?:|mailto:|tel:|data:|blob:|javascript:|#)/i.test(raw)) {
+      return raw;
+    }
+
+    return raw.startsWith("/") ? raw : `/${raw}`;
+  }
+
   function preservePreviewLinks(root) {
     const scope = root || document;
 
@@ -83,15 +106,18 @@
   }
 
   function releaseUrl(slug) {
-    return withLaunchPreview(`release.html?release=${encodeURIComponent(slug)}`);
+    return rootPath(`releases/${encodeURIComponent(slug)}/`);
   }
 
   function artistUrl(slug, releaseId) {
-    return withLaunchPreview(`artist.html?artist=${encodeURIComponent(slug)}${releaseId ? `&release=${encodeURIComponent(releaseId)}` : ""}`);
+    return rootPath(`artists/${encodeURIComponent(slug)}/`);
   }
 
   function epkUrl(slug) {
-    return withLaunchPreview(`epk.html?artist=${encodeURIComponent(slug)}`);
+    const targetArtist = (data.artists || []).find((entry) => entry.slug === slug) || null;
+    return targetArtist && String(targetArtist.epkStatus || "").toLowerCase() === "ready"
+      ? rootPath(`press/${encodeURIComponent(slug)}/`)
+      : withLaunchPreview(rootPath(`epk.html?artist=${encodeURIComponent(slug)}`));
   }
 
   function text(value, fallback) {
@@ -144,24 +170,24 @@
   }
 
   function showReleasePages() {
-    return isFullLaunchMode;
+    return isFullLaunchMode || isCanonicalReleasePage;
   }
 
   function publicNavLinks() {
     const links = [
-      { href: withLaunchPreview("index.html"), label: "Home" },
-      { href: withLaunchPreview("roster.html"), label: "Roster" }
+      { href: withLaunchPreview(rootPath("index.html")), label: "Home" },
+      { href: withLaunchPreview(rootPath("roster.html")), label: "Roster" }
     ];
 
     if (showCatalogPage()) {
-      links.push({ href: withLaunchPreview("catalog.html"), label: "Catalog" });
+      links.push({ href: withLaunchPreview(rootPath("catalog.html")), label: "Catalog" });
     }
 
-    links.push({ href: withLaunchPreview("connect.html"), label: "Connect" });
-    links.push({ href: withLaunchPreview("about.html"), label: "About" });
+    links.push({ href: withLaunchPreview(rootPath("connect.html")), label: "Connect" });
+    links.push({ href: withLaunchPreview(rootPath("about.html")), label: "About" });
 
     if (showPressPages()) {
-      links.push({ href: withLaunchPreview("epks.html"), label: "Press" });
+      links.push({ href: withLaunchPreview(rootPath("epks.html")), label: "Press" });
     }
 
     return links;
@@ -248,6 +274,10 @@
   }
 
   function siteUrl(pathValue) {
+    if (ui && ui.absoluteSiteUrl) {
+      return ui.absoluteSiteUrl(pathValue);
+    }
+
     return new URL(String(pathValue || "").replace(/^\/+/, ""), "https://www.pawnislandrecords.com/").toString();
   }
 
@@ -268,7 +298,7 @@
 
   function releaseStructuredData() {
     const action = releaseCta(release);
-    const releasePath = sitePath("release.html", { release: release.slug });
+    const releasePath = canonicalReleasePath(release.slug);
     const type = String(release.type || "").toLowerCase().includes("single")
       ? "MusicRecording"
       : "MusicAlbum";
@@ -306,6 +336,10 @@
     };
   }
 
+  function canonicalReleasePath(slug) {
+    return rootPath(`releases/${encodeURIComponent(slug)}/`);
+  }
+
   function renderNotFound() {
     document.title = "Release Not Found | Pawn Island Records";
     page.innerHTML = `
@@ -313,17 +347,17 @@
         <p class="eyebrow">Release</p>
         <h2>That release page is not available.</h2>
         <p>Return to the homepage to choose another release from the catalog.</p>
-        <a class="action-link" href="index.html">Back to Homepage</a>
+        <a class="action-link" href="${escapeAttribute(rootPath("index.html"))}">Back to Homepage</a>
       </section>
     `;
   }
 
   function renderLaunchHoldState(options) {
     const settings = options || {};
-    const title = text(settings.title, "Release pages are staying private for launch.");
+    const title = text(settings.title, "Release pages are still being prepared.");
     const copy = text(
       settings.copy,
-      "Fans can still use the live Too.fm links from the homepage and roster while the deeper release copy is being written."
+      "Use the homepage and roster for the current public listening paths while these release pages are finalized."
     );
     const descriptionNode = document.getElementById("release-meta-description");
 
@@ -341,9 +375,9 @@
         <h2>${escapeHtml(title)}</h2>
         <p>${escapeHtml(copy)}</p>
         <div class="footer-actions">
-          <a class="action-link" href="index.html">Home</a>
-          <a class="action-link" href="roster.html">Roster</a>
-          <a class="action-link" href="about.html">About</a>
+          <a class="action-link" href="${escapeAttribute(rootPath("index.html"))}">Home</a>
+          <a class="action-link" href="${escapeAttribute(rootPath("roster.html"))}">Roster</a>
+          <a class="action-link" href="${escapeAttribute(rootPath("about.html"))}">About</a>
         </div>
       </section>
     `;
@@ -473,6 +507,7 @@
   function renderEmbeds() {
     const primaryEmbed = ui.primaryEmbed(release);
     const youtubeId = ui.preferredYoutubeId(release);
+    const campaignAction = releaseCta(release);
 
     releaseEmbedHeading.textContent = primaryEmbed.label || "Official audio";
     releaseVideoHeading.textContent = youtubeId ? `${release.title} visual` : "Official visual";
@@ -489,8 +524,13 @@
         `
       : `
           <div class="embed-empty">
-            <p class="eyebrow">Audio</p>
-            <p>Official audio embed ready when a primary embed URL is added to this release.</p>
+            <p class="eyebrow">Listen</p>
+            <p>${escapeHtml(campaignAction ? "Open the official release path for the current listen, save, or pre-save destination." : "Official audio links will appear here as soon as they are confirmed.")}</p>
+            ${
+              campaignAction
+                ? `<a class="action-link action-link--accent" href="${escapeAttribute(sanitizeUrl(campaignAction.url, "#"))}" target="_blank" rel="noreferrer">${escapeHtml(campaignAction.label)}</a>`
+                : ""
+            }
           </div>
         `;
 
@@ -509,7 +549,7 @@
       : `
           <div class="embed-empty">
             <p class="eyebrow">Visual</p>
-            <p>Official YouTube embed ready when a release-level video or track video is attached.</p>
+            <p>No official visual is attached to this release yet. Use the listening path above for the current release destination.</p>
           </div>
         `;
   }
@@ -571,11 +611,11 @@
           <div class="footer-actions">
             <a class="action-link" href="${escapeAttribute(artistUrl(artist.slug, release.slug))}">Open project page</a>
             <a class="action-link" href="${escapeAttribute(epkUrl(artist.slug))}">Open press kit</a>
-            <a class="action-link" href="${escapeAttribute(`catalog.html?artist=${encodeURIComponent(artist.slug)}`)}">Browse ${escapeHtml(artist.name)} releases</a>
-            <a class="action-link" href="catalog.html">\u2190 Full catalog</a>
+            <a class="action-link" href="${escapeAttribute(withLaunchPreview(rootPath(`catalog.html?artist=${encodeURIComponent(artist.slug)}`)))}">Browse ${escapeHtml(artist.name)} releases</a>
+            <a class="action-link" href="${escapeAttribute(withLaunchPreview(rootPath("catalog.html")))}">\u2190 Full catalog</a>
             ${
               artist.slug === "matt-freeman"
-                ? '<a class="action-link" href="about.html">About Matthew</a><a class="action-link" href="process.html">Creative process</a>'
+                ? `<a class="action-link" href="${escapeAttribute(rootPath("about.html"))}">About Matthew</a><a class="action-link" href="${escapeAttribute(rootPath("process.html"))}">Creative process</a>`
                 : ""
             }
           </div>
@@ -587,8 +627,8 @@
             <h3>Keep moving through the catalog.</h3>
             <p>Return to the front page to move across the rest of the releases.</p>
             <div class="footer-actions">
-              <a class="action-link" href="catalog.html">\u2190 Full catalog</a>
-              <a class="action-link" href="index.html">Back to homepage</a>
+              <a class="action-link" href="${escapeAttribute(withLaunchPreview(rootPath("catalog.html")))}">\u2190 Full catalog</a>
+              <a class="action-link" href="${escapeAttribute(rootPath("index.html"))}">Back to homepage</a>
             </div>
           </article>`
         }
@@ -624,10 +664,10 @@
       ui.setPageMeta({
         title: `${release.title} | ${artist.name} | Pawn Island Records`,
         description: metaDescriptionText,
-        canonicalPath: sitePath("release.html", { release: release.slug }),
+        canonicalPath: isCanonicalReleasePage ? canonicalReleasePath(release.slug) : sitePath("release.html", { release: release.slug }),
         image: release.cover || artist.image || "assets/brand/pawnisland-1200.jpg",
-        ogType: "music.album",
-        robots: "noindex,follow",
+        ogType: String(release.type || "").toLowerCase().includes("single") ? "music.song" : "music.album",
+        robots: isCanonicalReleasePage ? "index,follow" : "noindex,follow",
         structuredData: releaseStructuredData(),
         structuredDataId: "pawn-release-structured-data"
       });

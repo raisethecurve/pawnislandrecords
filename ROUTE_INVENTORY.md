@@ -1,6 +1,6 @@
 # Pawn Island Records Route Inventory
 
-Status date: 2026-05-27
+Status date: 2026-06-10
 
 This inventory classifies every HTML entry point in the repo. The source-of-truth route list for automated checks lives in `tools/routes.js`; this document is the human-readable version for sprint planning and PR review.
 
@@ -18,7 +18,7 @@ This inventory classifies every HTML entry point in the repo. The source-of-trut
 | `release.html?release=rhea-mauro-hearthblood` | Hidden-but-shareable | Modern public | `public-data.js` | `noindex,follow` | Direct hold plus direct/shell `preview=full` | Release detail route variant with actions, embeds, tracklist, runtime metadata, and JSON-LD. |
 | `epks.html` | Hidden-but-shareable | Modern public | `public-data.js` | `noindex,follow` | Direct hold plus direct/shell `preview=full` | Press index route lists only strict-ready EPKs with approved source-backed assets. |
 | `epk.html?artist=rhea-mauro` | Hidden-but-shareable | Modern public | `public-data.js` | `noindex,follow` | Direct hold plus direct/shell `preview=full` | Ready artist EPK route variant with approved bio, assets, media, contact path, runtime metadata, and JSON-LD. |
-| `epk.html?artist=high-ground` | Hidden-but-shareable | Modern public | `public-data.js` | `noindex,follow` | Direct `preview=full` | Held EPK route variant renders a request-by-email press hold state. |
+| `epk.html?artist=high-ground` | Hidden-but-shareable | Modern public | `public-data.js` | `noindex,follow` | Direct `preview=full` | Ready non-Rhea EPK route variant with approved bio, assets, release context, runtime metadata, and JSON-LD. |
 | `process.html` | Hidden-but-shareable | Story | `public-data.js` | `noindex,follow` | Direct and shell | Creative-process story page; remains shareable but outside primary public nav. |
 | `merch.html` | Hidden-but-shareable | Modern public | `public-data.js` + `data/merch-products.json` | `noindex,follow` | Direct and shell | Curated merch desk for synced Printful products; fans request an invoice before production and the full Printful catalog is internal-only. |
 | `store.html` | Hidden-but-shareable | Modern public | `public-data.js` + `data/merch-products.json` | `noindex,follow` | Direct | Shop-subdomain storefront shell for synced Printful products; canonicalizes to `https://store.pawnislandrecords.com/` while staying noindex until the subdomain and operations are launch-ready. |
@@ -30,7 +30,7 @@ This inventory classifies every HTML entry point in the repo. The source-of-trut
 | `artists.html` | Redirect | Redirect shim | Static HTML | `noindex,follow` | Inventory only | Redirects to `roster.html`. |
 | `artists/` and `artists/<slug>/` | Generated public SEO | Static SEO artifact | `public-data.js` via `npm run generate:seo` | `index,follow` | Link/local spot checks | Crawlable canonical artist/project entity pages for search and answer engines. |
 | `releases/` and `releases/<slug>/` | Generated public SEO | Static SEO artifact | `public-data.js` via `npm run generate:seo` | `index,follow` | Link/local spot checks | Crawlable canonical release entity pages with release metadata and JSON-LD. |
-| `press/` and ready `press/<slug>/` | Generated public SEO | Static SEO artifact | `public-data.js` via `npm run generate:seo` | `index,follow` | Link/local spot checks | Crawlable public press-kit snapshots for strict-ready EPKs only. |
+| `press/` and ready `press/<slug>/` | Generated public SEO | Static SEO artifact | `public-data.js` via `npm run generate:seo` | `index,follow` | Link/local spot checks | Crawlable public press-kit snapshots for all strict-ready EPKs. |
 
 ## Validation Policy
 

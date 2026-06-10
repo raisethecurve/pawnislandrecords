@@ -191,6 +191,8 @@ function normalizePressAssetRecord(record) {
     url: text(record.url),
     type: text(record.type, "asset"),
     credit: text(record.credit),
+    usage: text(record.usage),
+    notes: text(record.notes),
     approved: Boolean(record.approved)
   };
 }
@@ -232,6 +234,9 @@ function artistHasCurrentReleaseContext(artist, data) {
 function isEpkReady(artist, data) {
   return text(artist && artist.epkStatus, "hold").toLowerCase() === "ready" &&
     Boolean(text(artist && artist.pressBio)) &&
+    Boolean(artist && artist.pressApproval && artist.pressApproval.bioApproved) &&
+    Boolean(artist && artist.pressApproval && artist.pressApproval.highlightsApproved) &&
+    Boolean(ensureArray(artist && artist.pressHighlights).length) &&
     Boolean(approvedPressAssets(artist).length) &&
     artistHasCurrentReleaseContext(artist, data) &&
     hasPressContact(data);

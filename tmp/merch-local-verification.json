@@ -1,0 +1,24 @@
+{
+  "guided": {
+    "intro": "Start with two live Pawn Island Records T-shirt picks. Each design is synced through Printful, checked before confirmation, and easy to explore in the full catalog when you want every option.",
+    "cards": 2,
+    "guidedCards": 2,
+    "heroTiles": 2,
+    "toolbarHidden": true,
+    "summary": "Two picks on deck. Full catalog holds all 10 synced designs.",
+    "status": "The two-pick rack is ready. The full catalog holds 10 designs across 2 projects."
+  },
+  "catalog": {
+    "cards": 10,
+    "toolbarHidden": false,
+    "url": "http://127.0.0.1:4174/merch.html?view=catalog",
+    "summary": "Full catalog: 10 of 10 products shown"
+  },
+  "cart": {
+    "count": "1",
+    "shippingOptions": 2,
+    "status": "Shipping rates ready.",
+    "submitText": "Request Draft Order"
+  },
+  "consoleErrors": []
+}

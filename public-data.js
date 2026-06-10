@@ -7,10 +7,10 @@ window.PAWN_PUBLIC_DATA = {
       "Matthew Freeman",
       "Matt Freeman"
     ],
-    "entityDescription": "The official independent label and project-world home for music written and built by Matthew H. Freeman.",
+    "entityDescription": "Independent creative music imprint founded by Matthew H. Freeman, built around original lyrics, atmosphere, story, and distinct project worlds.",
     "launchMode": "essentials",
     "featuredCampaignTitle": "Send Me",
-    "featuredCampaignSummary": "Crick Kinnard's new single opens for pre-save ahead of its June 1, 2026 release at 4 PM ET.",
+    "featuredCampaignSummary": "Crick Kinnard's Send Me is available through the current release link.",
     "featuredCampaignUrl": "https://too.fm/ypn96ka",
     "campaignUrl": "https://too.fm/ypn96ka",
     "defaultTooFmUrl": "https://too.fm/ypn96ka",
@@ -26,19 +26,19 @@ window.PAWN_PUBLIC_DATA = {
         "key": "threads",
         "label": "Threads",
         "url": "https://www.threads.com/@pawnislandrecords",
-        "role": "Short updates, notes, and release chatter."
+        "role": "Short notes, updates, and release chatter."
       },
       {
         "key": "tiktok",
         "label": "TikTok",
         "url": "https://www.tiktok.com/@pawnislandrecords",
-        "role": "Hooks, short clips, and fast discovery."
+        "role": "Hooks, short clips, and quick discovery."
       },
       {
         "key": "youtube",
         "label": "YouTube",
         "url": "https://www.youtube.com/@pawnislandrecords",
-        "role": "Full catalog video listening and project discographies."
+        "role": "Official audio, visualizers, and project discographies."
       },
       {
         "key": "spotify",
@@ -50,13 +50,13 @@ window.PAWN_PUBLIC_DATA = {
         "key": "soundcloud",
         "label": "SoundCloud",
         "url": "https://soundcloud.com/pawnisland",
-        "role": "Unreleased teasers, experiments, and market tests."
+        "role": "Early sketches, experiments, and market tests."
       },
       {
         "key": "facebook",
         "label": "Facebook",
         "url": "https://www.facebook.com/pawnislandrecords/",
-        "role": "Public label presence and broad updates."
+        "role": "Public label updates and community-facing posts."
       },
       {
         "key": "x",
@@ -84,7 +84,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "spotify",
         "url": "https://open.spotify.com/playlist/6Ro52nZas5JxzVgQa353Cw?si=xzNAYGiqQXqMGn-h5q_pqA",
         "image": "assets/brand/pawnisland-1200.jpg",
-        "description": "The main label playlist: a clean front door into the released catalog."
+        "description": "A clean front door into the released Pawn Island Records catalog."
       },
       {
         "title": "Golden Influence Map",
@@ -92,7 +92,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "spotify",
         "url": "https://open.spotify.com/playlist/3mZQWH2rREFhUk4C8gsLlG",
         "image": "assets/playlists/spotify/spotify_golden.png",
-        "description": "A warm influence shelf for the label's softer and stranger connective tissue."
+        "description": "A warm influence shelf for the label's softer, stranger connective tissue."
       },
       {
         "title": "High Ground Hip Hop Playlist",
@@ -100,7 +100,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "spotify",
         "url": "https://open.spotify.com/playlist/3tGVI8rcz498o5iHT3Ra5J",
         "image": "assets/playlists/spotify/spotify_hiphop.png",
-        "description": "Rap references, regional energy, and tracks that sharpen the High Ground lane."
+        "description": "Rap references, regional energy, and rhythm-forward tracks that sharpen the High Ground lane."
       },
       {
         "title": "Second Watch Worship",
@@ -108,7 +108,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "spotify",
         "url": "https://open.spotify.com/playlist/6svwz9dcDgvlTAm3BInNSQ",
         "image": "assets/playlists/spotify/spotify_worship.png",
-        "description": "Spiritual, reflective, and searching sounds around the Second Watch world."
+        "description": "Spiritual, reflective, and searching sounds around the second watch world."
       },
       {
         "title": "Crick's Country Corner",
@@ -116,7 +116,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "spotify",
         "url": "https://open.spotify.com/playlist/3oYdU0Bt4WbhbXPloeyRwr",
         "image": "assets/playlists/spotify/spotify_corner.png",
-        "description": "Country roots, plainspoken turns, and songwriter soil for Crick."
+        "description": "Country roots, plainspoken turns, and songwriter soil around Crick Kinnard."
       },
       {
         "title": "Resunant's Rock Chamber",
@@ -124,7 +124,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "spotify",
         "url": "https://open.spotify.com/playlist/72SiqUnRdOXfYbbOizYRhP",
         "image": "assets/playlists/spotify/spotify_chamber.png",
-        "description": "Guitar-forward reference points for the Resunant side of the island."
+        "description": "Guitar-forward reference points for the Resunant side of the catalog."
       },
       {
         "title": "Velvet Orchard Dance Club",
@@ -140,7 +140,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "spotify",
         "url": "https://open.spotify.com/playlist/5dmk4LcJyHhCIDxsBEAS1D?si=9zas9U-gR6ukXxQvQHJVzA",
         "image": "assets/playlists/spotify/matt_meaningful.png",
-        "description": "Some songs are a soundtrack for life's memorable moments, seasons, or milestones. Some are the reason we keep moving."
+        "description": "Songs for memorable moments, hard seasons, milestones, and the reasons we keep moving."
       },
       {
         "title": "Pawn Island Records Full Catalog",
@@ -148,7 +148,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "youtube",
         "url": "https://www.youtube.com/playlist?list=PLbOk__7W-1bGRbMxVt07H60_7Y2OGob7D",
         "image": "assets/playlists/youtube/ytplaylist_pawn.png",
-        "description": "The full label catalog in video form."
+        "description": "The full Pawn Island Records catalog in video form."
       },
       {
         "title": "Second Watch Discography",
@@ -156,7 +156,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "youtube",
         "url": "https://www.youtube.com/playlist?list=PLbOk__7W-1bG-Cugp2lUsJ31ay7wr4pXk",
         "image": "assets/playlists/youtube/ytplaylist_second.png",
-        "description": "The Second Watch catalog gathered into one listening path."
+        "description": "The second watch catalog gathered into one listening path."
       },
       {
         "title": "Crick Discography",
@@ -164,7 +164,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "youtube",
         "url": "https://www.youtube.com/playlist?list=PLbOk__7W-1bFYnfu3wEtvzRZG13eqt7Nc",
         "image": "assets/playlists/youtube/ytplaylist_crick.png",
-        "description": "Crick songs and releases collected for straight-through listening."
+        "description": "Crick Kinnard songs and releases collected for straight-through listening."
       },
       {
         "title": "Rhea Mauro Discography",
@@ -212,7 +212,7 @@ window.PAWN_PUBLIC_DATA = {
         "platform": "youtube",
         "url": "https://www.youtube.com/playlist?list=PLbOk__7W-1bEGlBt4-1v6t7n7brfKCOZW",
         "image": "assets/playlists/youtube/ytplaylist_blackout.png",
-        "description": "Blackout tracks collected as their own catalog room."
+        "description": "Blackout State tracks gathered in their own catalog room."
       },
       {
         "title": "Resunant Discography",
@@ -235,23 +235,23 @@ window.PAWN_PUBLIC_DATA = {
       "SoundCloud",
       "Tidal"
     ],
-    "aboutText": "Pawn Island Records is a one-person label founded, written, and built by Matthew H. Freeman, a poet and songwriter who follows feeling before format. Some songs arrive close to the page; others ask for noise, glow, weight, or motion. The project names exist to keep those lanes clear for listeners, so each release can live in its own world instead of everything being forced under one sound. The process is simple: stay with the song until it feels right, release it, and keep moving.",
-    "ethos": "Follow the feeling. Finish the song. Let each world keep its own weather.",
+    "aboutText": "Pawn Island Records is a one-person creative music imprint founded, written, and directed by Matthew H. Freeman. The catalog begins with language, feeling, and atmosphere, then gives each kind of song its own project world: electronic pop, hip-hop, singer-songwriter material, country blues, heavy rock, stoner doom, pop-punk, and reflective spiritual writing. The aim is simple: follow the feeling, shape the release with care, and let every world keep its own voice.",
+    "ethos": "Language first. Distinct worlds. Human creative control.",
     "timeline": [
       {
         "label": "01",
-        "title": "Write From the Feeling",
-        "text": "Most songs start with language, mood, or an image. The first job is not explanation. It is getting the emotional truth to land."
+        "title": "Start With Language",
+        "text": "Songs begin with titles, lines, images, questions, and emotional pressure before they become a finished sound."
       },
       {
         "label": "02",
-        "title": "Give Each Sound Its Own Name",
-        "text": "The roster is a set of project lanes built to separate genres and keep the catalog readable. Each name holds a different weather system."
+        "title": "Give Each Lane A World",
+        "text": "Each project name keeps a sound, mood, and visual language clear for listeners."
       },
       {
         "label": "03",
-        "title": "Release and Keep Moving",
-        "text": "When a song feels honest, it goes out into the world. The next piece begins before the dust has fully settled."
+        "title": "Release With Intention",
+        "text": "The catalog stays unified by writing, direction, revision, and final human judgment."
       }
     ],
     "platformPresets": [
@@ -270,18 +270,18 @@ window.PAWN_PUBLIC_DATA = {
     {
       "slug": "rhea-mauro",
       "name": "Rhea Mauro",
-      "lane": "Soulful belting / adult contemporary / country",
+      "lane": "Soul-rooted singer-songwriter",
       "accent": "#cb7c4c",
       "image": "media/public/promo/rhea_promo.png",
-      "summary": "A versatile vocal lane moving from soulful belting to singer-songwriter warmth, with room for playful country turns.",
-      "headline": "A voice-led project built for adult contemporary depth, songwriter intimacy, and occasional country lift.",
-      "story": "Rhea Mauro is one of the most flexible corners of the catalog. The songs can belt, confide, or loosen into something playful depending on where the writing wants to go.",
+      "summary": "Warm, emotionally grounded songs about home, memory, tenderness, identity, and direct human detail.",
+      "headline": "A soul-rooted singer-songwriter project built around warmth, memory, tenderness, and direct emotional detail.",
+      "story": "Rhea Mauro began in a soul lane and moved toward intimate singer-songwriter material, where voice, memory, and plainspoken emotional detail stay at the center.",
       "industryPitch": "Best framed through lyric excerpts, intimate visuals, acoustic performance clips, and writing-first storytelling.",
-      "pressBio": "Rhea Mauro is the songwriter-facing wing of Pawn Island Records, built for close writing, warm arrangements, and durable emotional detail.",
+      "pressBio": "Rhea Mauro is Pawn Island Records' soul-rooted singer-songwriter project. Beginning in soul and moving into intimate songwriter material, Rhea Mauro centers warmth, memory, tenderness, home, and emotionally direct storytelling.",
       "pressHighlights": [
-        "Songwriter-led release world with strong lyric focus",
-        "Warm visual palette and tactile artwork direction",
-        "Catalog lane suited to acoustic sessions and long-form editorial features"
+        "A soul-rooted project that evolved into singer-songwriter material.",
+        "Warm, intimate songs built around memory, home, tenderness, and emotional clarity.",
+        "Country appears as a release-specific experiment, not the whole project identity."
       ],
       "pressAssets": [
         "Square cover art",
@@ -308,6 +308,8 @@ window.PAWN_PUBLIC_DATA = {
           "url": "",
           "type": "image",
           "credit": "Pawn Island Records",
+          "usage": "Approved public EPK image",
+          "notes": "",
           "approved": true
         }
       ]
@@ -315,18 +317,18 @@ window.PAWN_PUBLIC_DATA = {
     {
       "slug": "high-ground",
       "name": "High Ground",
-      "lane": "Urban hip hop / New England identity",
+      "lane": "Hip-hop / rap / boom-bap",
       "accent": "#53473d",
       "image": "media/public/promo/high_promo.png",
-      "summary": "An urban hip hop lane with cold-weather edges, direct language, and a rooted New England identity.",
-      "headline": "A stripped-back project built for sharp bars, regional character, and clean impact.",
-      "story": "High Ground carries the clearest hip hop voice on the label, pairing direct writing with the feel of northeastern streets, winters, and self-possession.",
+      "summary": "Hip-hop, rap, and boom-bap fundamentals: rhythm, verbal presence, grit, memory, cadence, and direct expression.",
+      "headline": "A grounded hip-hop project built around cadence, drums, and verbal presence.",
+      "story": "High Ground gives the catalog a rhythm-forward lane for rap writing, boom-bap texture, beat feel, and the authority of a line delivered cleanly.",
       "industryPitch": "Strong fit for sharp visuals, editorial performance clips, and concise campaign language that lets the bars lead.",
-      "pressBio": "High Ground is the direct-hit rap lane of Pawn Island Records, built around clarity, intent, and records that say exactly what they mean.",
+      "pressBio": "High Ground is Pawn Island Records' hip-hop, rap, and boom-bap project. Built around rhythm, verbal presence, beat feel, cadence, and direct expression, it gives the catalog a grounded lane for rap-centered writing and production.",
       "pressHighlights": [
-        "Clear visual identity and graphic presentation",
-        "Strong single-ready structure",
-        "Press language can stay concise without losing character"
+        "Pawn Island's dedicated hip-hop, rap, and boom-bap lane.",
+        "A project built around cadence, drums, and verbal presence.",
+        "Lyric-forward rap writing without invented biography or false mythology."
       ],
       "pressAssets": [
         "Square cover art",
@@ -341,28 +343,39 @@ window.PAWN_PUBLIC_DATA = {
         "genres": [],
         "fetchedAt": ""
       },
-      "epkStatus": "hold",
+      "epkStatus": "ready",
       "pressApproval": {
-        "bioApproved": false,
-        "highlightsApproved": false
+        "bioApproved": true,
+        "highlightsApproved": true
       },
-      "pressAssetRecords": []
+      "pressAssetRecords": [
+        {
+          "label": "High Ground promo image",
+          "path": "media/public/promo/high_promo.png",
+          "url": "",
+          "type": "image",
+          "credit": "Pawn Island Records",
+          "usage": "Approved public EPK image",
+          "notes": "",
+          "approved": true
+        }
+      ]
     },
     {
       "slug": "velvet-orchard",
       "name": "Velvet Orchard",
-      "lane": "Bass-forward EDM / dance pop",
+      "lane": "Experimental electronic pop / EDM / bass",
       "accent": "#9a4d73",
       "image": "media/public/promo/velvet_promo.png",
-      "summary": "A neon-born dance lane that has evolved into bass-forward EDM with pop instincts intact.",
-      "headline": "A high-color project built for movement, glow, and late-night release.",
-      "story": "Velvet Orchard began in neon synth-pop and has grown into something heavier on rhythm and low end. It is the dance-facing world of the label, built to move without losing heart.",
+      "summary": "Experimental electronic pop that moves from bubblegum Y2K color into EDM, house, dubstep, bass, club, and festival-inspired electronica.",
+      "headline": "An experimental electronic-pop project built for movement, glow, heavy drops, and restless release.",
+      "story": "Velvet Orchard began in bright bubblegum Y2K pop and expanded into a broader electronic world shaped by EDM, house, bass music, club energy, and festival-scale atmosphere.",
       "industryPitch": "Best presented through strong artwork and visual-first rollouts that feel nocturnal rather than slick.",
-      "pressBio": "Velvet Orchard is the dream-pop arm of Pawn Island Records, leaning into saturated color, romantic pull, and songs that stay human beneath the glow.",
+      "pressBio": "Velvet Orchard is Pawn Island Records' experimental electronic-pop project. Beginning in bubblegum Y2K pop, it has evolved through EDM, house, dubstep, bass, club, and festival-inspired electronica with a restless, high-gloss sense of experimentation.",
       "pressHighlights": [
-        "Highly visual release identity",
-        "Strong crossover between music and design language",
-        "Natural fit for fashion-forward merch and editorial stills"
+        "Evolution from bubblegum Y2K pop into broader EDM and bass-facing electronica.",
+        "Club and festival inspiration filtered through emotional pop songwriting.",
+        "Bright surfaces, heavy drops, dance-floor release, and emotional excess."
       ],
       "pressAssets": [
         "Square cover art",
@@ -377,28 +390,39 @@ window.PAWN_PUBLIC_DATA = {
         "genres": [],
         "fetchedAt": ""
       },
-      "epkStatus": "hold",
+      "epkStatus": "ready",
       "pressApproval": {
-        "bioApproved": false,
-        "highlightsApproved": false
+        "bioApproved": true,
+        "highlightsApproved": true
       },
-      "pressAssetRecords": []
+      "pressAssetRecords": [
+        {
+          "label": "Velvet Orchard promo image",
+          "path": "media/public/promo/velvet_promo.png",
+          "url": "",
+          "type": "image",
+          "credit": "Pawn Island Records",
+          "usage": "Approved public EPK image",
+          "notes": "",
+          "approved": true
+        }
+      ]
     },
     {
       "slug": "quiet-filter",
       "name": "Quiet Filter",
-      "lane": "Stoner doom / heavy ritual",
+      "lane": "Bluesy stoner doom / grunge groove",
       "accent": "#8a764f",
       "image": "media/public/promo/filter_promo.png",
-      "summary": "A stoner-doom lane built on low-end drag, repetition, and immersive heaviness.",
-      "headline": "A metal project shaped by ritual pace, texture, and real physical weight.",
-      "story": "Quiet Filter is the slowest and heaviest lane on the label, leaning into stoner doom atmosphere, patience, and tone you can almost feel in the room.",
+      "summary": "Hypnotic, blues-stained stoner doom with grunge weight, dirty groove, heavy repetition, and weathered spiritual unease.",
+      "headline": "A slow-burning stoner doom project shaped by blues phrasing, grunge groove, reverb, and physical weight.",
+      "story": "Quiet Filter is the heavy, slow-burning lane of the catalog: bluesy, hypnotic, gritty, and saturated with reverb, repetition, and worn-down pressure.",
       "industryPitch": "Pairs naturally with performance video, heavier visual branding, and slow-burn campaigns that do not rush the atmosphere.",
-      "pressBio": "Quiet Filter is the heavy slow-burn wing of the label, built around mass, restraint, and immersion.",
+      "pressBio": "Quiet Filter is Pawn Island Records' stoner doom and grunge-groove project. Blues-stained, hypnotic, gritty, and heavy with reverb, the project lives in a world of worn surfaces, dirty light, circular riffs, and spiritual unease.",
       "pressHighlights": [
-        "Strong identity for heavy-music editorial framing",
-        "Visual language favors texture over excess",
-        "Track-level video embeds can deepen immersion"
+        "Stoner doom filtered through blues phrasing and grunge atmosphere.",
+        "Heavy repetition used as mood, not just riff worship.",
+        "A visual and sonic world of worn surfaces, smoke, grime, and revelation."
       ],
       "pressAssets": [
         "Square cover art",
@@ -413,28 +437,39 @@ window.PAWN_PUBLIC_DATA = {
         "genres": [],
         "fetchedAt": ""
       },
-      "epkStatus": "hold",
+      "epkStatus": "ready",
       "pressApproval": {
-        "bioApproved": false,
-        "highlightsApproved": false
+        "bioApproved": true,
+        "highlightsApproved": true
       },
-      "pressAssetRecords": []
+      "pressAssetRecords": [
+        {
+          "label": "Quiet Filter promo image",
+          "path": "media/public/promo/filter_promo.png",
+          "url": "",
+          "type": "image",
+          "credit": "Pawn Island Records",
+          "usage": "Approved public EPK image",
+          "notes": "",
+          "approved": true
+        }
+      ]
     },
     {
       "slug": "resunant",
       "name": "Resunant",
-      "lane": "Alternative rock / glam rock",
+      "lane": "Alternative power metal / narrative glam rock",
       "accent": "#cb6c2a",
       "image": "media/public/promo/resunant_promo.png",
-      "summary": "An alternative rock lane with glam lift, sharp hooks, and real stage energy.",
-      "headline": "A guitar-forward project built for contrast, color, and larger-than-life release.",
-      "story": "Resunant is where the catalog turns outward and theatrical, mixing alternative rock drive with glam-rock shine and a sense of ignition.",
+      "summary": "Alternative power metal and narrative-driven glam rock: theatrical, heavy, neon-lit, and built for concept-album scale.",
+      "headline": "A theatrical heavy-rock project built for power-metal force, glam drama, and concept-scale worldbuilding.",
+      "story": "Resunant lives where metal force meets glam-rock drama: heavy guitars, big choruses, neon atmosphere, spectacle, and story-forward rock mythology.",
       "industryPitch": "Strong fit for performance visuals, live clips, heavier playlist pitching, and artwork that leans into contrast and motion.",
-      "pressBio": "Resunant is the alt-metal lane of Pawn Island Records, balancing abrasion, melody, and a strong visual sense of aftermath.",
+      "pressBio": "Resunant is Pawn Island Records' alternative power metal and narrative-driven glam rock project. Theatrical, heavy, neon-lit, and story-forward, it channels concept-album spectacle, big choruses, and high-voltage rock worldbuilding.",
       "pressHighlights": [
-        "High-contrast visual identity",
-        "Built for larger live-performance framing",
-        "Good match for editorial visuals and behind-the-track content"
+        "Alternative power metal fused with narrative-driven glam rock.",
+        "Midnight Revival as a theatrical, concept-scale rock world.",
+        "Heavy music with glam drama, neon atmosphere, and story-forward presentation."
       ],
       "pressAssets": [
         "Square cover art",
@@ -449,28 +484,39 @@ window.PAWN_PUBLIC_DATA = {
         "genres": [],
         "fetchedAt": ""
       },
-      "epkStatus": "hold",
+      "epkStatus": "ready",
       "pressApproval": {
-        "bioApproved": false,
-        "highlightsApproved": false
+        "bioApproved": true,
+        "highlightsApproved": true
       },
-      "pressAssetRecords": []
+      "pressAssetRecords": [
+        {
+          "label": "Resunant promo image",
+          "path": "media/public/promo/resunant_promo.png",
+          "url": "",
+          "type": "image",
+          "credit": "Pawn Island Records",
+          "usage": "Approved public EPK image",
+          "notes": "",
+          "approved": true
+        }
+      ]
     },
     {
       "slug": "matt-freeman",
       "name": "Matt Freeman",
-      "lane": "Pop culture / uncategorized songs",
+      "lane": "Lyric-first songwriter / creative director",
       "accent": "#7b362b",
       "image": "media/public/albums/freeman_time.png",
-      "summary": "The catch-all lane for pop culture pieces, one-offs, and songs that do not belong under a stricter genre banner.",
-      "headline": "A flexible project for standalone ideas, cultural references, and material outside the genre-facing lanes.",
-      "story": "Matthew Freeman holds the songs that do not want to stay in a single box. It is the most open-ended space on the label, where commentary, character, and odd angles can lead the way.",
+      "summary": "Poet, songwriter, founder, and independent creator building Pawn Island Records around original lyrics, story, atmosphere, and genre-fluid project identities.",
+      "headline": "A lyric-first founder project for songs that stay closest to the writer's voice, story, and authorship.",
+      "story": "Matt Freeman anchors Pawn Island Records through lyrics, titles, emotional premises, story worlds, project identities, and the final creative decisions that shape each release.",
       "industryPitch": "A strong entry point for understanding the label as one authorship expressed through multiple release worlds.",
-      "pressBio": "Matthew Freeman is a poet, songwriter, and builder of release worlds whose work moves through industrial texture, electronic motion, and emotionally exact writing. Pawn Island Records grows from that same one-person practice: one voice, many lanes.",
+      "pressBio": "Matt Freeman is a poet, songwriter, and independent creator behind Pawn Island Records. His work centers original lyrics, story, atmosphere, and final creative direction across a genre-fluid catalog of project identities and releases.",
       "pressHighlights": [
-        "Industrial texture with electronic movement",
-        "Mood-first writing with cinematic tension",
-        "Release worlds shaped by resilience, transformation, and identity under pressure"
+        "Poet and songwriter building an independent label ecosystem.",
+        "Music as an extension of written work.",
+        "Human authorship, curation, arrangement, and final creative control as the center of the process."
       ],
       "pressAssets": [
         "Public bio",
@@ -485,28 +531,39 @@ window.PAWN_PUBLIC_DATA = {
         "genres": [],
         "fetchedAt": ""
       },
-      "epkStatus": "hold",
+      "epkStatus": "ready",
       "pressApproval": {
-        "bioApproved": false,
-        "highlightsApproved": false
+        "bioApproved": true,
+        "highlightsApproved": true
       },
-      "pressAssetRecords": []
+      "pressAssetRecords": [
+        {
+          "label": "Matt Freeman project artwork",
+          "path": "media/public/albums/freeman_time.png",
+          "url": "",
+          "type": "image",
+          "credit": "Pawn Island Records",
+          "usage": "Approved public EPK image",
+          "notes": "",
+          "approved": true
+        }
+      ]
     },
     {
       "slug": "blackout-state",
       "name": "Blackout State",
-      "lane": "Pop punk / shutdown energy",
+      "lane": "Pop-punk / melodic rebellion",
       "accent": "#c59b25",
       "image": "media/public/promo/state_promo.png",
-      "summary": "A pop-punk lane built for fast hooks, restless energy, and a little beautiful damage.",
-      "headline": "A confrontational project driven by momentum, abrasion, and sing-along impact.",
-      "story": "Blackout State is the loud, fast-moving corner of the label, where sharp edges and catchy release energy meet.",
+      "summary": "Pop-punk urgency, frustration, and melodic rebellion turned toward pressure, independence, and refusing someone else's script.",
+      "headline": "A pop-punk project built for pressure, refusal, melodic rebellion, and hard personal edge.",
+      "story": "Blackout State is the Pawn Island Records project for pop-punk energy, hook-driven refusal, self-definition, and the feeling of pushing back without a map.",
       "industryPitch": "Best supported with graphic campaigns, distressed visuals, and compact release identity that leans into collage and contrast.",
-      "pressBio": "Blackout State is the industrial-panic side of the label, pairing distressed graphics with songs that feel like alerts and aftermath.",
+      "pressBio": "Blackout State is Pawn Island Records' pop-punk project. Centered around No Manual, No Master, the project turns urgency, frustration, and melodic rebellion into songs about pressure, independence, and refusing someone else's script.",
       "pressHighlights": [
-        "Strong high-contrast visual language",
-        "Natural fit for sharp visual campaigns",
-        "High-impact campaign identity"
+        "Pop-punk framed around self-definition and refusal.",
+        "No Manual, No Master as a strong album-title statement.",
+        "Melodic rebellion tied to Pawn Island's lyric-first catalog identity."
       ],
       "pressAssets": [
         "Square cover art",
@@ -520,28 +577,39 @@ window.PAWN_PUBLIC_DATA = {
         "genres": [],
         "fetchedAt": ""
       },
-      "epkStatus": "hold",
+      "epkStatus": "ready",
       "pressApproval": {
-        "bioApproved": false,
-        "highlightsApproved": false
+        "bioApproved": true,
+        "highlightsApproved": true
       },
-      "pressAssetRecords": []
+      "pressAssetRecords": [
+        {
+          "label": "Blackout State promo image",
+          "path": "media/public/promo/state_promo.png",
+          "url": "",
+          "type": "image",
+          "credit": "Pawn Island Records",
+          "usage": "Approved public EPK image",
+          "notes": "",
+          "approved": true
+        }
+      ]
     },
     {
       "slug": "crick-kinnard",
       "name": "Crick Kinnard",
-      "lane": "Bluesy southern country / soul",
+      "lane": "Appalachian blues / country grit",
       "accent": "#b17d43",
       "image": "media/public/promo/crick_promo.png",
-      "summary": "A bluesy, soulful southern-country lane with grit, warmth, and deep roots.",
-      "headline": "A grounded project built from southern weather, soulful phrasing, and durable songcraft.",
-      "story": "Crick Kinnard carries the earthy, blues-soaked side of the label, where country structure and soul feeling meet without pretense.",
+      "summary": "Appalachian blues, country grit, battered-heart storytelling, and rough-edged songcraft with a weathered soul.",
+      "headline": "An Appalachian blues and country project built from battered-heart storytelling and rough-edged songcraft.",
+      "story": "Crick Kinnard carries the rough-edged country-blues lane: plainspoken, worn-in, bruised, funny when it needs to be, and sincere without sanding off the grit.",
       "industryPitch": "A good fit for Americana press, lyric features, intimate performance clips, and simple artwork-led campaign assets.",
-      "pressBio": "Crick Kinnard is the roots-noir arm of Pawn Island Records, built for patient storytelling, grounded imagery, and sturdy emotional truth.",
+      "pressBio": "Crick Kinnard is Pawn Island Records' Appalachian blues and country project, built around battered-heart storytelling, rough-edged songcraft, and plainspoken music with a weathered soul.",
       "pressHighlights": [
-        "Narrative-led songwriting identity",
-        "Strong fit for Americana and songwriter press",
-        "Release presentation benefits from calm pacing"
+        "Appalachian blues and country grit inside Pawn Island Records.",
+        "Plainspoken songs with battered-heart storytelling.",
+        "Country-blues character that favors rough truth over polish."
       ],
       "pressAssets": [
         "Square cover art",
@@ -556,28 +624,39 @@ window.PAWN_PUBLIC_DATA = {
         "genres": [],
         "fetchedAt": ""
       },
-      "epkStatus": "hold",
+      "epkStatus": "ready",
       "pressApproval": {
-        "bioApproved": false,
-        "highlightsApproved": false
+        "bioApproved": true,
+        "highlightsApproved": true
       },
-      "pressAssetRecords": []
+      "pressAssetRecords": [
+        {
+          "label": "Crick Kinnard promo image",
+          "path": "media/public/promo/crick_promo.png",
+          "url": "",
+          "type": "image",
+          "credit": "Pawn Island Records",
+          "usage": "Approved public EPK image",
+          "notes": "",
+          "approved": true
+        }
+      ]
     },
     {
       "slug": "second-watch",
       "name": "second watch",
-      "lane": "Contemporary gospel / modern church music",
+      "lane": "Reflective songwriter / devotional-adjacent",
       "accent": "#c08745",
       "image": "media/public/promo/second_promo.png",
-      "summary": "A contemporary gospel lane built for modern churches, devotion, and uplift.",
-      "headline": "A worship-facing project shaped by reflection, hope, and congregational scale.",
-      "story": "second watch carries the faith-centered material in the catalog, drawing on contemporary Christian songwriting built for modern church settings.",
+      "summary": "Reflective, lyric-forward songs shaped by vigil, prayer, confession, solitude, and late-night self-examination.",
+      "headline": "A reflective, devotional-adjacent project shaped by vigil, prayer, confession, and self-examination.",
+      "story": "second watch carries the reflective and devotional-adjacent lane: quiet attention, spiritual pressure, private questions, and lyric-forward reflection.",
       "industryPitch": "Works well with thoughtful editorial framing, lyric-first presentation, and carefully chosen visuals rather than constant motion.",
-      "pressBio": "second watch is the reflective wing of the catalog, built for quiet songs, spiritual undertones, and unforced emotional space.",
+      "pressBio": "second watch is Pawn Island Records' reflective, devotional-adjacent project, built for lyric-forward songs shaped by vigil, prayer, confession, solitude, and self-examination.",
       "pressHighlights": [
-        "Clear contemplative identity",
-        "Strong visual pairing with horizon and light motifs",
-        "Best served by minimal presentation"
+        "Reflective, devotional-adjacent writing without overstated worship claims.",
+        "Psalm of Myself as the clearest public anchor.",
+        "Late-night solitude, confession, and self-examination."
       ],
       "pressAssets": [
         "Square cover art",
@@ -591,12 +670,23 @@ window.PAWN_PUBLIC_DATA = {
         "genres": [],
         "fetchedAt": ""
       },
-      "epkStatus": "hold",
+      "epkStatus": "ready",
       "pressApproval": {
-        "bioApproved": false,
-        "highlightsApproved": false
+        "bioApproved": true,
+        "highlightsApproved": true
       },
-      "pressAssetRecords": []
+      "pressAssetRecords": [
+        {
+          "label": "second watch promo image",
+          "path": "media/public/promo/second_promo.png",
+          "url": "",
+          "type": "image",
+          "credit": "Pawn Island Records",
+          "usage": "Approved public EPK image",
+          "notes": "",
+          "approved": true
+        }
+      ]
     }
   ],
   "releases": [
@@ -609,7 +699,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fea342",
       "cover": "media/public/albums/rhea_hearth.png",
-      "description": "A songwriter world built around voice, weather, home, and the kind of emotional detail that grows larger the longer it lingers.",
+      "description": "A songwriter album shaped by voice, weather, home, and emotional details that keep expanding after the song ends.",
       "status": "live",
       "releaseDate": "2026-02-04",
       "tooFmUrl": "https://too.fm/d2d6eel",
@@ -737,7 +827,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#efc185",
       "cover": "media/public/albums/rhea_aura.png",
-      "description": "A playful, storybook songwriter-pop release following a young girl from childhood into adulthood.",
+      "description": "A warm, soul-rooted singer-songwriter album about home, identity, tenderness, memory, and the ordinary details that shape a life.",
       "status": "live",
       "releaseDate": "2026-04-03",
       "tooFmUrl": "https://too.fm/ga4wykj",
@@ -769,7 +859,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fcb84e",
       "cover": "media/public/albums/rhea_jet.png",
-      "description": "A forward-moving release in the Rhea Mauro catalog, built for open-road emotional scale and distance.",
+      "description": "A country-facing detour within Rhea Mauro's broader soul-rooted songwriter world, trading domestic warmth for open-road scale and playful distance.",
       "status": "live",
       "releaseDate": "2026-04-03",
       "tooFmUrl": "https://too.fm/jdb6lgv",
@@ -798,7 +888,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#f4be7c",
       "cover": "media/public/albums/updated_high.png",
-      "description": "A direct rap project built for clarity, control, and clean visual framing that keeps the words in front.",
+      "description": "A direct hip-hop album that keeps the words in front: clear, controlled, regional, and sharply framed.",
       "status": "live",
       "releaseDate": "2026-02-05",
       "tooFmUrl": "https://too.fm/d6evdk6",
@@ -933,8 +1023,8 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#53473d",
       "cover": "media/public/albums/high_analysis.png",
-      "description": "A poetic boom bap single from High Ground — a look back at childhood and the moment music became something to hold onto.",
-      "status": "upcoming",
+      "description": "A poetic boom-bap single from High Ground, looking back to childhood and the moment music became something to hold onto.",
+      "status": "live",
       "releaseDate": "2026-06-05",
       "tooFmUrl": "https://too.fm/drydpna",
       "platforms": [],
@@ -978,7 +1068,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fe6645",
       "cover": "media/public/albums/velvet_gas.png",
-      "description": "A late-night pop release that glows without losing edge, pairing saturated artwork with a darker emotional pull.",
+      "description": "A late-night Velvet Orchard EP that keeps its glow while pushing toward darker pull, heavier movement, and saturated color.",
       "status": "upcoming",
       "releaseDate": "2026-07-31",
       "tooFmUrl": "https://too.fm/6padq59",
@@ -1083,8 +1173,8 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#ca8659",
       "cover": "media/public/albums/velvet_afterglow.png",
-      "description": "A warm-lit dream-pop release built around the glow that lingers after the night peaks.",
-      "status": "upcoming",
+      "description": "A warm-lit Velvet Orchard album about the glow that lingers after the night peaks.",
+      "status": "live",
       "releaseDate": "2026-05-22",
       "tooFmUrl": "https://too.fm/k7mqrnj",
       "platforms": [],
@@ -1115,8 +1205,8 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fc695f",
       "cover": "media/public/albums/velvet_borrowed.png",
-      "description": "An intimate dream-pop release shaped by softness, distance, and the feeling of holding something that was never yours.",
-      "status": "upcoming",
+      "description": "An intimate electronic-pop album shaped by softness, distance, and the ache of holding light that was never fully yours.",
+      "status": "live",
       "releaseDate": "2026-06-01",
       "tooFmUrl": "https://too.fm/kyajkbn",
       "platforms": [],
@@ -1147,7 +1237,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#f769b6",
       "cover": "media/public/albums/velvet_crush.png",
-      "description": "A saturated pop release built around electric romantic tension and the overloaded feeling of early infatuation.",
+      "description": "A saturated electronic-pop release about electric romantic tension and the overload of early infatuation.",
       "status": "live",
       "releaseDate": "2026-02-27",
       "tooFmUrl": "https://too.fm/6kjkwyd",
@@ -1179,7 +1269,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#f9c95e",
       "cover": "media/public/albums/velvet_day.png",
-      "description": "A sunlit dream-pop release that trades nocturnal atmosphere for open sky and daydream warmth.",
+      "description": "A sunlit Velvet Orchard album that turns from nocturnal atmosphere toward open sky, heat, and daydream lift.",
       "status": "upcoming",
       "releaseDate": "2026-07-05",
       "tooFmUrl": "https://too.fm/k9vba0b",
@@ -1211,7 +1301,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fd6a45",
       "cover": "media/public/albums/velvet_door.png",
-      "description": "A moody pop release built around the feeling of standing at a threshold, weighted with anticipation.",
+      "description": "A moody pop album about threshold energy, anticipation, and the weight of standing before what comes next.",
       "status": "live",
       "releaseDate": "2026-02-20",
       "tooFmUrl": "https://too.fm/v4eknae",
@@ -1243,7 +1333,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#f85690",
       "cover": "media/public/albums/velvet_empty.png",
-      "description": "A spacious dream-pop release where absence becomes a texture and longing carries the melody.",
+      "description": "A darker electronic-pop release where emotional absence, nightlife glow, and fractured intimacy become sleek, unstable songs.",
       "status": "live",
       "releaseDate": "2026-04-03",
       "tooFmUrl": "https://too.fm/noprn67",
@@ -1275,8 +1365,8 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#ec6d9d",
       "cover": "media/public/albums/velvet_hand.png",
-      "description": "A tender, close-range pop release built around contact, warmth, and the weight of small gestures.",
-      "status": "upcoming",
+      "description": "A close-range pop release about touch, warmth, and the emotional weight of small gestures.",
+      "status": "live",
       "releaseDate": "2026-06-05",
       "tooFmUrl": "https://too.fm/9pdm2mm",
       "platforms": [],
@@ -1307,8 +1397,8 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#d1a2ce",
       "cover": "media/public/albums/velvet_lights.png",
-      "description": "A neon-drenched dream-pop release built for glowing late nights and soft-focus cityscapes.",
-      "status": "upcoming",
+      "description": "A polished Velvet Orchard single for the bright edge of electronic pop: luminous, direct, dance-facing, and newly visible.",
+      "status": "live",
       "releaseDate": "2026-05-01",
       "tooFmUrl": "https://too.fm/ryxg0kk",
       "platforms": [],
@@ -1339,7 +1429,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#f89be2",
       "cover": "media/public/albums/velvet_magic.png",
-      "description": "An after-hours pop release that leans into enchantment, glitter, and the strange pull of a perfect night.",
+      "description": "A bright Velvet Orchard release about wonder, transformation, and the charge of something feeling impossible until it happens.",
       "status": "upcoming",
       "releaseDate": "2026-07-04",
       "tooFmUrl": "https://too.fm/3ryrv4r",
@@ -1371,7 +1461,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#f2ca9a",
       "cover": "media/public/albums/velvet_mercy.png",
-      "description": "A lush, forgiving dream-pop release shaped by surrender and soft emotional resolution.",
+      "description": "A lush, forgiving dream-pop release shaped by surrender, softness, and emotional resolution.",
       "status": "upcoming",
       "releaseDate": "2026-07-10",
       "tooFmUrl": "https://too.fm/4ro4apx",
@@ -1403,7 +1493,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#f5d99e",
       "cover": "media/public/albums/velvet_mirage.png",
-      "description": "A hazy, shimmering pop release where distance is a visual texture and the hooks dissolve as soon as you reach them.",
+      "description": "A shimmering electronic-pop release where distance becomes texture and the hook seems to dissolve as it arrives.",
       "status": "upcoming",
       "releaseDate": "2026-07-17",
       "tooFmUrl": "https://too.fm/67vkpe7",
@@ -1435,7 +1525,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fa7fba",
       "cover": "media/public/albums/velvet_quiet.png",
-      "description": "A low-light dream-pop release built for stillness, intimacy, and the velvet texture of a song that asks nothing of you.",
+      "description": "A low-light dream-pop release for stillness, intimacy, and the velvet texture of a song that asks for nothing but attention.",
       "status": "live",
       "releaseDate": "2026-02-13",
       "tooFmUrl": "https://too.fm/87gp7ve",
@@ -1467,7 +1557,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#eaa3b9",
       "cover": "media/public/albums/velvet_shape.png",
-      "description": "An atmospheric pop release defined by silhouette, form, and the feeling of something just coming into focus.",
+      "description": "An atmospheric pop release about silhouette, form, and the first moment something comes into focus.",
       "status": "upcoming",
       "releaseDate": "2026-07-03",
       "tooFmUrl": "https://too.fm/j2mjj5k",
@@ -1499,8 +1589,8 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#a6a7a1",
       "cover": "media/public/albums/velvet_therapy.png",
-      "description": "A deep-glow pop release built around emotional release, the act of naming what hurts, and the warmth that follows.",
-      "status": "upcoming",
+      "description": "A deep-glow pop release about naming what hurts and finding warmth on the other side.",
+      "status": "live",
       "releaseDate": "2026-05-15",
       "tooFmUrl": "https://too.fm/oggqy0p",
       "platforms": [],
@@ -1531,7 +1621,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#e9c57f",
       "cover": "media/public/albums/quiet_wall.png",
-      "description": "A pressure-built heavy release with ritual pacing, stripped-down presentation, and room-shaping low end.",
+      "description": "A pressure-built heavy album with ritual pacing, stripped-down presentation, and low end that changes the room.",
       "status": "live",
       "releaseDate": "2026-02-14",
       "tooFmUrl": "https://too.fm/qonnaz",
@@ -1696,10 +1786,10 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#9a7146",
       "cover": "media/public/albums/quiet_worn_away.png",
-      "description": "A slow-burn Quiet Filter album built around erosion, isolation, and heavy textures that move like weather.",
+      "description": "A bluesy, hypnotic, gritty stoner doom release built on grunge groove, reverb, repetition, and spiritual fatigue.",
       "status": "upcoming",
       "releaseDate": "2026-08-03",
-      "tooFmUrl": "",
+      "tooFmUrl": "https://too.fm/a8qolq0",
       "platforms": [],
       "tracks": [],
       "youtubeId": "",
@@ -1728,7 +1818,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fabf64",
       "cover": "media/public/albums/resunant_ash.png",
-      "description": "A sharp-edged heavy record with strong visual contrast and a sense of aftermath baked into the release identity.",
+      "description": "A sharp-edged heavy record with stark visual contrast and aftermath baked into its release identity.",
       "status": "live",
       "releaseDate": "2026-02-04",
       "tooFmUrl": "https://too.fm/o0pxxyy",
@@ -1881,12 +1971,60 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#f8b871",
       "cover": "media/public/albums/resunant_revival.png",
-      "description": "A high-contrast alt-metal release built around lift, ignition, and the momentum that comes after the wreckage clears.",
-      "status": "upcoming",
+      "description": "A theatrical alternative power metal and narrative-driven glam rock release: neon-lit, heavy, dramatic, and built with concept-album scale.",
+      "status": "live",
       "releaseDate": "2026-05-01",
       "tooFmUrl": "https://too.fm/bkxbxm3",
       "platforms": [],
       "tracks": [],
+      "youtubeId": "",
+      "spotify": {
+        "id": "",
+        "type": "",
+        "url": "",
+        "embedUrl": "",
+        "fetchedAt": ""
+      },
+      "identifiers": {
+        "upc": ""
+      },
+      "primaryEmbedUrl": "",
+      "primaryEmbedLabel": ""
+    },
+    {
+      "slug": "resunant-memories",
+      "artist": "resunant",
+      "title": "Memories",
+      "aliases": [
+        "resunant-memories"
+      ],
+      "type": "Single",
+      "vibe": "cathedral-lit, elegiac, high-drama",
+      "year": "2026",
+      "accent": "#b99662",
+      "cover": "media/public/albums/resunant_memories.png",
+      "description": "A cathedral-scale Resunant single where memory becomes spectacle: blue-black atmosphere, gold light, and heavy, theatrical uplift.",
+      "status": "upcoming",
+      "releaseDate": "2026-08-31",
+      "tooFmUrl": "",
+      "platforms": [],
+      "tracks": [
+        {
+          "title": "Memories",
+          "runtime": "",
+          "youtubeId": "",
+          "spotify": {
+            "id": "",
+            "type": "",
+            "url": "",
+            "embedUrl": "",
+            "fetchedAt": ""
+          },
+          "identifiers": {
+            "isrc": ""
+          }
+        }
+      ],
       "youtubeId": "",
       "spotify": {
         "id": "",
@@ -1913,7 +2051,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fdbc51",
       "cover": "media/public/albums/freeman_time.png",
-      "description": "A one-shot release framed tightly around the idea, the title, and the image with no excess around it.",
+      "description": "A one-shot pop-culture single that keeps the title, image, and joke in sharp focus with no extra padding.",
       "status": "live",
       "releaseDate": "2026-04-03",
       "tooFmUrl": "https://too.fm/emww7xy",
@@ -1961,7 +2099,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fdb846",
       "cover": "media/public/albums/state_master.png",
-      "description": "A high-impact release world that trades polish for graphic abrasion and hard contrast.",
+      "description": "A pop-punk release about pressure, refusal, and self-definition, driven by restless hooks and the need to live without someone else's script.",
       "status": "live",
       "releaseDate": "2026-02-05",
       "tooFmUrl": "https://too.fm/vbzk4bv",
@@ -2036,7 +2174,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#c59b25",
       "cover": "media/public/albums/blackout-time.png",
-      "description": "A sharp, high-impact single from Blackout State built for fast hooks and restless energy.",
+      "description": "A fast, sharp Blackout State single built for restless hooks, quick impact, and charged release.",
       "status": "upcoming",
       "releaseDate": "2026-06-12",
       "tooFmUrl": "https://too.fm/dazenaz",
@@ -2081,7 +2219,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fbca87",
       "cover": "media/public/albums/crick_river.png",
-      "description": "A roots-driven songwriting release anchored in place, memory, and durable emotional detail.",
+      "description": "A roots-driven album anchored in place, memory, and durable emotional detail.",
       "status": "live",
       "releaseDate": "2026-02-04",
       "tooFmUrl": "https://too.fm/yn8xx7l",
@@ -2249,8 +2387,8 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fdc249",
       "cover": "media/public/albums/crick_fair.png",
-      "description": "A roots-noir release built around season, weather, and the durable honesty of songs that don't overstate.",
-      "status": "upcoming",
+      "description": "A plainspoken Crick Kinnard release in the Appalachian blues and country lane: rough-edged, bruised, dry, and human.",
+      "status": "live",
       "releaseDate": "2026-05-01",
       "tooFmUrl": "https://too.fm/x11ebjp",
       "platforms": [],
@@ -2278,8 +2416,8 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#b5844a",
       "cover": "media/public/albums/crick_send_me.jpg",
-      "description": "A roots-country single from Crick Kinnard about duty, family, and the heavy quiet around signing your name before stepping into the unknown.",
-      "status": "upcoming",
+      "description": "A roots-country single about duty, family, and the heavy quiet before signing your name and stepping into the unknown.",
+      "status": "live",
       "releaseDate": "2026-06-01",
       "releaseTime": "4 PM ET",
       "releaseHour": 16,
@@ -2325,7 +2463,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#b89462",
       "cover": "media/public/albums/crick_empty_chambers.png",
-      "description": "A roots-noir Crick Kinnard single set in the heavy quiet between guilt, mercy, and one more road out.",
+      "description": "A roots-noir single set in the quiet between guilt, mercy, and one more road out.",
       "status": "upcoming",
       "releaseDate": "2026-07-03",
       "platforms": [],
@@ -2370,7 +2508,7 @@ window.PAWN_PUBLIC_DATA = {
       "year": "2026",
       "accent": "#fdb046",
       "cover": "media/public/albums/second_psalm.png",
-      "description": "A still, reflective release framed around horizon light, symbolic imagery, and slower listening.",
+      "description": "A reflective, lyric-forward release from second watch, shaped by prayer, confession, solitude, and self-examination.",
       "status": "live",
       "releaseDate": "2026-01-29",
       "tooFmUrl": "https://too.fm/qyqq2qa",

@@ -50,6 +50,7 @@ function isSkippableUrl(rawValue) {
   return (
     !value ||
     value === "#" ||
+    /\$\{[^}]+\}/.test(value) ||
     (/^(?:https?:)?\/\//i.test(value) && !value.startsWith(siteOrigin)) ||
     /^(?:mailto:|tel:|data:|blob:|javascript:)/i.test(value)
   );
@@ -321,7 +322,12 @@ function sitemapPathSet() {
         continue;
       }
 
-      paths.add(url.pathname === "/" ? "index.html" : url.pathname.replace(/^\/+/, ""));
+      const normalizedPath = url.pathname === "/" ? "index.html" : url.pathname.replace(/^\/+/, "");
+      paths.add(normalizedPath);
+
+      if (normalizedPath.endsWith("/")) {
+        paths.add(`${normalizedPath}index.html`);
+      }
     } catch (error) {
       report("sitemap.xml", match[1], "sitemap URL is invalid");
     }

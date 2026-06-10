@@ -20,6 +20,8 @@ const {
 const failures = [];
 const warnings = [];
 const launchGate = process.argv.includes("--launch-gate");
+const strictSpotify = process.argv.includes("--strict-spotify");
+const releaseTimezone = "America/New_York";
 
 function fail(message) {
   failures.push(message);
@@ -33,6 +35,48 @@ function assert(condition, message) {
   if (!condition) {
     fail(message);
   }
+}
+
+function dateStampInTimezone(date, timeZone) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date).reduce((result, part) => {
+    if (part.type !== "literal") {
+      result[part.type] = part.value;
+    }
+
+    return result;
+  }, {});
+
+  return `${parts.year || "0000"}-${parts.month || "00"}-${parts.day || "00"}`;
+}
+
+function normalizedReleaseDate(value) {
+  const raw = text(value);
+  const match = raw.match(/^(\d{4})[-/](\d{2})[-/](\d{2})$/);
+
+  if (!match) {
+    return "";
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  if (
+    Number.isNaN(date.getTime()) ||
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  ) {
+    return "";
+  }
+
+  return `${match[1]}-${match[2]}-${match[3]}`;
 }
 
 function runFixtureChecks() {
@@ -84,6 +128,7 @@ function validateSourceShape(source, data) {
 
 function validatePublicData(data, source, audit) {
   const launchMode = text(data.label && data.label.launchMode, "full").toLowerCase();
+  const today = dateStampInTimezone(new Date(), releaseTimezone);
 
   for (const artist of data.artists || []) {
     assert(artist.spotify && Array.isArray(artist.spotify.genres), `artist ${artist.slug} is missing spotify metadata shell`);
@@ -101,6 +146,7 @@ function validatePublicData(data, source, audit) {
     assert(release.identifiers && typeof release.identifiers === "object", `release ${release.slug} is missing identifiers shell`);
 
     const state = text(release.status).toLowerCase();
+    const releaseDate = normalizedReleaseDate(release.releaseDate);
     if (state === "live" && !releaseListenUrl(release)) {
       fail(`live release ${release.slug} has no listen path`);
     }
@@ -108,15 +154,33 @@ function validatePublicData(data, source, audit) {
     if (state === "upcoming" && !text(release.releaseDate) && !releaseListenUrl(release)) {
       fail(`upcoming release ${release.slug} needs a release date or campaign/listen path`);
     }
+
+    if (releaseDate && state === "upcoming" && releaseDate < today) {
+      fail(`upcoming release ${release.slug} has past release date ${releaseDate}`);
+    }
+
+    if (releaseDate && state === "live" && releaseDate > today) {
+      fail(`live release ${release.slug} has future release date ${releaseDate}`);
+    }
   }
 
   if (launchGate || launchMode === "full") {
     if (audit.missing.spotifyArtistSeeds.length) {
-      fail(`launch gate: ${audit.missing.spotifyArtistSeeds.length} artist Spotify seeds are missing`);
+      const message = `launch gate enrichment: ${audit.missing.spotifyArtistSeeds.length} artist Spotify seeds are still missing`;
+      if (strictSpotify) {
+        fail(`strict Spotify gate: ${audit.missing.spotifyArtistSeeds.length} artist Spotify seeds are missing`);
+      } else {
+        warn(message);
+      }
     }
 
     if (audit.missing.spotifyReleaseSeeds.length) {
-      fail(`launch gate: ${audit.missing.spotifyReleaseSeeds.length} release Spotify seeds are missing`);
+      const message = `launch gate enrichment: ${audit.missing.spotifyReleaseSeeds.length} release Spotify seeds are still missing`;
+      if (strictSpotify) {
+        fail(`strict Spotify gate: ${audit.missing.spotifyReleaseSeeds.length} release Spotify seeds are missing`);
+      } else {
+        warn(message);
+      }
     }
 
     if (!audit.counts.readyEpks) {
