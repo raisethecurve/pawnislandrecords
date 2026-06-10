@@ -78,7 +78,13 @@ Cloudflare docs worth keeping nearby:
    npm run sync:r2:media -- --execute
    ```
 
-10. Verify one object after the custom domain status is Active.
+10. Verify the bucket contents after the custom domain status is Active.
+
+   ```sh
+   npm run verify:r2:media
+   ```
+
+11. Verify one object directly if you need a quick manual smoke check.
 
    ```sh
    curl -I https://media.pawnislandrecords.com/public/albums/rhea_hearth.png
@@ -89,6 +95,7 @@ Cloudflare docs worth keeping nearby:
 - Add or replace files under `media/`.
 - Run `npm run sync:r2:media` to inspect object keys.
 - Run `npm run sync:r2:media -- --execute` to upload.
+- Run `npm run verify:r2:media` to confirm every local media file is reachable from the media domain.
 - Run `npm run generate:seo` when static SEO pages or the sitemap should point social/search image URLs at the media domain.
 
 The default uploaded `Cache-Control` is `public, max-age=86400, stale-while-revalidate=604800`, because these filenames are readable but not content-hashed. If an existing object is replaced and the public URL must update immediately, purge `media.pawnislandrecords.com` in Cloudflare.
@@ -99,4 +106,5 @@ Useful overrides:
 PAWN_R2_BUCKET=pawn-island-records-media npm run sync:r2:media -- --execute
 PAWN_R2_CACHE_CONTROL="public, max-age=3600" npm run sync:r2:media -- --execute
 PAWN_MEDIA_ORIGIN=https://media.pawnislandrecords.com npm run generate:seo
+npm run verify:r2:media -- --filter quiet_worn_away
 ```

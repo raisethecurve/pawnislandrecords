@@ -65,12 +65,25 @@ function contentType(filePath) {
   );
 }
 
-function npxCommand() {
-  return process.platform === "win32" ? "npx.cmd" : "npx";
+function npxInvocation() {
+  const bundledNpx = path.join(path.dirname(process.execPath), "node_modules", "npm", "bin", "npx-cli.js");
+
+  if (fs.existsSync(bundledNpx)) {
+    return {
+      command: process.execPath,
+      args: [bundledNpx]
+    };
+  }
+
+  return {
+    command: process.platform === "win32" ? "npx.cmd" : "npx",
+    args: []
+  };
 }
 
 function runWrangler(args) {
-  const result = spawnSync(npxCommand(), ["--yes", "wrangler", ...args], {
+  const npx = npxInvocation();
+  const result = spawnSync(npx.command, [...npx.args, "--yes", "wrangler", ...args], {
     cwd: root,
     stdio: "inherit"
   });

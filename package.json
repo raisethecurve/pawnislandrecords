@@ -11,6 +11,7 @@
     "sync:spotify": "node tools/sync-spotify.js",
     "setup:r2:media": "node tools/setup-r2-media.js",
     "sync:r2:media": "node tools/sync-r2-media.js",
+    "verify:r2:media": "node tools/check-r2-media.js",
     "test:data": "node tools/check-data.js",
     "test:merch-metadata": "node tools/check-merch-metadata.js",
     "test:links": "node tools/check-links.js",
