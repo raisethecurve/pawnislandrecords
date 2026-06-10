@@ -10,7 +10,7 @@ Use this when moving checked-in public media from `media/` to a Cloudflare R2 bu
 - R2 object keys: relative to `media/`
 - Example: `media/public/albums/rhea_hearth.png` becomes `https://media.pawnislandrecords.com/public/albums/rhea_hearth.png`
 
-The site keeps local `media/...` paths in `public-data.js` so tests and localhost stay simple. Production runtime maps those paths to the media subdomain when the page host is under `pawnislandrecords.com`.
+The site keeps local `media/...` paths in `public-data.js` so tests and localhost stay simple. Production uses the main site origin by default for committed media files. Set `PAWN_MEDIA_ORIGIN=https://media.pawnislandrecords.com` only when the R2 bucket is intentionally synced and should be the canonical media origin.
 
 ## One-Time Cloudflare Setup
 
@@ -96,7 +96,7 @@ Cloudflare docs worth keeping nearby:
 - Run `npm run sync:r2:media` to inspect object keys.
 - Run `npm run sync:r2:media -- --execute` to upload.
 - Run `npm run verify:r2:media` to confirm every local media file is reachable from the media domain.
-- Run `npm run generate:seo` when static SEO pages or the sitemap should point social/search image URLs at the media domain.
+- Run `npm run generate:seo` after media URL policy changes. It points social/search image URLs at the main site by default; set `PAWN_MEDIA_ORIGIN` first only when the R2 bucket should be canonical.
 
 The default uploaded `Cache-Control` is `public, max-age=86400, stale-while-revalidate=604800`, because these filenames are readable but not content-hashed. If an existing object is replaced and the public URL must update immediately, purge `media.pawnislandrecords.com` in Cloudflare.
 

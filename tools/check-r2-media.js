@@ -4,7 +4,7 @@ const fs = require("node:fs");
 const http = require("node:http");
 const https = require("node:https");
 const path = require("node:path");
-const { configuredMediaOrigin } = require("./media-url");
+const { defaultMediaOrigin } = require("./media-url");
 
 const root = path.resolve(__dirname, "..");
 const defaultTimeoutMs = 12000;
@@ -26,7 +26,7 @@ function usage() {
 Checks that every local file under media/ is available from the configured media origin.
 
 Options:
-  --origin <url>        Defaults to PAWN_MEDIA_ORIGIN or ${configuredMediaOrigin()}.
+  --origin <url>        Defaults to PAWN_MEDIA_ORIGIN or ${defaultMediaOrigin}.
   --dir <path>          Local media directory. Defaults to PAWN_R2_MEDIA_DIR or media.
   --filter <text>       Check only paths containing this text.
   --concurrency <n>     Parallel requests. Defaults to ${defaultConcurrency}.
@@ -151,7 +151,7 @@ async function main() {
     return;
   }
 
-  const origin = readOption(args, "--origin", configuredMediaOrigin()).replace(/\/+$/g, "");
+  const origin = readOption(args, "--origin", process.env.PAWN_MEDIA_ORIGIN || defaultMediaOrigin).replace(/\/+$/g, "");
   const mediaDir = path.resolve(root, readOption(args, "--dir", process.env.PAWN_R2_MEDIA_DIR || "media"));
   const filter = readOption(args, "--filter", "").trim().toLowerCase();
   const concurrency = numberOption(args, "--concurrency", defaultConcurrency);

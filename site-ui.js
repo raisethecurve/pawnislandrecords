@@ -1526,8 +1526,7 @@
       return explicit.replace(/\/+$/g, "");
     }
 
-    const hostname = String(window.location && window.location.hostname || "").toLowerCase();
-    return /(?:^|\.)pawnislandrecords\.com$/i.test(hostname) ? "https://media.pawnislandrecords.com" : "";
+    return "";
   }
 
   function mediaObjectKey(value) {

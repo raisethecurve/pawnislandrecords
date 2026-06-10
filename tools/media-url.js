@@ -10,7 +10,7 @@ function trimTrailingSlash(value) {
 }
 
 function configuredMediaOrigin() {
-  return trimTrailingSlash(process.env.PAWN_MEDIA_ORIGIN || defaultMediaOrigin);
+  return trimTrailingSlash(process.env.PAWN_MEDIA_ORIGIN || "");
 }
 
 function mediaObjectKey(value) {
@@ -48,7 +48,8 @@ function mediaUrl(value) {
     return text(value);
   }
 
-  return new URL(key, `${configuredMediaOrigin()}/`).toString();
+  const mediaOrigin = configuredMediaOrigin();
+  return mediaOrigin ? new URL(key, `${mediaOrigin}/`).toString() : text(value);
 }
 
 function publicAssetUrl(value) {

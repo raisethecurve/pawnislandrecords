@@ -89,7 +89,7 @@ Use `.dev.vars` for local Pages Functions testing and never commit it.
 
 ## Cloudflare R2 Media Bucket
 
-Public release and project media can be mirrored from `media/` into Cloudflare R2 and served from `https://media.pawnislandrecords.com`. The repo keeps local media paths in `public-data.js` for tests and localhost, while production pages under `pawnislandrecords.com` resolve `media/...` artwork to the media subdomain.
+Public release and project media can be mirrored from `media/` into Cloudflare R2 and served from `https://media.pawnislandrecords.com`. The repo keeps local media paths in `public-data.js` for tests and localhost, and production pages use the main site origin by default for committed media. Set `PAWN_MEDIA_ORIGIN=https://media.pawnislandrecords.com` before generating pages only when the R2 bucket is intentionally synced and should be canonical.
 
 Recommended bucket/domain:
 
