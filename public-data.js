@@ -2006,7 +2006,7 @@ window.PAWN_PUBLIC_DATA = {
       "description": "A cathedral-scale Resunant single where memory becomes spectacle: blue-black atmosphere, gold light, and heavy, theatrical uplift.",
       "status": "upcoming",
       "releaseDate": "2026-08-31",
-      "tooFmUrl": "",
+      "tooFmUrl": "https://too.fm/orz1r47",
       "platforms": [],
       "tracks": [
         {
