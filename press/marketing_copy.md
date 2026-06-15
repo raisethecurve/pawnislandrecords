@@ -299,35 +299,35 @@ Can be public with conservative language. Avoid over-personal biography unless s
 
 ### One-line identity
 
-Blackout State is Pawn Island Records’ pop-punk project, led by the album **No Manual, No Master**.
+Blackout State is Pawn Island Records' pop-punk project, led by **No Manual, No Master** and the single **High Time**.
 
 ### Short public summary
 
-Blackout State channels pop-punk urgency, frustration, and melodic rebellion into songs about pressure, independence, and refusing the script.
+Blackout State writes pop-punk for no-manual moments: overdue decisions, hard exits, and refusing the role somebody else wrote.
 
 ### Main project bio
 
-Blackout State is the Pawn Island Records project for pop-punk energy, melodic defiance, and the feeling of pushing back against a system that never handed you instructions. Its central known release, **No Manual, No Master**, gives the project its clearest public frame: restless, hook-driven songs about pressure, refusal, independence, and self-definition.
+Blackout State is Pawn Island Records' pop-punk lane for songs that treat a title like a demand: **No Manual, No Master**; **High Time**; decide now.
 
-The project should be positioned as direct and energetic rather than overly polished or nostalgic. Blackout State can carry the emotional force of classic pop-punk—urgency, frustration, release—while staying connected to Pawn Island’s broader lyric-first identity. The sound world belongs to people trying to make sense of life without a guide, a safety net, or permission.
+The project should be positioned as direct and energetic rather than overly polished or nostalgic. **No Manual, No Master** sets the posture: no instruction sheet, no owner, no permission structure. **High Time** sharpens that posture into a deadline, with the project moving less like throwback scenery and more like someone reaching for the door before the room closes in.
 
-Blackout State is best described as pop-punk with a hard personal edge: catchy, charged, and built around the refusal to be managed by someone else’s rules.
+Blackout State is best described as pop-punk with a hard personal edge: title-first, impatient, and allergic to being managed by someone else's rules.
 
 ### Press bio
 
-Blackout State is Pawn Island Records’ pop-punk project. Centered around **No Manual, No Master**, the project turns urgency, frustration, and melodic rebellion into songs about pressure, independence, and refusing someone else’s script.
+Blackout State is Pawn Island Records' pop-punk project. **No Manual, No Master** sets its core posture: no instruction sheet, no owner, no permission structure. **High Time** pushes that same refusal into a compact deadline of a single.
 
 ### Story angles / editorial hooks
 
-* Pop-punk framed around self-definition and refusal.
-* **No Manual, No Master** as a strong album-title statement.
-* Youthful energy without pretending to be naïve.
-* Melodic rebellion tied to Pawn Island’s lyric-first catalog identity.
+* **No Manual, No Master** as a plainspoken autonomy statement.
+* **High Time** as the deadline moment: act now, get out, stop waiting.
+* Youthful voltage without pretending to be naive.
+* Pop-punk framed by sharp titles instead of throwback scenery.
 * Strong fit for pop-punk, alt-rock, emo-pop, and independent rock playlists.
 
 ### Do / don’t language
 
-Do use: pop-punk, melodic rebellion, urgency, pressure, independence, refusal, hook-driven.
+Do use: pop-punk, no-manual, no owner, no permission structure, deadline, hard exit, title-first.
 Don’t use: skate-punk unless approved, emo revival unless approved, fake band, invented band members, touring claims.
 Capitalization: **Blackout State**. Album title: **No Manual, No Master**.
 
@@ -814,13 +814,13 @@ No lyric pull quotes are approved yet.
 
 ### Release description
 
-**No Manual, No Master** is a pop-punk release about pressure, refusal, and self-definition. Hook-driven and restless, it captures the feeling of trying to build a life without instructions and refusing to live under someone else’s control.
+**No Manual, No Master** is the rulebook: no guide, no owner, no permission structure, just pop-punk pointed at the exit.
 
 ### Inside the release
 
-**No Manual, No Master** is the defining phrase for Blackout State. It gives the project its public posture immediately: no guide, no permission, no ownership. The album should be framed around autonomy, frustration, pressure, and melodic rebellion.
+**No Manual, No Master** is the defining phrase for Blackout State. It gives the project its public posture immediately: no guide, no owner, no permission structure.
 
-The sound lane is pop-punk, but the messaging should avoid empty nostalgia. This is not about pretending to be younger than the feeling. It is about the familiar pop-punk engine—hooks, speed, release, refusal—being used to express adult pressure and the anger of having to figure everything out without a map.
+The sound lane is pop-punk, but the messaging should avoid empty nostalgia. Keep the frame blunt and title-led; avoid generic rebellion language unless the copy names what is being refused.
 
 ### Tracklist
 
@@ -1033,7 +1033,7 @@ Press-safe facts: founder of Pawn Island Records; poet/songwriter/independent cr
 
 Status: available by request until assets are approved.
 Press bio: use Blackout State press bio above.
-Highlights: **No Manual, No Master**; pop-punk urgency; independence/refusal themes.
+Highlights: **No Manual, No Master**; **High Time**; no-owner/no-permission posture.
 Promo image/artwork: required.
 Credits: do not invent.
 Press-safe facts: Pawn Island Records project; pop-punk lane.
@@ -1175,7 +1175,7 @@ Appalachian blues, country grit, battered-heart storytelling, and rough-edged ro
 
 ## Blackout State playlist
 
-Pop-punk urgency, melodic rebellion, pressure, independence, and refusal.
+Pop-punk for no-permission exits, overdue decisions, and title-forward hooks.
 
 ## High Ground playlist
 

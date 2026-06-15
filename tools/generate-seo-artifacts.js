@@ -131,7 +131,7 @@ function truncate(value, maxLength = 220) {
     .replace(/\s+\S*$/, "")
     .replace(/\s+(?:and|or|with|of|the|a|an|to|in|for|by)$/i, "")
     .replace(/[,\s;:]+$/g, "");
-  return `${shortened}.`;
+  return /[.!?]$/.test(shortened) ? shortened : `${shortened}.`;
 }
 
 function artistUrl(artist) {
