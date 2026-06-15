@@ -303,31 +303,31 @@ Blackout State is Pawn Island Records' pop-punk project, led by **No Manual, No 
 
 ### Short public summary
 
-Blackout State writes pop-punk for no-manual moments: overdue decisions, hard exits, and refusing the role somebody else wrote.
+Blackout State writes energetic pop-punk about breakup wreckage, buried memories, hard exits, and the ghosts that keep showing up after the damage is done.
 
 ### Main project bio
 
-Blackout State is Pawn Island Records' pop-punk lane for songs that treat a title like a demand: **No Manual, No Master**; **High Time**; decide now.
+Blackout State turns pop-punk toward aftermath: breakup wreckage, half-buried memories, and the ache of a life that almost happened.
 
-The project should be positioned as direct and energetic rather than overly polished or nostalgic. **No Manual, No Master** sets the posture: no instruction sheet, no owner, no permission structure. **High Time** sharpens that posture into a deadline, with the project moving less like throwback scenery and more like someone reaching for the door before the room closes in.
+The project should be positioned as direct and energetic rather than overly polished or nostalgic. **No Manual, No Master** gives Blackout State its defiant backbone; **High Time** brings that defiance into a raw, loud breakup anthem.
 
-Blackout State is best described as pop-punk with a hard personal edge: title-first, impatient, and allergic to being managed by someone else's rules.
+Blackout State is best described as pop-punk with a hard personal edge: emotionally scraped-up, restless, and built for the space between heartbreak and release.
 
 ### Press bio
 
-Blackout State is Pawn Island Records' pop-punk project. **No Manual, No Master** sets its core posture: no instruction sheet, no owner, no permission structure. **High Time** pushes that same refusal into a compact deadline of a single.
+Blackout State is Pawn Island Records' pop-punk project. Led by **No Manual, No Master** and the single **High Time**, the project turns breakup wreckage, buried memories, and hard-won release into loud, emotionally direct pop-punk.
 
 ### Story angles / editorial hooks
 
-* **No Manual, No Master** as a plainspoken autonomy statement.
-* **High Time** as the deadline moment: act now, get out, stop waiting.
+* **High Time** as an energetic breakup anthem about ghosts, wreckage, and memories that refuse to stay buried.
+* Pop-punk built around heartbreak, release, and the life that almost happened.
+* **No Manual, No Master** as the project's defiant backbone.
 * Youthful voltage without pretending to be naive.
-* Pop-punk framed by sharp titles instead of throwback scenery.
 * Strong fit for pop-punk, alt-rock, emo-pop, and independent rock playlists.
 
 ### Do / don’t language
 
-Do use: pop-punk, no-manual, no owner, no permission structure, deadline, hard exit, title-first.
+Do use: pop-punk, breakup anthem, wreckage, ghosts, memories, heartbreak, release, restless momentum, almost happened.
 Don’t use: skate-punk unless approved, emo revival unless approved, fake band, invented band members, touring claims.
 Capitalization: **Blackout State**. Album title: **No Manual, No Master**.
 
@@ -814,13 +814,13 @@ No lyric pull quotes are approved yet.
 
 ### Release description
 
-**No Manual, No Master** is the rulebook: no guide, no owner, no permission structure, just pop-punk pointed at the exit.
+**No Manual, No Master** is a three-track pop-punk release about better days curdling, blown fuses, and refusing to keep living inside someone else's wreckage.
 
 ### Inside the release
 
-**No Manual, No Master** is the defining phrase for Blackout State. It gives the project its public posture immediately: no guide, no owner, no permission structure.
+**No Manual, No Master** keeps the frame blunt: "Better Days," "Crazy Eyes," and "Powered Down" sound like a life losing its instructions in real time.
 
-The sound lane is pop-punk, but the messaging should avoid empty nostalgia. Keep the frame blunt and title-led; avoid generic rebellion language unless the copy names what is being refused.
+The release pairs Blackout State's defiant title with heartbreak, burnout, and the moment a person stops accepting the version of life handed to them.
 
 ### Tracklist
 
@@ -878,7 +878,23 @@ No lyric pull quotes are approved yet.
 
 ---
 
-## Crick Kinnard — My Beaten Heart
+## Blackout State - High Time
+
+### Release description
+
+**High Time** is an energetic pop-punk breakup anthem about digging through the wreckage, finding the ghosts you tried to throw away, and realizing some memories do not stay buried.
+
+### Inside the release
+
+Built on raw emotion, restless momentum, and the ache of a life that almost happened, the single hits that space between heartbreak and release: loud, urgent, and ready to be turned all the way up.
+
+### Short public copy
+
+Blackout State returns with **High Time**, an energetic pop-punk breakup anthem about digging through the wreckage, finding the ghosts you tried to throw away, and realizing some memories do not stay buried. Built on raw emotion, restless momentum, and the ache of a life that almost happened, the single hits that space between heartbreak and release: loud, urgent, and ready to be turned all the way up. **High Time** is out now from Pawn Island Records.
+
+---
+
+## Crick Kinnard - My Beaten Heart
 
 ### Release description
 
@@ -1033,7 +1049,7 @@ Press-safe facts: founder of Pawn Island Records; poet/songwriter/independent cr
 
 Status: available by request until assets are approved.
 Press bio: use Blackout State press bio above.
-Highlights: **No Manual, No Master**; **High Time**; no-owner/no-permission posture.
+Highlights: **No Manual, No Master**; **High Time**; breakup wreckage; restless momentum.
 Promo image/artwork: required.
 Credits: do not invent.
 Press-safe facts: Pawn Island Records project; pop-punk lane.
@@ -1175,7 +1191,7 @@ Appalachian blues, country grit, battered-heart storytelling, and rough-edged ro
 
 ## Blackout State playlist
 
-Pop-punk for no-permission exits, overdue decisions, and title-forward hooks.
+Energetic pop-punk for breakup wreckage, buried ghosts, restless momentum, and loud release.
 
 ## High Ground playlist
 

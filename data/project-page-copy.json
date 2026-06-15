@@ -116,22 +116,22 @@
     "blackout-state": {
       "identity": "Blackout State is Pawn Island Records' pop-punk project, led by No Manual, No Master and the single High Time.",
       "lane": "Pop-punk / melodic rebellion",
-      "summary": "Pop-punk for no-manual moments: overdue decisions, hard exits, and refusing the role somebody else wrote.",
+      "summary": "Energetic pop-punk about breakup wreckage, buried memories, hard exits, and the ghosts that keep showing up after the damage is done.",
       "bio": [
-        "Blackout State is Pawn Island Records' pop-punk lane for songs that treat a title like a demand: No Manual, No Master; High Time; decide now.",
-        "No Manual, No Master sets the posture: no instruction sheet, no owner, no permission structure.",
-        "High Time sharpens that posture into a deadline, with the project moving less like nostalgia and more like someone reaching for the door before the room closes in."
+        "Blackout State turns pop-punk toward aftermath: breakup wreckage, half-buried memories, and the ache of a life that almost happened.",
+        "No Manual, No Master gives the project its defiant backbone; High Time brings that defiance into a raw, loud breakup anthem.",
+        "The sound should feel urgent and emotionally scraped-up, built for the space between heartbreak and release."
       ],
-      "pressBio": "Blackout State is Pawn Island Records' pop-punk project. No Manual, No Master sets its core posture: no instruction sheet, no owner, no permission structure. High Time pushes that same refusal into a compact deadline of a single.",
+      "pressBio": "Blackout State is Pawn Island Records' pop-punk project. Led by No Manual, No Master and the single High Time, the project turns breakup wreckage, buried memories, and hard-won release into loud, emotionally direct pop-punk.",
       "storyAngles": [
-        "No Manual, No Master as a plainspoken autonomy statement.",
-        "High Time as the deadline moment: act now, get out, stop waiting.",
-        "Pop-punk framed by sharp titles instead of throwback scenery."
+        "High Time as an energetic breakup anthem about ghosts, wreckage, and memories that refuse to stay buried.",
+        "Pop-punk built around heartbreak, release, and the life that almost happened.",
+        "No Manual, No Master as the project's defiant backbone."
       ],
       "emotionalLane": [
-        "Autonomy, impatience, cornered decisions, damaged optimism, and release."
+        "Heartbreak, wreckage, ghosts, restless momentum, release, and almost-life ache."
       ],
-      "playlistDescription": "Pop-punk for no-permission exits, overdue decisions, and title-forward hooks."
+      "playlistDescription": "Energetic pop-punk for breakup wreckage, buried ghosts, restless momentum, and loud release."
     },
     "crick-kinnard": {
       "identity": "Crick Kinnard is Pawn Island Records' Appalachian blues and country project.",
@@ -259,12 +259,20 @@
       "cta": "Follow the August 31 release."
     },
     "blackout-state-no-manual-no-master": {
-      "description": "No Manual, No Master is the rulebook: no guide, no owner, no permission structure, just pop-punk pointed at the exit.",
+      "description": "A three-track pop-punk release about better days curdling, blown fuses, and refusing to keep living inside someone else's wreckage.",
       "inside": [
-        "The record's title is the pitch: no guide, no owner, no permission structure.",
-        "Keep the frame blunt and title-led; avoid generic rebellion language unless the copy names what is being refused."
+        "No Manual, No Master keeps the frame blunt: Better Days, Crazy Eyes, and Powered Down sound like a life losing its instructions in real time.",
+        "The release pairs Blackout State's defiant title with heartbreak, burnout, and the moment a person stops accepting the version of life handed to them."
       ],
       "cta": "Turn it up."
+    },
+    "blackout-state-high-time": {
+      "description": "An energetic pop-punk breakup anthem about digging through wreckage, finding old ghosts, and realizing some memories do not stay buried.",
+      "inside": [
+        "High Time digs through the wreckage of a breakup, finding the ghosts you tried to throw away and the ache of a life that almost happened.",
+        "Built on raw emotion and restless momentum, the single lands between heartbreak and release: loud, urgent, and ready to be turned all the way up."
+      ],
+      "cta": "Turn High Time all the way up."
     },
     "crick-kinnard-thats-fair": {
       "description": "A plainspoken Crick Kinnard release in the Appalachian blues and country lane: rough-edged, bruised, dry, and human.",
