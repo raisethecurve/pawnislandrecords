@@ -28,6 +28,7 @@ Official project pages:
 Official release pages:
 - Hearthblood: https://www.pawnislandrecords.com/releases/rhea-mauro-hearthblood/
 - Aura Farming: https://www.pawnislandrecords.com/releases/rhea-mauro-aura-farming/
+- Melody of Rain: https://www.pawnislandrecords.com/releases/rhea-mauro-melody-of-rain/
 - Save a Horse Buy a Jet: https://www.pawnislandrecords.com/releases/rhea-mauro-save-a-horse-buy-a-jet/
 - The View From Up Here: https://www.pawnislandrecords.com/releases/high-ground-the-view-from-up-here/
 - Final Analysis: https://www.pawnislandrecords.com/releases/high-ground-final-analysis/
@@ -71,4 +72,4 @@ Approved press pages:
 - Crick Kinnard Press Kit: https://www.pawnislandrecords.com/press/crick-kinnard/
 - second watch Press Kit: https://www.pawnislandrecords.com/press/second-watch/
 
-Last updated: 2026-06-14
+Last updated: 2026-06-18

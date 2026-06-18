@@ -9,11 +9,11 @@ window.PAWN_PUBLIC_DATA = {
     ],
     "entityDescription": "Independent creative music imprint founded by Matthew H. Freeman, built around original lyrics, atmosphere, story, and distinct project worlds.",
     "launchMode": "essentials",
-    "featuredCampaignTitle": "Send Me",
-    "featuredCampaignSummary": "Crick Kinnard's Send Me is available through the current release link.",
-    "featuredCampaignUrl": "https://too.fm/ypn96ka",
-    "campaignUrl": "https://too.fm/ypn96ka",
-    "defaultTooFmUrl": "https://too.fm/ypn96ka",
+    "featuredCampaignTitle": "Melody of Rain",
+    "featuredCampaignSummary": "Rhea Mauro's Melody of Rain arrives September 4, 2026. Pre-save the forthcoming single through the current release link.",
+    "featuredCampaignUrl": "https://too.fm/80yrlej",
+    "campaignUrl": "https://too.fm/80yrlej",
+    "defaultTooFmUrl": "https://too.fm/80yrlej",
     "catalogPlaylistUrl": "https://open.spotify.com/playlist/6Ro52nZas5JxzVgQa353Cw?si=xzNAYGiqQXqMGn-h5q_pqA",
     "socialLinks": [
       {
@@ -843,6 +843,55 @@ window.PAWN_PUBLIC_DATA = {
       },
       "identifiers": {
         "upc": ""
+      },
+      "primaryEmbedUrl": "",
+      "primaryEmbedLabel": ""
+    },
+    {
+      "slug": "rhea-mauro-melody-of-rain",
+      "artist": "rhea-mauro",
+      "title": "Melody of Rain",
+      "aliases": [
+        "rhea-mauro-melody",
+        "melody-of-rain"
+      ],
+      "type": "Single",
+      "vibe": "rainlit, intimate, cinematic",
+      "year": "2026",
+      "accent": "#d9b16c",
+      "cover": "media/public/albums/rhea_melody.png",
+      "description": "A rainlit Rhea Mauro single where tenderness, distance, and memory gather into a cinematic soul-rooted singer-songwriter moment.",
+      "status": "upcoming",
+      "releaseDate": "2026-09-04",
+      "tooFmUrl": "https://too.fm/80yrlej",
+      "platforms": [],
+      "tracks": [
+        {
+          "title": "Melody of Rain",
+          "runtime": "5:08",
+          "youtubeId": "",
+          "spotify": {
+            "id": "",
+            "type": "",
+            "url": "",
+            "embedUrl": "",
+            "fetchedAt": ""
+          },
+          "identifiers": {
+            "isrc": ""
+          }
+        }
+      ],
+      "youtubeId": "",
+      "spotify": {
+        "id": "",
+        "type": "",
+        "url": "",
+        "embedUrl": "",
+        "fetchedAt": ""
+      },
+      "identifiers": {
+        "upc": "0672896700441"
       },
       "primaryEmbedUrl": "",
       "primaryEmbedLabel": ""
