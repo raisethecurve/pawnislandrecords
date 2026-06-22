@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-10",
+  "updatedAt": "2026-06-22",
   "notes": "Maintainer-owned source overlay for verified external IDs, press readiness, and approved assets. Empty Spotify fields mean no verified seed has been attached yet. Press assets listed here are approved for public EPK display and direct press download.",
   "artists": {
     "rhea-mauro": {
@@ -213,6 +213,17 @@
       "tooFmUrl": "https://too.fm/6padq59",
       "youtubeId": "",
       "tracks": {}
+    },
+    "velvet-orchard-all-my-life": {
+      "spotifyUrl": "",
+      "tooFmUrl": "https://too.fm/ag9pyj8",
+      "youtubeId": "",
+      "tracks": {
+        "All My Life": {
+          "spotifyUrl": "",
+          "youtubeId": ""
+        }
+      }
     },
     "velvet-orchard-afterglow": {
       "spotifyUrl": "",

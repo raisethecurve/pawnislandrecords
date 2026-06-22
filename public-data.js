@@ -1214,6 +1214,54 @@ window.PAWN_PUBLIC_DATA = {
       "primaryEmbedLabel": ""
     },
     {
+      "slug": "velvet-orchard-all-my-life",
+      "artist": "velvet-orchard",
+      "title": "All My Life",
+      "aliases": [
+        "velvet-orchard-life"
+      ],
+      "type": "Single",
+      "vibe": "horizon-lit, devoted, neon",
+      "year": "2026",
+      "accent": "#f04f86",
+      "cover": "media/public/albums/velvet_all_my_life.png",
+      "description": "A horizon-lit Velvet Orchard single where devotion, after-hours glow, and EDM-facing pop pull toward a wide-open chorus.",
+      "status": "upcoming",
+      "releaseDate": "2026-08-17",
+      "tooFmUrl": "https://too.fm/ag9pyj8",
+      "platforms": [],
+      "tracks": [
+        {
+          "title": "All My Life",
+          "runtime": "",
+          "youtubeId": "",
+          "spotify": {
+            "id": "",
+            "type": "",
+            "url": "",
+            "embedUrl": "",
+            "fetchedAt": ""
+          },
+          "identifiers": {
+            "isrc": ""
+          }
+        }
+      ],
+      "youtubeId": "",
+      "spotify": {
+        "id": "",
+        "type": "",
+        "url": "",
+        "embedUrl": "",
+        "fetchedAt": ""
+      },
+      "identifiers": {
+        "upc": ""
+      },
+      "primaryEmbedUrl": "",
+      "primaryEmbedLabel": ""
+    },
+    {
       "slug": "velvet-orchard-afterglow",
       "artist": "velvet-orchard",
       "title": "Afterglow",
