@@ -97,6 +97,78 @@ test.describe("persistent shell smoke", () => {
   }
 });
 
+test.describe("home pending carousel", () => {
+  test("keeps late-slide artwork inside the mobile viewport", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "mobile", "mobile-only responsive regression");
+
+    const targetTitles = ["Memories", "Melody of Rain"];
+    const response = await page.goto(withStandalone("index.html"), { waitUntil: "domcontentloaded" });
+
+    expect(response && response.status()).toBeLessThan(400);
+
+    const targetSlideIndex = await page.evaluate((titles) => {
+      const slides = Array.from(document.querySelectorAll(".pending-carousel__slide"));
+
+      return slides.findIndex((slide) => {
+        const slideTitles = Array.from(slide.querySelectorAll("h4")).map((heading) =>
+          heading.textContent.trim()
+        );
+        return titles.every((title) => slideTitles.includes(title));
+      });
+    }, targetTitles);
+
+    expect(targetSlideIndex).toBeGreaterThanOrEqual(0);
+
+    await page.locator(`[data-pending-dot="${targetSlideIndex}"]`).click();
+    await expect(page.locator(`[data-pending-slide="${targetSlideIndex}"]`)).toHaveAttribute(
+      "aria-hidden",
+      "false"
+    );
+    await page.waitForTimeout(550);
+
+    const bounds = await page.evaluate((titles) => {
+      const viewport = document.querySelector(".pending-carousel__viewport");
+      const activeSlide = document.querySelector(".pending-carousel__slide[aria-hidden='false']");
+
+      if (!viewport || !activeSlide) {
+        return [];
+      }
+
+      const viewportRect = viewport.getBoundingClientRect();
+
+      return titles.map((title) => {
+        const card = Array.from(activeSlide.querySelectorAll(".pending-album")).find(
+          (candidate) => candidate.querySelector("h4")?.textContent.trim() === title
+        );
+        const art = card && card.querySelector(".pending-album__art");
+        const cardRect = card ? card.getBoundingClientRect() : null;
+        const artRect = art ? art.getBoundingClientRect() : null;
+
+        return {
+          title,
+          found: Boolean(card && art),
+          viewportLeft: viewportRect.left,
+          viewportRight: viewportRect.right,
+          cardLeft: cardRect ? cardRect.left : 0,
+          cardRight: cardRect ? cardRect.right : 0,
+          artLeft: artRect ? artRect.left : 0,
+          artRight: artRect ? artRect.right : 0
+        };
+      });
+    }, targetTitles);
+
+    expect(bounds).toHaveLength(targetTitles.length);
+
+    for (const item of bounds) {
+      expect(item.found, item.title).toBe(true);
+      expect(item.cardLeft, item.title).toBeGreaterThanOrEqual(item.viewportLeft - 1);
+      expect(item.cardRight, item.title).toBeLessThanOrEqual(item.viewportRight + 1);
+      expect(item.artLeft, item.title).toBeGreaterThanOrEqual(item.viewportLeft - 1);
+      expect(item.artRight, item.title).toBeLessThanOrEqual(item.viewportRight + 1);
+    }
+  });
+});
+
 test.describe("public routing scroll", () => {
   test("public pages keep one native document scroller", async ({ page }, testInfo) => {
     const response = await page.goto("roster.html", { waitUntil: "domcontentloaded" });

@@ -122,6 +122,7 @@
   let artists = [];
   let featuredRelease = null;
   let homePendingCarouselTimer = null;
+  let homePendingCarouselResizeHandler = null;
 
   function refreshCatalogCaches() {
     data = resolvedData();
@@ -1203,6 +1204,12 @@
       homePendingCarouselTimer = null;
     }
 
+    if (homePendingCarouselResizeHandler) {
+      window.removeEventListener("resize", homePendingCarouselResizeHandler);
+      window.removeEventListener("orientationchange", homePendingCarouselResizeHandler);
+      homePendingCarouselResizeHandler = null;
+    }
+
     if (!carousel) {
       return;
     }
@@ -1219,7 +1226,9 @@
 
     const setSlide = (nextIndex) => {
       currentIndex = (nextIndex + slides.length) % slides.length;
-      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+      const firstSlideOffset = slides[0] ? slides[0].offsetLeft : 0;
+      const activeSlideOffset = slides[currentIndex].offsetLeft - firstSlideOffset;
+      track.style.transform = `translateX(-${activeSlideOffset}px)`;
 
       slides.forEach((slide, slideIndex) => {
         const isHidden = slideIndex !== currentIndex;
@@ -1266,6 +1275,9 @@
     carousel.addEventListener("mouseleave", startTimer);
     carousel.addEventListener("focusin", stopTimer);
     carousel.addEventListener("focusout", startTimer);
+    homePendingCarouselResizeHandler = () => setSlide(currentIndex);
+    window.addEventListener("resize", homePendingCarouselResizeHandler);
+    window.addEventListener("orientationchange", homePendingCarouselResizeHandler);
 
     setSlide(0);
     startTimer();
