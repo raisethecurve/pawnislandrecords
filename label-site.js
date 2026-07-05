@@ -1662,7 +1662,6 @@
                   ? `<p class="feature-card__support">${escapeHtml(releaseAvailability(featuredRelease))}</p>`
                   : ""
               }
-              <p class="feature-card__summary">${escapeHtml(text(featuredRelease.description, "Step into the current release world."))}</p>
               ${
                 featuredCardActions
                   ? `<div class="feature-card__actions">${featuredCardActions}</div>`
